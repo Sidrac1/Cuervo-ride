@@ -1,0 +1,236 @@
+/*====================
+    SIDEBAR
+=====================*/
+
+.sidebar{
+
+    position:fixed;
+
+    top:0;
+    left:0;
+
+    width:90px;
+    height:100vh;
+
+    background:#111827;
+
+    display:flex;
+    flex-direction:column;
+
+    overflow:hidden;
+
+    transition:.35s;
+
+    z-index:999;
+
+}
+
+.sidebar.active{
+
+    width:260px;
+
+}
+
+/*====================
+    LOGO
+=====================*/
+
+.logo{
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    padding:30px 0;
+
+}
+
+.logo img{
+
+    width:60px;
+
+    transition:.35s;
+
+}
+
+.sidebar.active .logo img{
+
+    width:130px;
+
+}
+
+/*====================
+    BOTÓN MENÚ
+=====================*/
+
+.menu-btn{
+
+    height:70px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    cursor:pointer;
+
+    color:white;
+
+    font-size:24px;
+
+    transition:.3s;
+
+}
+
+.menu-btn:hover{
+
+    color:#6EE7B7;
+
+}
+
+/*====================
+    MENÚ
+=====================*/
+
+.sidebar-menu{
+
+    flex:1;
+
+    margin-top:20px;
+
+}
+
+.sidebar-menu a{
+
+    display:flex;
+    align-items:center;
+
+    gap:18px;
+
+    padding:18px 30px;
+
+    color:white;
+
+    text-decoration:none;
+
+    transition:.3s;
+
+}
+
+.sidebar-menu a:hover{
+
+    background:#1F2937;
+
+}
+
+.sidebar-menu i{
+
+    width:30px;
+
+    text-align:center;
+
+    font-size:22px;
+
+    transition:.3s;
+
+}
+
+.sidebar-menu a:hover i{
+
+    transform:scale(1.1);
+
+}
+
+.sidebar-menu span{
+
+    opacity:0;
+
+    white-space:nowrap;
+
+    transition:.3s;
+
+}
+
+.sidebar.active .sidebar-menu span{
+
+    opacity:1;
+
+}
+
+/*====================
+    LOGOUT
+=====================*/
+
+.logout-btn:hover{
+
+    background:#7F1D1D;
+
+    color:#FCA5A5;
+
+}
+
+.logout-btn:hover i{
+
+    color:#F87171;
+
+}
+
+/*====================
+    PERFIL INFERIOR
+=====================*/
+
+.bottom-profile{
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    padding:30px;
+
+}
+
+.bottom-profile a{
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    text-decoration:none;
+
+}
+
+.bottom-profile img{
+
+    width:55px;
+    height:55px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    cursor:pointer;
+
+    border:3px solid transparent;
+
+    transition:.3s;
+
+}
+
+.bottom-profile img:hover{
+
+    transform:scale(1.08);
+
+    border-color:#6EE7B7;
+
+    box-shadow:0 0 15px rgba(110,231,183,.35);
+
+}
+
+/*====================
+    SCROLL
+=====================*/
+
+.sidebar::-webkit-scrollbar{
+
+    width:0;
+
+}

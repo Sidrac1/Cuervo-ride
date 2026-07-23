@@ -1,0 +1,84 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <link rel="stylesheet"
+    href="{% static 'css/sidebar.css' %}">
+
+    <title>Sidebar</title>
+
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+        <!-- Logo -->
+        <div class="logo">
+            <a href="{% url 'home' %}" class="logo-link">
+                <img src="{% static 'img/logo.png' %}" alt="Logo">
+            </a>
+        </div>
+
+        <!-- Botón menú -->
+        <div class="menu-btn" id="menu-btn">
+            <i class="fa-solid fa-bars"></i>
+        </div>
+
+        <!-- Navegación -->
+        <nav class="sidebar-menu">
+
+            <a href="{% url 'home' %}">
+                <i class="fa-solid fa-house"></i>
+                <span>Inicio</span>
+            </a>
+
+            <a href="{% url 'perfil' %}">
+                <i class="fa-regular fa-user"></i>
+                <span>Perfil</span>
+            </a>
+
+            <a href="#">
+                <i class="fa-solid fa-car"></i>
+                <span>Mis viajes</span>
+            </a>
+
+            <!-- Logout -->
+            <a href="{% url 'logout' %}"
+               class="logout-btn"
+               onclick="return confirm('¿Deseas cerrar sesión?');">
+
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>Cerrar sesión</span>
+
+            </a>
+
+        </nav>
+
+        <!-- Avatar inferior -->
+        <div class="bottom-profile">
+
+            <a href="{% url 'perfil' %}" title="Mi perfil">
+
+                <img
+                    src="https://i.imgur.com/2DhmtJ4.png"
+                    alt="Perfil">
+
+            </a>
+
+        </div>
+
+    </aside>
+
+    <script src="{% static 'js/sidebarP.js' %}"></script>
+
+</body>
+</html>

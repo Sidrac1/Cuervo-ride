@@ -1,0 +1,259 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filtro de Viajes</title>
+
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <link rel="stylesheet" href="{% static 'css/filtroviaje.css' %}">
+</head>
+
+<body>
+
+
+    <!-- SIDEBAR -->
+    {% include 'components/sidebar.html' %}
+
+
+    <!-- CONTENIDO -->
+
+    <main class="content">
+
+
+        <header>
+
+            <h1 class="logo-text">
+                Cuervo-<span>Ride</span>
+            </h1>
+
+        </header>
+
+         <!-- ==========================
+         BARRA DE BÚSQUEDA
+        =========================== -->
+
+       <div class="busqueda-container">
+
+            <div class="busqueda">
+
+                <input type="text" placeholder="Desde">
+
+                <input type="text" placeholder="Hacia">
+
+            <div class="time-input">
+
+                <input type="time" id="hora">
+
+                <label for="hora">
+                    <i class="fa-regular fa-clock"></i>
+                </label>
+
+            </div>
+
+            <button class="btn-buscar">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+        <section class="agendar">
+
+        
+
+    <!--==========================
+        PANEL IZQUIERDO
+    ===========================-->
+
+    <aside class="panel-izquierdo">
+
+        <!-- LISTA DE CONDUCTORES -->
+
+        <div class="lista-conductores">
+
+            <!-- Tarjeta -->
+
+            <div class="card-conductor active">
+
+                <img src="https://i.imgur.com/2DhmtJ4.png" alt="Perfil">
+
+                <div>
+
+                    <h3>Nombre Conductor</h3>
+
+                    <p>Hora salida - Hora llegada</p>
+
+                </div>
+
+            </div>
+
+            <div class="card-conductor">
+
+                <img src="https://i.imgur.com/2DhmtJ4.png" alt="Perfil">
+
+                <div>
+
+                    <h3>Nombre Conductor</h3>
+
+                    <p>Hora salida - Hora llegada</p>
+
+                </div>
+
+            </div>
+
+            <div class="card-conductor">
+
+                <img src="https://i.imgur.com/2DhmtJ4.png" alt="Perfil">
+
+                <div>
+
+                    <h3>Nombre Conductor</h3>
+
+                    <p>Hora salida - Hora llegada</p>
+
+                </div>
+
+            </div>
+
+            <div class="card-conductor">
+
+                <img src="https://i.imgur.com/2DhmtJ4.png" alt="Perfil">
+
+                <div>
+
+                    <h3>Nombre Conductor</h3>
+
+                    <p>Hora salida - Hora llegada</p>
+
+                </div>
+
+            </div>
+
+            <div class="card-conductor">
+
+                <img src="https://i.imgur.com/2DhmtJ4.png" alt="Perfil">
+
+                <div>
+
+                    <h3>Nombre Conductor</h3>
+
+                    <p>Hora salida - Hora llegada</p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+    <!--==========================
+        PANEL DERECHO
+    ===========================-->
+
+    <section class="detalle-conductor">
+
+        <div class="detalle-header">
+
+            <img class="foto-conductor"
+                 src="https://i.imgur.com/2DhmtJ4.png"
+                 alt="Conductor">
+
+            <h2>Nombre Conductor</h2>
+
+            <img class="auto"
+                 src="{% static 'img/carro.png' %}"
+                 alt="Vehículo">
+
+        </div>
+
+        <div class="detalle-body">
+
+            <!-- Columna izquierda -->
+
+            <div class="datos">
+
+                <div class="dato">
+
+                    <h3>Fecha</h3>
+
+                    <p>16/03/2026</p>
+
+                </div>
+
+                <div class="dato">
+
+                    <h3>Hora salida</h3>
+
+                    <p>13:54</p>
+
+                </div>
+
+                <div class="dato">
+
+                    <h3>Hora llegada</h3>
+
+                    <p>13:54</p>
+
+                </div>
+
+            </div>
+
+            <!-- Columna derecha -->
+
+            <div class="datos">
+
+                <div class="fila">
+
+                    <div>
+
+                        <h3>Modelo</h3>
+
+                        <p>Hilux 2022</p>
+
+                    </div>
+
+                    <div>
+
+                        <h3>Placas</h3>
+
+                        <p>ASD123</p>
+
+                    </div>
+
+                </div>
+
+                <div class="dato">
+
+                    <h3>Asientos disponibles</h3>
+
+                    <p>2</p>
+
+                </div>
+
+                <button class="btn-apartar">
+
+                    Apartar lugar
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</section>
+    </main>
+
+    <script src="{% static 'js/perfil.js' %}"></script>
+
+</body>
+</html>

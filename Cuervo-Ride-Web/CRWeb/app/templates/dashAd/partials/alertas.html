@@ -1,0 +1,331 @@
+<section class="contenedor">
+
+    <!--================ FILTROS =================-->
+
+    <section class="filtros">
+
+        <div class="buscar">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <input
+                type="text"
+                id="buscarAlerta"
+                placeholder="Buscar alerta...">
+
+        </div>
+
+        <select id="filtroTipo">
+
+            <option value="Todos">
+
+                Tipo: Todos
+
+            </option>
+
+            <option value="Urgente">
+
+                Urgente
+
+            </option>
+
+            <option value="Medio">
+
+                Medio
+
+            </option>
+
+            <option value="Bajo">
+
+                Bajo
+
+            </option>
+
+        </select>
+
+        <select id="filtroEstado">
+
+            <option value="Todos">
+
+                Estado: Todos
+
+            </option>
+
+            <option value="Activo">
+
+                Activo
+
+            </option>
+
+            <option value="Inactivo">
+
+                Inactivo
+
+            </option>
+
+        </select>
+
+        <button id="btnFiltrar">
+
+            Filtrar
+
+        </button>
+
+    </section>
+
+
+
+    <!--================ TABLA =================-->
+
+    <section class="tabla">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>ID</th>
+
+                    <th>Nombre</th>
+
+                    <th>Alerta</th>
+
+                    <th>Tipo</th>
+
+                    <th>Estado</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="tablaAlertas">
+
+                <tr>
+
+                    <td>AL001</td>
+
+                    <td>
+
+                        Carlos Méndez
+
+                    </td>
+
+                    <td>
+
+                        Falla Mecánica
+
+                    </td>
+
+                    <td>
+
+                        <span class="tipo urgente">
+
+                            Urgente
+
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <span class="estado inactivo">
+
+                            Inactivo
+
+                        </span>
+
+                    </td>
+
+                </tr>
+
+
+
+                <tr>
+
+                    <td>AL002</td>
+
+                    <td>
+
+                        Fernanda Ruiz
+
+                    </td>
+
+                    <td>
+
+                        Falla Mecánica
+
+                    </td>
+
+                    <td>
+
+                        <span class="tipo urgente">
+
+                            Urgente
+
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <span class="estado activo">
+
+                            Activo
+
+                        </span>
+
+                    </td>
+
+                </tr>
+
+
+
+                <tr>
+
+                    <td>AL003</td>
+
+                    <td>
+
+                        Diego Martínez
+
+                    </td>
+
+                    <td>
+
+                        Sin Combustible
+
+                    </td>
+
+                    <td>
+
+                        <span class="tipo medio">
+
+                            Medio
+
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <span class="estado activo">
+
+                            Activo
+
+                        </span>
+
+                    </td>
+
+                </tr>
+
+
+
+                <tr>
+
+                    <td>AL004</td>
+
+                    <td>
+
+                        Valeria Torres
+
+                    </td>
+
+                    <td>
+
+                        Necesita Atención Médica
+
+                    </td>
+
+                    <td>
+
+                        <span class="tipo urgente">
+
+                            Urgente
+
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <span class="estado activo">
+
+                            Activo
+
+                        </span>
+
+                    </td>
+
+                </tr>
+
+
+
+                <tr>
+
+                    <td>AL005</td>
+
+                    <td>
+
+                        Luis Herreras
+
+                    </td>
+
+                    <td>
+
+                        Llanta Pinchada
+
+                    </td>
+
+                    <td>
+
+                        <span class="tipo bajo">
+
+                            Bajo
+
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <span class="estado activo">
+
+                            Activo
+
+                        </span>
+
+                    </td>
+
+                </tr>
+            </tbody>
+
+        </table>
+
+
+
+        <!--================ FOOTER =================-->
+
+        <div class="footer-tabla">
+
+            <p>
+
+                Mostrando 1 - 5 de 5 alertas
+
+            </p>
+
+            <div class="paginacion">
+
+                <button class="pagina activa">
+
+                    1
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</section>

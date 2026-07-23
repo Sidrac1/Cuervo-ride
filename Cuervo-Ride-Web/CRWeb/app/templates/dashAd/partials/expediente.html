@@ -1,0 +1,771 @@
+{% load static %}
+
+<div class="usuario-card">
+
+    <!--==================================================
+    SIDEBAR DEL USUARIO
+    ==================================================-->
+
+    <aside class="usuario-sidebar">
+
+        <img
+            id="fotoUsuario"
+            src="{% static 'img/profileIcon.png' %}"
+            class="foto-usuario"
+            alt="Fotografía de {{ usuario.nombre }}">
+
+        <h2 id="nombreTitulo">
+
+            {{ usuario.nombre|default:"Usuario" }}
+
+        </h2>
+
+        <p class="matricula-usuario">
+
+            {{ usuario.matricula|default:"Sin matrícula" }}
+
+        </p>
+
+        <button
+            type="button"
+            class="tab-btn"
+            id="btnGeneral">
+
+            <i class="fa-solid fa-user"></i>
+
+            Información General
+
+        </button>
+
+        <button
+            type="button"
+            class="tab-btn active"
+            id="btnMedico">
+
+            <i class="fa-solid fa-notes-medical"></i>
+
+            Expediente Médico
+
+        </button>
+
+    </aside>
+
+
+    <!--==================================================
+    PANEL PRINCIPAL
+    ==================================================-->
+
+    <section class="usuario-panel">
+
+        <!-- Encabezado -->
+
+        <div class="panel-header">
+
+            <div>
+
+                <h2>Expediente Médico</h2>
+
+                <p>
+                    Consulta, modifica y verifica la información médica del usuario.
+                </p>
+
+            </div>
+
+
+            {% if informacion_medica.verificado %}
+
+                <div class="estado-expediente verificado">
+
+                    <i class="fa-solid fa-circle-check"></i>
+
+                    Verificado
+
+                </div>
+
+            {% else %}
+
+                <div class="estado-expediente pendiente">
+
+                    <i class="fa-solid fa-clock"></i>
+
+                    Pendiente
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!--==================================================
+        FORMULARIO
+        ==================================================-->
+
+        <form
+            id="formMedico"
+            method="POST">
+
+            {% csrf_token %}
+
+            <div class="grid-info">
+
+                <!--==========================================
+                DISCAPACIDAD
+                ===========================================-->
+
+                <div class="campo">
+
+                    <label>
+                        ¿Presenta alguna discapacidad?
+                    </label>
+
+                    <div class="radio-group">
+
+                        <label for="discapacidadSi">
+
+                            <input
+                                type="radio"
+                                id="discapacidadSi"
+                                name="discapacidad"
+                                value="si"
+
+                                {% if informacion_medica.discapacidad %}
+                                    checked
+                                {% endif %}>
+
+                            Sí
+
+                        </label>
+
+
+                        <label for="discapacidadNo">
+
+                            <input
+                                type="radio"
+                                id="discapacidadNo"
+                                name="discapacidad"
+                                value="no"
+
+                                {% if not informacion_medica.discapacidad %}
+                                    checked
+                                {% endif %}>
+
+                            No
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+                <!--==========================================
+                TIPO DE SANGRE
+                ===========================================-->
+
+                <div class="campo">
+
+                    <label for="tipoSangre">
+                        Tipo de sangre
+                    </label>
+
+                    <select
+                        id="tipoSangre"
+                        name="tipo_sangre">
+
+                        <option value="">
+                            Seleccione...
+                        </option>
+
+                        <option
+                            value="A+"
+                            {% if informacion_medica.tipo_sangre == "A+" %}
+                                selected
+                            {% endif %}>
+                            A+
+                        </option>
+
+                        <option
+                            value="A-"
+                            {% if informacion_medica.tipo_sangre == "A-" %}
+                                selected
+                            {% endif %}>
+                            A-
+                        </option>
+
+                        <option
+                            value="B+"
+                            {% if informacion_medica.tipo_sangre == "B+" %}
+                                selected
+                            {% endif %}>
+                            B+
+                        </option>
+
+                        <option
+                            value="B-"
+                            {% if informacion_medica.tipo_sangre == "B-" %}
+                                selected
+                            {% endif %}>
+                            B-
+                        </option>
+
+                        <option
+                            value="AB+"
+                            {% if informacion_medica.tipo_sangre == "AB+" %}
+                                selected
+                            {% endif %}>
+                            AB+
+                        </option>
+
+                        <option
+                            value="AB-"
+                            {% if informacion_medica.tipo_sangre == "AB-" %}
+                                selected
+                            {% endif %}>
+                            AB-
+                        </option>
+
+                        <option
+                            value="O+"
+                            {% if informacion_medica.tipo_sangre == "O+" %}
+                                selected
+                            {% endif %}>
+                            O+
+                        </option>
+
+                        <option
+                            value="O-"
+                            {% if informacion_medica.tipo_sangre == "O-" %}
+                                selected
+                            {% endif %}>
+                            O-
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!--==========================================
+                TIPO DE DISCAPACIDAD
+                ===========================================-->
+
+                <div
+                    class="campo"
+                    id="campoTipoDiscapacidad">
+
+                    <label for="tipoDiscapacidad">
+                        Tipo de discapacidad
+                    </label>
+
+                    <select
+                        id="tipoDiscapacidad"
+                        name="tipo_discapacidad">
+
+                        <option value="">
+                            Seleccione...
+                        </option>
+
+                        <option
+                            value="visual"
+                            {% if informacion_medica.tipo_discapacidad == "visual" %}
+                                selected
+                            {% endif %}>
+                            Visual
+                        </option>
+
+                        <option
+                            value="auditiva"
+                            {% if informacion_medica.tipo_discapacidad == "auditiva" %}
+                                selected
+                            {% endif %}>
+                            Auditiva
+                        </option>
+
+                        <option
+                            value="motriz"
+                            {% if informacion_medica.tipo_discapacidad == "motriz" %}
+                                selected
+                            {% endif %}>
+                            Motriz
+                        </option>
+
+                        <option
+                            value="intelectual"
+                            {% if informacion_medica.tipo_discapacidad == "intelectual" %}
+                                selected
+                            {% endif %}>
+                            Intelectual
+                        </option>
+
+                        <option
+                            value="psicosocial"
+                            {% if informacion_medica.tipo_discapacidad == "psicosocial" %}
+                                selected
+                            {% endif %}>
+                            Psicosocial
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!--==========================================
+                VEHÍCULO ADAPTADO
+                ===========================================-->
+
+                <div
+                    class="campo"
+                    id="campoVehiculoAdaptado">
+
+                    <label>
+                        ¿Requiere vehículo adaptado?
+                    </label>
+
+                    <div class="radio-group">
+
+                        <label for="vehiculoAdaptadoSi">
+
+                            <input
+                                type="radio"
+                                id="vehiculoAdaptadoSi"
+                                name="vehiculo_adaptado"
+                                value="si"
+
+                                {% if informacion_medica.vehiculo_adaptado %}
+                                    checked
+                                {% endif %}>
+
+                            Sí
+
+                        </label>
+
+
+                        <label for="vehiculoAdaptadoNo">
+
+                            <input
+                                type="radio"
+                                id="vehiculoAdaptadoNo"
+                                name="vehiculo_adaptado"
+                                value="no"
+
+                                {% if not informacion_medica.vehiculo_adaptado %}
+                                    checked
+                                {% endif %}>
+
+                            No
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+                <!--==========================================
+                CUIDADOS ESPECIALES
+                ===========================================-->
+
+                <div
+                    class="campo"
+                    id="campoCuidadosEspeciales">
+
+                    <label>
+                        ¿Requiere cuidados especiales?
+                    </label>
+
+                    <div class="radio-group">
+
+                        <label for="cuidadosEspecialesSi">
+
+                            <input
+                                type="radio"
+                                id="cuidadosEspecialesSi"
+                                name="cuidados_especiales"
+                                value="si"
+
+                                {% if informacion_medica.cuidados_especiales %}
+                                    checked
+                                {% endif %}>
+
+                            Sí
+
+                        </label>
+
+
+                        <label for="cuidadosEspecialesNo">
+
+                            <input
+                                type="radio"
+                                id="cuidadosEspecialesNo"
+                                name="cuidados_especiales"
+                                value="no"
+
+                                {% if not informacion_medica.cuidados_especiales %}
+                                    checked
+                                {% endif %}>
+
+                            No
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+                <!--==========================================
+                APOYOS
+                ===========================================-->
+
+                <div
+                    class="campo ancho"
+                    id="campoApoyos">
+
+                    <label>
+                        Apoyos que utiliza
+                    </label>
+
+                    <div class="checkbox-grid">
+
+                        <label for="usaBaston">
+
+                            <input
+                                type="checkbox"
+                                id="usaBaston"
+                                name="usa_baston"
+
+                                {% if informacion_medica.usa_baston %}
+                                    checked
+                                {% endif %}>
+
+                            Bastón
+
+                        </label>
+
+
+                        <label for="usaPerroGuia">
+
+                            <input
+                                type="checkbox"
+                                id="usaPerroGuia"
+                                name="usa_perro_guia"
+
+                                {% if informacion_medica.usa_perro_guia %}
+                                    checked
+                                {% endif %}>
+
+                            Perro guía
+
+                        </label>
+
+
+                        <label for="usaSillaRuedas">
+
+                            <input
+                                type="checkbox"
+                                id="usaSillaRuedas"
+                                name="usa_silla_ruedas"
+
+                                {% if informacion_medica.usa_silla_ruedas %}
+                                    checked
+                                {% endif %}>
+
+                            Silla de ruedas
+
+                        </label>
+
+
+                        <label for="usaAndadera">
+
+                            <input
+                                type="checkbox"
+                                id="usaAndadera"
+                                name="usa_andadera"
+
+                                {% if informacion_medica.usa_andadera %}
+                                    checked
+                                {% endif %}>
+
+                            Andadera
+
+                        </label>
+
+
+                        <label for="usaMuletas">
+
+                            <input
+                                type="checkbox"
+                                id="usaMuletas"
+                                name="usa_muletas"
+
+                                {% if informacion_medica.usa_muletas %}
+                                    checked
+                                {% endif %}>
+
+                            Muletas
+
+                        </label>
+
+
+                        <label for="usaProtesis">
+
+                            <input
+                                type="checkbox"
+                                id="usaProtesis"
+                                name="usa_protesis"
+
+                                {% if informacion_medica.usa_protesis %}
+                                    checked
+                                {% endif %}>
+
+                            Prótesis
+
+                        </label>
+
+
+                        <label for="usaOtroApoyo">
+
+                            <input
+                                type="checkbox"
+                                id="usaOtroApoyo"
+
+                                {% if informacion_medica.otro_apoyo %}
+                                    checked
+                                {% endif %}>
+
+                            Otro
+
+                        </label>
+
+                    </div>
+
+
+                    <!-- Otro apoyo -->
+
+                    <div
+                        class="otro-apoyo-admin
+                        {% if not informacion_medica.otro_apoyo %}
+                            oculto
+                        {% endif %}"
+                        id="campoOtroApoyo">
+
+                        <label for="otroApoyo">
+                            Especifique otro apoyo
+                        </label>
+
+                        <input
+                            type="text"
+                            id="otroApoyo"
+                            name="otro_apoyo"
+                            maxlength="100"
+                            value="{{ informacion_medica.otro_apoyo|default:'' }}"
+
+                            {% if not informacion_medica.otro_apoyo %}
+                                disabled
+                            {% endif %}>
+
+                    </div>
+
+                </div>
+
+
+                <!--==========================================
+                CONTACTO DE EMERGENCIA
+                ===========================================-->
+
+                <div class="campo">
+
+                    <label for="contacto">
+                        Nombre del contacto de emergencia
+                    </label>
+
+                    <input
+                        type="text"
+                        id="contacto"
+                        name="nombre_contacto"
+                        maxlength="150"
+                        value="{{ informacion_medica.nombre_contacto|default:'' }}">
+
+                </div>
+
+
+                <!--==========================================
+                TELÉFONO
+                ===========================================-->
+
+                <div class="campo">
+
+                    <label for="telefonoEmergencia">
+                        Teléfono del contacto
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="telefonoEmergencia"
+                        name="telefono_contacto"
+                        maxlength="20"
+                        value="{{ informacion_medica.telefono_contacto|default:'' }}">
+
+                </div>
+
+
+                <!--==========================================
+                OBSERVACIONES
+                ===========================================-->
+
+                <div class="campo ancho">
+
+                    <label for="observaciones">
+                        Observaciones
+                    </label>
+
+                    <textarea
+                        id="observaciones"
+                        name="observaciones"
+                        rows="5"
+                        maxlength="1000"
+                        placeholder="Información adicional...">{{ informacion_medica.observaciones|default:'' }}</textarea>
+
+                </div>
+
+
+                <!--==========================================
+                VERIFICACIÓN ADMINISTRATIVA
+                ===========================================-->
+
+                <div class="campo ancho campo-verificacion">
+
+                    <label>
+                        Estado de verificación
+                    </label>
+
+                    <div class="radio-group">
+
+                        <label for="verificadoSi">
+
+                            <input
+                                type="radio"
+                                id="verificadoSi"
+                                name="verificado"
+                                value="si"
+
+                                {% if informacion_medica.verificado %}
+                                    checked
+                                {% endif %}>
+
+                            Verificado
+
+                        </label>
+
+
+                        <label for="verificadoNo">
+
+                            <input
+                                type="radio"
+                                id="verificadoNo"
+                                name="verificado"
+                                value="no"
+
+                                {% if not informacion_medica.verificado %}
+                                    checked
+                                {% endif %}>
+
+                            Pendiente
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!--==================================================
+            INFORMACIÓN DEL REGISTRO
+            ==================================================-->
+
+            <div class="registro-info">
+
+                <div>
+
+                    <span>Fecha de registro</span>
+
+                    <strong>
+
+                        {% if informacion_medica.fecha_registro %}
+
+                            {{ informacion_medica.fecha_registro|date:"d/m/Y H:i" }}
+
+                        {% else %}
+
+                            Sin registro
+
+                        {% endif %}
+
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>Última actualización</span>
+
+                    <strong>
+
+                        {% if informacion_medica.fecha_actualizacion %}
+
+                            {{ informacion_medica.fecha_actualizacion|date:"d/m/Y H:i" }}
+
+                        {% else %}
+
+                            Sin actualización
+
+                        {% endif %}
+
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!--==================================================
+            ACCIONES
+            ==================================================-->
+
+            <div class="acciones-info">
+
+                <button
+                    type="button"
+                    id="volver"
+                    class="btn-volver">
+
+                    <i class="fa-solid fa-arrow-left"></i>
+
+                    Regresar
+
+                </button>
+
+
+                <button
+                    type="submit"
+                    id="guardar"
+                    class="btn-guardar">
+
+                    <i class="fa-solid fa-floppy-disk"></i>
+
+                    Guardar cambios
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+</div>

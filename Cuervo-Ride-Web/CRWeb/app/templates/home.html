@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Cuervo Ride</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+    <header class="navbar">
+
+        <div class="nav-left">
+            <a href="{% url 'home' %}" class="logo-link">
+                <div class="logo"></div>
+            </a>
+        </div>
+
+        <nav class="nav-links">
+            <a href="{% url 'filtroviajes' %}">Agendar Viaje</a>
+            <a href="{% url 'agendarviaje' %}">Viajes</a>
+            <a href="{% url 'sobrenosotros' %}">Sobre nosotros</a>
+        </nav>
+
+        <div class="profile">
+            <a href="{% url 'perfil' %}" class="profile-icon">
+            </a>
+        </div>
+    </header>
+ 
+    <section class="baner">
+        <div class="baner-content">
+                <button class="cta-btn">Apartar lugar</button>
+        </div>
+    </section>
+
+    <section class="info">
+        <h2>Comparte tu viaje, llega a tu nido seguro.</h2>
+        <p>
+            ¿Vas camino a la universidad o de regreso a casa? 
+            Encuentra estudiantes que realizan tu misma ruta y comparte el trayecto. 
+            Ahorra en transporte, aprovecha los asientos disponibles de otros compañeros y viaja 
+            de una manera más económica, práctica y segura.
+        </p>
+    </section>
+
+</body>
+</html>

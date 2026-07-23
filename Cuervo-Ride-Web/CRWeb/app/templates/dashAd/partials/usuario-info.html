@@ -1,0 +1,316 @@
+{% load static %}
+
+<div class="usuario-card">
+
+    <!--================ SIDEBAR =================-->
+
+    <aside class="usuario-sidebar">
+
+        <img
+            id="fotoUsuario"
+            src="{% static 'img/profileIcon.png' %}"
+            class="foto-usuario"
+            alt="Foto de {{ usuario.nombre }}">
+
+        <h2 id="nombreTitulo">
+            {{ usuario.nombre }}
+        </h2>
+
+        <button
+            type="button"
+            class="tab-btn active"
+            id="btnGeneral"
+            data-tab="general">
+
+            Información General
+
+        </button>
+
+        <button
+            type="button"
+            class="tab-btn"
+            id="btnMedico"
+            data-tab="medico">
+
+            Expediente Médico
+
+        </button>
+
+    </aside>
+
+
+    <!--================ PANEL GENERAL =================-->
+
+    <section
+        class="usuario-panel tab-admin active"
+        id="tabGeneral">
+
+        <h2>
+            Información General
+        </h2>
+
+        <form
+            id="formGeneral"
+            method="POST">
+
+            {% csrf_token %}
+
+            <input
+                type="hidden"
+                name="formulario"
+                value="informacion_general">
+
+            <div class="grid-info">
+
+                <!-- Nombre -->
+
+                <div class="campo-admin">
+
+                    <label for="adminNombre">
+                        Nombre
+                    </label>
+
+                    <input
+                        id="adminNombre"
+                        name="nombre"
+                        type="text"
+                        value="{{ usuario.nombre }}"
+                        maxlength="150"
+                        required>
+
+                </div>
+
+
+                <!-- Correo -->
+
+                <div class="campo-admin">
+
+                    <label for="adminEmail">
+                        Correo institucional
+                    </label>
+
+                    <input
+                        id="adminEmail"
+                        name="email"
+                        type="email"
+                        value="{{ usuario.email }}"
+                        maxlength="254"
+                        autocomplete="email"
+                        required>
+
+                </div>
+
+
+                <!-- Matrícula -->
+
+                <div class="campo-admin">
+
+                    <label for="adminMatricula">
+                        Matrícula
+                    </label>
+
+                    <input
+                        id="adminMatricula"
+                        name="matricula"
+                        type="text"
+                        value="{{ usuario.matricula }}"
+                        maxlength="20"
+                        required>
+
+                </div>
+
+
+                <!-- Carrera -->
+
+                <div class="campo-admin">
+
+                    <label for="adminCarrera">
+                        Carrera
+                    </label>
+
+                    <input
+                        id="adminCarrera"
+                        name="carrera"
+                        type="text"
+                        value="{{ usuario.carrera }}"
+                        maxlength="150"
+                        required>
+
+                </div>
+
+
+                <!-- Teléfono -->
+
+                <div class="campo-admin">
+
+                    <label for="adminTelefono">
+                        Teléfono
+                    </label>
+
+                    <input
+                        id="adminTelefono"
+                        name="telefono"
+                        type="tel"
+                        value="{{ usuario.telefono }}"
+                        maxlength="15"
+                        autocomplete="tel"
+                        placeholder="Sin teléfono registrado">
+
+                </div>
+
+
+                <!-- Rol -->
+
+                <div class="campo-admin">
+
+                    <label for="adminRol">
+                        Rol
+                    </label>
+
+                    <select
+                        id="adminRol"
+                        name="rol"
+                        required>
+
+                        <option
+                            value="pasajero"
+                            {% if usuario.rol == 'pasajero' %}selected{% endif %}>
+
+                            Pasajero
+
+                        </option>
+
+                        <option
+                            value="conductor"
+                            {% if usuario.rol == 'conductor' %}selected{% endif %}>
+
+                            Conductor
+
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Estado -->
+
+                <div class="campo-admin">
+
+                    <label for="adminEstado">
+                        Estado
+                    </label>
+
+                    <select
+                        id="adminEstado"
+                        name="estado"
+                        required>
+
+                        <option
+                            value="activo"
+                            {% if usuario.is_active %}selected{% endif %}>
+
+                            Activo
+
+                        </option>
+
+                        <option
+                            value="inactivo"
+                            {% if not usuario.is_active %}selected{% endif %}>
+
+                            Inactivo
+
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Acceso administrativo -->
+
+                <div class="campo-admin">
+
+                    <label for="adminStaff">
+                        Acceso administrativo
+                    </label>
+
+                    <select
+                        id="adminStaff"
+                        name="is_staff">
+
+                        <option
+                            value="false"
+                            {% if not usuario.is_staff %}selected{% endif %}>
+
+                            Usuario normal
+
+                        </option>
+
+                        <option
+                            value="true"
+                            {% if usuario.is_staff %}selected{% endif %}>
+
+                            Administrador
+
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Nueva contraseña -->
+
+                <div class="campo-admin ancho">
+
+                    <label for="adminPassword">
+                        Nueva contraseña
+                    </label>
+
+                    <input
+                        id="adminPassword"
+                        name="password"
+                        type="password"
+                        minlength="8"
+                        autocomplete="new-password"
+                        placeholder="Dejar vacío para conservar la contraseña actual">
+
+                    <small class="ayuda-campo">
+                        La contraseña solo cambiará si se escribe una nueva.
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <!--================ ACCIONES =================-->
+
+            <div class="acciones-info">
+
+                <button
+                    type="button"
+                    id="volver"
+                    class="btn-volver">
+
+                    Regresar
+
+                </button>
+
+                <button
+                    type="submit"
+                    id="guardar"
+                    class="btn-guardar-admin">
+
+                    Guardar cambios
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+</div>

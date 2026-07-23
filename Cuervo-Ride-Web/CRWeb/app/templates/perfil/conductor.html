@@ -1,0 +1,194 @@
+    <form
+        method="POST"
+        enctype="multipart/form-data"
+        class="formulario"
+        id="formDatosConductor">
+
+        {% csrf_token %}
+
+        <input
+            type="hidden"
+            name="tipo_formulario"
+            value="datos_conductor">
+
+        <!-- NÚMERO DE LICENCIA -->
+
+        <div class="campo">
+
+            <label for="numeroLicencia">
+                Número de licencia
+            </label>
+
+            <div class="input-box">
+
+                <input
+                    type="text"
+                    id="numeroLicencia"
+                    name="numero_licencia"
+                    value="{{ perfil_conductor.numero_licencia|default:'' }}"
+                    placeholder="Número de licencia"
+                    maxlength="50"
+                    readonly>
+
+                <button
+                    type="button"
+                    class="editar">
+
+                    <i class="fa-solid fa-pencil"></i>
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- FECHA DE VENCIMIENTO -->
+
+        <div class="campo">
+
+            <label for="vencimientoLicencia">
+                Fecha de vencimiento
+            </label>
+
+            <div class="input-box">
+
+                <input
+                    type="date"
+                    id="vencimientoLicencia"
+                    name="fecha_vencimiento_licencia"
+                    value="{{ perfil_conductor.fecha_vencimiento_licencia|date:'Y-m-d' }}"
+                    readonly>
+
+                <button
+                    type="button"
+                    class="editar">
+
+                    <i class="fa-solid fa-pencil"></i>
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- FOTO FRONTAL -->
+
+        <div class="campo">
+
+            <label for="licenciaFrontal">
+                Fotografía frontal
+            </label>
+
+            {% if perfil_conductor.foto_licencia_frontal %}
+
+                <div class="archivo-actual">
+
+                    <a
+                        href="{{ perfil_conductor.foto_licencia_frontal.url }}"
+                        target="_blank">
+
+                        Ver archivo actual
+
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+            <div class="input-box input-archivo">
+
+                <input
+                    type="file"
+                    id="licenciaFrontal"
+                    name="foto_licencia_frontal"
+                    accept="image/png,image/jpeg,image/webp"
+                    disabled>
+
+            </div>
+
+        </div>
+
+        <!-- FOTO POSTERIOR -->
+
+        <div class="campo">
+
+            <label for="licenciaReverso">
+                Fotografía posterior
+            </label>
+
+            {% if perfil_conductor.foto_licencia_reverso %}
+
+                <div class="archivo-actual">
+
+                    <a
+                        href="{{ perfil_conductor.foto_licencia_reverso.url }}"
+                        target="_blank">
+
+                        Ver archivo actual
+
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+            <div class="input-box input-archivo">
+
+                <input
+                    type="file"
+                    id="licenciaReverso"
+                    name="foto_licencia_reverso"
+                    accept="image/png,image/jpeg,image/webp"
+                    disabled>
+
+            </div>
+
+        </div>
+
+        <!-- ESTADO -->
+
+        <div class="campo">
+
+            <label>
+                Estado de verificación
+            </label>
+
+            <div class="estado-verificacion">
+
+                {% if perfil_conductor %}
+
+                    {{ perfil_conductor.get_estado_verificacion_display }}
+
+                {% else %}
+
+                    Información incompleta
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <!-- BOTONES -->
+
+        <div class="botones oculto">
+
+            <button
+                type="button"
+                class="cancelar">
+
+                Cancelar
+
+            </button>
+
+            <button
+                type="submit"
+                class="guardar">
+
+                Guardar
+
+            </button>
+
+        </div>
+
+    </form>
