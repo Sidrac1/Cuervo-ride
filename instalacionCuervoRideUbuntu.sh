@@ -20,7 +20,7 @@ python3 -m venv myenv
 
 echo "activación del entorno virtual"
 source myenv/bin/activate
-
+cd Cuervo-ride/
 echo "instalación de dependencias"
 pip install -r requirements.txt
 
