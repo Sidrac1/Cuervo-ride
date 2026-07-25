@@ -1,0 +1,809 @@
+/*========================================
+    RESET GENERAL
+========================================*/
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    min-height:100vh;
+    background:#0c0f1c;
+    color:#ffffff;
+    overflow-x:hidden;
+}
+
+
+/*========================================
+    CONTENEDOR PRINCIPAL
+========================================*/
+
+.container{
+    width:100%;
+    min-height:100vh;
+
+    display:flex;
+
+    padding:40px;
+
+    position:relative;
+}
+
+
+/*========================================
+    LADO IZQUIERDO
+========================================*/
+
+.left{
+    flex:1;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+
+    padding:80px 40px 40px;
+}
+
+.left h1{
+    font-size:clamp(48px, 8vw, 100px);
+    line-height:.9;
+    font-weight:900;
+    letter-spacing:-3px;
+}
+
+.left p{
+    margin-top:30px;
+
+    color:#cfcfcf;
+
+    font-size:17px;
+    line-height:1.5;
+}
+
+.register-link{
+    color:#98ec63;
+    text-decoration:underline;
+    text-underline-offset:3px;
+
+    transition:
+        color .25s ease,
+        text-shadow .25s ease;
+}
+
+.register-link:hover{
+    color:#98ec63;
+    text-shadow:0 0 12px rgba(152, 236, 99, .35);
+}
+
+
+/*========================================
+    BOTÓN REGRESAR
+========================================*/
+
+.back{
+    position:absolute;
+
+    top:35px;
+    left:35px;
+
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    color:#ffffff;
+
+    text-decoration:none;
+    font-size:17px;
+    font-weight:600;
+
+    transition:
+        color .25s ease,
+        transform .25s ease;
+}
+
+.back:hover{
+    color:#98ec63;
+    transform:translateX(-3px);
+}
+
+.back i{
+    font-size:16px;
+}
+
+
+/*========================================
+    DIVISOR CENTRAL
+========================================*/
+
+.divider{
+    width:2px;
+    min-height:100%;
+
+    flex-shrink:0;
+
+    background:
+        linear-gradient(
+            to bottom,
+            transparent,
+            rgba(152, 236, 99, .45),
+            #98ec63,
+            rgba(152, 236, 99, .45),
+            transparent
+        );
+
+    box-shadow:
+        0 0 18px rgba(152, 236, 99, .15);
+}
+
+
+/*========================================
+    LADO DERECHO
+========================================*/
+
+.right{
+    flex:1;
+
+    position:relative;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
+    padding:70px 40px 40px;
+}
+
+
+/*========================================
+    MARCA
+========================================*/
+
+.brand{
+    position:absolute;
+
+    top:0;
+    right:40px;
+
+    font-size:22px;
+    font-weight:800;
+    letter-spacing:.3px;
+}
+
+.brand span{
+    color:#98ec63;
+}
+
+
+/*========================================
+    TARJETA
+========================================*/
+
+.card{
+    position:relative;
+    isolation:isolate;
+
+    width:100%;
+    max-width:380px;
+
+    padding:44px 32px 34px;
+
+    border-radius:22px;
+
+    background:
+            rgba(31, 40, 64, .98);
+
+    text-align:center;
+
+    box-shadow:
+        0 24px 60px rgba(0, 0, 0, .35),
+        inset 0 1px 0 rgba(255, 255, 255, .04);
+}
+
+.card::before{
+    content:"";
+
+    position:absolute;
+    inset:0;
+
+    padding:2px;
+
+    border-radius:22px;
+
+    border: 2px solid #98ec63;
+
+    -webkit-mask-composite:xor;
+    mask-composite:exclude;
+
+    pointer-events:none;
+}
+
+
+
+
+/*========================================
+    AVATAR
+========================================*/
+
+.avatar{
+    width:90px;
+    height:90px;
+
+    margin:0 auto 26px;
+
+    position:relative;
+
+    border-radius:50%;
+
+    background-color:#05070d;
+    background-image:url("../img/profileIcon.png");
+    background-position:center;
+    background-repeat:no-repeat;
+    background-size:cover;
+
+    box-shadow:
+        0 10px 25px rgba(0, 0, 0, .35);
+}
+
+.avatar::before{
+    content:"";
+
+    position:absolute;
+    inset:-3px;
+
+    border-radius:50%;
+
+    background:#98ec63;
+
+    z-index:-1;
+}
+
+
+/*========================================
+    FORMULARIO
+========================================*/
+
+#loginForm{
+    width:100%;
+}
+
+.input-group{
+    width:100%;
+
+    position:relative;
+
+    margin-bottom:15px;
+}
+
+.input-group input{
+    width:100%;
+    height:48px;
+
+    padding:0 46px;
+
+    border:1px solid rgba(255, 255, 255, .08);
+    border-radius:9px;
+
+    background:#f5f6f8;
+    color:#141827;
+
+    font-size:15px;
+
+    outline:none;
+
+    transition:
+        border-color .25s ease,
+        box-shadow .25s ease,
+        background .25s ease;
+}
+
+.input-group input::placeholder{
+    color:#7f8797;
+}
+
+.input-group input:focus{
+    background:#ffffff;
+
+    border-color:#98ec63;
+
+    box-shadow:
+        0 0 0 3px rgba(152, 236, 99, .16);
+}
+
+
+/*========================================
+    ICONOS DE LOS INPUTS
+========================================*/
+
+.input-icon{
+    position:absolute;
+
+    top:50%;
+    left:16px;
+
+    transform:translateY(-50%);
+
+    color:#667085;
+    font-size:15px;
+
+    pointer-events:none;
+
+    z-index:2;
+}
+
+
+/*========================================
+    MOSTRAR / OCULTAR CONTRASEÑA
+========================================*/
+
+.toggle-password{
+    position:absolute;
+
+    top:50%;
+    right:10px;
+
+    transform:translateY(-50%);
+
+    width:34px;
+    height:34px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    padding:0;
+
+    border:none;
+    border-radius:8px;
+
+    background:transparent;
+    color:#667085;
+
+    cursor:pointer;
+
+    transition:
+        color .2s ease,
+        background .2s ease;
+}
+
+.toggle-password:hover{
+    color:#141827;
+    background:rgba(20, 24, 39, .06);
+}
+
+.toggle-password:focus-visible{
+    outline:2px solid #98ec63;
+    outline-offset:2px;
+}
+
+
+/*========================================
+    BOTÓN LOGIN
+========================================*/
+
+.login-btn{
+    width:100%;
+    min-height:48px;
+
+    margin-top:4px;
+
+    padding:12px 18px;
+
+    border:1px solid rgba(152, 236, 99, .16);
+    border-radius:9px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #141827,
+            #20283d
+        );
+
+    color:#ffffff;
+
+    font-size:15px;
+    font-weight:700;
+
+    cursor:pointer;
+
+    box-shadow:
+        0 10px 25px rgba(0, 0, 0, .2);
+
+    transition:
+        transform .25s ease,
+        background .25s ease,
+        border-color .25s ease,
+        box-shadow .25s ease;
+}
+
+.login-btn:hover{
+    transform:translateY(-2px);
+
+    border-color:#98ec63;
+
+    box-shadow:
+        0 14px 30px rgba(0, 0, 0, .28),
+        0 0 16px rgba(152, 236, 99, .08);
+}
+
+.login-btn:active{
+    transform:translateY(0);
+}
+
+.login-btn:focus-visible{
+    outline:2px solid #98ec63;
+    outline-offset:3px;
+}
+
+
+/*========================================
+    MENSAJES DE DJANGO
+========================================*/
+
+.messages-container{
+    width:100%;
+
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+
+    margin-bottom:18px;
+}
+
+.message{
+    width:100%;
+
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+
+    padding:12px 14px;
+
+    border-radius:10px;
+
+    font-size:14px;
+    line-height:1.45;
+    text-align:left;
+}
+
+.message i{
+    margin-top:2px;
+    flex-shrink:0;
+}
+
+.message.error{
+    background:rgba(255, 74, 74, .12);
+    border:1px solid rgba(255, 74, 74, .4);
+    color:#ff9999;
+}
+
+.message.success{
+    background:rgba(152, 236, 99, .12);
+    border:1px solid rgba(152, 236, 99, .4);
+    color:#b6ff96;
+}
+
+.message.warning{
+    background:rgba(255, 193, 7, .12);
+    border:1px solid rgba(255, 193, 7, .4);
+    color:#ffd76a;
+}
+
+.message.info{
+    background:rgba(96, 165, 250, .12);
+    border:1px solid rgba(96, 165, 250, .4);
+    color:#a8ceff;
+}
+
+
+/*========================================
+    SEPARADOR
+========================================*/
+
+.separator{
+    width:100%;
+
+    position:relative;
+
+    margin:24px 0;
+}
+
+.separator::before,
+.separator::after{
+    content:"";
+
+    position:absolute;
+    top:50%;
+
+    width:41%;
+    height:1px;
+
+    background:rgba(255, 255, 255, .28);
+}
+
+.separator::before{
+    left:0;
+}
+
+.separator::after{
+    right:0;
+}
+
+.separator span{
+    position:relative;
+    z-index:2;
+
+    padding:0 12px;
+
+    background:#263149;
+    color:#c7ccd6;
+
+    font-size:14px;
+}
+
+
+/*========================================
+    BOTÓN GOOGLE
+========================================*/
+
+.google-btn{
+    width:100%;
+    min-height:46px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+
+    padding:10px 16px;
+
+    border:none;
+    border-radius:9px;
+
+    background:#ffffff;
+    color:#444444;
+
+    font-size:14px;
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        opacity .25s ease;
+}
+
+.google-btn:hover:not(:disabled){
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 10px 22px rgba(0, 0, 0, .22);
+}
+
+.google-btn img{
+    width:18px;
+    height:18px;
+
+    object-fit:contain;
+}
+
+.google-btn:disabled{
+    opacity:.52;
+    cursor:not-allowed;
+}
+
+
+/*========================================
+    ACCESIBILIDAD
+========================================*/
+
+.sr-only{
+    position:absolute;
+
+    width:1px;
+    height:1px;
+
+    padding:0;
+    margin:-1px;
+
+    overflow:hidden;
+
+    clip:rect(0, 0, 0, 0);
+    white-space:nowrap;
+
+    border:0;
+}
+
+
+/*========================================
+    RESPONSIVE TABLET
+========================================*/
+
+@media (max-width:900px){
+
+    .container{
+        flex-direction:column;
+
+        justify-content:center;
+        align-items:center;
+
+        gap:36px;
+
+        min-height:100vh;
+        height:auto;
+
+        padding:90px 24px 40px;
+    }
+
+    .left{
+        width:100%;
+
+        padding:20px 0 0;
+
+        text-align:center;
+        align-items:center;
+    }
+
+    .left h1{
+        font-size:clamp(54px, 12vw, 78px);
+    }
+
+    .left p{
+        margin-top:22px;
+    }
+
+    .divider{
+        width:min(80%, 520px);
+        height:2px;
+        min-height:2px;
+
+        background:
+            linear-gradient(
+                to right,
+                transparent,
+                rgba(152, 236, 99, .45),
+                #98ec63,
+                rgba(152, 236, 99, .45),
+                transparent
+            );
+    }
+
+    .right{
+        width:100%;
+
+        padding:45px 0 0;
+    }
+
+    .brand{
+        position:static;
+
+        margin-bottom:24px;
+
+        text-align:center;
+    }
+
+    .card{
+        max-width:420px;
+    }
+
+    .back{
+        top:25px;
+        left:25px;
+    }
+
+}
+
+
+/*========================================
+    RESPONSIVE MÓVIL
+========================================*/
+
+@media (max-width:480px){
+
+    .container{
+        padding:
+            78px
+            15px
+            30px;
+    }
+
+    .left{
+        padding-top:10px;
+    }
+
+    .left h1{
+        font-size:44px;
+        letter-spacing:-2px;
+    }
+
+    .left p{
+        font-size:15px;
+        max-width:290px;
+    }
+
+    .right{
+        padding-top:30px;
+    }
+
+    .brand{
+        font-size:19px;
+    }
+
+    .card{
+        max-width:100%;
+
+        padding:34px 20px 28px;
+
+        border-radius:18px;
+    }
+
+    .card::before{
+        border-radius:18px;
+    }
+
+    .avatar{
+        width:74px;
+        height:74px;
+
+        margin-bottom:22px;
+    }
+
+    .input-group input{
+        height:46px;
+
+        padding-left:42px;
+        padding-right:44px;
+
+        font-size:14px;
+    }
+
+    .input-icon{
+        left:14px;
+    }
+
+    .login-btn{
+        min-height:46px;
+    }
+
+    .separator{
+        margin:21px 0;
+    }
+
+    .back{
+        top:22px;
+        left:18px;
+
+        font-size:15px;
+    }
+
+}
+
+
+/*========================================
+    PANTALLAS MUY PEQUEÑAS
+========================================*/
+
+@media (max-width:350px){
+
+    .container{
+        padding-left:10px;
+        padding-right:10px;
+    }
+
+    .left h1{
+        font-size:38px;
+    }
+
+    .card{
+        padding-left:16px;
+        padding-right:16px;
+    }
+
+}

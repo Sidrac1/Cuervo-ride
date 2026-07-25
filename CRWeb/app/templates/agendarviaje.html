@@ -1,0 +1,147 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nosotros</title>
+
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <link rel="stylesheet" href="{% static 'css/agendarviaje.css' %}">
+</head>
+
+<body>
+
+
+    <!-- SIDEBAR -->
+    {% include 'components/sidebar.html' %}
+
+    <!-- CONTENIDO -->
+
+    <main class="content">
+
+
+        <header>
+
+            <h1 class="logo-text">
+                Cuervo-<span>Ride</span>
+            </h1>
+
+        </header>
+
+        <section class="agendar">
+
+        <!-- PANEL IZQUIERDO -->
+        <aside class="panel-izquierdo">
+
+            <div class="busqueda">
+
+                <input
+                    type="text"
+                    placeholder="Buscar conductor">
+
+                <button class="btn-buscar">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+
+                <a href="{% url 'filtroviajes' %}" class="btn-filtro">
+                    <i class="fa-solid fa-sliders"></i>
+                </a>
+
+            </div>
+
+        <div class="lista-conductores">
+
+            <div class="card-conductor">
+
+                <img src="https://i.imgur.com/2DhmtJ4.png">
+
+                <div>
+
+                    <h3>Nombre Conductor</h3>
+
+                    <p>Destino disponible</p>
+
+                </div>
+
+            </div>
+
+            <div class="card-conductor">
+
+                <img src="https://i.imgur.com/2DhmtJ4.png">
+
+                <div>
+
+                    <h3>Nombre Conductor</h3>
+
+                    <p>Destino disponible</p>
+
+                </div>
+
+            </div>
+
+            <div class="card-conductor">
+
+                <img src="https://i.imgur.com/2DhmtJ4.png">
+
+                <div>
+
+                    <h3>Nombre Conductor</h3>
+
+                    <p>Destino disponible</p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+            <!-- PANEL DERECHO -->
+
+            <section class="panel-derecho">
+
+                <h1>Agendar raite</h1>
+
+                <h2>Mapa de rutas</h2>
+
+                <div class="mapa">
+
+                    <p>Aquí se mostrará el mapa de Google Maps</p>
+
+                </div>
+
+                <div class="ruta-info">
+
+                <div>
+
+                    <strong>Horario</strong>
+
+                    <p>--:--</p>
+
+                </div>
+
+                <div>
+
+                    <strong>Lugares disponibles</strong>
+
+                    <p>0</p>
+
+                </div>
+
+                    <button>
+
+                        Apartar lugar
+
+                    </button>
+
+                </div>
+
+            </section>
+    </main>
+
+</body>
+</html>

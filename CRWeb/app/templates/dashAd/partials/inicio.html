@@ -1,0 +1,61 @@
+{% load static %}
+<section class="contenedor">
+    <!--================ BIENVENIDA =================-->
+    <section class="bienvenida">
+        <div class="foto-admin">
+            <img src="{% static 'img/admin.png' %}" alt="Administrador">
+        </div>
+
+        <div class="texto-bienvenida">
+            <h1>¡Bienvenido, Jean!</h1>
+            <p>
+                Gestiona todos los usuarios registrados, monitorea los rides activos,
+                administra las alertas del sistema y consulta las estadísticas generales
+                desde un solo lugar.
+            </p>
+        </div>
+    </section>
+
+    <!--================ TARJETAS =================-->
+    <section class="dashboard">
+        <div class="dashboard-card">
+            <div class="icono">
+                <i class="fa-solid fa-users"></i>
+            </div>
+            <div class="info">
+                <h3>Usuarios Registrados</h3>
+                <span id="totalUsuarios">5</span>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="icono verde">
+                <i class="fa-solid fa-car"></i>
+            </div>
+            <div class="info">
+                <h3>Rides Activos</h3>
+                <span id="totalRides" class="verde">1</span>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="icono amarillo">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div class="info">
+                <h3>Alertas Activas</h3>
+                <span id="totalAlertas" class="amarillo">4</span>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="icono estrella">
+                <i class="fa-solid fa-star"></i>
+            </div>
+            <div class="info">
+                <h3>Calificación Promedio</h3>
+                <span id="promedio" class="dorado">4.7</span>
+            </div>
+        </div>
+    </section>
+</section>

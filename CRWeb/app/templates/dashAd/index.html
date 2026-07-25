@@ -1,0 +1,89 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuervo-Ride | Panel Administrador</title>
+
+    <!-- Estilos generales -->
+    <link rel="stylesheet" href="{% static 'css/adminCSS/admin.css' %}">
+    
+    <!-- Flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+    <!-- CSS dinámico cargado mediante JS -->
+    <link rel="stylesheet" id="vista-css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- ==========================================
+                    HEADER
+    =========================================== -->
+    <header class="admin-header">
+        <div class="logo" id="btnInicio">
+            <img src="{% static 'img/logo.png' %}" alt="Logo Cuervo-Ride">
+            <h1>
+                <span class="logo-cuervo">Cuervo</span><span class="logo-ride">-Ride</span>
+            </h1>
+        </div>
+
+        <nav class="menu-admin">
+            <button class="menu-btn" data-view="usuarios">
+                <span>Usuarios</span>
+                <span>Registrados</span>
+            </button>
+
+            <button class="menu-btn" data-view="rides">
+                <span>Rides</span>
+                <span>Activos</span>
+            </button>
+
+            <button class="menu-btn" data-view="alertas">
+                <span>Alertas</span>
+                <span>Activas</span>
+            </button>
+
+            <button class="menu-btn" data-view="puntuacion">
+                <span>Puntuación</span>
+                <span>Promedio</span>
+            </button>
+        </nav>
+
+        <div class="perfil">
+            <img src="{% static 'img/admin.png' %}" alt="Administrador">
+        </div>
+    </header>
+
+    <div class="header-line"></div>
+
+    <!-- ==========================================
+                CONTENIDO DINÁMICO
+    =========================================== -->
+    <main id="contenido">
+        <!-- Aquí se cargan las vistas HTML vía AJAX -->
+    </main>
+
+    <!-- Configuración para consumo de Django en JS -->
+    <script>
+        window.APP_CONFIG = {
+            STATIC_URL: "{% static '' %}",
+            PANEL_URL: "{% url 'cargar_vista' vista='PLACEHOLDER' %}".replace('PLACEHOLDER/', '')
+        };
+    </script>
+
+    <!-- Librerías de terceros -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- JavaScript Principal -->
+    <script src="{% static 'js/admin.js' %}"></script>
+</body>
+
+</html>

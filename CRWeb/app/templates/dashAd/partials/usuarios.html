@@ -1,0 +1,75 @@
+<section class="contenedor">
+
+    <!--================ FILTROS =================-->
+    <section class="filtros">
+        <div class="buscar">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="buscarUsuario" placeholder="Buscar usuario...">
+        </div>
+
+        <select id="filtroRol">
+            <option value="Todos">Rol: Todos</option>
+            <option value="Administrador">Administrador</option>
+            <option value="Conductor">Conductor</option>
+            <option value="Pasajero">Pasajero</option>
+        </select>
+
+        <select id="filtroEstado">
+            <option value="Todos">Estado: Todos</option>
+            <option value="Activo">Activo</option>
+            <option value="Inactivo">Inactivo</option>
+        </select>
+
+        <button id="btnFiltrar">Filtrar</button>
+    </section>
+
+    <!--================ TABLA =================-->
+    <section class="tabla">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Rol</th>
+                    <th>Estado</th>
+                    <th>Detalles</th>
+                </tr>
+            </thead>
+            <tbody id="tablaUsuarios">
+                {% for u in usuarios %}
+                <tr>
+                    <td>{{ u.id }}</td>
+                    <td>{{ u.get_full_name|default:u.nombre }}</td>
+                    <td>{{ u.email }}</td>
+                    <td>
+                        <span class="badge {{ u.rol }}">
+                            {{ u.get_rol_display|default:u.rol|capfirst }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="estado {% if u.estado_cuenta == 'activa' %}activo{% else %}inactivo{% endif %}">
+                            {% if u.estado_cuenta == 'activa' %}Activo{% else %}Inactivo{% endif %}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="editar-btn" data-id="{{ u.id }}">
+                            Editar
+                        </button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 30px; color: #888;">
+                        No hay usuarios registrados.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="footer-tabla">
+            <p>Mostrando {{ usuarios|length }} usuarios</p>
+        </div>
+    </section>
+</section>

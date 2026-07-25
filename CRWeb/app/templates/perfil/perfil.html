@@ -1,0 +1,205 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Perfil de Usuario</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <link rel="stylesheet"
+          href="{% static 'css/pasajero.css' %}">
+
+</head>
+
+<body>
+
+    {% include 'components/sidebar.html' %}
+
+    <main class="content">
+
+        <header>
+            
+                <h1 class="logo-text">
+                    Cuervo-<span>Ride</span>
+                </h1>
+
+        </header>
+
+        <section class="perfil">
+
+            <!-- PERFIL SUPERIOR -->
+
+            <div class="perfil-top">
+
+                <div class="foto">
+
+                    <img src="https://i.imgur.com/2DhmtJ4.png"
+                         alt="Usuario">
+
+                </div>
+
+                <div class="info">
+
+                    <h1>BIENVENIDO</h1>
+
+                    <h3>USER</h3>
+
+                    <p>
+                        Pasajero:
+                        ★★★★☆
+                    </p>
+
+                </div>
+
+            </div>
+
+            <!-- CONTENIDO -->
+
+            <div class="contenido">
+
+                <!-- MENÚ LATERAL -->
+
+                <div class="menu-lateral">
+
+                    <div class="icon active"
+                         data-tab="datos">
+
+                        <i class="fa-regular fa-address-card"></i>
+
+                    </div>
+
+                    <div class="icon"
+                         data-tab="perfil">
+
+                        <i class="fa-regular fa-user"></i>
+
+                    </div>
+
+                    <div class="icon"
+                         data-tab="historial">
+
+                        <i class="fa-solid fa-clock"></i>
+
+                    </div>
+
+                    <div class="icon" 
+                        data-tab="historial-medico">
+
+                        <i class="fa-solid fa-notes-medical"></i>
+
+                    </div>
+
+                    {% if request.user.rol == "conductor" %}
+
+                    <div class="icon" 
+                        data-tab="conductor">
+
+                        <i class="fa-solid fa-id-card"></i>
+                    
+                    </div>
+
+                    <div class="icon" 
+                    data-tab="vehiculo">
+                        
+                        <i class="fa-solid fa-car-side"></i>
+                    
+                    </div>
+
+                    {% endif %}
+
+                    <div class="icon"
+                         data-tab="config">
+
+                        <i class="fa-solid fa-gears"></i>
+
+                    </div>
+
+                </div>
+
+                <!-- PANEL DERECHO -->
+
+                <div class="tabs">
+
+                    <!-- DATOS -->
+                    <div class="tab active" id="datos">
+
+                        {% include 'perfil/datos.html' %}
+
+                    </div>
+
+                    <!-- PERFIL -->
+                    <div class="tab" id="perfil">
+
+                        {% include 'perfil/cuenta.html' %}
+
+                    </div>
+
+                    <!-- HISTORIAL -->
+                    <div class="tab" id="historial">
+
+                        {% include 'perfil/historial/historial.html' %}
+
+                    </div>
+
+                    <!-- HISTORIAL MÉDICO -->
+                    <div class="tab" id="historial-medico">
+
+                        {% include 'perfil/historial_medico.html' %}
+
+                    </div>
+
+                    <!-- conductor -->
+                    <div class="tab" id="conductor">
+
+                        {% if request.user.rol == "conductor" %}
+
+                            {% include 'perfil/conductor.html' %}
+
+                        {% endif %}
+
+                    </div>
+
+                    <!-- VEHICULO -->
+                    <div class="tab" id="vehiculo">
+
+                        {% if request.user.rol == "conductor" %}
+
+                            {% include 'perfil/vehiculo.html' %}
+
+                        {% endif %}
+
+                    </div>
+
+                    <!-- CONFIGURACIÓN -->
+                    <div class="tab" id="config">
+
+                        {% include 'perfil/configuracion.html' %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    {% include 'perfil/historial/modal_viaje.html' %}
+
+    <script src="{% static 'js/sidebarP.js' %}"></script>
+    <script src="{% static 'js/tabs.js' %}"></script>
+    <script src="{% static 'js/historial.js' %}"></script>
+    <script src="{% static 'js/editarperfil.js' %}"></script>
+
+</body>
+
+</html>

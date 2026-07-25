@@ -1,0 +1,350 @@
+/*==================================================
+        TAB - INFORMACIÓN SENSIBLE
+==================================================*/
+
+.formulario{
+
+    width:100%;
+
+    max-width:850px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:22px;
+
+}
+
+
+/*==================================================
+                    CAMPO
+==================================================*/
+
+.campo{
+
+    width:100%;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:9px;
+
+}
+
+
+.campo label{
+
+    color:#dce5ef;
+
+    font-size:15px;
+
+    font-weight:600;
+
+}
+
+
+/*==================================================
+                INPUT BOX
+==================================================*/
+
+.input-box{
+
+    position:relative;
+
+    display:flex;
+
+    align-items:center;
+
+    width:100%;
+
+}
+
+
+/*==================================================
+                    INPUTS
+==================================================*/
+
+.input-box input{
+
+    width:100%;
+
+    height:50px;
+
+    padding:0 48px 0 16px;
+
+    border-radius:10px;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    background:#182235;
+
+    color:#ffffff;
+
+    font-size:15px;
+
+    outline:none;
+
+    transition:
+
+        background .25s,
+
+        border-color .25s,
+
+        box-shadow .25s;
+
+}
+
+
+/*==================================================
+                SOLO LECTURA
+==================================================*/
+
+.input-box input[readonly]{
+
+    cursor:default;
+
+    color:#c8d2df;
+
+}
+
+
+/*==================================================
+                MODO EDICIÓN
+==================================================*/
+
+.input-box input:not([readonly]){
+
+    background:#1f2e47;
+
+    border-color:#98ec63;
+
+    box-shadow:
+
+        0 0 0 2px
+
+        rgba(152,236,99,.12);
+
+}
+
+
+/*==================================================
+        CAMPOS DE CONTRASEÑA
+==================================================*/
+
+#password,
+#confirmPassword{
+
+    letter-spacing:3px;
+
+    font-weight:bold;
+
+}
+
+
+/*==================================================
+            ÍCONO EDITAR
+==================================================*/
+
+.editar{
+
+    position:absolute;
+
+    right:16px;
+
+    color:#98ec63;
+
+    font-size:17px;
+
+    cursor:pointer;
+
+    transition:
+
+        color .25s,
+
+        transform .25s;
+
+}
+
+
+.editar:hover{
+
+    color:#baff8d;
+
+    transform:scale(1.12);
+
+}
+
+
+/*==================================================
+            BOTONES
+==================================================*/
+
+.botones{
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    gap:14px;
+
+    margin-top:10px;
+
+}
+
+
+.botones.oculto{
+
+    display:none;
+
+}
+
+
+/*==================================================
+            BOTÓN CANCELAR
+==================================================*/
+
+.cancelar{
+
+    min-width:130px;
+
+    height:45px;
+
+    border-radius:9px;
+
+    border:1px solid rgba(255,255,255,.15);
+
+    background:transparent;
+
+    color:#dce5ef;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+}
+
+
+.cancelar:hover{
+
+    background:rgba(255,255,255,.08);
+
+    border-color:rgba(255,255,255,.28);
+
+}
+
+
+/*==================================================
+            BOTÓN GUARDAR
+==================================================*/
+
+.guardar{
+
+    min-width:130px;
+
+    height:45px;
+
+    border:none;
+
+    border-radius:9px;
+
+    background:#98ec63;
+
+    color:#101820;
+
+    font-size:15px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:
+
+        background .25s,
+
+        transform .25s,
+
+        box-shadow .25s;
+
+}
+
+
+.guardar:hover{
+
+    background:#adff7d;
+
+    transform:translateY(-2px);
+
+    box-shadow:
+
+        0 8px 20px
+
+        rgba(152,236,99,.18);
+
+}
+
+
+/*==================================================
+        CAMPOS DESHABILITADOS
+==================================================*/
+
+.cancelar:disabled,
+.guardar:disabled{
+
+    opacity:.55;
+
+    cursor:not-allowed;
+
+    transform:none;
+
+    box-shadow:none;
+
+}
+
+
+/*==================================================
+            RESPONSIVE
+==================================================*/
+
+@media(max-width:700px){
+
+    .formulario{
+
+        max-width:100%;
+
+        gap:18px;
+
+    }
+
+
+    .input-box input{
+
+        height:47px;
+
+        font-size:14px;
+
+    }
+
+
+    .botones{
+
+        flex-direction:column-reverse;
+
+        align-items:stretch;
+
+    }
+
+
+    .cancelar,
+    .guardar{
+
+        width:100%;
+
+    }
+
+}

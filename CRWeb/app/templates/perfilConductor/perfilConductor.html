@@ -1,0 +1,939 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Perfil de conductor | Cuervo-Ride</title>
+
+    <!-- FONT AWESOME -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <!-- ESTILOS DEL PERFIL -->
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/pasajero.css' %}">
+
+</head>
+
+<body>
+
+    <!-- SIDEBAR PRINCIPAL -->
+
+    {% include 'components/sidebar.html' %}
+
+
+    <!-- CONTENIDO PRINCIPAL -->
+
+    <main class="content">
+
+        <!-- ENCABEZADO -->
+
+        <header>
+
+            <h2>
+                Perfil de usuario
+            </h2>
+
+            <h1 class="logo-text">
+                Cuervo-<span>Ride</span>
+            </h1>
+
+        </header>
+
+
+        <!-- PERFIL -->
+
+        <section class="perfil">
+
+            <!-- INFORMACIÓN SUPERIOR -->
+
+            <div class="perfil-top">
+
+                <div class="foto">
+
+                    <img
+                        src="{% if request.user.foto %}{{ request.user.foto.url }}{% else %}{% static 'img/profileIcon.png' %}{% endif %}"
+                        alt="Foto de perfil">
+
+                </div>
+
+
+                <div class="info">
+
+                    <h1>
+                        BIENVENIDO
+                    </h1>
+
+                    <h3>
+
+                        {% if request.user.get_full_name %}
+
+                            {{ request.user.get_full_name }}
+
+                        {% elif request.user.nombre %}
+
+                            {{ request.user.nombre }}
+
+                        {% else %}
+
+                            {{ request.user.username }}
+
+                        {% endif %}
+
+                    </h3>
+
+                    <p>
+
+                        {% if request.user.rol == "conductor" %}
+
+                            Conductor
+
+                        {% else %}
+
+                            Pasajero
+
+                        {% endif %}
+
+                        · ★★★★☆
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- CONTENIDO DEL PERFIL -->
+
+            <div class="contenido">
+
+                <!--=========================================
+                    MENÚ LATERAL DE PESTAÑAS
+                ==========================================-->
+
+                <div class="menu-lateral">
+
+                    <!-- DATOS PERSONALES -->
+
+                    <button
+                        type="button"
+                        class="icon active"
+                        data-tab="datos"
+                        title="Datos personales"
+                        aria-label="Datos personales">
+
+                        <i class="fa-regular fa-address-card"></i>
+
+                    </button>
+
+
+                    <!-- DATOS SENSIBLES -->
+
+                    <button
+                        type="button"
+                        class="icon"
+                        data-tab="perfil"
+                        title="Datos sensibles"
+                        aria-label="Datos sensibles">
+
+                        <i class="fa-regular fa-user"></i>
+
+                    </button>
+
+
+                    <!-- EXPEDIENTE MÉDICO -->
+
+                    <button
+                        type="button"
+                        class="icon"
+                        data-tab="medico"
+                        title="Expediente médico"
+                        aria-label="Expediente médico">
+
+                        <i class="fa-solid fa-notes-medical"></i>
+
+                    </button>
+
+
+                    <!-- DATOS DEL CONDUCTOR -->
+
+                    {% if request.user.rol == "conductor" %}
+
+                        <button
+                            type="button"
+                            class="icon"
+                            data-tab="conductor"
+                            title="Datos del conductor"
+                            aria-label="Datos del conductor">
+
+                            <i class="fa-regular fa-id-card"></i>
+
+                        </button>
+
+
+                        <!-- VEHÍCULO -->
+
+                        <button
+                            type="button"
+                            class="icon"
+                            data-tab="vehiculo"
+                            title="Información del vehículo"
+                            aria-label="Información del vehículo">
+
+                            <i class="fa-solid fa-car"></i>
+
+                        </button>
+
+                    {% endif %}
+
+
+                    <!-- CONFIGURACIÓN -->
+
+                    <button
+                        type="button"
+                        class="icon"
+                        data-tab="config"
+                        title="Configuración"
+                        aria-label="Configuración">
+
+                        <i class="fa-solid fa-gears"></i>
+
+                    </button>
+
+                </div>
+
+
+                <!--=========================================
+                    CONTENIDO DE LAS PESTAÑAS
+                ==========================================-->
+
+                <div class="tabs">
+
+                    <!--=====================================
+                        TAB 1: DATOS PERSONALES
+                    ======================================-->
+
+                    <div
+                        class="tab active"
+                        id="datos">
+
+                        <form
+                            method="POST"
+                            class="formulario"
+                            id="formDatosPersonales">
+
+                            {% csrf_token %}
+
+                            <input
+                                type="hidden"
+                                name="tipo_formulario"
+                                value="datos_personales">
+
+
+                            <!-- NOMBRE -->
+
+                            <div class="campo">
+
+                                <label for="nombreUsuario">
+                                    Nombre del alumno
+                                </label>
+
+                                <div class="input-box">
+
+                                    <input
+                                        type="text"
+                                        id="nombreUsuario"
+                                        name="nombre"
+                                        value="{{ request.user.nombre|default:'' }}"
+                                        placeholder="Nombre completo"
+                                        readonly>
+
+                                    <button
+                                        type="button"
+                                        class="editar"
+                                        aria-label="Editar nombre">
+
+                                        <i class="fa-solid fa-pencil"></i>
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- MATRÍCULA -->
+
+                            <div class="campo">
+
+                                <label for="matriculaUsuario">
+                                    Matrícula del alumno
+                                </label>
+
+                                <div class="input-box">
+
+                                    <input
+                                        type="text"
+                                        id="matriculaUsuario"
+                                        name="matricula"
+                                        value="{{ request.user.matricula|default:'' }}"
+                                        placeholder="Matrícula"
+                                        readonly>
+
+                                    <button
+                                        type="button"
+                                        class="editar"
+                                        aria-label="Editar matrícula">
+
+                                        <i class="fa-solid fa-pencil"></i>
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- CORREO -->
+
+                            <div class="campo">
+
+                                <label for="correoUsuario">
+                                    Correo del alumno
+                                </label>
+
+                                <div class="input-box">
+
+                                    <input
+                                        type="email"
+                                        id="correoUsuario"
+                                        name="email"
+                                        value="{{ request.user.email|default:'' }}"
+                                        placeholder="Correo electrónico"
+                                        readonly>
+
+                                    <button
+                                        type="button"
+                                        class="editar"
+                                        aria-label="Editar correo">
+
+                                        <i class="fa-solid fa-pencil"></i>
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- CARRERA O GRADO -->
+
+                            <div class="campo">
+
+                                <label for="carreraUsuario">
+                                    Carrera, grado y grupo
+                                </label>
+
+                                <div class="input-box">
+
+                                    <input
+                                        type="text"
+                                        id="carreraUsuario"
+                                        name="carrera"
+                                        value="{{ request.user.carrera|default:'' }}"
+                                        placeholder="Carrera, grado y grupo"
+                                        readonly>
+
+                                    <button
+                                        type="button"
+                                        class="editar"
+                                        aria-label="Editar carrera">
+
+                                        <i class="fa-solid fa-pencil"></i>
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- BOTONES -->
+
+                            <div class="botones oculto">
+
+                                <button
+                                    type="button"
+                                    class="cancelar">
+
+                                    Cancelar
+
+                                </button>
+
+                                <button
+                                    type="submit"
+                                    class="guardar">
+
+                                    Guardar
+
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+
+                    <!--=====================================
+                        TAB 2: DATOS SENSIBLES
+                    ======================================-->
+
+                    <div
+                        class="tab"
+                        id="perfil">
+
+                        <form
+                            method="POST"
+                            class="formulario"
+                            id="formDatosSensibles">
+
+                            {% csrf_token %}
+
+                            <input
+                                type="hidden"
+                                name="tipo_formulario"
+                                value="datos_sensibles">
+
+
+                            <!-- CORREO INSTITUCIONAL -->
+
+                            <div class="campo">
+
+                                <label for="correoInstitucional">
+                                    Correo institucional
+                                </label>
+
+                                <div class="input-box">
+
+                                    <input
+                                        type="email"
+                                        id="correoInstitucional"
+                                        name="correo_institucional"
+                                        value="{{ request.user.email|default:'' }}"
+                                        placeholder="Correo institucional"
+                                        readonly>
+
+                                    <button
+                                        type="button"
+                                        class="editar"
+                                        aria-label="Editar correo institucional">
+
+                                        <i class="fa-solid fa-pencil"></i>
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- TELÉFONO -->
+
+                            <div class="campo">
+
+                                <label for="telefonoUsuario">
+                                    Teléfono
+                                </label>
+
+                                <div class="input-box">
+
+                                    <input
+                                        type="tel"
+                                        id="telefonoUsuario"
+                                        name="telefono"
+                                        value="{{ request.user.telefono|default:'' }}"
+                                        placeholder="Número de teléfono"
+                                        maxlength="15"
+                                        readonly>
+
+                                    <button
+                                        type="button"
+                                        class="editar"
+                                        aria-label="Editar teléfono">
+
+                                        <i class="fa-solid fa-pencil"></i>
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- NUEVA CONTRASEÑA -->
+
+                            <div class="campo">
+
+                                <label for="nuevaPassword">
+                                    Nueva contraseña
+                                </label>
+
+                                <div class="input-box">
+
+                                    <input
+                                        type="password"
+                                        id="nuevaPassword"
+                                        name="nueva_password"
+                                        value=""
+                                        placeholder="Escribe una nueva contraseña"
+                                        autocomplete="new-password"
+                                        readonly>
+
+                                    <button
+                                        type="button"
+                                        class="editar"
+                                        aria-label="Cambiar contraseña">
+
+                                        <i class="fa-solid fa-pencil"></i>
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- CONFIRMAR CONTRASEÑA -->
+
+                            <div class="campo">
+
+                                <label for="confirmarPassword">
+                                    Confirmar contraseña
+                                </label>
+
+                                <div class="input-box">
+
+                                    <input
+                                        type="password"
+                                        id="confirmarPassword"
+                                        name="confirmar_password"
+                                        value=""
+                                        placeholder="Confirma la nueva contraseña"
+                                        autocomplete="new-password"
+                                        readonly>
+
+                                    <button
+                                        type="button"
+                                        class="editar"
+                                        aria-label="Confirmar contraseña">
+
+                                        <i class="fa-solid fa-pencil"></i>
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- BOTONES -->
+
+                            <div class="botones oculto">
+
+                                <button
+                                    type="button"
+                                    class="cancelar">
+
+                                    Cancelar
+
+                                </button>
+
+                                <button
+                                    type="submit"
+                                    class="guardar">
+
+                                    Guardar
+
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+
+                    <!--=====================================
+                        TAB 3: EXPEDIENTE MÉDICO
+                    ======================================-->
+
+                    <div
+                        class="tab"
+                        id="medico">
+
+                        <div class="formulario">
+
+                            <!--
+                                AQUÍ INTEGRAREMOS EL MISMO FORMULARIO
+                                MÉDICO QUE UTILIZA EL PASAJERO.
+
+                                No se agregó un include con un nombre inventado
+                                para evitar un TemplateDoesNotExist.
+                            -->
+
+                            <div class="campo">
+
+                                <label>
+                                    Expediente médico
+                                </label>
+
+                                <div class="mensaje-seccion">
+
+                                    Esta sección utilizará el mismo formulario
+                                    médico disponible para el usuario pasajero.
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!--=====================================
+                        TAB 4: DATOS DEL CONDUCTOR
+                    ======================================-->
+
+                    {% if request.user.rol == "conductor" %}
+
+                        <div
+                            class="tab"
+                            id="conductor">
+
+                            <form
+                                method="POST"
+                                enctype="multipart/form-data"
+                                class="formulario"
+                                id="formDatosConductor">
+
+                                {% csrf_token %}
+
+                                <input
+                                    type="hidden"
+                                    name="tipo_formulario"
+                                    value="datos_conductor">
+
+
+                                <!-- NÚMERO DE LICENCIA -->
+
+                                <div class="campo">
+
+                                    <label for="numeroLicencia">
+                                        Número de licencia
+                                    </label>
+
+                                    <div class="input-box">
+
+                                        <input
+                                            type="text"
+                                            id="numeroLicencia"
+                                            name="numero_licencia"
+                                            value="{{ perfil_conductor.numero_licencia|default:'' }}"
+                                            placeholder="Número de licencia"
+                                            maxlength="50"
+                                            readonly>
+
+                                        <button
+                                            type="button"
+                                            class="editar"
+                                            aria-label="Editar número de licencia">
+
+                                            <i class="fa-solid fa-pencil"></i>
+
+                                        </button>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- FECHA DE VENCIMIENTO -->
+
+                                <div class="campo">
+
+                                    <label for="vencimientoLicencia">
+                                        Fecha de vencimiento
+                                    </label>
+
+                                    <div class="input-box">
+
+                                        <input
+                                            type="date"
+                                            id="vencimientoLicencia"
+                                            name="fecha_vencimiento_licencia"
+                                            value="{{ perfil_conductor.fecha_vencimiento_licencia|date:'Y-m-d' }}"
+                                            readonly>
+
+                                        <button
+                                            type="button"
+                                            class="editar"
+                                            aria-label="Editar vencimiento de licencia">
+
+                                            <i class="fa-solid fa-pencil"></i>
+
+                                        </button>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- FOTO FRONTAL DE LICENCIA -->
+
+                                <div class="campo">
+
+                                    <label for="licenciaFrontal">
+                                        Fotografía frontal de la licencia
+                                    </label>
+
+                                    {% if perfil_conductor.foto_licencia_frontal %}
+
+                                        <div class="archivo-actual">
+
+                                            <a
+                                                href="{{ perfil_conductor.foto_licencia_frontal.url }}"
+                                                target="_blank"
+                                                rel="noopener noreferrer">
+
+                                                Ver archivo actual
+
+                                            </a>
+
+                                        </div>
+
+                                    {% endif %}
+
+                                    <div class="input-box input-archivo">
+
+                                        <input
+                                            type="file"
+                                            id="licenciaFrontal"
+                                            name="foto_licencia_frontal"
+                                            accept="image/png,image/jpeg,image/webp"
+                                            disabled>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- FOTO POSTERIOR DE LICENCIA -->
+
+                                <div class="campo">
+
+                                    <label for="licenciaReverso">
+                                        Fotografía posterior de la licencia
+                                    </label>
+
+                                    {% if perfil_conductor.foto_licencia_reverso %}
+
+                                        <div class="archivo-actual">
+
+                                            <a
+                                                href="{{ perfil_conductor.foto_licencia_reverso.url }}"
+                                                target="_blank"
+                                                rel="noopener noreferrer">
+
+                                                Ver archivo actual
+
+                                            </a>
+
+                                        </div>
+
+                                    {% endif %}
+
+                                    <div class="input-box input-archivo">
+
+                                        <input
+                                            type="file"
+                                            id="licenciaReverso"
+                                            name="foto_licencia_reverso"
+                                            accept="image/png,image/jpeg,image/webp"
+                                            disabled>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- ESTADO DE VERIFICACIÓN -->
+
+                                <div class="campo">
+
+                                    <label>
+                                        Estado de verificación
+                                    </label>
+
+                                    <div class="estado-verificacion">
+
+                                        {% if perfil_conductor %}
+
+                                            {{ perfil_conductor.get_estado_verificacion_display }}
+
+                                        {% else %}
+
+                                            Información incompleta
+
+                                        {% endif %}
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- BOTONES -->
+
+                                <div class="botones oculto">
+
+                                    <button
+                                        type="button"
+                                        class="cancelar">
+
+                                        Cancelar
+
+                                    </button>
+
+                                    <button
+                                        type="submit"
+                                        class="guardar">
+
+                                        Guardar
+
+                                    </button>
+
+                                </div>
+
+                            </form>
+
+                        </div>
+
+
+                        <!--=================================
+                            TAB 5: VEHÍCULO
+                        ==================================-->
+
+                        {% include 'perfil/partials/vehiculo.html' %}
+
+                    {% endif %}
+
+
+                    <!--=====================================
+                        TAB 6: CONFIGURACIÓN
+                    ======================================-->
+
+                    <div
+                        class="tab"
+                        id="config">
+
+                        <form
+                            method="POST"
+                            class="formulario"
+                            id="formConfiguracion">
+
+                            {% csrf_token %}
+
+                            <input
+                                type="hidden"
+                                name="tipo_formulario"
+                                value="configuracion">
+
+
+                            <!-- ROL -->
+
+                            <div class="campo">
+
+                                <label for="rol">
+                                    Rol actual
+                                </label>
+
+                                <div class="select-box">
+
+                                    <select
+                                        id="rol"
+                                        name="rol">
+
+                                        <option
+                                            value="pasajero"
+                                            {% if request.user.rol == "pasajero" %}selected{% endif %}>
+
+                                            Pasajero
+
+                                        </option>
+
+                                        <option
+                                            value="conductor"
+                                            {% if request.user.rol == "conductor" %}selected{% endif %}>
+
+                                            Conductor
+
+                                        </option>
+
+                                    </select>
+
+                                    <i class="fa-solid fa-chevron-down"></i>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- BOTÓN -->
+
+                            <div class="botones">
+
+                                <button
+                                    type="submit"
+                                    class="guardar">
+
+                                    Guardar cambios
+
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- JAVASCRIPT -->
+
+    <script src="{% static 'js/sidebarP.js' %}"></script>
+
+    <script src="{% static 'js/tabs.js' %}"></script>
+
+</body>
+
+</html>

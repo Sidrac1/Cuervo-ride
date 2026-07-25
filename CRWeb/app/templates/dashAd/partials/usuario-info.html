@@ -1,0 +1,78 @@
+{% load static %}
+<div class="usuario-card">
+    <!--================ SIDEBAR =================-->
+    <aside class="usuario-sidebar">
+        <img id="fotoUsuario" src="{% static 'img/admin.png' %}" class="foto-usuario" alt="Usuario">
+        <h2 id="nombreTitulo">Cargando...</h2>
+
+        <button class="tab-btn active" id="btnGeneral">Información General</button>
+        <button class="tab-btn" id="btnMedico">Expediente Médico</button>
+    </aside>
+
+    <!--================ PANEL =================-->
+    <section class="usuario-panel">
+        <h2>Información General</h2>
+        <form id="formGeneral">
+            <input type="hidden" id="usuarioId">
+            
+            <div class="grid-info">
+                <div class="campo">
+                    <label>Nombre</label>
+                    <input id="nombre" type="text" placeholder="Nombre">
+                </div>
+
+                <div class="campo">
+                    <label>Correo Institucional</label>
+                    <input id="correo" type="email" placeholder="Correo">
+                </div>
+
+                <div class="campo">
+                    <label>Matrícula</label>
+                    <input id="matricula" type="text" placeholder="Matrícula">
+                </div>
+
+                <div class="campo">
+                    <label>Cuatrimestre / Grado</label>
+                    <input id="cuatrimestre" type="text" placeholder="Grado y grupo">
+                </div>
+
+                <div class="campo">
+                    <label>Carrera</label>
+                    <input id="carrera" type="text" placeholder="Carrera">
+                </div>
+
+                <div class="campo">
+                    <label>Rol</label>
+                    <select id="rol">
+                        <option value="administrador">Administrador</option>
+                        <option value="conductor">Conductor</option>
+                        <option value="pasajero">Pasajero</option>
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label>Estado</label>
+                    <select id="estado">
+                        <option value="Activo">Activo</option>
+                        <option value="Inactivo">Inactivo</option>
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label>Contraseña (Dejar en blanco para no cambiar)</label>
+                    <input id="password" type="password" placeholder="••••••••">
+                </div>
+
+                <div class="campo ancho">
+                    <label>Teléfono</label>
+                    <input id="telefono" type="text" placeholder="Teléfono">
+                </div>
+            </div>
+
+            <div class="acciones-info">
+                <button type="button" id="volver">Regresar</button>
+                <button type="submit" id="guardar">Guardar Cambios</button>
+            </div>
+        </form>
+    </section>
+</div>

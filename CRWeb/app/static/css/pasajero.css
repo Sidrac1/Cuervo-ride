@@ -1,0 +1,3331 @@
+/*==================================
+RESET
+==================================*/
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+
+html,
+body{
+
+    width:100%;
+    min-height:100vh;
+
+}
+
+
+body{
+
+    background:#11182c;
+    overflow-x:hidden;
+
+}
+
+
+
+/*==================================
+CONTENIDO PRINCIPAL
+==================================*/
+
+.content{
+
+    margin-left:90px;
+
+    width:calc(100% - 90px);
+
+    min-height:100vh;
+
+    padding:25px 40px;
+
+}
+
+
+
+/*==================================
+HEADER
+==================================*/
+
+header{
+
+    width:100%;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:40px;
+
+}
+
+
+.logo-text{
+
+    color:white;
+
+    font-size:35px;
+
+    font-weight:700;
+
+    margin-left:auto;
+
+}
+
+
+.logo-text span{
+
+    color:#98ec63;
+
+}
+
+/*==================================
+PERFIL SUPERIOR
+==================================*/
+
+.perfil{
+    width:100%;
+}
+
+
+.perfil-top{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:30px;
+
+    margin-bottom:45px;
+
+}
+
+
+.foto{
+
+    flex-shrink:0;
+
+}
+
+
+.foto img{
+
+    width:110px;
+
+    height:110px;
+
+    object-fit:cover;
+
+    border-radius:50%;
+
+    border:3px solid #98ec63;
+
+}
+
+
+
+.info{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:6px;
+
+}
+
+
+.info h1{
+
+    color:white;
+
+    font-size:42px;
+
+    font-weight:700;
+
+}
+
+
+.info h3{
+
+    color:white;
+
+    font-size:28px;
+
+    font-weight:500;
+
+}
+
+
+.info p{
+
+    color:#d6d6d6;
+
+    font-size:16px;
+
+}
+
+
+/*==================================
+CONTENIDO INFERIOR
+==================================*/
+
+
+.contenido{
+
+    display:flex;
+
+    align-items:flex-start;
+
+    gap:35px;
+
+}
+
+
+
+/*==================================
+MENU LATERAL
+==================================*/
+
+.menu-lateral{
+
+    width:80px;
+
+    background:#11182c;
+
+    border:2px solid #8ef25d;
+
+    border-radius:12px;
+
+    padding:12px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+
+    flex-shrink:0;
+
+}
+
+
+/*==================================
+ICONOS
+==================================*/
+
+
+.icon{
+
+    width:55px;
+
+    height:55px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+    color:white;
+
+    font-size:28px;
+
+}
+
+
+.icon:hover{
+
+    background:#33405e;
+
+}
+
+
+.icon.active{
+
+    background:#33405e;
+
+    color:#98ec63;
+
+}
+
+
+/*==================================
+CONTENEDOR TABS
+==================================*/
+
+.tabs{
+
+    flex:1;
+
+    width:100%;
+
+    min-height:450px;
+
+}
+
+
+
+/*==================================
+ SISTEMA DE TABS CORREGIDO
+==================================*/
+
+
+.tab{
+
+    display:none;
+
+    width:100%;
+
+}
+
+
+
+.tab.active{
+
+    display:block;
+
+    animation:fade .25s ease;
+
+}
+
+
+
+/*==================================
+SELECT
+==================================*/
+
+
+.select-box{
+
+    width:100%;
+
+    height:55px;
+
+    background:#263249;
+
+    border-radius:10px;
+
+    padding:0 20px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:15px;
+
+    transition:.25s;
+
+}
+
+
+
+.select-box:focus-within{
+
+    border:2px solid #8ef25d;
+
+}
+
+
+
+.select-box select{
+
+    width:100%;
+
+    height:100%;
+
+    background:none;
+
+    border:none;
+
+    outline:none;
+
+    color:white;
+
+    font-size:17px;
+
+    appearance:none;
+
+    -webkit-appearance:none;
+
+    -moz-appearance:none;
+
+    cursor:pointer;
+
+}
+
+
+
+.select-box option{
+
+    background:#263249;
+
+    color:white;
+
+}
+
+
+
+.select-box i{
+
+    color:white;
+
+    font-size:18px;
+
+    pointer-events:none;
+
+}
+
+
+
+/*==================================
+UTILIDAD: OCULTAR ELEMENTOS
+==================================*/
+
+.oculto{
+
+    display:none;
+
+}
+
+
+/*==================================
+ANIMACION TABS
+==================================*/
+
+
+@keyframes fade{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(8px);
+
+    }
+
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+
+/*==================================
+SCROLLBAR
+==================================*/
+
+
+::-webkit-scrollbar{
+
+    width:8px;
+
+}
+
+
+
+::-webkit-scrollbar-thumb{
+
+    background:#98ec63;
+
+    border-radius:20px;
+
+}
+
+
+
+::-webkit-scrollbar-track{
+
+    background:#11182c;
+
+}
+
+
+
+/*==================================
+RESPONSIVE
+==================================*/
+
+
+@media(max-width:1100px){
+
+
+.content{
+
+    padding:25px;
+
+}
+
+
+
+header h2{
+
+    font-size:26px;
+
+}
+
+
+
+.logo-text{
+
+    font-size:30px;
+
+}
+
+
+
+.info h1{
+
+    font-size:35px;
+
+}
+
+
+
+.info h3{
+
+    font-size:24px;
+
+}
+
+
+}
+
+
+@media(max-width:900px){
+
+
+.content{
+
+    margin-left:0;
+
+    width:100%;
+
+    padding:20px;
+
+}
+
+
+
+header{
+
+    flex-direction:column;
+
+    gap:20px;
+
+    align-items:flex-start;
+
+}
+
+
+
+.perfil-top{
+
+    flex-direction:column;
+
+    text-align:center;
+
+}
+
+
+
+.info{
+
+    align-items:center;
+
+}
+
+
+
+.contenido{
+
+    flex-direction:column;
+
+}
+
+
+
+.menu-lateral{
+
+    width:100%;
+
+    flex-direction:row;
+
+    justify-content:center;
+
+}
+
+
+
+.icon{
+
+    width:60px;
+
+    height:60px;
+
+}
+
+
+}
+
+@media(max-width:600px){
+
+
+.content{
+
+    padding:15px;
+
+}
+
+
+
+header h2{
+
+    font-size:22px;
+
+}
+
+
+
+.logo-text{
+
+    font-size:26px;
+
+}
+
+
+
+.info h1{
+
+    font-size:28px;
+
+}
+
+
+
+.info h3{
+
+    font-size:20px;
+
+}
+
+
+
+.foto img{
+
+    width:90px;
+
+    height:90px;
+
+}
+
+
+
+.select-box{
+
+    height:50px;
+
+}
+
+
+
+.select-box select{
+
+    font-size:15px;
+
+}
+}
+
+.tab:not(.active){
+    display:none !important;
+}
+
+.tab.active{
+    display:block !important;
+}
+
+/*==================================================
+        MODAL DETALLE DEL VIAJE
+==================================================*/
+
+
+.modal-viaje{
+
+    position:fixed;
+
+    inset:0;
+
+    width:100%;
+
+    height:100%;
+
+    background:rgba(0,0,0,.65);
+
+    display:none;
+
+    justify-content:center;
+
+    align-items:center;
+
+    padding:25px;
+
+    z-index:9999;
+
+    backdrop-filter:blur(4px);
+
+}
+
+
+/*==================================================
+        MOSTRAR MODAL
+==================================================*/
+
+
+.modal-viaje.mostrar{
+
+    display:flex;
+
+}
+
+/*==================================================
+        HISTORIAL DE VIAJES
+==================================================*/
+
+
+.historial-container{
+
+    width:100%;
+
+}
+
+
+
+/*==================================================
+        ENCABEZADO HISTORIAL
+==================================================*/
+
+
+.historial-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:20px;
+
+    margin-bottom:30px;
+
+}
+
+
+
+.historial-header h2{
+
+    color:white;
+
+    font-size:28px;
+
+    margin-bottom:8px;
+
+}
+
+
+
+.historial-header p{
+
+    color:#cfcfcf;
+
+    font-size:15px;
+
+}
+
+
+
+/*==================================================
+        BUSCADOR
+==================================================*/
+
+
+.buscador{
+
+    width:320px;
+
+    height:45px;
+
+    background:#263249;
+
+    border-radius:12px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:0 15px;
+
+}
+
+
+
+.buscador i{
+
+    color:#98ec63;
+
+    font-size:18px;
+
+}
+
+
+
+.buscador input{
+
+    width:100%;
+
+    height:100%;
+
+    background:none;
+
+    border:none;
+
+    outline:none;
+
+    color:white;
+
+    font-size:15px;
+
+}
+
+
+
+.buscador input::placeholder{
+
+    color:#aaa;
+
+}
+
+
+
+/*==================================================
+        LISTA DE VIAJES
+==================================================*/
+
+
+.lista-viajes{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:20px;
+
+}
+
+
+
+/*==================================================
+        TARJETA VIAJE
+==================================================*/
+
+
+.viaje-card{
+
+    width:100%;
+
+    background:#1b2437;
+
+    border-radius:15px;
+
+    padding:22px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:25px;
+
+    border:1px solid transparent;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+}
+
+
+
+.viaje-card:hover{
+
+    border-color:#98ec63;
+
+    transform:translateY(-3px);
+
+    box-shadow:0 8px 25px rgba(0,0,0,.25);
+
+}
+
+
+
+/*==================================================
+        INFORMACION PRINCIPAL
+==================================================*/
+
+
+.viaje-info{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:15px;
+
+}
+
+
+
+.conductor{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    color:white;
+
+    font-size:18px;
+
+    font-weight:600;
+
+}
+
+
+
+.conductor i{
+
+    color:#98ec63;
+
+    font-size:22px;
+
+}
+
+
+
+.ruta{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    color:#d6d6d6;
+
+    font-size:15px;
+
+}
+
+
+
+.ruta i{
+
+    color:#98ec63;
+
+}
+
+
+
+/*==================================================
+        DETALLES DERECHA
+==================================================*/
+
+
+.viaje-detalles{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:20px;
+
+}
+
+
+
+.viaje-detalles span{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    color:#d6d6d6;
+
+    font-size:14px;
+
+}
+
+
+
+.viaje-detalles i{
+
+    color:#98ec63;
+
+}
+
+
+
+/*==================================================
+        ESTADO
+==================================================*/
+
+
+.estado{
+
+    padding:7px 15px;
+
+    border-radius:20px;
+
+    font-size:13px !important;
+
+    font-weight:600;
+
+}
+
+
+
+.estado.finalizado{
+
+    background:#98ec63;
+
+    color:#11182c !important;
+
+}
+
+
+
+/*==================================================
+        SIN VIAJES
+==================================================*/
+
+
+.sin-viajes{
+
+    width:100%;
+
+    padding:40px;
+
+    background:#1b2437;
+
+    border-radius:15px;
+
+    text-align:center;
+
+    color:#d6d6d6;
+
+}
+
+
+
+/*==================================================
+        RESPONSIVE
+==================================================*/
+
+
+@media(max-width:900px){
+
+
+    .historial-header{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+    }
+
+
+
+    .buscador{
+
+        width:100%;
+
+    }
+
+
+
+    .viaje-card{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+    }
+
+
+
+    .viaje-detalles{
+
+        width:100%;
+
+        flex-wrap:wrap;
+
+    }
+
+
+}
+
+
+
+@media(max-width:600px){
+
+
+    .historial-header h2{
+
+        font-size:22px;
+
+    }
+
+
+
+    .viaje-card{
+
+        padding:18px;
+
+    }
+
+
+
+    .conductor{
+
+        font-size:16px;
+
+    }
+
+
+}
+
+/*==================================================
+        CONTENIDO DEL MODAL
+==================================================*/
+
+
+.modal-contenido{
+
+    position:relative;
+
+    width:100%;
+
+    max-width:900px;
+
+    max-height:90vh;
+
+    overflow-y:auto;
+
+    background:#1b2437;
+
+    border:2px solid #98ec63;
+
+    border-radius:18px;
+
+    padding:35px;
+
+    box-shadow:0 15px 45px rgba(0,0,0,.45);
+
+}
+
+
+
+/* Animación solo al abrir */
+
+.modal-viaje.mostrar .modal-contenido{
+
+    animation:modalFade .25s ease;
+
+}
+
+
+/*==================================================
+        TITULO
+==================================================*/
+
+
+.modal-contenido h2{
+
+    color:white;
+
+    font-size:28px;
+
+    font-weight:700;
+
+    margin-bottom:30px;
+
+}
+
+
+
+/*==================================================
+        BOTON CERRAR
+==================================================*/
+
+
+.cerrar-modal{
+
+    position:absolute;
+
+    top:20px;
+
+    right:20px;
+
+    width:42px;
+
+    height:42px;
+
+    border-radius:50%;
+
+    background:#263249;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+}
+
+
+
+.cerrar-modal:hover{
+
+    background:#98ec63;
+
+}
+
+
+
+.cerrar-modal i{
+
+    color:white;
+
+    font-size:22px;
+
+}
+
+
+
+.cerrar-modal:hover i{
+
+    color:#11182c;
+
+}
+
+
+/*==================================================
+        INFORMACION DEL VIAJE
+==================================================*/
+
+
+.detalle-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:20px;
+
+    margin-bottom:30px;
+
+}
+
+
+
+.detalle-item{
+
+    background:#263249;
+
+    border-radius:12px;
+
+    padding:18px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:8px;
+
+}
+
+
+
+.detalle-item label{
+
+    color:#98ec63;
+
+    font-size:14px;
+
+    font-weight:600;
+
+}
+
+
+
+.detalle-item span{
+
+    color:white;
+
+    font-size:17px;
+
+}
+
+
+
+/*==================================================
+        CALIFICACION
+==================================================*/
+
+
+.calificacion{
+
+    background:#263249;
+
+    border-radius:12px;
+
+    padding:20px;
+
+    margin-bottom:30px;
+
+    text-align:center;
+
+}
+
+
+
+.calificacion h3{
+
+    color:white;
+
+    margin-bottom:12px;
+
+}
+
+
+
+.estrellas{
+
+    color:#ffd54f;
+
+    font-size:30px;
+
+    letter-spacing:5px;
+
+}
+
+
+
+/*==================================================
+        MAPA
+==================================================*/
+
+
+.mapa-container{
+
+    margin-top:20px;
+
+}
+
+
+
+.mapa-container h3{
+
+    color:white;
+
+    margin-bottom:15px;
+
+}
+
+
+
+#mapaViaje{
+
+    width:100%;
+
+    height:320px;
+
+    background:#263249;
+
+    border:2px dashed #98ec63;
+
+    border-radius:12px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    color:#bdbdbd;
+
+    font-size:18px;
+
+}
+
+
+
+/*==================================================
+        SCROLL DEL MODAL
+==================================================*/
+
+
+.modal-contenido::-webkit-scrollbar{
+
+    width:8px;
+
+}
+
+
+
+.modal-contenido::-webkit-scrollbar-track{
+
+    background:#11182c;
+
+}
+
+
+
+.modal-contenido::-webkit-scrollbar-thumb{
+
+    background:#98ec63;
+
+    border-radius:20px;
+
+}
+
+
+
+/*==================================================
+        ANIMACION
+==================================================*/
+
+
+@keyframes modalFade{
+
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(25px) scale(.95);
+
+    }
+
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0) scale(1);
+
+    }
+
+
+}
+
+
+/*==================================================
+        RESPONSIVE
+==================================================*/
+
+
+@media(max-width:700px){
+
+
+    .modal-viaje{
+
+        padding:15px;
+
+    }
+
+
+    .modal-contenido{
+
+        padding:25px;
+
+    }
+
+
+    .detalle-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+
+    .modal-contenido h2{
+
+        font-size:23px;
+
+    }
+
+
+    #mapaViaje{
+
+        height:220px;
+
+    }
+
+
+}
+
+/*==================================================
+        CONFIGURACION
+==================================================*/
+
+
+.config-container{
+
+    width:100%;
+
+}
+
+
+
+/*==================================================
+        ENCABEZADO
+==================================================*/
+
+
+.config-header{
+
+    margin-bottom:35px;
+
+}
+
+
+.config-header h2{
+
+    color:white;
+
+    font-size:28px;
+
+    font-weight:700;
+
+    margin-bottom:8px;
+
+}
+
+
+.config-header p{
+
+    color:#d6d6d6;
+
+    font-size:15px;
+
+}
+
+
+
+/*==================================================
+        SECCIONES
+==================================================*/
+
+
+.config-section{
+
+    margin-bottom:35px;
+
+}
+
+
+
+.config-section h3{
+
+    color:#98ec63;
+
+    font-size:18px;
+
+    font-weight:600;
+
+    margin-bottom:18px;
+
+}
+
+
+/*==================================================
+        OPCIONES DE CONFIGURACION
+==================================================*/
+
+
+.config-option{
+
+    width:100%;
+
+    min-height:90px;
+
+    background:#1b2437;
+
+    border-radius:15px;
+
+    padding:20px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:20px;
+
+    margin-bottom:15px;
+
+    transition:.25s;
+
+    border:1px solid transparent;
+
+}
+
+
+
+.config-option:hover{
+
+    border-color:#98ec63;
+
+    transform:translateY(-2px);
+
+}
+
+
+
+/*==================================================
+        ICONOS
+==================================================*/
+
+
+.option-icon{
+
+    width:55px;
+
+    height:55px;
+
+    background:#263249;
+
+    border-radius:12px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    flex-shrink:0;
+
+}
+
+
+
+.option-icon i{
+
+    color:#98ec63;
+
+    font-size:24px;
+
+}
+
+
+
+/*==================================================
+        INFORMACION
+==================================================*/
+
+
+.option-info{
+
+    flex:1;
+
+}
+
+
+
+.option-info h4{
+
+    color:white;
+
+    font-size:17px;
+
+    font-weight:600;
+
+    margin-bottom:6px;
+
+}
+
+
+
+.option-info p{
+
+    color:#cfcfcf;
+
+    font-size:14px;
+
+    line-height:1.4;
+
+}
+
+
+
+/*==================================================
+        ACCIONES
+==================================================*/
+
+
+.option-action{
+
+    display:flex;
+
+    align-items:center;
+
+}
+
+
+
+/*==================================================
+        SELECT IDIOMA
+==================================================*/
+
+
+.option-action select{
+
+    height:42px;
+
+    min-width:130px;
+
+    padding:0 15px;
+
+    background:#263249;
+
+    border:none;
+
+    outline:none;
+
+    border-radius:10px;
+
+    color:white;
+
+    font-size:15px;
+
+    cursor:pointer;
+
+}
+
+
+
+.option-action select option{
+
+    background:#263249;
+
+    color:white;
+
+}
+
+
+
+/*==================================================
+        MODO OSCURO DESHABILITADO
+==================================================*/
+
+
+.config-option.disabled{
+
+    opacity:.55;
+
+    cursor:not-allowed;
+
+}
+
+
+
+.config-option.disabled:hover{
+
+    transform:none;
+
+    border-color:transparent;
+
+}
+
+
+
+.disabled-text{
+
+    color:#aaa;
+
+    font-size:14px;
+
+    font-weight:600;
+
+}
+
+
+
+/*==================================================
+        ELIMINAR CUENTA
+==================================================*/
+
+
+.danger-option{
+
+    border:1px solid rgba(255,80,80,.25);
+
+}
+
+
+
+.danger-option:hover{
+
+    border-color:#ff5555;
+
+}
+
+
+
+.danger-option .option-icon i{
+
+    color:#ff5555;
+
+}
+
+
+
+.btn-eliminar{
+
+    background:#ff5555;
+
+    color:white;
+
+    border:none;
+
+    border-radius:10px;
+
+    padding:12px 25px;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+}
+
+
+
+.btn-eliminar:hover{
+
+    background:#d93636;
+
+    transform:translateY(-2px);
+
+}
+
+
+
+/*==================================================
+        RESPONSIVE
+==================================================*/
+
+
+@media(max-width:800px){
+
+
+    .config-option{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+    }
+
+
+
+    .option-action{
+
+        width:100%;
+
+    }
+
+
+
+    .option-action select,
+
+    .btn-eliminar{
+
+        width:100%;
+
+    }
+
+
+}
+
+/*==================================================
+    CORRECCIÓN COMPLETA: TAB CONFIGURACIÓN
+==================================================*/
+
+/*
+Evita que el formulario limite el ancho
+o introduzca estilos inesperados.
+*/
+
+#config{
+
+    width:100%;
+
+}
+
+
+#config.active{
+
+    display:block !important;
+
+}
+
+
+#config .config-container{
+
+    width:100%;
+
+    display:block;
+
+    color:white;
+
+}
+
+
+/*==================================================
+    FORMULARIO DE CONFIGURACIÓN
+==================================================*/
+
+.config-form{
+
+    width:100%;
+
+    display:block;
+
+    margin:0;
+
+    padding:0;
+
+}
+
+
+/* Evita bordes o fondos heredados de otros formularios */
+
+.config-form fieldset{
+
+    border:none;
+
+    margin:0;
+
+    padding:0;
+
+}
+
+
+/*==================================================
+    ENCABEZADO
+==================================================*/
+
+#config .config-header{
+
+    width:100%;
+
+    margin-bottom:35px;
+
+}
+
+
+#config .config-header h2{
+
+    margin:0 0 8px 0;
+
+    color:#ffffff;
+
+    font-size:28px;
+
+    font-weight:700;
+
+}
+
+
+#config .config-header p{
+
+    margin:0;
+
+    color:#cfd4df;
+
+    font-size:15px;
+
+    line-height:1.5;
+
+}
+
+
+/*==================================================
+    SECCIONES
+==================================================*/
+
+#config .config-section{
+
+    width:100%;
+
+    margin-bottom:35px;
+
+}
+
+
+#config .config-section h3{
+
+    margin:0 0 18px 0;
+
+    color:#98ec63;
+
+    font-size:18px;
+
+    font-weight:700;
+
+}
+
+
+/*==================================================
+    TARJETAS DE CONFIGURACIÓN
+==================================================*/
+
+#config .config-option{
+
+    width:100%;
+
+    min-height:95px;
+
+    margin-bottom:15px;
+
+    padding:20px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:20px;
+
+    background:#1b2437;
+
+    border:1px solid rgba(255,255,255,.06);
+
+    border-radius:15px;
+
+    transition:
+        border-color .25s ease,
+        transform .25s ease,
+        box-shadow .25s ease;
+
+}
+
+
+#config .config-option:hover{
+
+    border-color:#98ec63;
+
+    transform:translateY(-2px);
+
+    box-shadow:0 8px 24px rgba(0,0,0,.18);
+
+}
+
+
+/*==================================================
+    ICONOS
+==================================================*/
+
+#config .option-icon{
+
+    width:55px;
+
+    height:55px;
+
+    min-width:55px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    flex-shrink:0;
+
+    background:#263249;
+
+    border-radius:12px;
+
+}
+
+
+#config .option-icon i{
+
+    color:#98ec63;
+
+    font-size:23px;
+
+}
+
+
+/*==================================================
+    INFORMACIÓN DE LA OPCIÓN
+==================================================*/
+
+#config .option-info{
+
+    flex:1;
+
+    min-width:0;
+
+}
+
+
+#config .option-info h4{
+
+    margin:0 0 6px 0;
+
+    color:#ffffff;
+
+    font-size:17px;
+
+    font-weight:700;
+
+}
+
+
+#config .option-info p{
+
+    margin:0;
+
+    color:#cfd4df;
+
+    font-size:14px;
+
+    line-height:1.5;
+
+}
+
+
+/*==================================================
+    CONTENEDOR DE ACCIONES
+==================================================*/
+
+#config .option-action{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:flex-end;
+
+    flex-shrink:0;
+
+}
+
+
+/*==================================================
+    SELECTS DE CONFIGURACIÓN
+==================================================*/
+
+#config .option-action select{
+
+    width:auto;
+
+    min-width:160px;
+
+    height:44px;
+
+    padding:0 40px 0 14px;
+
+    color:#ffffff;
+
+    background-color:#263249;
+
+    border:1px solid rgba(255,255,255,.12);
+
+    border-radius:10px;
+
+    outline:none;
+
+    font-size:15px;
+
+    cursor:pointer;
+
+    appearance:none;
+
+    -webkit-appearance:none;
+
+    background-image:
+        linear-gradient(
+            45deg,
+            transparent 50%,
+            #98ec63 50%
+        ),
+        linear-gradient(
+            135deg,
+            #98ec63 50%,
+            transparent 50%
+        );
+
+    background-position:
+        calc(100% - 18px) 18px,
+        calc(100% - 13px) 18px;
+
+    background-size:
+        5px 5px,
+        5px 5px;
+
+    background-repeat:no-repeat;
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
+
+}
+
+
+#config .option-action select:hover{
+
+    border-color:rgba(152,236,99,.65);
+
+}
+
+
+#config .option-action select:focus{
+
+    border-color:#98ec63;
+
+    box-shadow:0 0 0 3px rgba(152,236,99,.12);
+
+}
+
+
+#config .option-action select option{
+
+    color:#ffffff;
+
+    background:#263249;
+
+}
+
+
+/*==================================================
+    OPCIÓN DESHABILITADA
+==================================================*/
+
+#config .config-option.disabled{
+
+    opacity:.55;
+
+    cursor:not-allowed;
+
+}
+
+
+#config .config-option.disabled:hover{
+
+    border-color:rgba(255,255,255,.06);
+
+    transform:none;
+
+    box-shadow:none;
+
+}
+
+
+#config .disabled-text{
+
+    color:#aeb4c1;
+
+    font-size:14px;
+
+    font-weight:600;
+
+}
+
+
+/*==================================================
+    BOTÓN GUARDAR
+==================================================*/
+
+#config .config-actions{
+
+    width:100%;
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    align-items:center;
+
+    margin-top:25px;
+
+}
+
+
+#config .btn-guardar-config{
+
+    min-height:46px;
+
+    padding:12px 24px;
+
+    display:inline-flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:10px;
+
+    color:#11182c;
+
+    background:#98ec63;
+
+    border:none;
+
+    border-radius:10px;
+
+    font-size:15px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:
+        background .2s ease,
+        transform .2s ease,
+        box-shadow .2s ease;
+
+}
+
+
+#config .btn-guardar-config i{
+
+    color:#11182c;
+
+    font-size:16px;
+
+}
+
+
+#config .btn-guardar-config:hover{
+
+    background:#a8f77a;
+
+    transform:translateY(-2px);
+
+    box-shadow:0 8px 20px rgba(152,236,99,.23);
+
+}
+
+
+#config .btn-guardar-config:active{
+
+    transform:translateY(0);
+
+}
+
+
+/*==================================================
+    ELIMINAR CUENTA
+==================================================*/
+
+#config .danger-option{
+
+    border-color:rgba(255,80,80,.25);
+
+}
+
+
+#config .danger-option:hover{
+
+    border-color:#ff5555;
+
+}
+
+
+#config .danger-option .option-icon i{
+
+    color:#ff5555;
+
+}
+
+
+#config .btn-eliminar{
+
+    min-height:44px;
+
+    padding:11px 23px;
+
+    color:#ffffff;
+
+    background:#ff5555;
+
+    border:none;
+
+    border-radius:10px;
+
+    font-size:15px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:
+        background .2s ease,
+        transform .2s ease,
+        box-shadow .2s ease;
+
+}
+
+
+#config .btn-eliminar:hover{
+
+    background:#d93636;
+
+    transform:translateY(-2px);
+
+    box-shadow:0 7px 18px rgba(255,85,85,.2);
+
+}
+
+
+/*==================================================
+    RESPONSIVE CONFIGURACIÓN
+==================================================*/
+
+@media(max-width:800px){
+
+    #config .config-option{
+
+        align-items:flex-start;
+
+        flex-wrap:wrap;
+
+    }
+
+
+    #config .option-info{
+
+        flex:1;
+
+        min-width:calc(100% - 80px);
+
+    }
+
+
+    #config .option-action{
+
+        width:100%;
+
+        justify-content:flex-start;
+
+        padding-left:75px;
+
+    }
+
+
+    #config .option-action select,
+
+    #config .btn-eliminar{
+
+        width:100%;
+
+    }
+
+
+    #config .config-actions{
+
+        justify-content:stretch;
+
+    }
+
+
+    #config .btn-guardar-config{
+
+        width:100%;
+
+    }
+
+}
+
+
+@media(max-width:520px){
+
+    #config .config-header h2{
+
+        font-size:24px;
+
+    }
+
+
+    #config .config-option{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        padding:18px;
+
+    }
+
+
+    #config .option-info{
+
+        width:100%;
+
+        min-width:100%;
+
+    }
+
+
+    #config .option-action{
+
+        width:100%;
+
+        padding-left:0;
+
+    }
+
+
+    #config .option-action select{
+
+        width:100%;
+
+    }
+
+}
+
+/*==================================================
+    FORMULARIOS CONDUCTOR Y VEHÍCULO
+==================================================*/
+
+#conductor,
+#vehiculo{
+
+    width:100%;
+
+}
+
+
+/*==================================================
+    CONTENEDOR GENERAL
+==================================================*/
+
+#conductor .formulario-container,
+#vehiculo .formulario-container{
+
+    width:100%;
+
+    background:#1b2437;
+
+    border:1px solid rgba(255,255,255,.06);
+
+    border-radius:18px;
+
+    padding:30px;
+
+    box-shadow:0 12px 30px rgba(0,0,0,.18);
+
+}
+
+
+/*==================================================
+    ENCABEZADO
+==================================================*/
+
+#conductor .formulario-header,
+#vehiculo .formulario-header{
+
+    width:100%;
+
+    margin-bottom:30px;
+
+    padding-bottom:20px;
+
+    border-bottom:1px solid rgba(255,255,255,.08);
+
+}
+
+
+#conductor .formulario-header h2,
+#vehiculo .formulario-header h2{
+
+    color:#ffffff;
+
+    font-size:28px;
+
+    font-weight:700;
+
+    margin-bottom:8px;
+
+}
+
+
+#conductor .formulario-header p,
+#vehiculo .formulario-header p{
+
+    color:#cfd4df;
+
+    font-size:15px;
+
+    line-height:1.5;
+
+}
+
+
+/*==================================================
+    FORMULARIO
+==================================================*/
+
+#conductor form.formulario,
+#vehiculo form.formulario{
+
+    width:100%;
+
+    display:grid;
+
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+
+    gap:22px 25px;
+
+}
+
+
+/*==================================================
+    CAMPOS
+==================================================*/
+
+#conductor .campo,
+#vehiculo .campo{
+
+    width:100%;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:9px;
+
+}
+
+
+#conductor .campo label,
+#vehiculo .campo label{
+
+    color:#ffffff;
+
+    font-size:14px;
+
+    font-weight:600;
+
+}
+
+
+/*==================================================
+    INPUT BOX
+==================================================*/
+
+#conductor .input-box,
+#vehiculo .input-box{
+
+    width:100%;
+
+    min-height:52px;
+
+    position:relative;
+
+    display:flex;
+
+    align-items:center;
+
+    background:#263249;
+
+    border:1px solid transparent;
+
+    border-radius:11px;
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease,
+        background .2s ease;
+
+}
+
+
+#conductor .input-box:focus-within,
+#vehiculo .input-box:focus-within{
+
+    border-color:#98ec63;
+
+    box-shadow:0 0 0 3px rgba(152,236,99,.12);
+
+}
+
+
+/*==================================================
+    INPUTS, SELECTS Y TEXTAREA
+==================================================*/
+
+#conductor .input-box input,
+#conductor .input-box select,
+#conductor .input-box textarea,
+#vehiculo .input-box input,
+#vehiculo .input-box select,
+#vehiculo .input-box textarea{
+
+    width:100%;
+
+    min-height:52px;
+
+    padding:0 52px 0 16px;
+
+    color:#ffffff;
+
+    background:transparent;
+
+    border:none;
+
+    outline:none;
+
+    font-size:15px;
+
+}
+
+
+#conductor .input-box textarea,
+#vehiculo .input-box textarea{
+
+    min-height:120px;
+
+    padding-top:15px;
+
+    resize:vertical;
+
+}
+
+
+#conductor .input-box select,
+#vehiculo .input-box select{
+
+    cursor:pointer;
+
+}
+
+
+#conductor .input-box select option,
+#vehiculo .input-box select option{
+
+    color:#ffffff;
+
+    background:#263249;
+
+}
+
+
+#conductor .input-box input::placeholder,
+#conductor .input-box textarea::placeholder,
+#vehiculo .input-box input::placeholder,
+#vehiculo .input-box textarea::placeholder{
+
+    color:#98a1b3;
+
+}
+
+
+/*==================================================
+    CAMPOS BLOQUEADOS
+==================================================*/
+
+#conductor .input-box input[readonly],
+#conductor .input-box textarea[readonly],
+#conductor .input-box select:disabled,
+#vehiculo .input-box input[readonly],
+#vehiculo .input-box textarea[readonly],
+#vehiculo .input-box select:disabled{
+
+    color:#d7dbe4;
+
+    cursor:default;
+
+}
+
+
+#conductor .input-box input.editando,
+#conductor .input-box textarea.editando,
+#conductor .input-box select.editando,
+#vehiculo .input-box input.editando,
+#vehiculo .input-box textarea.editando,
+#vehiculo .input-box select.editando{
+
+    color:#ffffff;
+
+}
+
+
+/*==================================================
+    BOTÓN EDITAR
+==================================================*/
+
+#conductor .editar,
+#vehiculo .editar{
+
+    width:38px;
+
+    height:38px;
+
+    position:absolute;
+
+    right:7px;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    color:#98ec63;
+
+    background:#1b2437;
+
+    border:none;
+
+    border-radius:9px;
+
+    cursor:pointer;
+
+    transition:
+        background .2s ease,
+        transform .2s ease,
+        color .2s ease;
+
+}
+
+
+#conductor .editar:hover,
+#vehiculo .editar:hover{
+
+    color:#11182c;
+
+    background:#98ec63;
+
+    transform:translateY(-50%) scale(1.05);
+
+}
+
+
+#conductor .editar i,
+#vehiculo .editar i{
+
+    font-size:15px;
+
+}
+
+
+/*==================================================
+    CAMPOS DE ARCHIVO
+==================================================*/
+
+#conductor .input-archivo,
+#vehiculo .input-archivo{
+
+    width:100%;
+
+    min-height:110px;
+
+    padding:18px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:10px;
+
+    text-align:center;
+
+    background:#263249;
+
+    border:2px dashed rgba(152,236,99,.45);
+
+    border-radius:13px;
+
+    transition:
+        border-color .2s ease,
+        background .2s ease,
+        transform .2s ease;
+
+}
+
+
+#conductor .input-archivo:hover,
+#vehiculo .input-archivo:hover{
+
+    border-color:#98ec63;
+
+    background:#2b3852;
+
+}
+
+
+#conductor .input-archivo i,
+#vehiculo .input-archivo i{
+
+    color:#98ec63;
+
+    font-size:28px;
+
+}
+
+
+#conductor .input-archivo span,
+#vehiculo .input-archivo span{
+
+    color:#d8dde7;
+
+    font-size:14px;
+
+}
+
+
+#conductor .input-archivo input[type="file"],
+#vehiculo .input-archivo input[type="file"]{
+
+    width:100%;
+
+    color:#cfd4df;
+
+    font-size:13px;
+
+    cursor:pointer;
+
+}
+
+
+#conductor input[type="file"]::file-selector-button,
+#vehiculo input[type="file"]::file-selector-button{
+
+    margin-right:12px;
+
+    padding:9px 14px;
+
+    color:#11182c;
+
+    background:#98ec63;
+
+    border:none;
+
+    border-radius:8px;
+
+    font-size:13px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+}
+
+
+/*==================================================
+    IMÁGENES / DOCUMENTOS ACTUALES
+==================================================*/
+
+#conductor .archivo-actual,
+#vehiculo .archivo-actual{
+
+    width:100%;
+
+    margin-top:10px;
+
+    padding:12px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    background:#202c42;
+
+    border-radius:10px;
+
+}
+
+
+#conductor .archivo-actual img,
+#vehiculo .archivo-actual img{
+
+    width:75px;
+
+    height:75px;
+
+    object-fit:cover;
+
+    border-radius:10px;
+
+    border:2px solid rgba(152,236,99,.45);
+
+}
+
+
+#conductor .archivo-actual a,
+#vehiculo .archivo-actual a{
+
+    color:#98ec63;
+
+    font-size:14px;
+
+    text-decoration:none;
+
+}
+
+
+#conductor .archivo-actual a:hover,
+#vehiculo .archivo-actual a:hover{
+
+    text-decoration:underline;
+
+}
+
+
+/*==================================================
+    ESTADO DEL CONDUCTOR
+==================================================*/
+
+#conductor .estado-verificacion{
+
+    width:100%;
+
+    min-height:52px;
+
+    padding:12px 16px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    color:#ffffff;
+
+    background:#263249;
+
+    border-radius:11px;
+
+}
+
+
+#conductor .estado-verificacion i{
+
+    color:#98ec63;
+
+}
+
+
+#conductor .estado-verificacion.pendiente{
+
+    border:1px solid rgba(255,196,74,.35);
+
+}
+
+
+#conductor .estado-verificacion.pendiente i{
+
+    color:#ffc44a;
+
+}
+
+
+#conductor .estado-verificacion.rechazado{
+
+    border:1px solid rgba(255,85,85,.35);
+
+}
+
+
+#conductor .estado-verificacion.rechazado i{
+
+    color:#ff5555;
+
+}
+
+
+/*==================================================
+    CAMPOS A ANCHO COMPLETO
+==================================================*/
+
+#conductor .campo.completo,
+#vehiculo .campo.completo{
+
+    grid-column:1 / -1;
+
+}
+
+
+/*==================================================
+    BOTONES
+==================================================*/
+
+#conductor .botones,
+#vehiculo .botones{
+
+    grid-column:1 / -1;
+
+    width:100%;
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    align-items:center;
+
+    gap:12px;
+
+    margin-top:10px;
+
+}
+
+
+#conductor .guardar,
+#vehiculo .guardar{
+
+    min-width:130px;
+
+    min-height:45px;
+
+    padding:11px 22px;
+
+    color:#11182c;
+
+    background:#98ec63;
+
+    border:none;
+
+    border-radius:10px;
+
+    font-size:15px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:
+        background .2s ease,
+        transform .2s ease,
+        box-shadow .2s ease;
+
+}
+
+
+#conductor .guardar:hover,
+#vehiculo .guardar:hover{
+
+    background:#a9f77d;
+
+    transform:translateY(-2px);
+
+    box-shadow:0 8px 20px rgba(152,236,99,.2);
+
+}
+
+
+#conductor .cancelar,
+#vehiculo .cancelar{
+
+    min-width:120px;
+
+    min-height:45px;
+
+    padding:11px 22px;
+
+    color:#ffffff;
+
+    background:#36425a;
+
+    border:none;
+
+    border-radius:10px;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:
+        background .2s ease,
+        transform .2s ease;
+
+}
+
+
+#conductor .cancelar:hover,
+#vehiculo .cancelar:hover{
+
+    background:#46546f;
+
+    transform:translateY(-2px);
+
+}
+
+
+/*==================================================
+    MENSAJES DE AYUDA Y ERROR
+==================================================*/
+
+#conductor .texto-ayuda,
+#vehiculo .texto-ayuda{
+
+    color:#9ca6b8;
+
+    font-size:12px;
+
+    line-height:1.4;
+
+}
+
+
+#conductor .errorlist,
+#vehiculo .errorlist{
+
+    margin-top:7px;
+
+    padding:10px 12px;
+
+    color:#ffb1b1;
+
+    background:rgba(255,85,85,.1);
+
+    border:1px solid rgba(255,85,85,.25);
+
+    border-radius:8px;
+
+    list-style:none;
+
+    font-size:13px;
+
+}
+
+
+/*==================================================
+    RESPONSIVE
+==================================================*/
+
+@media(max-width:900px){
+
+    #conductor form.formulario,
+    #vehiculo form.formulario{
+
+        grid-template-columns:1fr;
+
+    }
+
+
+    #conductor .campo.completo,
+    #vehiculo .campo.completo{
+
+        grid-column:auto;
+
+    }
+
+
+    #conductor .botones,
+    #vehiculo .botones{
+
+        grid-column:auto;
+
+    }
+
+}
+
+
+@media(max-width:600px){
+
+    #conductor .formulario-container,
+    #vehiculo .formulario-container{
+
+        padding:20px;
+
+        border-radius:14px;
+
+    }
+
+
+    #conductor .formulario-header h2,
+    #vehiculo .formulario-header h2{
+
+        font-size:23px;
+
+    }
+
+
+    #conductor .botones,
+    #vehiculo .botones{
+
+        flex-direction:column;
+
+        align-items:stretch;
+
+    }
+
+
+    #conductor .guardar,
+    #conductor .cancelar,
+    #vehiculo .guardar,
+    #vehiculo .cancelar{
+
+        width:100%;
+
+    }
+
+
+    #conductor .input-box input,
+    #conductor .input-box select,
+    #conductor .input-box textarea,
+    #vehiculo .input-box input,
+    #vehiculo .input-box select,
+    #vehiculo .input-box textarea{
+
+        font-size:14px;
+
+    }
+
+}

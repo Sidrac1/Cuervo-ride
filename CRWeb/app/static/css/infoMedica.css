@@ -1,0 +1,783 @@
+/*==================================================
+RESET
+==================================================*/
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    background:#0c0f1c;
+    min-height:100vh;
+    color:white;
+    padding:40px;
+}
+
+
+/*==================================================
+BOTÓN REGRESAR
+==================================================*/
+
+.back{
+    position:absolute;
+    top:35px;
+    left:35px;
+
+    color:white;
+    text-decoration:none;
+    font-size:17px;
+
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    transition:
+        color .25s ease,
+        transform .25s ease;
+}
+
+.back i{
+    font-size:16px;
+}
+
+.back:hover{
+    color:#98ec63;
+    transform:translateX(-3px);
+}
+
+
+/*==================================================
+MARCA
+==================================================*/
+
+.brand{
+    position:absolute;
+    top:35px;
+    right:40px;
+
+    font-size:22px;
+    font-weight:700;
+}
+
+.brand span{
+    color:#98ec63;
+}
+
+
+/*==================================================
+TARJETA PRINCIPAL
+==================================================*/
+
+.card{
+    width:100%;
+    max-width:1050px;
+
+    margin:90px auto 40px;
+    padding:45px;
+
+    background:#1b2437;
+
+    border-radius:20px;
+    border:2px solid rgba(152,236,99,.20);
+
+    box-shadow:0 20px 50px rgba(0,0,0,.35);
+}
+
+
+/*==================================================
+TÍTULO Y DESCRIPCIÓN
+==================================================*/
+
+.card h1{
+    text-align:center;
+    margin-bottom:15px;
+    font-size:34px;
+}
+
+.descripcion{
+    max-width:750px;
+    margin:0 auto 40px;
+
+    text-align:center;
+    color:#c5cad7;
+    line-height:1.6;
+}
+
+
+/*==================================================
+FORMULARIO
+==================================================*/
+
+#formInfoMedica{
+    width:100%;
+}
+
+
+/*==================================================
+BLOQUES
+==================================================*/
+
+.bloque{
+    margin-bottom:35px;
+    padding:25px;
+
+    background:#263249;
+
+    border-radius:15px;
+    border:1px solid transparent;
+
+    transition:
+        border-color .35s ease,
+        box-shadow .35s ease,
+        transform .35s ease;
+}
+
+.bloque:hover{
+    border-color:rgba(152,236,99,.15);
+    box-shadow:0 8px 20px rgba(0,0,0,.12);
+}
+
+.bloque h2{
+    color:#98ec63;
+    margin-bottom:25px;
+    font-size:22px;
+}
+
+
+/*==================================================
+GRID GENERAL
+==================================================*/
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:25px;
+}
+
+
+/*==================================================
+CAMPOS
+==================================================*/
+
+.campo{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+
+    min-width:0;
+}
+
+.campo > label{
+    font-size:15px;
+    font-weight:600;
+    color:white;
+}
+
+
+/*==================================================
+INPUTS, SELECTS Y TEXTAREA
+==================================================*/
+
+input[type="text"],
+input[type="tel"],
+select,
+textarea{
+    width:100%;
+    padding:14px;
+
+    border:2px solid transparent;
+    border-radius:10px;
+
+    background:#11182c;
+    color:white;
+
+    font-size:15px;
+    outline:none;
+
+    transition:
+        border-color .25s ease,
+        box-shadow .25s ease,
+        background .25s ease;
+}
+
+input[type="text"]:hover,
+input[type="tel"]:hover,
+select:hover,
+textarea:hover{
+    background:#141d34;
+}
+
+input[type="text"]:focus,
+input[type="tel"]:focus,
+select:focus,
+textarea:focus{
+    border-color:#98ec63;
+    box-shadow:0 0 0 3px rgba(152,236,99,.12);
+}
+
+input::placeholder,
+textarea::placeholder{
+    color:#7f899e;
+}
+
+select{
+    cursor:pointer;
+}
+
+select option{
+    background:#11182c;
+    color:white;
+}
+
+textarea{
+    resize:vertical;
+    min-height:120px;
+    line-height:1.5;
+}
+
+
+/*==================================================
+CAMPOS DESHABILITADOS
+==================================================*/
+
+input:disabled,
+select:disabled,
+textarea:disabled{
+    opacity:.55;
+    cursor:not-allowed;
+    background:#0d1324;
+    color:#8e96a8;
+}
+
+input:disabled::placeholder{
+    color:#626b7d;
+}
+
+
+/*==================================================
+RADIOS
+==================================================*/
+
+.radio-group{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:15px 30px;
+
+    min-height:48px;
+    margin-top:2px;
+}
+
+.radio-group label{
+    display:flex;
+    align-items:center;
+    gap:8px;
+
+    padding:8px 12px;
+
+    border-radius:8px;
+    color:#e4e8f0;
+
+    cursor:pointer;
+    user-select:none;
+
+    transition:
+        background .25s ease,
+        color .25s ease;
+}
+
+.radio-group label:hover{
+    background:rgba(152,236,99,.08);
+    color:#98ec63;
+}
+
+.radio-group input[type="radio"]{
+    width:18px;
+    height:18px;
+
+    margin:0;
+
+    accent-color:#98ec63;
+    cursor:pointer;
+}
+
+
+/*==================================================
+CHECKBOX GRID
+==================================================*/
+
+.checkbox-grid{
+    display:grid;
+    grid-template-columns:repeat(3, minmax(0, 1fr));
+    gap:15px;
+}
+
+.checkbox-grid label{
+    min-height:48px;
+
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    padding:12px 14px;
+
+    background:#11182c;
+    border:2px solid transparent;
+    border-radius:10px;
+
+    color:#e4e8f0;
+    cursor:pointer;
+    user-select:none;
+
+    transition:
+        background .25s ease,
+        border-color .25s ease,
+        color .25s ease,
+        transform .25s ease;
+}
+
+.checkbox-grid label:hover{
+    background:#141d34;
+    border-color:rgba(152,236,99,.35);
+    color:#98ec63;
+    transform:translateY(-1px);
+}
+
+.checkbox-grid input[type="checkbox"]{
+    width:18px;
+    height:18px;
+
+    flex-shrink:0;
+
+    accent-color:#98ec63;
+    cursor:pointer;
+}
+
+
+/*==================================================
+CAMPO OTRO APOYO
+==================================================*/
+
+.otro-apoyo-campo{
+    margin-top:22px;
+    padding-top:22px;
+
+    border-top:1px solid rgba(255,255,255,.08);
+}
+
+.otro-apoyo-campo input{
+    max-width:100%;
+}
+
+/*
+Esta clase se puede agregar desde JavaScript
+para ocultar el campo cuando no esté marcado.
+*/
+
+.otro-apoyo-campo.oculto{
+    display:none;
+}
+
+
+/*==================================================
+ESTADO DE SECCIONES DESHABILITADAS
+==================================================*/
+
+/*
+Estas clases pueden utilizarse desde JavaScript
+cuando el usuario seleccione que no presenta discapacidad.
+*/
+
+.bloque.deshabilitado{
+    opacity:.55;
+    pointer-events:none;
+}
+
+.bloque.oculto{
+    display:none;
+}
+
+
+/*==================================================
+BOTONES
+==================================================*/
+
+.acciones{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:25px;
+
+    margin-top:40px;
+}
+
+.guardar{
+    min-width:210px;
+
+    padding:15px 35px;
+
+    background:#98ec63;
+    color:#11182c;
+
+    border:none;
+    border-radius:12px;
+
+    font-size:16px;
+    font-weight:bold;
+
+    cursor:pointer;
+
+    box-shadow:0 8px 20px rgba(152,236,99,.15);
+
+    transition:
+        background .25s ease,
+        transform .25s ease,
+        box-shadow .25s ease;
+}
+
+.guardar:hover{
+    background:#7edb42;
+    transform:translateY(-2px);
+    box-shadow:0 10px 25px rgba(152,236,99,.25);
+}
+
+.guardar:active{
+    transform:translateY(0);
+}
+
+.guardar:disabled{
+    opacity:.55;
+    cursor:not-allowed;
+    transform:none;
+    box-shadow:none;
+}
+
+.omitir{
+    color:#bfc6d4;
+    text-decoration:none;
+    font-size:15px;
+
+    transition:color .25s ease;
+}
+
+.omitir:hover{
+    color:#98ec63;
+}
+
+
+/*==================================================
+INDICADOR DE PROGRESO
+==================================================*/
+
+.progress{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    width:100%;
+    margin:40px 0 50px;
+}
+
+.step{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+
+    min-width:150px;
+}
+
+.circle{
+    width:50px;
+    height:50px;
+
+    border-radius:50%;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    background:#11182c;
+    border:2px solid #46516b;
+
+    color:#aeb7c7;
+
+    font-size:18px;
+    font-weight:bold;
+
+    transition:
+        background .3s ease,
+        border-color .3s ease,
+        color .3s ease,
+        box-shadow .3s ease;
+}
+
+.step span{
+    margin-top:12px;
+
+    font-size:14px;
+    color:#aeb7c7;
+
+    text-align:center;
+    font-weight:500;
+}
+
+
+/*==================================================
+LÍNEAS DEL PROGRESO
+==================================================*/
+
+.line{
+    width:90px;
+    height:3px;
+
+    margin:0 10px;
+
+    background:#46516b;
+    border-radius:10px;
+
+    transition:background .3s ease;
+}
+
+
+/*==================================================
+PASO COMPLETADO
+==================================================*/
+
+.step.completed .circle{
+    background:#98ec63;
+    border-color:#98ec63;
+    color:#11182c;
+}
+
+.step.completed span{
+    color:#98ec63;
+    font-weight:600;
+}
+
+.line.completed{
+    background:#98ec63;
+}
+
+
+/*==================================================
+PASO ACTUAL
+==================================================*/
+
+.step.active .circle{
+    background:#263249;
+    border-color:#98ec63;
+    color:#98ec63;
+
+    box-shadow:0 0 15px rgba(152,236,99,.35);
+}
+
+.step.active span{
+    color:white;
+    font-weight:600;
+}
+
+
+/*==================================================
+PASO PENDIENTE
+==================================================*/
+
+.step:not(.completed):not(.active) .circle{
+    background:#11182c;
+    border-color:#46516b;
+    color:#7e879b;
+}
+
+.step:not(.completed):not(.active) span{
+    color:#7e879b;
+}
+
+
+/*==================================================
+VALIDACIONES VISUALES
+==================================================*/
+
+.campo-error input,
+.campo-error select,
+.campo-error textarea{
+    border-color:#ff6b6b;
+}
+
+.mensaje-error{
+    color:#ff8c8c;
+    font-size:13px;
+    line-height:1.4;
+}
+
+.mensaje-exito{
+    padding:14px 18px;
+    margin-bottom:25px;
+
+    background:rgba(152,236,99,.10);
+    border:1px solid rgba(152,236,99,.35);
+    border-radius:10px;
+
+    color:#baff91;
+}
+
+
+/*==================================================
+RESPONSIVE TABLET
+==================================================*/
+
+@media(max-width:900px){
+
+    body{
+        padding:30px;
+    }
+
+    .card{
+        padding:30px;
+    }
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .checkbox-grid{
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+/*==================================================
+RESPONSIVE PROGRESO
+==================================================*/
+
+@media(max-width:768px){
+
+    .progress{
+        flex-direction:column;
+        gap:14px;
+
+        margin:35px 0 45px;
+    }
+
+    .line{
+        width:3px;
+        height:35px;
+
+        margin:0;
+    }
+
+    .step{
+        min-width:auto;
+    }
+
+    .acciones{
+        flex-direction:column;
+        align-items:stretch;
+    }
+
+    .guardar{
+        width:100%;
+    }
+
+    .omitir{
+        text-align:center;
+    }
+
+}
+
+
+/*==================================================
+RESPONSIVE MÓVIL
+==================================================*/
+
+@media(max-width:600px){
+
+    body{
+        padding:20px;
+    }
+
+    .brand{
+        position:static;
+
+        margin-bottom:25px;
+
+        text-align:center;
+    }
+
+    .back{
+        position:static;
+
+        width:max-content;
+        margin-bottom:25px;
+    }
+
+    .card{
+        margin:20px auto;
+        padding:24px 18px;
+
+        border-radius:16px;
+    }
+
+    .card h1{
+        font-size:28px;
+    }
+
+    .descripcion{
+        font-size:14px;
+        margin-bottom:30px;
+    }
+
+    .bloque{
+        padding:20px 16px;
+    }
+
+    .bloque h2{
+        font-size:19px;
+    }
+
+    .checkbox-grid{
+        grid-template-columns:1fr;
+    }
+
+    .radio-group{
+        gap:10px;
+    }
+
+}
+
+
+/*==================================================
+MÓVILES PEQUEÑOS
+==================================================*/
+
+@media(max-width:400px){
+
+    body{
+        padding:15px;
+    }
+
+    .card{
+        padding:22px 14px;
+    }
+
+    .bloque{
+        padding:18px 13px;
+    }
+
+    .radio-group{
+        flex-direction:column;
+        align-items:stretch;
+    }
+
+    .radio-group label{
+        width:100%;
+        background:#11182c;
+    }
+
+}

@@ -1,0 +1,153 @@
+<form
+    class="formulario"
+    id="formDatosSensibles"
+    method="POST">
+
+
+{% csrf_token %}
+
+<!--=====================================
+        CORREO INSTITUCIONAL
+======================================-->
+
+<div class="campo">
+
+    <label for="email">
+        Correo institucional
+    </label>
+
+    <div class="input-box">
+
+        <input
+            type="email"
+            id="email"
+            name="email"
+            value="{{ request.user.email }}"
+            maxlength="254"
+            autocomplete="email"
+            readonly>
+
+        <i
+            class="fa-solid fa-pencil editar"
+            data-input="email">
+        </i>
+
+    </div>
+
+</div>
+
+
+<!--=====================================
+                TELÉFONO
+======================================-->
+
+<div class="campo">
+
+    <label for="telefono">
+        Teléfono
+    </label>
+
+    <div class="input-box">
+
+        <input
+            type="tel"
+            id="telefono"
+            name="telefono"
+            value="{{ request.user.telefono }}"
+            maxlength="15"
+            autocomplete="tel"
+            placeholder="Ingresa tu teléfono"
+            readonly>
+
+        <i
+            class="fa-solid fa-pencil editar"
+            data-input="telefono">
+        </i>
+
+    </div>
+
+</div>
+
+
+<!--=====================================
+            NUEVA CONTRASEÑA
+======================================-->
+
+<div class="campo">
+
+    <label for="password">
+        Nueva contraseña
+    </label>
+
+    <div class="input-box">
+
+        <input
+            type="password"
+            id="password"
+            name="password"
+            minlength="8"
+            autocomplete="new-password"
+            placeholder="********"
+            readonly>
+
+        <i
+            class="fa-solid fa-pencil editar"
+            data-input="password">
+        </i>
+
+    </div>
+
+</div>
+
+
+<!--=====================================
+        CONFIRMAR CONTRASEÑA
+======================================-->
+
+<div class="campo">
+
+    <label for="confirmPassword">
+        Confirmar contraseña
+    </label>
+
+    <div class="input-box">
+
+        <input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            minlength="8"
+            autocomplete="new-password"
+            placeholder="********"
+            readonly>
+
+    </div>
+
+</div>
+
+
+<!--=====================================
+            BOTONES
+======================================-->
+
+<div class="botones oculto">
+
+    <button
+        type="button"
+        class="cancelar">
+
+        Cancelar
+
+    </button>
+
+    <button
+        type="submit"
+        class="guardar">
+
+        Guardar
+
+    </button>
+
+</div>
+
+</form>

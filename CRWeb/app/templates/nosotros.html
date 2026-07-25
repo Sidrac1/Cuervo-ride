@@ -1,0 +1,107 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nosotros</title>
+
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <link rel="stylesheet" href="{% static 'css/nosotros.css' %}">
+</head>
+
+<body>
+
+    {% include 'components/sidebar.html' %}
+
+    <!-- CONTENIDO -->
+
+    <main class="content">
+
+
+        <header>
+
+            <h1 class="logo-text">
+                Cuervo-<span>Ride</span>
+            </h1>
+
+        </header>
+
+        <section class="Nosotros">
+
+            <!-- NOSOTROS -->
+
+            <div class="Nosotros-top">
+
+
+                <div class="info">
+
+                    <h1>¿Quienes Somos?</h1>
+
+                </div>
+
+
+            </div>
+
+            <!-- CONTENIDO PRINCIPAL -->
+
+            <div class="contenido">
+                <h1>Sobre nosotros</h1>
+                <p>
+                    Somos un equipo de estudiantes de la Universidad Tecnológica de Tijuana comprometidos con mejorar la seguridad,
+                    accesibilidad y movilidad de nuestra comunidad universitaria. Nuestro proyecto nace a partir de una necesidad real: la
+                    falta de opciones de transporte seguras y confiables para los estudiantes que concluyen sus clases en horarios
+                    nocturnos. <br>
+                    <br>
+                    La plataforma fue diseñada para conectar a estudiantes que cuentan con vehículo propio y desean compartir
+                    trayectos, con compañeros que necesitan un traslado seguro hacia sus hogares. Todo esto dentro de un entorno
+                    controlado, exclusivo para la comunidad universitaria, donde la confianza, la verificación de usuarios y la inclusión son
+                    pilares fundamentales. <br>
+                    <br>
+                    Nuestro objetivo es transformar los “aventones” informales en una solución organizada, segura y accesible, que fomente
+                    el sentido de comunidad y reduzca los riesgos asociados al transporte nocturno. Además, integramos funcionalidades
+                    pensadas para estudiantes con discapacidades motrices, promoviendo un sistema de movilidad verdaderamente
+                    incluyente. <br>
+                    <br>
+                    Creemos que la tecnología puede ser una herramienta para cuidar a las personas, optimizar recursos y fortalecer la
+                    colaboración entre estudiantes. Por eso, desarrollamos una plataforma enfocada no solo en el traslado, sino en la
+                    tranquilidad y bienestar de quienes forman parte de la UTT.
+                </p>
+                <h2>Mision</h2>
+                <p>
+                    Coordinar el transporte durante el turno nocturno para el alumnado de la UTT mediante un modelo
+                    de raite (ride) seguro poniendo especial atención en la seguridad, accesibilidad y equidad en los
+                    costos. Nuestra misión está enfocada en resolver la necesidad de transporte para los alumnos en el
+                    turno vespertino que no cuentan con transporte público después de las 8:30 PM. Buscamos ofrecer
+                    una alternativa que fomente la colaboración entre los alumnos que cuentan con un vehículo propio y
+                    los alumnos que necesitan volver a sus casas después del horario de clases.
+                </p>
+                <h2>Vision</h2>
+                <p>
+                    Convertirse en el sistema predilecto por la UTT para gestionar el transporte seguro de sus
+                    estudiantes durante el turno nocturno poniendo especial atención en integrar al alumnado con
+                    discapacidades motrices. Nuestra visión apunta a un futuro donde todos los alumnos tengan
+                    transporte rápido, seguro, confiable y organizado para proteger a la comunidad estudiantil.
+                </p>
+                <h2>Valores</h2>
+                <p>
+                    El proyecto se fundamenta en principios como inclusión, seguridad, responsabilidad, colaboración,
+                    sostenibilidad y respeto. Estos valores guían tanto el diseño del sistema como la interacción entre
+                    usuarios, garantizando que la experiencia sea justa, confiable y orientada al bienestar de la
+                    comunidad universitaria.
+                </p>
+            </div>
+
+
+        </section>
+
+
+
+    </main>
+
+    <script src="{% static 'js/sidebarP.js' %}"></script>
+
+</body>
+</html>
