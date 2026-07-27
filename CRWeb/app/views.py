@@ -31,6 +31,11 @@ Usuario = get_user_model()
 # FUNCIONES AUXILIARES
 # =========================================================
 
+def inicio(request):
+    if request.user.is_authenticated:
+        return redirect("home")
+    return redirect("login")
+
 def es_administrador(usuario):
     return (
         usuario.is_authenticated
@@ -502,5 +507,3 @@ def api_actualizar_usuario(request, usuario_id):
         return JsonResponse({"ok": False, "error": "El usuario no existe."}, status=404)
     except Exception as e:
         return JsonResponse({"ok": False, "error": str(e)}, status=500)
-
-    
