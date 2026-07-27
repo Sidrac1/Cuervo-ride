@@ -6,7 +6,8 @@ urlpatterns = [
     # ---------------------------------------------------------
     # Vistas Públicas / Navegación
     # ---------------------------------------------------------
-    path("", views.home, name="home"),
+    path("", views.inicio, name="inicio"),
+    path("home/", views.home, name="home"),
     path("nosotros/", views.sobrenosotros, name="sobrenosotros"),
     path("agendar-viaje/", views.agendarviaje, name="agendarviaje"),
     path("filtro-viajes/", views.filtroviajes, name="filtroviajes"),
