@@ -16,24 +16,30 @@ body{
 
 .navbar{
     display:flex;
+    position:absolute;
+    width: 100%;
     align-items:center;
     padding:15px 40px;
-    background:#243047;
-    border-bottom:2px solid #9cffb5;
 }
 
 /* LOGO */
 
 .logo{
-    width:60px;
-    height:60px;
+    position:absolute;
+    left:30px;
+    top:70%;
+    transform:translateY(-50%);
 
-    background-image:url("/static/img/logo.png");
-    background-position:center;
+    width:140px;
+    height:140px;
+
+    background-image:url("/static/img/LMST.png");
     background-repeat:no-repeat;
+    background-position:center;
     background-size:contain;
 
     flex-shrink:0;
+    z-index:10;
 }
 
 /* NOMBRE */
@@ -62,7 +68,8 @@ body{
 }
 
 .nav-links a:hover{
-    color:#9cffb5;
+    color:#98ec63;
+    transform:scale(1.05);
 }
 
 /* PERFIL */
@@ -83,7 +90,7 @@ body{
     background-repeat:no-repeat;
     background-size:cover;
 
-    border:2px solid #9cffb5;
+    border:2px solid #98ec63;
 }
 
 /*=========================
@@ -91,9 +98,9 @@ body{
 ==========================*/
 
 .baner{
-    height:420px;
-    background-image:url("/static/img/baner.jpg");
-    background-position:center;
+    height:640px;
+    background-image:url("/static/img/baner.png");
+    background-position:bottom center;
     background-repeat:no-repeat;
     background-size:cover;
 
@@ -109,11 +116,11 @@ body{
 /* BOTÓN */
 
 .cta-btn{
-    margin-top:410px;
+    margin-top:620px;
     padding:15px 40px;
     border:none;
     border-radius:8px;
-    background:linear-gradient(135deg,#d6ffe0,#9cffb5);
+    background:#98ec63;
     font-size:18px;
     font-weight:bold;
     cursor:pointer;
@@ -145,4 +152,236 @@ body{
     color:#d2d2d2;
     line-height:1.8;
     font-size:18px;
+}
+
+/*==================================================
+    PERFIL Y MENÚ DESPLEGABLE
+==================================================*/
+
+.profile{
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+}
+
+.profile-button{
+    padding:0;
+    display:flex;
+    align-items:center;
+    gap:7px;
+    color:#ffffff;
+    background:transparent;
+    border:none;
+    border-radius:50px;
+    cursor:pointer;
+    outline:none;
+}
+
+.profile-button:hover .profile-icon,
+.profile-button.active .profile-icon{
+    border-color:#98ec63;
+    box-shadow:
+        0 0 0 4px rgba(152,236,99,.12),
+        0 6px 18px rgba(0,0,0,.25);
+}
+
+.profile-button:focus-visible{
+    outline:2px solid #98ec63;
+    outline-offset:4px;
+}
+
+.profile-icon{
+    width:46px;
+    height:46px;
+    object-fit:cover;
+    background:#ffffff;
+    border:2px solid rgba(255,255,255,.65);
+    border-radius:50%;
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease,
+        transform .2s ease;
+}
+
+.profile-button:hover .profile-icon{
+    transform:translateY(-1px);
+}
+
+.profile-arrow{
+    color:#cbd4df;
+    font-size:17px;
+    line-height:1;
+    transition:
+        color .2s ease,
+        transform .2s ease;
+}
+
+.profile-button:hover .profile-arrow,
+.profile-button.active .profile-arrow{
+    color:#98ec63;
+}
+
+.profile-button.active .profile-arrow{
+    transform:rotate(180deg);
+}
+
+
+/*==================================================
+    PANEL DEL PERFIL
+==================================================*/
+
+.profile-menu{
+    width:235px;
+    position:absolute;
+    top:calc(100% + 14px);
+    right:0;
+    z-index:1000;
+    overflow:hidden;
+    background:#15223a;
+    border:1px solid rgba(152,236,99,.35);
+    border-radius:15px;
+    box-shadow:
+        0 18px 45px rgba(0,0,0,.38),
+        0 0 0 1px rgba(255,255,255,.03);
+    animation:profileMenuAppear .18s ease;
+}
+
+.profile-menu::before{
+    content:"";
+    width:13px;
+    height:13px;
+    position:absolute;
+    top:-7px;
+    right:24px;
+    background:#15223a;
+    border-top:1px solid rgba(152,236,99,.35);
+    border-left:1px solid rgba(152,236,99,.35);
+    transform:rotate(45deg);
+}
+
+@keyframes profileMenuAppear{
+
+    from{
+        opacity:0;
+        transform:translateY(-7px) scale(.98);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0) scale(1);
+    }
+
+}
+
+
+/*==================================================
+    ENCABEZADO DEL PANEL
+==================================================*/
+
+.profile-menu-header{
+    padding:17px 16px 14px;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    background:#101c31;
+    border-bottom:1px solid rgba(255,255,255,.07);
+}
+
+.profile-menu-header strong{
+    max-width:100%;
+    color:#ffffff;
+    font-size:15px;
+    font-weight:700;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+.profile-menu-header span{
+    color:#98ec63;
+    font-size:12px;
+    font-weight:600;
+    text-transform:capitalize;
+}
+
+
+/*==================================================
+    OPCIONES DEL PANEL
+==================================================*/
+
+.profile-menu-item{
+    width:100%;
+    min-height:48px;
+    padding:11px 16px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    color:#e8edf3;
+    background:transparent;
+    border:none;
+    text-decoration:none;
+    font-size:14px;
+    text-align:left;
+    cursor:pointer;
+    transition:
+        color .2s ease,
+        background .2s ease,
+        padding-left .2s ease;
+}
+
+.profile-menu-item:hover{
+    padding-left:20px;
+    color:#ffffff;
+    background:rgba(152,236,99,.10);
+}
+
+.profile-menu-icon{
+    width:25px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#98ec63;
+    font-size:17px;
+}
+
+.logout-form{
+    margin:0;
+    border-top:1px solid rgba(255,255,255,.07);
+}
+
+.logout-button{
+    font-family:inherit;
+}
+
+.logout-button:hover{
+    color:#ffb0b0;
+    background:rgba(255,92,92,.10);
+}
+
+.logout-button:hover .profile-menu-icon{
+    color:#ff7777;
+}
+
+
+/*==================================================
+    RESPONSIVE
+==================================================*/
+
+@media(max-width:700px){
+
+    .profile-arrow{
+        display:none;
+    }
+
+    .profile-menu{
+        width:220px;
+        right:-5px;
+    }
+
+    .profile-icon{
+        width:42px;
+        height:42px;
+    }
+
 }
