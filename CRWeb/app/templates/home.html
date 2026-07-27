@@ -3,47 +3,245 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+
     <title>Cuervo Ride</title>
-    <link rel="stylesheet" href="{% static 'css/home.css' %}">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/home.css' %}">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 </head>
+
 <body>
 
-    <header class="navbar">
+<header class="navbar">
 
-        <div class="nav-left">
-            <a href="{% url 'home' %}" class="logo-link">
-                <div class="logo"></div>
+    <!-- Logo -->
+    <div class="nav-left">
+
+        <a
+            href="{% url 'home' %}"
+            class="logo-link">
+
+            <div class="logo"></div>
+
+        </a>
+
+    </div>
+
+
+    <!-- Navegación -->
+    <nav class="nav-links">
+
+        {% if user.is_authenticated %}
+
+            <!-- PASAJERO -->
+            {% if user.es_pasajero %}
+
+                <a href="{% url 'filtroviajes' %}">
+                    Buscar viajes
+                </a>
+
+                <a href="{% url 'agendarviaje' %}">
+                    Agendar viaje
+                </a>
+
+                <a href="#">
+                    Mis viajes
+                </a>
+
+            {% endif %}
+
+
+            <!-- CONDUCTOR -->
+            {% if user.es_conductor %}
+
+                <a href="#">
+                    Publicar viaje
+                </a>
+
+                <a href="#">
+                    Mis viajes
+                </a>
+
+                <a href="#">
+                    Solicitudes
+                </a>
+
+            {% endif %}
+
+
+            <!-- ADMINISTRADOR -->
+            {% if user.es_administrador %}
+
+                <a href="{% url 'index' %}">
+                    Panel
+                </a>
+
+                <a href="{% url 'panel_admin' %}">
+                    Usuarios
+                </a>
+
+            {% endif %}
+
+        {% else %}
+
+            <a href="{% url 'login' %}">
+                Iniciar sesión
             </a>
-        </div>
 
-        <nav class="nav-links">
-            <a href="{% url 'filtroviajes' %}">Agendar Viaje</a>
-            <a href="{% url 'agendarviaje' %}">Viajes</a>
-            <a href="{% url 'sobrenosotros' %}">Sobre nosotros</a>
-        </nav>
-
-        <div class="profile">
-            <a href="{% url 'perfil' %}" class="profile-icon">
+            <a href="{% url 'register' %}">
+                Registrarse
             </a>
-        </div>
-    </header>
- 
-    <section class="baner">
-        <div class="baner-content">
-                <button class="cta-btn">Apartar lugar</button>
-        </div>
-    </section>
 
-    <section class="info">
-        <h2>Comparte tu viaje, llega a tu nido seguro.</h2>
-        <p>
-            ¿Vas camino a la universidad o de regreso a casa? 
-            Encuentra estudiantes que realizan tu misma ruta y comparte el trayecto. 
-            Ahorra en transporte, aprovecha los asientos disponibles de otros compañeros y viaja 
-            de una manera más económica, práctica y segura.
-        </p>
-    </section>
+        {% endif %}
+
+    </nav>
+
+
+    <!-- Perfil -->
+    <div class="profile">
+
+        {% if user.is_authenticated %}
+
+            <button
+                type="button"
+                class="profile-button"
+                id="profileMenuButton"
+                aria-label="Abrir menú de usuario"
+                aria-expanded="false"
+                aria-controls="profileMenu">
+
+                {% if user.foto %}
+
+                    <img
+                        src="{{ user.foto.url }}"
+                        alt="Perfil"
+                        class="profile-icon">
+
+                {% else %}
+
+                    <img
+                        src="{% static 'img/profileIcon.png' %}"
+                        alt="Perfil"
+                        class="profile-icon">
+
+                {% endif %}
+
+                <span class="profile-arrow">
+                    ▾
+                </span>
+
+            </button>
+
+
+            <!-- Menú desplegable -->
+            <div
+                class="profile-menu"
+                id="profileMenu"
+                hidden>
+
+                <div class="profile-menu-header">
+
+                    <strong>
+                        {% if user.get_full_name %}
+                            {{ user.get_full_name }}
+                        {% else %}
+                            {{ user.email }}
+                        {% endif %}
+                    </strong>
+
+                    <span>
+                        {{ user.get_rol_display|default:user.rol }}
+                    </span>
+
+                </div>
+
+
+                <a
+                    href="{% url 'perfil' %}"
+                    class="profile-menu-item">
+
+                    <span class="profile-menu-icon">
+                        👤
+                    </span>
+
+                    <span>
+                        Mi perfil
+                    </span>
+
+                </a>
+
+
+                <form
+                    method="POST"
+                    action="{% url 'logout' %}"
+                    class="logout-form">
+
+                    {% csrf_token %}
+
+                    <button
+                        type="submit"
+                        class="profile-menu-item logout-button">
+
+                        <span class="profile-menu-icon">
+                            ↪
+                        </span>
+
+                        <span>
+                            Cerrar sesión
+                        </span>
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</header>
+
+
+<section class="baner">
+
+    <div class="baner-content">
+
+        <button
+            type="button"
+            class="cta-btn">
+
+            Apartar lugar
+
+        </button>
+
+    </div>
+
+</section>
+
+
+<section class="info">
+
+    <h2>
+        Comparte tu viaje, llega a tu nido seguro.
+    </h2>
+
+    <p>
+        ¿Vas camino a la universidad o de regreso a casa?
+        Encuentra estudiantes que realizan tu misma ruta y comparte el trayecto.
+        Ahorra en transporte, aprovecha los asientos disponibles de otros compañeros
+        y viaja de una manera más económica, práctica y segura.
+    </p>
+
+</section>
+
+
+<script src="{% static 'js/home.js' %}"></script>
 
 </body>
 </html>
