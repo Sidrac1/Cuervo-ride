@@ -13,16 +13,22 @@ from django.contrib.auth.decorators import (
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_http_methods
+
+import json
 
 from .models import (
     InformacionMedica,
     PerfilConductor,
     Vehiculo,
+    Viaje,
+    SalaChat,
+    AlertaEmergencia,
 )
+from .forms import PublicarViajeForm
 
 Usuario = get_user_model()
 
@@ -502,10 +508,7 @@ def publicar_viaje(request):
                     "El viaje fue publicado correctamente."
                 )
 
-                return redirect(
-                    "detalle_viaje",
-                    viaje_id=viaje.id,
-                )
+                return redirect("mis_viajes_conductor")
 
     else:
 
@@ -663,38 +666,48 @@ def cargar_vista(request, vista):
     plantilla = VISTAS_ADMIN.get(vista)
     if plantilla is None:
         raise Http404("Vista administrativa no encontrada.")
-    return render(request, plantilla)
+
+    contexto = {}
+
+    # Si se carga la vista de la tabla de usuarios, obtenemos la lista real de la BD
+    if vista == "usuarios":
+        contexto["usuarios"] = Usuario.objects.all().order_by("-id")
+
+    return render(request, plantilla, contexto)
 
 
 @user_passes_test(es_administrador, login_url="login")
 def panel_admin(request):
-    usuarios = Usuario.objects.all().order_by("nombre", "first_name", "last_name")
-
-    contexto = {
-        "usuarios": usuarios,
-        "total_usuarios": usuarios.count(),
-        "total_pasajeros": usuarios.filter(rol=Usuario.Roles.PASAJERO).count(),
-        "total_conductores": usuarios.filter(rol=Usuario.Roles.CONDUCTOR).count(),
-        "total_pendientes": usuarios.filter(
-            estado_cuenta=Usuario.EstadosCuenta.PENDIENTE
-        ).count(),
-    }
-
-    return render(request, "admin/index.html", contexto)
+    """
+    Antes esta vista renderizaba "admin/index.html", una plantilla que no
+    existe en app/templates/ (solo existe dashAd/index.html) -- daba 500.
+    Redirigimos al panel administrativo real en vez de reproducir el error.
+    """
+    return redirect("index")
 
 
 # ========================================================
 @user_passes_test(es_administrador, login_url="login")
 def panel_alertas(request):
-    alertas = Usuario.objects.all().order_by("-id")
+    """
+    Antes consultaba Usuario.objects.filter(tipo=..., estado=...), pero
+    Usuario no tiene esos campos -- las alertas de emergencia viven en el
+    modelo AlertaEmergencia. Se corrige para consultar el modelo correcto.
+    """
+    alertas = (
+        AlertaEmergencia.objects
+        .select_related("usuario", "viaje")
+        .order_by("-fecha_activacion")
+    )
+
     contexto = {
         "alertas": alertas,
         "total_alertas": alertas.count(),
-        "total_alertas_urgentes": alertas.filter(tipo="critico").count(),
-        "total_alertas_medio": alertas.filter(tipo="medio").count(),
-        "total_alertas_bajo": alertas.filter(tipo="bajo").count(),
-        "total_alertas_inactivo": alertas.filter(estado="inactivo").count(),
-        "total_alertas_activas": alertas.filter(estado="activo").count(),
+        "total_alertas_urgentes": alertas.filter(tipo=AlertaEmergencia.TiposAlerta.PANICO).count(),
+        "total_alertas_medio": alertas.filter(tipo=AlertaEmergencia.TiposAlerta.ACCIDENTE).count(),
+        "total_alertas_bajo": alertas.filter(tipo=AlertaEmergencia.TiposAlerta.OTRO).count(),
+        "total_alertas_activas": alertas.filter(estado=AlertaEmergencia.EstadosAlerta.ACTIVA).count(),
+        "total_alertas_resueltas": alertas.filter(estado=AlertaEmergencia.EstadosAlerta.RESUELTA).count(),
     }
 
     return render(request, "dashAd/partials/alertas.html", contexto)
@@ -710,32 +723,6 @@ def logout_view(request):
     auth_logout(request)
     messages.success(request, "La sesión se cerró correctamente.")
     return redirect("login")
-
-
-# =========================================================
-# conexión de usuarios y usuario-info para vista de administrador
-# =========================================================
-from django.http import JsonResponse, Http404
-from django.views.decorators.http import require_http_methods
-import json
-
-# =========================================================
-# VISTAS DE NAVEGACIÓN PANEL ADMIN
-# =========================================================
-
-@user_passes_test(es_administrador, login_url="login")
-def cargar_vista(request, vista):
-    plantilla = VISTAS_ADMIN.get(vista)
-    if plantilla is None:
-        raise Http404("Vista administrativa no encontrada.")
-    
-    contexto = {}
-    
-    # Si se carga la vista de la tabla de usuarios, obtenemos la lista real de la BD
-    if vista == "usuarios":
-        contexto["usuarios"] = Usuario.objects.all().order_by("-id")
-        
-    return render(request, plantilla, contexto)
 
 
 # =========================================================
@@ -760,7 +747,8 @@ def api_obtener_usuario(request, usuario_id):
             "cuatrimestre": grado,
             "carrera": usuario.carrera,
             "rol": usuario.rol,
-            "estado": "Activo" if usuario.estado_cuenta == Usuario.EstadosCuenta.ACTIVA else "Inactivo",
+            "estado": usuario.estado_cuenta,
+            "estado_display": usuario.get_estado_cuenta_display(),
             "telefono": usuario.telefono,
         }
         return JsonResponse({"ok": True, "usuario": data})
@@ -789,12 +777,21 @@ def api_actualizar_usuario(request, usuario_id):
         if nuevo_rol in {Usuario.Roles.ADMINISTRADOR, Usuario.Roles.CONDUCTOR, Usuario.Roles.PASAJERO}:
             usuario.rol = nuevo_rol
 
-        # Mapeo de estado
+        # Mapeo de estado -- se exponen los 4 estados reales del modelo
+        # (activa/suspendida/bloqueada/pendiente), no solo Activo/Inactivo.
         nuevo_estado = data.get("estado", "")
-        if nuevo_estado == "Activo":
-            usuario.estado_cuenta = Usuario.EstadosCuenta.ACTIVA
-        elif nuevo_estado == "Inactivo":
-            usuario.estado_cuenta = Usuario.EstadosCuenta.SUSPENDIDA
+        estados_validos = {
+            "activa": Usuario.EstadosCuenta.ACTIVA,
+            "suspendida": Usuario.EstadosCuenta.SUSPENDIDA,
+            "bloqueada": Usuario.EstadosCuenta.BLOQUEADA,
+            "pendiente": Usuario.EstadosCuenta.PENDIENTE,
+            # compatibilidad con el frontend existente (usuario-info.js)
+            "activo": Usuario.EstadosCuenta.ACTIVA,
+            "inactivo": Usuario.EstadosCuenta.SUSPENDIDA,
+        }
+        estado_normalizado = estados_validos.get(nuevo_estado.strip().lower())
+        if estado_normalizado:
+            usuario.estado_cuenta = estado_normalizado
 
         # Contraseña (solo si se especifica un valor nuevo)
         nueva_password = data.get("password")

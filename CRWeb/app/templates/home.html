@@ -49,7 +49,7 @@
                     Agendar viaje
                 </a>
 
-                <a href="#">
+                <a href="{% url 'mis_viajes_pasajero' %}">
                     Mis viajes
                 </a>
 
@@ -59,11 +59,11 @@
             <!-- CONDUCTOR -->
             {% if user.es_conductor %}
 
-                <a href="#">
+                <a href="{% url 'publicar_viaje' %}">
                     Publicar viaje
                 </a>
 
-                <a href="#">
+                <a href="{% url 'mis_viajes_conductor' %}">
                     Mis viajes
                 </a>
 
@@ -212,13 +212,23 @@
 
     <div class="baner-content">
 
-        <button
-            type="button"
-            class="cta-btn">
+        {% if user.is_authenticated and user.es_conductor %}
 
-            Apartar lugar
+            <a href="{% url 'publicar_viaje' %}" class="cta-btn" style="text-decoration:none; display:inline-block;">
+                Publicar viaje
+            </a>
 
-        </button>
+        {% else %}
+
+            <button
+                type="button"
+                class="cta-btn">
+
+                Apartar lugar
+
+            </button>
+
+        {% endif %}
 
     </div>
 

@@ -85,6 +85,11 @@
 
            {% if request.user.rol == "conductor" %}
 
+            <a href="{% url 'publicar_viaje' %}">
+                <i class="fa-solid fa-square-plus"></i>
+                <span>Publicar viaje</span>
+            </a>
+
             <a href="{% url 'mis_viajes_conductor' %}">
                 <i class="fa-solid fa-route"></i>
                 <span>Mis viajes</span>

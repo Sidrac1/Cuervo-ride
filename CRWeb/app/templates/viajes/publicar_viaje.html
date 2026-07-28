@@ -127,52 +127,28 @@
                 </div>
 
                 <!-- ======================================
-                            ORIGEN
+                            ORIGEN (fijo: siempre la UTT)
                 ======================================= -->
 
                 <div class="campo-formulario campo-ubicacion">
 
-                    <label for="{{ formulario.origen.id_for_label }}">
+                    <label>
                         <span class="punto-ruta punto-origen"></span>
                         Punto de origen
                     </label>
 
-                    <div class="buscador-ubicacion">
-
-                        {{ formulario.origen }}
-
-                        <button
-                            type="button"
-                            class="btn-buscar-ubicacion"
-                            id="buscarOrigen"
-                            aria-label="Buscar origen"
-                        >
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                        </button>
-
+                    <div class="ubicacion-fija" title="El origen siempre es la Universidad Tecnológica de Tijuana">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <span>Universidad Tecnológica de Tijuana</span>
                     </div>
 
-                    <div
-                        class="resultados-ubicacion"
-                        id="resultadosOrigen"
-                        hidden
-                    ></div>
-
-                    <div
-                        class="ubicacion-seleccionada"
-                        id="origenSeleccionado"
-                        hidden
-                    >
-                        <i class="fa-solid fa-circle-check"></i>
-
-                        <span></span>
-                    </div>
-
-                    {% for error in formulario.origen.errors %}
-                        <span class="error-campo">
-                            {{ error }}
-                        </span>
-                    {% endfor %}
+                    <!-- Se manda igual por POST, pero ya no es editable por
+                         el usuario -- el servidor también lo fuerza en
+                         PublicarViajeForm.clean(), así que aunque alguien
+                         intente mandar otro valor, no tiene efecto. -->
+                    <input type="hidden" name="origen" value="{{ formulario.initial.origen }}">
+                    <input type="hidden" name="origen_latitud" value="{{ formulario.initial.origen_latitud }}">
+                    <input type="hidden" name="origen_longitud" value="{{ formulario.initial.origen_longitud }}">
 
                 </div>
 
@@ -226,10 +202,9 @@
 
                 </div>
 
-                <!-- Coordenadas ocultas -->
+                <!-- Coordenadas ocultas (solo destino -- el origen ya se
+                     manda arriba como campo fijo) -->
 
-                {{ formulario.origen_latitud }}
-                {{ formulario.origen_longitud }}
                 {{ formulario.destino_latitud }}
                 {{ formulario.destino_longitud }}
 

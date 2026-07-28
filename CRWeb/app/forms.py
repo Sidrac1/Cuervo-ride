@@ -1,8 +1,11 @@
+from decimal import Decimal
+
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
 from .models import Viaje, Vehiculo
+from .constants import UTT_NOMBRE, UTT_LATITUD, UTT_LONGITUD
 
 
 class PublicarViajeForm(forms.ModelForm):
@@ -182,12 +185,23 @@ class PublicarViajeForm(forms.ModelForm):
             "%Y-%m-%dT%H:%M"
         ]
 
-        # Las coordenadas son obligatorias para publicar
-        # aunque en el modelo sean opcionales.
-        self.fields["origen_latitud"].required = True
-        self.fields["origen_longitud"].required = True
-        self.fields["destino_latitud"].required = True
-        self.fields["destino_longitud"].required = True
+        # El origen SIEMPRE es la UTT -- ya no depende de lo que mande el
+        # cliente. Se muestra fijo/no editable en el template, y aquí se
+        # refuerza también server-side en clean() (ver abajo), por si
+        # alguien manda otro valor directamente a la vista.
+        self.fields["origen"].required = False
+        self.fields["origen_latitud"].required = False
+        self.fields["origen_longitud"].required = False
+        self.initial["origen"] = UTT_NOMBRE
+        self.initial["origen_latitud"] = UTT_LATITUD
+        self.initial["origen_longitud"] = UTT_LONGITUD
+
+        # El destino sí depende del mapa (ver mapa_publicar.js), que un
+        # compañero está integrando por separado. Mientras esa integración
+        # no esté lista, NO bloqueamos la publicación exigiendo
+        # coordenadas de destino -- basta con el texto del destino.
+        self.fields["destino_latitud"].required = False
+        self.fields["destino_longitud"].required = False
 
         if conductor is not None:
             self.fields["vehiculo"].queryset = (
@@ -242,25 +256,18 @@ class PublicarViajeForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
 
+        # El origen SIEMPRE es la UTT, sin importar qué haya llegado en el
+        # POST -- así que lo forzamos aquí, sea cual sea el valor enviado.
+        cleaned_data["origen"] = UTT_NOMBRE
+        cleaned_data["origen_latitud"] = Decimal(UTT_LATITUD)
+        cleaned_data["origen_longitud"] = Decimal(UTT_LONGITUD)
+
         vehiculo = cleaned_data.get("vehiculo")
         fecha_salida = cleaned_data.get(
             "fecha_hora_salida"
         )
         fecha_llegada = cleaned_data.get(
             "fecha_hora_llegada_estimada"
-        )
-
-        origen_latitud = cleaned_data.get(
-            "origen_latitud"
-        )
-        origen_longitud = cleaned_data.get(
-            "origen_longitud"
-        )
-        destino_latitud = cleaned_data.get(
-            "destino_latitud"
-        )
-        destino_longitud = cleaned_data.get(
-            "destino_longitud"
         )
 
         if (
@@ -290,17 +297,9 @@ class PublicarViajeForm(forms.ModelForm):
                 ),
             )
 
-        coordenadas_completas = all([
-            origen_latitud is not None,
-            origen_longitud is not None,
-            destino_latitud is not None,
-            destino_longitud is not None,
-        ])
-
-        if not coordenadas_completas:
-            raise ValidationError(
-                "Debes seleccionar un origen y un destino "
-                "válidos en el mapa."
-            )
+        # NOTA: ya no exigimos destino_latitud/destino_longitud aquí --
+        # la integración del mapa para el destino está en curso por
+        # separado. Cuando esté lista, se puede volver a añadir esa
+        # validación si se quiere exigir un punto exacto en el mapa.
 
         return cleaned_data

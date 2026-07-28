@@ -13,6 +13,11 @@ urlpatterns = [
     path("filtro-viajes/", views.filtroviajes, name="filtroviajes"),
     path("viajes/publicar/",views.publicar_viaje,name="publicar_viaje",),
     path("viajes/mis-viajes/",views.mis_viajes_conductor,name="mis_viajes_conductor",),
+    # TODO: placeholder mientras se construye la vista real de "mis viajes"
+    # para pasajeros (historial de solicitudes). Por ahora apunta a la
+    # pantalla de búsqueda para que el link del sidebar no truene con
+    # NoReverseMatch cuando un pasajero la visita.
+    path("filtro-viajes/", views.filtroviajes, name="mis_viajes_pasajero"),
 
     # ---------------------------------------------------------
     # Autenticación y Registro
@@ -34,7 +39,6 @@ urlpatterns = [
     path("admin-panel/cargar/<str:vista>/", views.cargar_vista, name="cargar_vista"),
     path("admin-panel/usuarios/", views.panel_admin, name="panel_admin"),
     path('admin-panel/alertas/', views.panel_alertas, name='panel_alertas'),
-    path('panel/vista/<str:vista>/', views.cargar_vista, name='cargar_vista'),
     path('api/admin/usuarios/<int:usuario_id>/', views.api_obtener_usuario, name='api_obtener_usuario'),
     path('api/admin/usuarios/<int:usuario_id>/actualizar/', views.api_actualizar_usuario, name='api_actualizar_usuario'),
 ]
