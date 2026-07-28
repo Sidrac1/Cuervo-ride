@@ -1,16 +1,23 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet"
-    href="{% static 'css/sidebar.css' %}">
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/sidebar.css' %}">
 
     <title>Sidebar</title>
 
@@ -19,64 +26,181 @@
 <body>
 
     <!-- SIDEBAR -->
-    <aside class="sidebar" id="sidebar">
+    <aside
+        class="sidebar"
+        id="sidebar">
 
         <!-- Logo -->
         <div class="logo">
-            <a href="{% url 'home' %}" class="logo-link">
-                <img src="{% static 'img/logo.png' %}" alt="Logo">
+
+            <a
+                href="{% url 'home' %}"
+                class="logo-link">
+
+                <img
+                    src="{% static 'img/logo.png' %}"
+                    alt="Logo de Cuervo Ride">
+
             </a>
+
         </div>
 
+
         <!-- Botón menú -->
-        <div class="menu-btn" id="menu-btn">
+        <button
+            type="button"
+            class="menu-btn"
+            id="menu-btn"
+            aria-label="Abrir o cerrar menú">
+
             <i class="fa-solid fa-bars"></i>
-        </div>
+
+        </button>
+
 
         <!-- Navegación -->
         <nav class="sidebar-menu">
 
             <a href="{% url 'home' %}">
+
                 <i class="fa-solid fa-house"></i>
-                <span>Inicio</span>
+
+                <span>
+                    Inicio
+                </span>
+
             </a>
+
 
             <a href="{% url 'perfil' %}">
+
                 <i class="fa-regular fa-user"></i>
-                <span>Perfil</span>
+
+                <span>
+                    Perfil
+                </span>
+
             </a>
 
-            <a href="#">
-                <i class="fa-solid fa-car"></i>
+
+           {% if request.user.rol == "conductor" %}
+
+            <a href="{% url 'mis_viajes_conductor' %}">
+                <i class="fa-solid fa-route"></i>
                 <span>Mis viajes</span>
             </a>
 
-            <!-- Logout -->
-            <form action="{% url 'logout' %}" 
-                method="post" 
-                onsubmit="return confirm('¿Deseas cerrar sesión?');" 
-                class="logout-form">
-                {% csrf_token %}
-                <button type="submit" class="logout-btn">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                    <span>Cerrar sesión</span>
-                </button>
-            </form>
+            {% elif request.user.rol == "pasajero" %}
+
+            <a href="{% url 'mis_viajes_pasajero' %}">
+                <i class="fa-solid fa-route"></i>
+                <span>Mis viajes</span>
+            </a>
+
+            {% endif %}
+
         </nav>
 
-        <!-- Avatar inferior -->
-        <div class="bottom-profile">
 
-            <a href="{% url 'perfil' %}" title="Mi perfil">
+        <!-- Logout inferior -->
+        <div class="bottom-logout">
 
-                <img
-                    src="https://i.imgur.com/2DhmtJ4.png"
-                    alt="Perfil">
+            <form
+                action="{% url 'logout' %}"
+                method="post"
+                class="logout-form"
+                id="logoutForm">
 
-            </a>
+                {% csrf_token %}
+
+                <button
+                    type="button"
+                    class="logout-btn"
+                    id="openLogoutModal"
+                    title="Cerrar sesión">
+
+                    <i class="fa-solid fa-right-from-bracket"></i>
+
+                    <span>
+                        Cerrar sesión
+                    </span>
+
+                </button>
+
+            </form>
 
         </div>
 
+    </aside>
+
+
+    <!-- MODAL DE CONFIRMACIÓN -->
+    <div
+        class="logout-modal-overlay"
+        id="logoutModal"
+        aria-hidden="true">
+
+        <div
+            class="logout-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="logoutModalTitle">
+
+            <div class="logout-modal-icon">
+
+                <i class="fa-solid fa-right-from-bracket"></i>
+
+            </div>
+
+
+            <h2 id="logoutModalTitle">
+
+                ¿Cerrar sesión?
+
+            </h2>
+
+
+            <p>
+
+                Estás a punto de salir de tu cuenta.
+                ¿Deseas continuar?
+
+            </p>
+
+
+            <div class="logout-modal-actions">
+
+                <button
+                    type="button"
+                    class="modal-cancel-btn"
+                    id="cancelLogout">
+
+                    Cancelar
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="modal-confirm-btn"
+                    id="confirmLogout">
+
+                    Cerrar sesión
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script src="{% static 'js/sidebarP.js' %}"></script>
+
+</body>
+
+</html>
     </aside>
 
     <script src="{% static 'js/sidebarP.js' %}"></script>
