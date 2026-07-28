@@ -12,6 +12,7 @@ urlpatterns = [
     path("agendar-viaje/", views.agendarviaje, name="agendarviaje"),
     path("filtro-viajes/", views.filtroviajes, name="filtroviajes"),
     path("viajes/publicar/",views.publicar_viaje,name="publicar_viaje",),
+    path("viajes/mis-viajes/",views.mis_viajes_conductor,name="mis_viajes_conductor",),
 
     # ---------------------------------------------------------
     # Autenticación y Registro
