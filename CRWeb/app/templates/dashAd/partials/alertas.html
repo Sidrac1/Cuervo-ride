@@ -80,7 +80,7 @@
     <section class="tabla">
 
         <table>
-
+            <!--  Cabecera de la tabla  -->
             <thead>
 
                 <tr>
@@ -98,206 +98,22 @@
                 </tr>
 
             </thead>
-
+            <!-- ======== Cuerpo de la tabla ======== -->
             <tbody id="tablaAlertas">
-
+                {% for alerta in alertas %}
                 <tr>
-
-                    <td>AL001</td>
-
+                    <td>{{ alerta.id }}</td>
+                    <td class="col-usuario">{{ alerta.usuario.get_full_name }}</td>
                     <td>
-
-                        Carlos Méndez
-
+                        <span class="badge tipo-alerta">{{ alerta.tipo }}</span>
                     </td>
-
-                    <td>
-
-                        Falla Mecánica
-
-                    </td>
-
-                    <td>
-
-                        <span class="tipo urgente">
-
-                            Urgente
-
-                        </span>
-
-                    </td>
-
-                    <td>
-
-                        <span class="estado inactivo">
-
-                            Inactivo
-
-                        </span>
-
-                    </td>
-
+                    <td class="col-detalle">{{ alerta.descripcion }}</td>
                 </tr>
-
-
-
+                {% empty %}
                 <tr>
-
-                    <td>AL002</td>
-
-                    <td>
-
-                        Fernanda Ruiz
-
-                    </td>
-
-                    <td>
-
-                        Falla Mecánica
-
-                    </td>
-
-                    <td>
-
-                        <span class="tipo urgente">
-
-                            Urgente
-
-                        </span>
-
-                    </td>
-
-                    <td>
-
-                        <span class="estado activo">
-
-                            Activo
-
-                        </span>
-
-                    </td>
-
+                    <td colspan="4" style="text-align: center; padding: 30px;">No hay alertas registradas.</td>
                 </tr>
-
-
-
-                <tr>
-
-                    <td>AL003</td>
-
-                    <td>
-
-                        Diego Martínez
-
-                    </td>
-
-                    <td>
-
-                        Sin Combustible
-
-                    </td>
-
-                    <td>
-
-                        <span class="tipo medio">
-
-                            Medio
-
-                        </span>
-
-                    </td>
-
-                    <td>
-
-                        <span class="estado activo">
-
-                            Activo
-
-                        </span>
-
-                    </td>
-
-                </tr>
-
-
-
-                <tr>
-
-                    <td>AL004</td>
-
-                    <td>
-
-                        Valeria Torres
-
-                    </td>
-
-                    <td>
-
-                        Necesita Atención Médica
-
-                    </td>
-
-                    <td>
-
-                        <span class="tipo urgente">
-
-                            Urgente
-
-                        </span>
-
-                    </td>
-
-                    <td>
-
-                        <span class="estado activo">
-
-                            Activo
-
-                        </span>
-
-                    </td>
-
-                </tr>
-
-
-
-                <tr>
-
-                    <td>AL005</td>
-
-                    <td>
-
-                        Luis Herreras
-
-                    </td>
-
-                    <td>
-
-                        Llanta Pinchada
-
-                    </td>
-
-                    <td>
-
-                        <span class="tipo bajo">
-
-                            Bajo
-
-                        </span>
-
-                    </td>
-
-                    <td>
-
-                        <span class="estado activo">
-
-                            Activo
-
-                        </span>
-
-                    </td>
-
-                </tr>
+                {% endfor %}
             </tbody>
 
         </table>

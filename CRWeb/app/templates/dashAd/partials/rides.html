@@ -81,20 +81,20 @@
             </thead>
 
             <tbody id="tablaRides">
-
+                {% for ride in rides %}
                 <tr>
 
-                    <td>RD001</td>
+                    <td>{{ ride.id }}</td>
 
-                    <td>Carlos Méndez</td>
+                    <td>{{ ride.conductor.get_full_name|default:ride.conductor.nombre }}</td>
 
-                    <td>UTT → Centro</td>
+                    <td>{{ ride.origen }} → {{ ride.destino }}</td>
 
-                    <td>10:00 PM</td>
+                    <td>{{ ride.hora_salida }}</td>
 
-                    <td>3 / 4</td>
+                    <td>{{ ride.pasajeros }} / {{ ride.capacidad }}</td>
 
-                    <td>22/07/2026</td>
+                    <td>{{ ride.fecha }}</td>
 
                     <td>
 
@@ -107,118 +107,7 @@
                     </td>
 
                 </tr>
-
-
-
-                <tr>
-
-                    <td>RD002</td>
-
-                    <td>Fernanda Ruiz</td>
-
-                    <td>UTT → Otay</td>
-
-                    <td>09:30 PM</td>
-
-                    <td>2 / 3</td>
-
-                    <td>22/07/2026</td>
-
-                    <td>
-
-                        <span class="estado enprogreso">
-
-                            En progreso
-
-                        </span>
-
-                    </td>
-
-                </tr>
-
-
-
-                <tr>
-
-                    <td>RD003</td>
-
-                    <td>Diego Martínez</td>
-
-                    <td>UTT → Rosarito</td>
-
-                    <td>10:50 PM</td>
-
-                    <td>4 / 4</td>
-
-                    <td>21/07/2026</td>
-
-                    <td>
-
-                        <span class="estado completado">
-
-                            Completado
-
-                        </span>
-
-                    </td>
-
-                </tr>
-
-
-
-                <tr>
-
-                    <td>RD004</td>
-
-                    <td>Valeria Torres</td>
-
-                    <td>UTT → Playas</td>
-
-                    <td>10:00 PM</td>
-
-                    <td>0 / 4</td>
-
-                    <td>22/07/2026</td>
-
-                    <td>
-
-                        <span class="estado cancelado">
-
-                            Cancelado
-
-                        </span>
-
-                    </td>
-
-                </tr>
-
-
-
-                <tr>
-
-                    <td>RD005</td>
-
-                    <td>Luis Herrera</td>
-
-                    <td>UTT → Zona Río</td>
-
-                    <td>10:30 PM</td>
-
-                    <td>1 / 3</td>
-
-                    <td>23/07/2026</td>
-
-                    <td>
-
-                        <span class="estado programado">
-
-                            Programado
-
-                        </span>
-
-                    </td>
-
-                </tr>
+                {%endfor%}
 
             </tbody>
 

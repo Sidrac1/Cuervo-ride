@@ -399,6 +399,23 @@ def panel_admin(request):
     return render(request, "admin/index.html", contexto)
 
 
+# ========================================================
+@user_passes_test(es_administrador, login_url="login")
+def panel_alertas(request):
+    alertas = Usuario.objects.all().order_by("-id")
+    contexto = {
+        "alertas": alertas,
+        "total_alertas": alertas.count(),
+        "total_alertas_urgentes": alertas.filter(tipo="critico").count(),
+        "total_alertas_medio": alertas.filter(tipo="medio").count(),
+        "total_alertas_bajo": alertas.filter(tipo="bajo").count(),
+        "total_alertas_inactivo": alertas.filter(estado="inactivo").count(),
+        "total_alertas_activas": alertas.filter(estado="activo").count(),
+    }
+
+    return render(request, "dashAd/partials/alertas.html", contexto)
+
+
 # =========================================================
 # CERRAR SESIÓN
 # =========================================================

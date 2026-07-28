@@ -31,8 +31,8 @@ urlpatterns = [
     path("admin-panel/", views.index, name="index"),
     path("admin-panel/cargar/<str:vista>/", views.cargar_vista, name="cargar_vista"),
     path("admin-panel/usuarios/", views.panel_admin, name="panel_admin"),
+    path('admin-panel/alertas/', views.panel_alertas, name='panel_alertas'),
     path('panel/vista/<str:vista>/', views.cargar_vista, name='cargar_vista'),
     path('api/admin/usuarios/<int:usuario_id>/', views.api_obtener_usuario, name='api_obtener_usuario'),
     path('api/admin/usuarios/<int:usuario_id>/actualizar/', views.api_actualizar_usuario, name='api_actualizar_usuario'),
-    
 ]
