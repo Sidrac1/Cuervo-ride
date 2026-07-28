@@ -1,0 +1,1826 @@
+/*==================================================
+                    VARIABLES
+==================================================*/
+
+:root{
+
+    --sidebar-width:90px;
+
+    --fondo-principal:#0c0f1c;
+    --fondo-secundario:#0b2239;
+    --fondo-card:#0f2944;
+    --fondo-card-hover:#12304f;
+    --fondo-suave:#153653;
+
+    --texto-principal:#f4f8fc;
+    --texto-secundario:#9eb4c8;
+    --texto-suave:#6f8ba5;
+
+    --azul:#98ec63;
+    --azul-hover:#3fae45;
+    --azul-suave:rgba(22,135,255,.13);
+
+    --verde:#21c77a;
+    --verde-suave:rgba(33,199,122,.13);
+
+    --rojo:#ff626b;
+    --rojo-hover:#ff777e;
+    --rojo-suave:rgba(255,98,107,.13);
+
+    --amarillo:#ffbd4a;
+    --amarillo-suave:rgba(255,189,74,.13);
+
+    --morado:#a77cff;
+    --morado-suave:rgba(167,124,255,.13);
+
+    --borde:rgba(255,255,255,.08);
+    --borde-fuerte:rgba(255,255,255,.14);
+
+    --sombra:
+        0 18px 45px
+        rgba(0,0,0,.22);
+
+    --sombra-suave:
+        0 10px 30px
+        rgba(0,0,0,.14);
+
+    --radio-sm:10px;
+    --radio-md:15px;
+    --radio-lg:21px;
+
+}
+
+/*==================================================
+                       RESET
+==================================================*/
+
+*{
+
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+
+}
+
+html{
+
+    scroll-behavior:smooth;
+
+}
+
+body{
+
+    min-height:100vh;
+
+    font-family:
+        "Segoe UI",
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        sans-serif;
+
+    background:
+        radial-gradient(
+            circle at top right,
+            rgba(22,135,255,.09),
+            transparent 420px
+        ),
+        var(--fondo-principal);
+
+    color:var(--texto-principal);
+
+}
+
+button,
+input,
+select,
+textarea{
+
+    font:inherit;
+
+}
+
+button,
+a{
+
+    -webkit-tap-highlight-color:transparent;
+
+}
+
+a{
+
+    color:inherit;
+    text-decoration:none;
+
+}
+
+button{
+
+    border:0;
+
+}
+
+[hidden]{
+
+    display:none !important;
+
+}
+
+/*==================================================
+                 CONTENEDOR PRINCIPAL
+==================================================*/
+
+.mis-viajes-main{
+
+    min-height:100vh;
+
+    margin-left:var(--sidebar-width);
+
+    padding:42px clamp(25px, 4vw, 60px) 70px;
+
+    transition:
+        margin-left .35s ease;
+
+}
+
+/*
+Si tu sidebar agrega la clase active al abrirse,
+este selector mueve correctamente el contenido.
+*/
+
+.sidebar.active ~ .mis-viajes-main{
+
+    margin-left:260px;
+
+}
+
+/*==================================================
+                      ENCABEZADO
+==================================================*/
+
+.mis-viajes-header{
+
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:30px;
+
+    max-width:1450px;
+
+    margin:0 auto 34px;
+
+}
+
+.header-texto{
+
+    min-width:0;
+
+}
+
+.header-etiqueta{
+
+    display:inline-flex;
+    align-items:center;
+
+    margin-bottom:9px;
+    padding:6px 11px;
+
+    border:1px solid rgba(22,135,255,.22);
+    border-radius:30px;
+
+    background:var(--azul-suave);
+    color:#77bbff;
+
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:.8px;
+    text-transform:uppercase;
+
+}
+
+.mis-viajes-header h1{
+
+    margin-bottom:7px;
+
+    font-size:clamp(31px, 4vw, 43px);
+    line-height:1.05;
+    letter-spacing:-1.2px;
+
+}
+
+.mis-viajes-header p{
+
+    max-width:620px;
+
+    color:var(--texto-secundario);
+
+    font-size:15px;
+    line-height:1.55;
+
+}
+
+.btn-nuevo-viaje{
+
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    flex:0 0 auto;
+
+    min-height:50px;
+
+    padding:13px 20px;
+
+    border-radius:14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #98ec63,
+            #3fae45
+        );
+
+    color:white;
+
+    font-size:14px;
+    font-weight:800;
+
+    box-shadow:
+        0 13px 28px
+        rgba(22,135,255,.24);
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        filter .2s ease;
+
+}
+
+.btn-nuevo-viaje:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 17px 35px
+        rgba(22,135,255,.32);
+
+    filter:brightness(1.04);
+
+}
+
+/*==================================================
+                  MENSAJES DE DJANGO
+==================================================*/
+
+.mensajes-django{
+
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+
+    max-width:1450px;
+
+    margin:0 auto 22px;
+
+}
+
+.mensaje{
+
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+
+    padding:13px 15px;
+
+    border:1px solid var(--borde);
+    border-radius:var(--radio-md);
+
+    background:rgba(255,255,255,.035);
+
+    color:var(--texto-secundario);
+
+    font-size:13px;
+    line-height:1.5;
+
+}
+
+.mensaje.success{
+
+    border-color:rgba(33,199,122,.24);
+    background:var(--verde-suave);
+    color:#a9efd0;
+
+}
+
+.mensaje.warning{
+
+    border-color:rgba(255,189,74,.24);
+    background:var(--amarillo-suave);
+    color:#ffe1a7;
+
+}
+
+.mensaje.error{
+
+    border-color:rgba(255,98,107,.24);
+    background:var(--rojo-suave);
+    color:#ffc3c7;
+
+}
+
+/*==================================================
+                    ESTADÍSTICAS
+==================================================*/
+
+.estadisticas-viajes{
+
+    display:grid;
+    grid-template-columns:repeat(4, minmax(0, 1fr));
+    gap:16px;
+
+    max-width:1450px;
+
+    margin:0 auto 27px;
+
+}
+
+.estadistica-card{
+
+    position:relative;
+
+    display:flex;
+    align-items:center;
+    gap:15px;
+
+    min-width:0;
+    min-height:112px;
+
+    padding:20px;
+
+    overflow:hidden;
+
+    border:1px solid var(--borde);
+    border-radius:var(--radio-lg);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.04),
+            rgba(255,255,255,.015)
+        ),
+        var(--fondo-secundario);
+
+    box-shadow:var(--sombra-suave);
+
+    transition:
+        transform .22s ease,
+        border-color .22s ease,
+        background .22s ease;
+
+}
+
+.estadistica-card::after{
+
+    content:"";
+
+    position:absolute;
+    right:-32px;
+    bottom:-48px;
+
+    width:115px;
+    height:115px;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.025);
+
+}
+
+.estadistica-card:hover{
+
+    transform:translateY(-3px);
+
+    border-color:var(--borde-fuerte);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.055),
+            rgba(255,255,255,.02)
+        ),
+        var(--fondo-secundario);
+
+}
+
+.estadistica-icono{
+
+    position:relative;
+    z-index:2;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex:0 0 auto;
+
+    width:50px;
+    height:50px;
+
+    border-radius:15px;
+
+    font-size:20px;
+
+}
+
+.estadistica-icono.total{
+
+    background:var(--azul-suave);
+    color:#67b1ff;
+
+}
+
+.estadistica-icono.disponibles{
+
+    background:var(--verde-suave);
+    color:var(--verde);
+
+}
+
+.estadistica-icono.curso{
+
+    background:var(--amarillo-suave);
+    color:var(--amarillo);
+
+}
+
+.estadistica-icono.finalizados{
+
+    background:var(--morado-suave);
+    color:#bd9dff;
+
+}
+
+.estadistica-card > div{
+
+    position:relative;
+    z-index:2;
+
+    min-width:0;
+
+}
+
+.estadistica-card div span{
+
+    display:block;
+
+    margin-bottom:4px;
+
+    overflow:hidden;
+
+    color:var(--texto-secundario);
+
+    font-size:12px;
+    font-weight:600;
+
+    text-overflow:ellipsis;
+    white-space:nowrap;
+
+}
+
+.estadistica-card div strong{
+
+    display:block;
+
+    font-size:27px;
+    line-height:1;
+
+}
+
+/*==================================================
+                    BARRA DE FILTROS
+==================================================*/
+
+.barra-filtros{
+
+    max-width:1450px;
+
+    margin:0 auto 22px;
+    padding:6px;
+
+    overflow-x:auto;
+
+    border:1px solid var(--borde);
+    border-radius:16px;
+
+    background:rgba(11,34,57,.78);
+
+    scrollbar-width:none;
+
+    backdrop-filter:blur(10px);
+
+}
+
+.barra-filtros::-webkit-scrollbar{
+
+    display:none;
+
+}
+
+.filtros-viajes{
+
+    display:flex;
+    align-items:center;
+    gap:5px;
+
+    min-width:max-content;
+
+}
+
+.filtro-btn{
+
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+
+    min-height:42px;
+
+    padding:9px 14px;
+
+    border-radius:11px;
+
+    color:var(--texto-secundario);
+
+    font-size:12px;
+    font-weight:750;
+
+    transition:
+        background .2s ease,
+        color .2s ease,
+        transform .2s ease;
+
+}
+
+.filtro-btn:hover{
+
+    background:rgba(255,255,255,.055);
+    color:white;
+
+}
+
+.filtro-btn.active{
+
+    background:var(--azul);
+    color:white;
+
+    box-shadow:
+        0 7px 18px
+        rgba(22,135,255,.22);
+
+}
+
+.filtro-btn span{
+
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+
+    min-width:23px;
+    height:23px;
+
+    padding:0 6px;
+
+    border-radius:20px;
+
+    background:rgba(255,255,255,.08);
+
+    font-size:10px;
+
+}
+
+.filtro-btn.active span{
+
+    background:rgba(255,255,255,.18);
+
+}
+
+/*==================================================
+                    LISTA DE VIAJES
+==================================================*/
+
+.lista-viajes{
+
+    display:grid;
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
+    gap:20px;
+
+    max-width:1450px;
+
+    margin:0 auto;
+
+}
+
+/*==================================================
+                   TARJETA DE VIAJE
+==================================================*/
+
+.viaje-card{
+
+    position:relative;
+
+    display:flex;
+    flex-direction:column;
+
+    min-width:0;
+
+    padding:23px;
+
+    border:1px solid var(--borde);
+    border-radius:var(--radio-lg);
+
+    background:
+        linear-gradient(
+            150deg,
+            rgba(255,255,255,.035),
+            transparent 45%
+        ),
+        var(--fondo-card);
+
+    box-shadow:var(--sombra-suave);
+
+    opacity:0;
+    transform:translateY(16px);
+
+    transition:
+        opacity .42s ease,
+        transform .42s ease,
+        border-color .22s ease,
+        box-shadow .22s ease,
+        background .22s ease;
+
+}
+
+.viaje-card.visible{
+
+    opacity:1;
+    transform:translateY(0);
+
+}
+
+.viaje-card:hover{
+
+    border-color:rgba(22,135,255,.22);
+
+    background:
+        linear-gradient(
+            150deg,
+            rgba(22,135,255,.055),
+            transparent 48%
+        ),
+        var(--fondo-card-hover);
+
+    box-shadow:var(--sombra);
+
+}
+
+.viaje-card.seleccionada{
+
+    border-color:rgba(22,135,255,.48);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(22,135,255,.08),
+        var(--sombra);
+
+}
+
+/*==================================================
+               ENCABEZADO DE LA TARJETA
+==================================================*/
+
+.viaje-card-header{
+
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:15px;
+
+    margin-bottom:25px;
+
+}
+
+.viaje-fecha{
+
+    display:flex;
+    align-items:center;
+    gap:11px;
+
+    min-width:0;
+
+}
+
+.fecha-icono{
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex:0 0 auto;
+
+    width:41px;
+    height:41px;
+
+    border-radius:13px;
+
+    background:var(--azul-suave);
+    color:#75baff;
+
+}
+
+.viaje-fecha div{
+
+    min-width:0;
+
+}
+
+.viaje-fecha strong,
+.viaje-fecha span{
+
+    display:block;
+
+}
+
+.viaje-fecha strong{
+
+    margin-bottom:3px;
+
+    font-size:14px;
+
+}
+
+.viaje-fecha span{
+
+    color:var(--texto-secundario);
+
+    font-size:12px;
+
+}
+
+/*==================================================
+                   ESTADOS DEL VIAJE
+==================================================*/
+
+.estado-viaje{
+
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    flex:0 0 auto;
+
+    padding:7px 10px;
+
+    border:1px solid transparent;
+    border-radius:30px;
+
+    font-size:10px;
+    font-weight:850;
+    letter-spacing:.25px;
+    text-transform:uppercase;
+
+}
+
+.estado-viaje i{
+
+    font-size:8px;
+
+}
+
+.estado-disponible{
+
+    border-color:rgba(33,199,122,.22);
+
+    background:var(--verde-suave);
+    color:#6fe0ac;
+
+}
+
+.estado-completo{
+
+    border-color:rgba(255,189,74,.22);
+
+    background:var(--amarillo-suave);
+    color:#ffd17e;
+
+}
+
+.estado-en_curso{
+
+    border-color:rgba(22,135,255,.22);
+
+    background:var(--azul-suave);
+    color:#75baff;
+
+}
+
+.estado-finalizado{
+
+    border-color:rgba(167,124,255,.22);
+
+    background:var(--morado-suave);
+    color:#c4a8ff;
+
+}
+
+.estado-cancelado{
+
+    border-color:rgba(255,98,107,.22);
+
+    background:var(--rojo-suave);
+    color:#ff9da3;
+
+}
+
+/*==================================================
+                       RUTA
+==================================================*/
+
+.viaje-ruta{
+
+    display:grid;
+    grid-template-columns:18px minmax(0, 1fr);
+    gap:13px;
+
+    margin-bottom:23px;
+
+}
+
+.ruta-puntos{
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+
+    padding:5px 0;
+
+}
+
+.ruta-punto{
+
+    display:block;
+    flex:0 0 auto;
+
+    width:12px;
+    height:12px;
+
+    border:3px solid currentColor;
+    border-radius:50%;
+
+    background:var(--fondo-card);
+
+}
+
+.ruta-punto.origen{
+
+    color:var(--verde);
+
+}
+
+.ruta-punto.destino{
+
+    color:var(--rojo);
+
+}
+
+.ruta-linea{
+
+    display:block;
+    flex:1;
+
+    width:2px;
+    min-height:38px;
+
+    margin:4px 0;
+
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            rgba(255,255,255,.28) 0,
+            rgba(255,255,255,.28) 4px,
+            transparent 4px,
+            transparent 8px
+        );
+
+}
+
+.ruta-direcciones{
+
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    gap:19px;
+
+    min-width:0;
+
+}
+
+.ruta-direcciones div{
+
+    min-width:0;
+
+}
+
+.ruta-direcciones span,
+.ruta-direcciones strong{
+
+    display:block;
+
+}
+
+.ruta-direcciones span{
+
+    margin-bottom:4px;
+
+    color:var(--texto-suave);
+
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.55px;
+    text-transform:uppercase;
+
+}
+
+.ruta-direcciones strong{
+
+    overflow:hidden;
+
+    font-size:13px;
+    line-height:1.4;
+
+    text-overflow:ellipsis;
+    white-space:nowrap;
+
+}
+
+/*==================================================
+                INFORMACIÓN DEL VIAJE
+==================================================*/
+
+.viaje-informacion{
+
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+
+    margin-bottom:17px;
+
+}
+
+.info-viaje{
+
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    min-width:0;
+
+    padding:12px;
+
+    border:1px solid rgba(255,255,255,.055);
+    border-radius:13px;
+
+    background:rgba(255,255,255,.025);
+
+}
+
+.info-viaje > i{
+
+    flex:0 0 auto;
+
+    width:23px;
+
+    color:#73b8ff;
+
+    font-size:15px;
+    text-align:center;
+
+}
+
+.info-viaje div{
+
+    min-width:0;
+
+}
+
+.info-viaje span,
+.info-viaje strong{
+
+    display:block;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+    white-space:nowrap;
+
+}
+
+.info-viaje span{
+
+    margin-bottom:3px;
+
+    color:var(--texto-suave);
+
+    font-size:9px;
+    font-weight:750;
+    letter-spacing:.35px;
+    text-transform:uppercase;
+
+}
+
+.info-viaje strong{
+
+    font-size:11px;
+
+}
+
+/*==================================================
+                   PREFERENCIAS
+==================================================*/
+
+.preferencias-card{
+
+    display:flex;
+    flex-wrap:wrap;
+    gap:7px;
+
+    min-height:29px;
+    margin-bottom:18px;
+
+}
+
+.preferencias-card:empty{
+
+    display:none;
+
+}
+
+.preferencias-card span{
+
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+
+    padding:6px 9px;
+
+    border-radius:30px;
+
+    background:rgba(255,255,255,.055);
+    color:var(--texto-secundario);
+
+    font-size:10px;
+    font-weight:650;
+
+}
+
+.preferencias-card i{
+
+    color:#77bbff;
+
+}
+
+/*==================================================
+               DETALLES EXPANDIBLES
+==================================================*/
+
+.detalles-expandibles{
+
+    max-height:0;
+    overflow:hidden;
+
+    opacity:0;
+
+    transition:
+        max-height .35s ease,
+        opacity .25s ease,
+        margin .35s ease;
+
+}
+
+.viaje-card.detalles-abiertos
+.detalles-expandibles{
+
+    max-height:400px;
+
+    margin-bottom:17px;
+
+    opacity:1;
+
+}
+
+.detalles-expandibles-contenido{
+
+    padding:14px;
+
+    border:1px solid var(--borde);
+    border-radius:13px;
+
+    background:rgba(0,0,0,.11);
+
+}
+
+.detalles-expandibles-contenido h3{
+
+    margin-bottom:10px;
+
+    font-size:12px;
+
+}
+
+.detalles-expandibles-contenido p{
+
+    color:var(--texto-secundario);
+
+    font-size:11px;
+    line-height:1.55;
+
+}
+
+/*==================================================
+                 ACCIONES DE TARJETA
+==================================================*/
+
+.viaje-card-footer{
+
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:8px;
+
+    margin-top:auto;
+    padding-top:17px;
+
+    border-top:1px solid var(--borde);
+
+}
+
+.btn-viaje{
+
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+
+    min-height:38px;
+
+    padding:9px 12px;
+
+    border:1px solid transparent;
+    border-radius:10px;
+
+    background:transparent;
+
+    color:var(--texto-secundario);
+
+    font-size:10px;
+    font-weight:800;
+
+    cursor:pointer;
+
+    transition:
+        transform .18s ease,
+        background .18s ease,
+        color .18s ease,
+        border-color .18s ease,
+        opacity .18s ease;
+
+}
+
+.btn-viaje:hover{
+
+    transform:translateY(-1px);
+
+}
+
+.btn-viaje:disabled{
+
+    cursor:wait;
+
+    opacity:.55;
+    transform:none;
+
+}
+
+.btn-detalles{
+
+    border-color:var(--borde);
+
+    background:rgba(255,255,255,.035);
+
+}
+
+.btn-detalles:hover{
+
+    border-color:rgba(22,135,255,.28);
+
+    background:var(--azul-suave);
+    color:#84c1ff;
+
+}
+
+.btn-secundario{
+
+    border-color:var(--borde);
+
+    background:rgba(255,255,255,.035);
+
+}
+
+.btn-secundario:hover{
+
+    border-color:var(--borde-fuerte);
+
+    background:rgba(255,255,255,.07);
+    color:white;
+
+}
+
+.btn-peligro{
+
+    border-color:rgba(255,98,107,.18);
+
+    background:var(--rojo-suave);
+    color:#ff9da3;
+
+}
+
+.btn-peligro:hover{
+
+    border-color:rgba(255,98,107,.34);
+
+    background:rgba(255,98,107,.19);
+    color:#ffc1c4;
+
+}
+
+.btn-iniciar{
+
+    margin-left:auto;
+
+    background:var(--azul);
+    color:white;
+
+    box-shadow:
+        0 7px 17px
+        rgba(22,135,255,.18);
+
+}
+
+.btn-iniciar:hover{
+
+    background:var(--azul-hover);
+
+    box-shadow:
+        0 10px 22px
+        rgba(22,135,255,.25);
+
+}
+
+/*==================================================
+                    ESTADO VACÍO
+==================================================*/
+
+.viajes-vacio{
+
+    grid-column:1 / -1;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+
+    min-height:420px;
+
+    padding:50px 25px;
+
+    border:1px dashed rgba(255,255,255,.13);
+    border-radius:var(--radio-lg);
+
+    background:rgba(255,255,255,.018);
+
+    text-align:center;
+
+}
+
+.vacio-icono{
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    width:72px;
+    height:72px;
+
+    margin-bottom:18px;
+
+    border-radius:22px;
+
+    background:var(--azul-suave);
+    color:#6fb5ff;
+
+    font-size:29px;
+
+}
+
+.viajes-vacio h2{
+
+    margin-bottom:8px;
+
+    font-size:21px;
+
+}
+
+.viajes-vacio p{
+
+    max-width:440px;
+
+    margin-bottom:21px;
+
+    color:var(--texto-secundario);
+
+    font-size:13px;
+    line-height:1.6;
+
+}
+
+.btn-vacio{
+
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+
+    min-height:44px;
+
+    padding:11px 16px;
+
+    border-radius:12px;
+
+    background:var(--azul);
+    color:white;
+
+    font-size:12px;
+    font-weight:800;
+
+    transition:
+        transform .2s ease,
+        background .2s ease;
+
+}
+
+.btn-vacio:hover{
+
+    background:var(--azul-hover);
+    transform:translateY(-2px);
+
+}
+
+/*==================================================
+                  MODAL DE CONFIRMACIÓN
+==================================================*/
+
+.modal-viaje-overlay{
+
+    position:fixed;
+    inset:0;
+    z-index:5000;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    padding:20px;
+
+    background:rgba(1,10,18,.72);
+
+    opacity:0;
+    visibility:hidden;
+
+    transition:
+        opacity .22s ease,
+        visibility .22s ease;
+
+    backdrop-filter:blur(8px);
+
+}
+
+.modal-viaje-overlay.abierto{
+
+    opacity:1;
+    visibility:visible;
+
+}
+
+.modal-viaje{
+
+    width:min(440px, 100%);
+
+    padding:26px;
+
+    border:1px solid var(--borde-fuerte);
+    border-radius:21px;
+
+    background:
+        linear-gradient(
+            150deg,
+            rgba(255,255,255,.045),
+            transparent 42%
+        ),
+        #0d2944;
+
+    box-shadow:
+        0 26px 75px
+        rgba(0,0,0,.42);
+
+    transform:
+        translateY(18px)
+        scale(.97);
+
+    transition:transform .22s ease;
+
+}
+
+.modal-viaje-overlay.abierto
+.modal-viaje{
+
+    transform:
+        translateY(0)
+        scale(1);
+
+}
+
+.modal-icono{
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    width:52px;
+    height:52px;
+
+    margin-bottom:17px;
+
+    border-radius:16px;
+
+    background:var(--rojo-suave);
+    color:#ff8e95;
+
+    font-size:21px;
+
+}
+
+.modal-viaje h2{
+
+    margin-bottom:8px;
+
+    font-size:21px;
+
+}
+
+.modal-viaje p{
+
+    color:var(--texto-secundario);
+
+    font-size:13px;
+    line-height:1.6;
+
+}
+
+.modal-acciones{
+
+    display:flex;
+    justify-content:flex-end;
+    gap:9px;
+
+    margin-top:23px;
+
+}
+
+.modal-btn{
+
+    min-height:42px;
+
+    padding:10px 15px;
+
+    border-radius:11px;
+
+    font-size:12px;
+    font-weight:800;
+
+    cursor:pointer;
+
+    transition:
+        background .18s ease,
+        transform .18s ease;
+
+}
+
+.modal-btn:hover{
+
+    transform:translateY(-1px);
+
+}
+
+.modal-btn-cancelar{
+
+    border:1px solid var(--borde);
+
+    background:rgba(255,255,255,.045);
+    color:white;
+
+}
+
+.modal-btn-confirmar{
+
+    background:var(--rojo);
+    color:white;
+
+}
+
+.modal-btn-confirmar:hover{
+
+    background:var(--rojo-hover);
+
+}
+
+/*==================================================
+                       TOAST
+==================================================*/
+
+.contenedor-toast{
+
+    position:fixed;
+    right:23px;
+    bottom:23px;
+    z-index:6000;
+
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:10px;
+
+    pointer-events:none;
+
+}
+
+.toast-viaje{
+
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+
+    width:min(360px, calc(100vw - 35px));
+
+    padding:13px 15px;
+
+    border:1px solid var(--borde-fuerte);
+    border-radius:13px;
+
+    background:rgba(10,37,60,.96);
+    color:white;
+
+    box-shadow:var(--sombra);
+
+    font-size:12px;
+    line-height:1.5;
+
+    opacity:0;
+    transform:translateX(25px);
+
+    transition:
+        opacity .25s ease,
+        transform .25s ease;
+
+    backdrop-filter:blur(10px);
+
+}
+
+.toast-viaje.visible{
+
+    opacity:1;
+    transform:translateX(0);
+
+}
+
+.toast-viaje.info i{
+
+    color:#71b8ff;
+
+}
+
+.toast-viaje.exito i{
+
+    color:var(--verde);
+
+}
+
+.toast-viaje.error i{
+
+    color:var(--rojo);
+
+}
+
+/*==================================================
+                      RESPONSIVE
+==================================================*/
+
+@media(max-width:1200px){
+
+    .estadisticas-viajes{
+
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+
+    }
+
+    .lista-viajes{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+@media(max-width:850px){
+
+    .mis-viajes-main{
+
+        margin-left:90px;
+
+        padding:
+            30px 22px
+            55px;
+
+    }
+
+    .sidebar.active ~ .mis-viajes-main{
+
+        margin-left:90px;
+
+    }
+
+    .mis-viajes-header{
+
+        align-items:flex-start;
+        flex-direction:column;
+
+    }
+
+    .btn-nuevo-viaje{
+
+        width:100%;
+
+    }
+
+}
+
+@media(max-width:620px){
+
+    :root{
+
+        --sidebar-width:0px;
+
+    }
+
+    .mis-viajes-main{
+
+        margin-left:0;
+
+        padding:
+            24px 15px
+            45px;
+
+    }
+
+    .mis-viajes-header{
+
+        margin-bottom:25px;
+
+    }
+
+    .mis-viajes-header h1{
+
+        font-size:31px;
+
+    }
+
+    .estadisticas-viajes{
+
+        grid-template-columns:1fr 1fr;
+        gap:10px;
+
+    }
+
+    .estadistica-card{
+
+        min-height:100px;
+
+        padding:14px;
+
+    }
+
+    .estadistica-icono{
+
+        width:42px;
+        height:42px;
+
+        font-size:17px;
+
+    }
+
+    .estadistica-card div strong{
+
+        font-size:23px;
+
+    }
+
+    .viaje-card{
+
+        padding:18px;
+
+    }
+
+    .viaje-card-header{
+
+        align-items:flex-start;
+        flex-direction:column;
+
+    }
+
+    .viaje-informacion{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .viaje-card-footer{
+
+        display:grid;
+        grid-template-columns:1fr 1fr;
+
+    }
+
+    .btn-viaje{
+
+        width:100%;
+
+    }
+
+    .btn-iniciar{
+
+        grid-column:1 / -1;
+
+        margin-left:0;
+
+    }
+
+}
+
+@media(max-width:420px){
+
+    .estadisticas-viajes{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .viaje-card-footer{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .btn-iniciar{
+
+        grid-column:auto;
+
+    }
+
+    .modal-acciones{
+
+        flex-direction:column-reverse;
+
+    }
+
+    .modal-btn{
+
+        width:100%;
+
+    }
+
+}
