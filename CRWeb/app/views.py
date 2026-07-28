@@ -639,7 +639,87 @@ def mis_viajes_conductor(request):
         "viajes/mis_viajes_conductor.html",
         contexto
     )
+    
+#==========================================================
+# Mis viajes - Pasajero
+#==========================================================
 
+@login_required
+def mis_viajes_pasajero(request):
+
+    if request.user.rol != "pasajero":
+        return render(request, "403.html", status=403)
+
+    filtro = request.GET.get("estado", "todos")
+
+    solicitudes = SolicitudViaje.objects.filter(
+        pasajero=request.user
+    ).select_related(
+        "viaje",
+        "viaje__conductor__usuario",
+        "viaje__vehiculo"
+    )
+
+    if filtro == "pendientes":
+        solicitudes = solicitudes.filter(
+            estado=SolicitudViaje.EstadosSolicitud.PENDIENTE
+        )
+
+    elif filtro == "aceptadas":
+        solicitudes = solicitudes.filter(
+            estado=SolicitudViaje.EstadosSolicitud.ACEPTADA
+        )
+
+    elif filtro == "rechazadas":
+        solicitudes = solicitudes.filter(
+            estado=SolicitudViaje.EstadosSolicitud.RECHAZADA
+        )
+
+    elif filtro == "canceladas":
+        solicitudes = solicitudes.filter(
+            estado=SolicitudViaje.EstadosSolicitud.CANCELADA
+        )
+
+    elif filtro == "completadas":
+        solicitudes = solicitudes.filter(
+            estado=SolicitudViaje.EstadosSolicitud.COMPLETADA
+        )
+
+    estadisticas = {
+        "total": SolicitudViaje.objects.filter(
+            pasajero=request.user
+        ).count(),
+
+        "pendientes": SolicitudViaje.objects.filter(
+            pasajero=request.user,
+            estado=SolicitudViaje.EstadosSolicitud.PENDIENTE
+        ).count(),
+
+        "aceptadas": SolicitudViaje.objects.filter(
+            pasajero=request.user,
+            estado=SolicitudViaje.EstadosSolicitud.ACEPTADA
+        ).count(),
+
+        "completadas": SolicitudViaje.objects.filter(
+            pasajero=request.user,
+            estado=SolicitudViaje.EstadosSolicitud.COMPLETADA
+        ).count(),
+
+        "canceladas": SolicitudViaje.objects.filter(
+            pasajero=request.user,
+            estado=SolicitudViaje.EstadosSolicitud.CANCELADA
+        ).count(),
+    }
+
+    return render(
+        request,
+        "viajes/mis_viajes_pasajero.html",
+        {
+            "solicitudes": solicitudes,
+            "estadisticas": estadisticas,
+            "filtro_actual": filtro,
+        },
+    )
 
 # =========================================================
 # PANEL ADMINISTRATIVO
