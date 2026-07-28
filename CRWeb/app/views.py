@@ -352,7 +352,178 @@ def perfil(request):
     }
 
     return render(request, "perfil/perfil.html", contexto)
+# =========================================================
+# PUBLICAR VIAJE
+# =========================================================
 
+@login_required(login_url="login")
+def publicar_viaje(request):
+
+    # Solo los conductores pueden acceder.
+    if not request.user.es_conductor:
+        messages.error(
+            request,
+            "Solo los usuarios con rol de conductor "
+            "pueden publicar viajes."
+        )
+        return redirect("home")
+
+    try:
+        perfil_conductor = request.user.perfil_conductor
+
+    except PerfilConductor.DoesNotExist:
+        messages.warning(
+            request,
+            "Debes completar primero tu perfil de conductor."
+        )
+
+        base_url = reverse("perfil")
+        query_string = urlencode({
+            "tab": "vehiculo"
+        })
+
+        return redirect(
+            f"{base_url}?{query_string}"
+        )
+
+    # El conductor debe estar aprobado.
+    if (
+        perfil_conductor.estado_verificacion
+        != PerfilConductor.EstadosVerificacion.APROBADO
+    ):
+        messages.warning(
+            request,
+            "Tu perfil de conductor debe estar aprobado "
+            "antes de publicar viajes."
+        )
+
+        return redirect("perfil")
+
+    vehiculos_disponibles = (
+        Vehiculo.objects.filter(
+            conductor=perfil_conductor,
+            activo=True,
+            estado=Vehiculo.EstadosVehiculo.APROBADO,
+        )
+        .order_by("-fecha_registro")
+    )
+
+    if not vehiculos_disponibles.exists():
+        messages.warning(
+            request,
+            "Necesitas tener al menos un vehículo aprobado "
+            "y activo para publicar un viaje."
+        )
+
+        base_url = reverse("perfil")
+        query_string = urlencode({
+            "tab": "vehiculo"
+        })
+
+        return redirect(
+            f"{base_url}?{query_string}"
+        )
+
+    if request.method == "POST":
+
+        formulario = PublicarViajeForm(
+            request.POST,
+            conductor=perfil_conductor,
+        )
+
+        if formulario.is_valid():
+
+            try:
+                with transaction.atomic():
+
+                    viaje = formulario.save(
+                        commit=False
+                    )
+
+                    viaje.conductor = perfil_conductor
+
+                    # Al publicarlo todos los asientos
+                    # comienzan disponibles.
+                    viaje.asientos_disponibles = (
+                        viaje.asientos_totales
+                    )
+
+                    viaje.estado = (
+                        Viaje.EstadosViaje.DISPONIBLE
+                    )
+
+                    viaje.full_clean()
+                    viaje.save()
+
+                    # Cada viaje tendrá su propia sala.
+                    SalaChat.objects.create(
+                        viaje=viaje,
+                        activa=True,
+                    )
+
+            except ValidationError as error:
+
+                if hasattr(error, "message_dict"):
+                    for campo, errores in (
+                        error.message_dict.items()
+                    ):
+                        for mensaje in errores:
+
+                            if campo in formulario.fields:
+                                formulario.add_error(
+                                    campo,
+                                    mensaje,
+                                )
+                            else:
+                                formulario.add_error(
+                                    None,
+                                    mensaje,
+                                )
+                else:
+                    formulario.add_error(
+                        None,
+                        error.message,
+                    )
+
+            except IntegrityError:
+
+                formulario.add_error(
+                    None,
+                    (
+                        "No fue posible publicar el viaje. "
+                        "Inténtalo nuevamente."
+                    ),
+                )
+
+            else:
+
+                messages.success(
+                    request,
+                    "El viaje fue publicado correctamente."
+                )
+
+                return redirect(
+                    "detalle_viaje",
+                    viaje_id=viaje.id,
+                )
+
+    else:
+
+        formulario = PublicarViajeForm(
+            conductor=perfil_conductor,
+        )
+
+    contexto = {
+        "formulario": formulario,
+        "perfil_conductor": perfil_conductor,
+        "vehiculos_disponibles": vehiculos_disponibles,
+    }
+
+    return render(
+        request,
+        "viajes/publicar_viaje.html",
+        contexto,
+    )
 
 # =========================================================
 # PANEL ADMINISTRATIVO
