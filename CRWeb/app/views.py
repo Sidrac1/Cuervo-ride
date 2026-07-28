@@ -525,6 +525,119 @@ def publicar_viaje(request):
         contexto,
     )
 
+#==========================================================
+# Mis Viajes - Conductor
+#==========================================================
+
+@login_required(login_url="login")
+def mis_viajes_conductor(request):
+    """
+    Muestra todos los viajes publicados por el conductor autenticado.
+    Permite filtrar los viajes según su estado.
+    """
+
+    # Evita que un pasajero acceda directamente mediante la URL.
+    if request.user.rol != request.user.Roles.CONDUCTOR:
+        messages.error(
+            request,
+            "Esta sección está disponible únicamente para conductores."
+        )
+        return redirect("home")
+
+    try:
+        perfil_conductor = request.user.perfil_conductor
+    except PerfilConductor.DoesNotExist:
+        messages.warning(
+            request,
+            "Primero debes completar tu perfil de conductor."
+        )
+
+        return redirect("perfil")
+
+    filtro = request.GET.get("estado", "todos").lower()
+
+    viajes = (
+        Viaje.objects
+        .filter(conductor=perfil_conductor)
+        .select_related("vehiculo")
+        .order_by("-fecha_hora_salida")
+    )
+
+    # Estados que pueden enviarse por GET.
+    filtros_permitidos = {
+        "todos",
+        "disponibles",
+        "en_curso",
+        "finalizados",
+        "cancelados",
+    }
+
+    if filtro not in filtros_permitidos:
+        filtro = "todos"
+
+    if filtro == "disponibles":
+        viajes = viajes.filter(
+            estado__in=[
+                Viaje.EstadosViaje.DISPONIBLE,
+                Viaje.EstadosViaje.COMPLETO,
+            ]
+        )
+
+    elif filtro == "en_curso":
+        viajes = viajes.filter(
+            estado=Viaje.EstadosViaje.EN_CURSO
+        )
+
+    elif filtro == "finalizados":
+        viajes = viajes.filter(
+            estado=Viaje.EstadosViaje.FINALIZADO
+        )
+
+    elif filtro == "cancelados":
+        viajes = viajes.filter(
+            estado=Viaje.EstadosViaje.CANCELADO
+        )
+
+    todos_los_viajes = Viaje.objects.filter(
+        conductor=perfil_conductor
+    )
+
+    estadisticas = {
+        "total": todos_los_viajes.count(),
+
+        "disponibles": todos_los_viajes.filter(
+            estado__in=[
+                Viaje.EstadosViaje.DISPONIBLE,
+                Viaje.EstadosViaje.COMPLETO,
+            ]
+        ).count(),
+
+        "en_curso": todos_los_viajes.filter(
+            estado=Viaje.EstadosViaje.EN_CURSO
+        ).count(),
+
+        "finalizados": todos_los_viajes.filter(
+            estado=Viaje.EstadosViaje.FINALIZADO
+        ).count(),
+
+        "cancelados": todos_los_viajes.filter(
+            estado=Viaje.EstadosViaje.CANCELADO
+        ).count(),
+    }
+
+    contexto = {
+        "viajes": viajes,
+        "filtro_actual": filtro,
+        "estadisticas": estadisticas,
+    }
+
+    return render(
+        request,
+        "viajes/mis_viajes_conductor.html",
+        contexto
+    )
+
+
 # =========================================================
 # PANEL ADMINISTRATIVO
 # =========================================================
