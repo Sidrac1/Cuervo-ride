@@ -99,7 +99,7 @@ body{
 
 .baner{
     height:640px;
-    background-image:url("/static/img/baner.png");
+    background-image:url("/static/img/baner.jpg");
     background-position:bottom center;
     background-repeat:no-repeat;
     background-size:cover;
