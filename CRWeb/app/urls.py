@@ -11,6 +11,7 @@ urlpatterns = [
     path("nosotros/", views.sobrenosotros, name="sobrenosotros"),
     path("agendar-viaje/", views.agendarviaje, name="agendarviaje"),
     path("filtro-viajes/", views.filtroviajes, name="filtroviajes"),
+    path("viajes/publicar/",views.publicar_viaje,name="publicar_viaje",),
 
     # ---------------------------------------------------------
     # Autenticación y Registro
