@@ -1,0 +1,549 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Mis viajes | Cuervo-Ride</title>
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/mis_viajes_conductor.css' %}"
+    >
+
+</head>
+
+<body>
+
+    {% include "components/sidebar.html" %}
+
+    <main class="mis-viajes-main">
+
+        <!-- =========================================
+                        ENCABEZADO
+        ========================================== -->
+
+        <header class="mis-viajes-header">
+
+            <div class="header-texto">
+
+                <h1>Mis viajes</h1>
+
+                <p>
+                    Administra los recorridos que has publicado
+                    y consulta su estado.
+                </p>
+
+            </div>
+
+            <a
+                href="{% url 'publicar_viaje' %}"
+                class="btn-nuevo-viaje"
+            >
+                <i class="fa-solid fa-plus"></i>
+
+                <span>Publicar nuevo viaje</span>
+            </a>
+
+        </header>
+
+        <!-- =========================================
+                    MENSAJES DE DJANGO
+        ========================================== -->
+
+        {% if messages %}
+
+            <section class="mensajes-django">
+
+                {% for message in messages %}
+
+                    <div class="mensaje {{ message.tags }}">
+
+                        {% if message.tags == "success" %}
+                            <i class="fa-solid fa-circle-check"></i>
+
+                        {% elif message.tags == "warning" %}
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+
+                        {% else %}
+                            <i class="fa-solid fa-circle-info"></i>
+                        {% endif %}
+
+                        <span>{{ message }}</span>
+
+                    </div>
+
+                {% endfor %}
+
+            </section>
+
+        {% endif %}
+
+        <!-- =========================================
+                      ESTADÍSTICAS
+        ========================================== -->
+
+        <section class="estadisticas-viajes">
+
+            <article class="estadistica-card">
+
+                <span class="estadistica-icono total">
+                    <i class="fa-solid fa-route"></i>
+                </span>
+
+                <div>
+                    <span>Total de viajes</span>
+                    <strong>{{ estadisticas.total }}</strong>
+                </div>
+
+            </article>
+
+            <article class="estadistica-card">
+
+                <span class="estadistica-icono disponibles">
+                    <i class="fa-solid fa-calendar-check"></i>
+                </span>
+
+                <div>
+                    <span>Disponibles</span>
+                    <strong>{{ estadisticas.disponibles }}</strong>
+                </div>
+
+            </article>
+
+            <article class="estadistica-card">
+
+                <span class="estadistica-icono curso">
+                    <i class="fa-solid fa-car-side"></i>
+                </span>
+
+                <div>
+                    <span>En curso</span>
+                    <strong>{{ estadisticas.en_curso }}</strong>
+                </div>
+
+            </article>
+
+            <article class="estadistica-card">
+
+                <span class="estadistica-icono finalizados">
+                    <i class="fa-solid fa-flag-checkered"></i>
+                </span>
+
+                <div>
+                    <span>Finalizados</span>
+                    <strong>{{ estadisticas.finalizados }}</strong>
+                </div>
+
+            </article>
+
+        </section>
+
+        <!-- =========================================
+                         FILTROS
+        ========================================== -->
+
+        <section class="barra-filtros">
+
+            <nav class="filtros-viajes">
+
+                <a
+                    href="{% url 'mis_viajes_conductor' %}?estado=todos"
+                    class="filtro-btn {% if filtro_actual == 'todos' %}active{% endif %}"
+                >
+                    Todos
+
+                    <span>{{ estadisticas.total }}</span>
+                </a>
+
+                <a
+                    href="{% url 'mis_viajes_conductor' %}?estado=disponibles"
+                    class="filtro-btn {% if filtro_actual == 'disponibles' %}active{% endif %}"
+                >
+                    Disponibles
+
+                    <span>{{ estadisticas.disponibles }}</span>
+                </a>
+
+                <a
+                    href="{% url 'mis_viajes_conductor' %}?estado=en_curso"
+                    class="filtro-btn {% if filtro_actual == 'en_curso' %}active{% endif %}"
+                >
+                    En curso
+
+                    <span>{{ estadisticas.en_curso }}</span>
+                </a>
+
+                <a
+                    href="{% url 'mis_viajes_conductor' %}?estado=finalizados"
+                    class="filtro-btn {% if filtro_actual == 'finalizados' %}active{% endif %}"
+                >
+                    Finalizados
+
+                    <span>{{ estadisticas.finalizados }}</span>
+                </a>
+
+                <a
+                    href="{% url 'mis_viajes_conductor' %}?estado=cancelados"
+                    class="filtro-btn {% if filtro_actual == 'cancelados' %}active{% endif %}"
+                >
+                    Cancelados
+
+                    <span>{{ estadisticas.cancelados }}</span>
+                </a>
+
+            </nav>
+
+        </section>
+
+        <!-- =========================================
+                      LISTA DE VIAJES
+        ========================================== -->
+
+        <section class="lista-viajes">
+
+            {% for viaje in viajes %}
+
+                <article
+                    class="viaje-card"
+                    data-viaje-id="{{ viaje.id }}"
+                    data-estado="{{ viaje.estado }}"
+                >
+
+                    <!-- Parte superior -->
+
+                    <header class="viaje-card-header">
+
+                        <div class="viaje-fecha">
+
+                            <span class="fecha-icono">
+                                <i class="fa-regular fa-calendar"></i>
+                            </span>
+
+                            <div>
+                                <strong>
+                                    {{ viaje.fecha_hora_salida|date:"d M Y" }}
+                                </strong>
+
+                                <span>
+                                    {{ viaje.fecha_hora_salida|date:"H:i" }} h
+                                </span>
+                            </div>
+
+                        </div>
+
+                        <span class="estado-viaje estado-{{ viaje.estado }}">
+
+                            {% if viaje.estado == "disponible" %}
+
+                                <i class="fa-solid fa-circle"></i>
+                                Disponible
+
+                            {% elif viaje.estado == "completo" %}
+
+                                <i class="fa-solid fa-users"></i>
+                                Completo
+
+                            {% elif viaje.estado == "en_curso" %}
+
+                                <i class="fa-solid fa-location-arrow"></i>
+                                En curso
+
+                            {% elif viaje.estado == "finalizado" %}
+
+                                <i class="fa-solid fa-circle-check"></i>
+                                Finalizado
+
+                            {% elif viaje.estado == "cancelado" %}
+
+                                <i class="fa-solid fa-circle-xmark"></i>
+                                Cancelado
+
+                            {% else %}
+
+                                {{ viaje.get_estado_display }}
+
+                            {% endif %}
+
+                        </span>
+
+                    </header>
+
+                    <!-- Ruta -->
+
+                    <div class="viaje-ruta">
+
+                        <div class="ruta-puntos">
+
+                            <span class="ruta-punto origen"></span>
+
+                            <span class="ruta-linea"></span>
+
+                            <span class="ruta-punto destino"></span>
+
+                        </div>
+
+                        <div class="ruta-direcciones">
+
+                            <div>
+
+                                <span>Origen</span>
+
+                                <strong>
+                                    {{ viaje.origen }}
+                                </strong>
+
+                            </div>
+
+                            <div>
+
+                                <span>Destino</span>
+
+                                <strong>
+                                    {{ viaje.destino }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Información -->
+
+                    <div class="viaje-informacion">
+
+                        <div class="info-viaje">
+
+                            <i class="fa-solid fa-car-side"></i>
+
+                            <div>
+                                <span>Vehículo</span>
+
+                                <strong>
+                                    {{ viaje.vehiculo.marca }}
+                                    {{ viaje.vehiculo.modelo }}
+                                </strong>
+                            </div>
+
+                        </div>
+
+                        <div class="info-viaje">
+
+                            <i class="fa-solid fa-users"></i>
+
+                            <div>
+                                <span>Asientos disponibles</span>
+
+                                <strong>
+                                    {{ viaje.asientos_disponibles }}
+                                    de
+                                    {{ viaje.asientos_totales }}
+                                </strong>
+                            </div>
+
+                        </div>
+
+                        <div class="info-viaje">
+
+                            <i class="fa-solid fa-coins"></i>
+
+                            <div>
+                                <span>Costo por pasajero</span>
+
+                                <strong>
+                                    ${{ viaje.costo_por_pasajero|floatformat:2 }}
+                                    MXN
+                                </strong>
+                            </div>
+
+                        </div>
+
+                        <div class="info-viaje">
+
+                            <i class="fa-regular fa-clock"></i>
+
+                            <div>
+                                <span>Llegada estimada</span>
+
+                                <strong>
+                                    {% if viaje.fecha_hora_llegada_estimada %}
+                                        {{ viaje.fecha_hora_llegada_estimada|date:"H:i" }} h
+                                    {% else %}
+                                        Sin definir
+                                    {% endif %}
+                                </strong>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Preferencias -->
+
+                    <div class="preferencias-card">
+
+                        {% if viaje.permite_mascota %}
+
+                            <span>
+                                <i class="fa-solid fa-paw"></i>
+                                Mascotas
+                            </span>
+
+                        {% endif %}
+
+                        {% if viaje.acepta_silla_ruedas %}
+
+                            <span>
+                                <i class="fa-solid fa-wheelchair"></i>
+                                Silla de ruedas
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                    <!-- Acciones -->
+
+                    <footer class="viaje-card-footer">
+
+                        <button
+                            type="button"
+                            class="btn-viaje btn-detalles"
+                            data-accion="detalles"
+                            data-viaje-id="{{ viaje.id }}"
+                        >
+                            <i class="fa-regular fa-eye"></i>
+                            Ver detalles
+                        </button>
+
+                        {% if viaje.estado == "disponible" or viaje.estado == "completo" %}
+
+                            <button
+                                type="button"
+                                class="btn-viaje btn-secundario"
+                                data-accion="editar"
+                                data-viaje-id="{{ viaje.id }}"
+                            >
+                                <i class="fa-solid fa-pen"></i>
+                                Editar
+                            </button>
+
+                            <button
+                                type="button"
+                                class="btn-viaje btn-peligro"
+                                data-accion="cancelar"
+                                data-viaje-id="{{ viaje.id }}"
+                            >
+                                <i class="fa-solid fa-ban"></i>
+                                Cancelar
+                            </button>
+
+                            <button
+                                type="button"
+                                class="btn-viaje btn-iniciar"
+                                data-accion="iniciar"
+                                data-viaje-id="{{ viaje.id }}"
+                            >
+                                <i class="fa-solid fa-play"></i>
+                                Iniciar
+                            </button>
+
+                        {% elif viaje.estado == "en_curso" %}
+
+                            <button
+                                type="button"
+                                class="btn-viaje btn-iniciar"
+                                data-accion="continuar"
+                                data-viaje-id="{{ viaje.id }}"
+                            >
+                                <i class="fa-solid fa-location-arrow"></i>
+                                Continuar viaje
+                            </button>
+
+                        {% elif viaje.estado == "finalizado" or viaje.estado == "cancelado" %}
+
+                            <button
+                                type="button"
+                                class="btn-viaje btn-secundario"
+                                data-accion="duplicar"
+                                data-viaje-id="{{ viaje.id }}"
+                            >
+                                <i class="fa-regular fa-copy"></i>
+                                Duplicar viaje
+                            </button>
+
+                        {% endif %}
+
+                    </footer>
+
+                </article>
+
+            {% empty %}
+
+                <div class="viajes-vacio">
+
+                    <span class="vacio-icono">
+                        <i class="fa-solid fa-route"></i>
+                    </span>
+
+                    <h2>No hay viajes para mostrar</h2>
+
+                    {% if filtro_actual == "todos" %}
+
+                        <p>
+                            Todavía no has publicado ningún viaje.
+                            Crea tu primer recorrido para comenzar.
+                        </p>
+
+                        <a
+                            href="{% url 'publicar_viaje' %}"
+                            class="btn-vacio"
+                        >
+                            <i class="fa-solid fa-plus"></i>
+                            Publicar mi primer viaje
+                        </a>
+
+                    {% else %}
+
+                        <p>
+                            No tienes viajes dentro de esta categoría.
+                        </p>
+
+                        <a
+                            href="{% url 'mis_viajes_conductor' %}"
+                            class="btn-vacio"
+                        >
+                            Mostrar todos los viajes
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+
+        </section>
+
+    </main>
+
+    <script
+        src="{% static 'js/mis_viajes_conductor.js' %}"
+    ></script>
+
+</body>
+
+</html>
