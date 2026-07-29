@@ -1,0 +1,2186 @@
+/* =========================================================
+   MIS VIAJES DEL PASAJERO
+   CUERVO-RIDE
+========================================================= */
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+:root {
+
+    --color-fondo: #0c0f1c;
+    --color-fondo-secundario: #0c0f1c;
+
+    --color-card: #101d30;
+    --color-card-secundario: #14243a;
+    --color-card-hover: #182b44;
+
+    --color-borde: rgba(255, 255, 255, 0.09);
+    --color-borde-hover: rgba(152, 236, 99, 0.35);
+
+    --color-principal: #98ec63;
+    --color-principal-oscuro: #4fbd47;
+    --color-principal-suave: rgba(152, 236, 99, 0.12);
+
+    --color-texto: #f8fafc;
+    --color-texto-secundario: #aab6c7;
+    --color-texto-suave: #718096;
+
+    --color-azul: #4ca6ff;
+    --color-azul-suave: rgba(76, 166, 255, 0.13);
+
+    --color-amarillo: #f8c14b;
+    --color-amarillo-suave: rgba(248, 193, 75, 0.13);
+
+    --color-rojo: #ff6577;
+    --color-rojo-suave: rgba(255, 101, 119, 0.13);
+
+    --color-naranja: #fb923c;
+    --color-naranja-suave: rgba(251, 146, 60, 0.13);
+
+    --color-morado: #a78bfa;
+    --color-morado-suave: rgba(167, 139, 250, 0.13);
+
+    --color-gris: #94a3b8;
+    --color-gris-suave: rgba(148, 163, 184, 0.13);
+
+    --sombra-card:
+        0 18px 45px rgba(0, 0, 0, 0.22);
+
+    --sombra-hover:
+        0 24px 55px rgba(0, 0, 0, 0.32);
+
+    --radio-grande: 24px;
+    --radio-medio: 17px;
+    --radio-pequeno: 12px;
+
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+
+}
+
+html {
+
+    scroll-behavior: smooth;
+
+}
+
+body {
+
+    min-height: 100vh;
+    background-color: #0c0f1c;
+    color: var(--color-texto);
+
+    font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+}
+
+button,
+input,
+select,
+textarea {
+
+    font: inherit;
+
+}
+
+button,
+a {
+
+    -webkit-tap-highlight-color: transparent;
+
+}
+
+a {
+
+    color: inherit;
+    text-decoration: none;
+
+}
+
+img {
+
+    display: block;
+    max-width: 100%;
+
+}
+
+
+/* =========================================================
+   CONTENIDO PRINCIPAL
+========================================================= */
+
+.mis-viajes-main {
+
+    min-height: 100vh;
+
+    margin-left: 90px;
+
+    padding:
+        42px
+        clamp(22px, 4vw, 64px)
+        70px;
+
+    transition:
+        margin-left 0.35s ease;
+
+}
+
+.sidebar.active ~ .mis-viajes-main {
+
+    margin-left: 260px;
+
+}
+
+
+/* =========================================================
+   ENCABEZADO
+========================================================= */
+
+.encabezado-pagina {
+
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+
+    margin-bottom: 35px;
+
+    padding: 30px;
+
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-grande);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(152, 236, 99, 0.08),
+            rgba(76, 166, 255, 0.035)
+        ),
+        var(--color-card);
+
+    box-shadow: var(--sombra-card);
+
+    overflow: hidden;
+    position: relative;
+
+}
+
+.encabezado-pagina::before {
+
+    content: "";
+
+    width: 230px;
+    height: 230px;
+
+    position: absolute;
+    top: -140px;
+    right: -85px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(152, 236, 99, 0.2),
+            transparent 70%
+        );
+
+    pointer-events: none;
+
+}
+
+.encabezado-texto {
+
+    max-width: 720px;
+    position: relative;
+    z-index: 1;
+
+}
+
+.encabezado-etiqueta {
+
+    width: fit-content;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+
+    margin-bottom: 15px;
+
+    padding: 8px 13px;
+
+    border: 1px solid rgba(152, 236, 99, 0.24);
+    border-radius: 999px;
+
+    background: var(--color-principal-suave);
+
+    color: var(--color-principal);
+
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+
+}
+
+.encabezado-texto h1 {
+
+    margin-bottom: 10px;
+
+    color: var(--color-texto);
+
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.05;
+
+}
+
+.encabezado-texto p {
+
+    max-width: 650px;
+
+    color: var(--color-texto-secundario);
+
+    font-size: 0.98rem;
+    line-height: 1.7;
+
+}
+
+.encabezado-acciones {
+
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+
+}
+
+.btn-buscar-viaje {
+
+    min-height: 48px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    padding: 12px 20px;
+
+    border: none;
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--color-principal),
+            var(--color-principal-oscuro)
+        );
+
+    color: #07111f;
+
+    font-size: 0.9rem;
+    font-weight: 800;
+
+    box-shadow:
+        0 12px 25px rgba(79, 189, 71, 0.2);
+
+    cursor: pointer;
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        filter 0.25s ease;
+
+}
+
+.btn-buscar-viaje:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 17px 32px rgba(79, 189, 71, 0.3);
+
+    filter: brightness(1.04);
+
+}
+
+
+/* =========================================================
+   MENSAJES DE DJANGO
+========================================================= */
+
+.mensajes-contenedor {
+
+    display: grid;
+    gap: 12px;
+
+    margin-bottom: 24px;
+
+}
+
+.mensaje {
+
+    min-height: 52px;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 13px 15px;
+
+    border: 1px solid var(--color-borde);
+    border-radius: 14px;
+
+    background: var(--color-card);
+
+    color: var(--color-texto-secundario);
+
+    box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.14);
+
+}
+
+.mensaje-success {
+
+    border-color: rgba(152, 236, 99, 0.28);
+    background: rgba(152, 236, 99, 0.09);
+    color: var(--color-principal);
+
+}
+
+.mensaje-error {
+
+    border-color: rgba(255, 101, 119, 0.28);
+    background: var(--color-rojo-suave);
+    color: var(--color-rojo);
+
+}
+
+.mensaje-warning {
+
+    border-color: rgba(248, 193, 75, 0.28);
+    background: var(--color-amarillo-suave);
+    color: var(--color-amarillo);
+
+}
+
+.cerrar-mensaje {
+
+    width: 34px;
+    height: 34px;
+
+    display: grid;
+    place-items: center;
+
+    margin-left: auto;
+
+    border: none;
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, 0.05);
+    color: currentColor;
+
+    cursor: pointer;
+
+}
+
+
+/* =========================================================
+   ESTADÍSTICAS
+========================================================= */
+
+.estadisticas-viajes {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(5, minmax(150px, 1fr));
+
+    gap: 16px;
+
+    margin-bottom: 28px;
+
+}
+
+.estadistica-card {
+
+    min-height: 112px;
+
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    padding: 19px;
+
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-medio);
+
+    background: var(--color-card);
+
+    box-shadow:
+        0 12px 28px rgba(0, 0, 0, 0.16);
+
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        background 0.25s ease;
+
+}
+
+.estadistica-card:hover {
+
+    transform: translateY(-4px);
+
+    border-color: var(--color-borde-hover);
+    background: var(--color-card-secundario);
+
+}
+
+.estadistica-icono {
+
+    width: 48px;
+    height: 48px;
+
+    flex-shrink: 0;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 15px;
+
+    font-size: 1.1rem;
+
+}
+
+.estadistica-icono.total {
+
+    background: var(--color-azul-suave);
+    color: var(--color-azul);
+
+}
+
+.estadistica-icono.pendientes {
+
+    background: var(--color-amarillo-suave);
+    color: var(--color-amarillo);
+
+}
+
+.estadistica-icono.aceptadas {
+
+    background: var(--color-principal-suave);
+    color: var(--color-principal);
+
+}
+
+.estadistica-icono.completadas {
+
+    background: var(--color-morado-suave);
+    color: var(--color-morado);
+
+}
+
+.estadistica-icono.canceladas {
+
+    background: var(--color-rojo-suave);
+    color: var(--color-rojo);
+
+}
+
+.estadistica-contenido {
+
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+}
+
+.estadistica-numero {
+
+    color: var(--color-texto);
+
+    font-size: 1.65rem;
+    font-weight: 850;
+    line-height: 1;
+
+}
+
+.estadistica-label {
+
+    color: var(--color-texto-secundario);
+
+    font-size: 0.78rem;
+    line-height: 1.35;
+
+}
+
+
+/* =========================================================
+   FILTROS
+========================================================= */
+
+.filtros-viajes {
+
+    margin-bottom: 25px;
+
+    padding: 23px;
+
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-grande);
+
+    background: var(--color-card);
+
+    box-shadow:
+        0 13px 30px rgba(0, 0, 0, 0.16);
+
+}
+
+.filtros-encabezado {
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+
+    margin-bottom: 20px;
+
+}
+
+.filtros-encabezado h2 {
+
+    margin-bottom: 5px;
+
+    color: var(--color-texto);
+
+    font-size: 1.15rem;
+
+}
+
+.filtros-encabezado p {
+
+    color: var(--color-texto-secundario);
+
+    font-size: 0.85rem;
+
+}
+
+.cantidad-resultados {
+
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 8px 12px;
+
+    border-radius: 999px;
+
+    background: rgba(255, 255, 255, 0.045);
+    color: var(--color-texto-secundario);
+
+    font-size: 0.78rem;
+    white-space: nowrap;
+
+}
+
+.filtros-lista {
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+
+}
+
+.filtro-btn {
+
+    min-height: 40px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 9px 15px;
+
+    border: 1px solid var(--color-borde);
+    border-radius: 12px;
+
+    background: rgba(255, 255, 255, 0.025);
+
+    color: var(--color-texto-secundario);
+
+    font-size: 0.82rem;
+    font-weight: 700;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+
+}
+
+.filtro-btn:hover {
+
+    transform: translateY(-1px);
+
+    border-color: rgba(152, 236, 99, 0.28);
+    color: var(--color-principal);
+
+}
+
+.filtro-btn.active {
+
+    border-color: transparent;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--color-principal),
+            var(--color-principal-oscuro)
+        );
+
+    color: #07111f;
+
+    box-shadow:
+        0 9px 20px rgba(79, 189, 71, 0.2);
+
+}
+
+
+/* =========================================================
+   LISTA DE SOLICITUDES
+========================================================= */
+
+.solicitudes-lista {
+
+    display: grid;
+    gap: 22px;
+
+}
+
+.solicitud-card {
+
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-grande);
+
+    background: var(--color-card);
+
+    box-shadow: var(--sombra-card);
+
+    overflow: hidden;
+
+    opacity: 0;
+    transform: translateY(18px);
+
+    transition:
+        opacity 0.5s ease,
+        transform 0.5s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+
+}
+
+.solicitud-card.visible {
+
+    opacity: 1;
+    transform: translateY(0);
+
+}
+
+.solicitud-card:hover {
+
+    border-color: var(--color-borde-hover);
+    box-shadow: var(--sombra-hover);
+
+}
+
+.solicitud-card::before {
+
+    content: "";
+
+    display: block;
+
+    width: 100%;
+    height: 4px;
+
+    background: var(--color-gris);
+
+}
+
+.solicitud-card.solicitud-pendiente::before {
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--color-amarillo),
+            #ffe08a
+        );
+
+}
+
+.solicitud-card.solicitud-aceptada::before {
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--color-principal),
+            var(--color-principal-oscuro)
+        );
+
+}
+
+.solicitud-card.solicitud-rechazada::before,
+.solicitud-card.solicitud-cancelada::before {
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--color-rojo),
+            #ff94a1
+        );
+
+}
+
+.solicitud-card.solicitud-completada::before {
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--color-morado),
+            #c4b5fd
+        );
+
+}
+
+.solicitud-card.solicitud-no_presentado::before {
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--color-naranja),
+            #fdba74
+        );
+
+}
+
+
+/* =========================================================
+   ENCABEZADO DE TARJETA
+========================================================= */
+
+.solicitud-card-header {
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+
+    padding: 21px 24px;
+
+    border-bottom: 1px solid var(--color-borde);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.018),
+            transparent
+        );
+
+}
+
+.fecha-viaje {
+
+    display: flex;
+    align-items: center;
+    gap: 13px;
+
+}
+
+.fecha-icono {
+
+    width: 45px;
+    height: 45px;
+
+    flex-shrink: 0;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 14px;
+
+    background: var(--color-principal-suave);
+    color: var(--color-principal);
+
+}
+
+.fecha-viaje > div:last-child {
+
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+}
+
+.fecha-dia {
+
+    color: var(--color-texto);
+
+    font-size: 0.95rem;
+    font-weight: 800;
+    text-transform: capitalize;
+
+}
+
+.fecha-hora {
+
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    color: var(--color-texto-secundario);
+
+    font-size: 0.78rem;
+
+}
+
+.estados-solicitud {
+
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 9px;
+
+}
+
+.estado-badge {
+
+    min-height: 34px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    padding: 7px 11px;
+
+    border: 1px solid transparent;
+    border-radius: 999px;
+
+    font-size: 0.72rem;
+    font-weight: 800;
+    white-space: nowrap;
+
+}
+
+.estado-pendiente {
+
+    border-color: rgba(248, 193, 75, 0.25);
+    background: var(--color-amarillo-suave);
+    color: var(--color-amarillo);
+
+}
+
+.estado-aceptada {
+
+    border-color: rgba(152, 236, 99, 0.25);
+    background: var(--color-principal-suave);
+    color: var(--color-principal);
+
+}
+
+.estado-rechazada,
+.estado-cancelada {
+
+    border-color: rgba(255, 101, 119, 0.25);
+    background: var(--color-rojo-suave);
+    color: var(--color-rojo);
+
+}
+
+.estado-completada {
+
+    border-color: rgba(167, 139, 250, 0.25);
+    background: var(--color-morado-suave);
+    color: var(--color-morado);
+
+}
+
+.estado-no_presentado {
+
+    border-color: rgba(251, 146, 60, 0.25);
+    background: var(--color-naranja-suave);
+    color: var(--color-naranja);
+
+}
+
+.estado-viaje {
+
+    background: var(--color-gris-suave);
+    color: var(--color-gris);
+
+}
+
+.viaje-disponible {
+
+    border-color: rgba(76, 166, 255, 0.25);
+    background: var(--color-azul-suave);
+    color: var(--color-azul);
+
+}
+
+.viaje-completo {
+
+    border-color: rgba(248, 193, 75, 0.25);
+    background: var(--color-amarillo-suave);
+    color: var(--color-amarillo);
+
+}
+
+.viaje-en_curso {
+
+    border-color: rgba(152, 236, 99, 0.25);
+    background: var(--color-principal-suave);
+    color: var(--color-principal);
+
+}
+
+.viaje-finalizado {
+
+    border-color: rgba(167, 139, 250, 0.25);
+    background: var(--color-morado-suave);
+    color: var(--color-morado);
+
+}
+
+.viaje-cancelado {
+
+    border-color: rgba(255, 101, 119, 0.25);
+    background: var(--color-rojo-suave);
+    color: var(--color-rojo);
+
+}
+
+
+/* =========================================================
+   RUTA
+========================================================= */
+
+.ruta-viaje {
+
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1fr)
+        90px
+        minmax(0, 1fr);
+
+    align-items: center;
+
+    padding: 27px 24px;
+
+    border-bottom: 1px solid var(--color-borde);
+
+}
+
+.ruta-punto {
+
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+
+    min-width: 0;
+
+}
+
+.punto-marcador {
+
+    width: 13px;
+    height: 13px;
+
+    flex-shrink: 0;
+
+    margin-top: 5px;
+
+    border: 3px solid var(--color-card);
+    border-radius: 50%;
+
+    box-shadow:
+        0 0 0 3px rgba(255, 255, 255, 0.06);
+
+}
+
+.ruta-origen .punto-marcador {
+
+    background: var(--color-principal);
+
+}
+
+.ruta-destino .punto-marcador {
+
+    background: var(--color-azul);
+
+}
+
+.ruta-informacion {
+
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+}
+
+.ruta-label {
+
+    color: var(--color-texto-suave);
+
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+
+}
+
+.ruta-informacion strong {
+
+    display: block;
+
+    color: var(--color-texto);
+
+    font-size: 0.94rem;
+    line-height: 1.45;
+
+    overflow-wrap: anywhere;
+
+}
+
+.ruta-linea {
+
+    display: flex;
+    align-items: center;
+
+    padding: 0 14px;
+
+}
+
+.ruta-linea span {
+
+    width: 100%;
+    height: 2px;
+
+    position: relative;
+
+    background:
+        repeating-linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0.21) 0,
+            rgba(255, 255, 255, 0.21) 7px,
+            transparent 7px,
+            transparent 13px
+        );
+
+}
+
+.ruta-linea span::after {
+
+    content: "\f061";
+
+    position: absolute;
+    top: 50%;
+    right: -3px;
+
+    transform: translateY(-50%);
+
+    color: var(--color-texto-suave);
+
+    font-family: "Font Awesome 6 Free";
+    font-size: 0.7rem;
+    font-weight: 900;
+
+}
+
+
+/* =========================================================
+   INFORMACIÓN DEL VIAJE
+========================================================= */
+
+.informacion-viaje-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(220px, 1.45fr)
+        repeat(4, minmax(150px, 1fr));
+
+    gap: 13px;
+
+    padding: 24px;
+
+}
+
+.conductor-info,
+.info-bloque {
+
+    min-width: 0;
+    min-height: 95px;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 15px;
+
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-medio);
+
+    background: rgba(255, 255, 255, 0.025);
+
+}
+
+.conductor-info {
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(152, 236, 99, 0.055),
+            rgba(255, 255, 255, 0.018)
+        );
+
+}
+
+.conductor-foto {
+
+    width: 54px;
+    height: 54px;
+
+    flex-shrink: 0;
+
+    display: grid;
+    place-items: center;
+
+    border: 2px solid rgba(152, 236, 99, 0.28);
+    border-radius: 50%;
+
+    background: var(--color-card-secundario);
+    color: var(--color-principal);
+
+    overflow: hidden;
+
+}
+
+.conductor-foto img {
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+}
+
+.conductor-datos,
+.info-bloque > div:last-child {
+
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+}
+
+.info-label {
+
+    color: var(--color-texto-suave);
+
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+
+}
+
+.conductor-datos strong,
+.info-bloque strong {
+
+    color: var(--color-texto);
+
+    font-size: 0.88rem;
+    line-height: 1.35;
+
+    overflow-wrap: anywhere;
+
+}
+
+.conductor-estado {
+
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    color: var(--color-principal);
+
+    font-size: 0.67rem;
+    font-weight: 700;
+
+}
+
+.info-icono {
+
+    width: 39px;
+    height: 39px;
+
+    flex-shrink: 0;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 12px;
+
+    background: rgba(152, 236, 99, 0.09);
+    color: var(--color-principal);
+
+}
+
+.info-bloque small {
+
+    color: var(--color-texto-secundario);
+
+    font-size: 0.7rem;
+    line-height: 1.4;
+
+}
+
+
+/* =========================================================
+   PREFERENCIAS
+========================================================= */
+
+.preferencias-viaje {
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+
+    padding:
+        0
+        24px
+        23px;
+
+}
+
+.preferencia-chip {
+
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    padding: 8px 11px;
+
+    border: 1px solid rgba(76, 166, 255, 0.18);
+    border-radius: 999px;
+
+    background: var(--color-azul-suave);
+    color: var(--color-azul);
+
+    font-size: 0.7rem;
+    font-weight: 750;
+
+}
+
+.preferencia-chip.asistencia {
+
+    border-color: rgba(167, 139, 250, 0.2);
+    background: var(--color-morado-suave);
+    color: var(--color-morado);
+
+}
+
+
+/* =========================================================
+   DETALLES ADICIONALES
+========================================================= */
+
+.detalles-adicionales {
+
+    display: grid;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 13px;
+
+    max-height: 0;
+
+    padding: 0 24px;
+
+    border-top: 1px solid transparent;
+
+    background: rgba(0, 0, 0, 0.09);
+
+    opacity: 0;
+    overflow: hidden;
+
+    transition:
+        max-height 0.45s ease,
+        padding 0.35s ease,
+        opacity 0.3s ease,
+        border-color 0.3s ease;
+
+}
+
+.detalles-adicionales.activo {
+
+    max-height: 1000px;
+
+    padding:
+        22px
+        24px;
+
+    border-top-color: var(--color-borde);
+
+    opacity: 1;
+
+}
+
+.detalle-item {
+
+    min-width: 0;
+
+    padding: 15px;
+
+    border: 1px solid var(--color-borde);
+    border-radius: 14px;
+
+    background: rgba(255, 255, 255, 0.025);
+
+}
+
+.detalle-label {
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    margin-bottom: 8px;
+
+    color: var(--color-principal);
+
+    font-size: 0.75rem;
+    font-weight: 800;
+
+}
+
+.detalle-item p {
+
+    color: var(--color-texto-secundario);
+
+    font-size: 0.8rem;
+    line-height: 1.65;
+
+    overflow-wrap: anywhere;
+
+}
+
+
+/* =========================================================
+   PIE DE TARJETA
+========================================================= */
+
+.solicitud-card-footer {
+
+    min-height: 76px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+
+    padding: 15px 24px;
+
+    border-top: 1px solid var(--color-borde);
+
+    background: rgba(255, 255, 255, 0.014);
+
+}
+
+.acciones-principales {
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 10px;
+
+}
+
+
+/* =========================================================
+   BOTONES
+========================================================= */
+
+.btn-viaje {
+
+    min-height: 42px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    padding: 10px 15px;
+
+    border: 1px solid transparent;
+    border-radius: 12px;
+
+    font-size: 0.78rem;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease,
+        opacity 0.2s ease;
+
+}
+
+.btn-viaje:hover {
+
+    transform: translateY(-2px);
+
+}
+
+.btn-viaje:disabled {
+
+    opacity: 0.6;
+    cursor: wait;
+    transform: none;
+
+}
+
+.btn-principal {
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--color-principal),
+            var(--color-principal-oscuro)
+        );
+
+    color: #07111f;
+
+    box-shadow:
+        0 9px 20px rgba(79, 189, 71, 0.18);
+
+}
+
+.btn-principal:hover {
+
+    box-shadow:
+        0 13px 27px rgba(79, 189, 71, 0.27);
+
+}
+
+.btn-secundario {
+
+    border-color: var(--color-borde);
+
+    background: rgba(255, 255, 255, 0.035);
+    color: var(--color-texto-secundario);
+
+}
+
+.btn-secundario:hover {
+
+    border-color: rgba(152, 236, 99, 0.28);
+
+    background: var(--color-principal-suave);
+    color: var(--color-principal);
+
+}
+
+.btn-peligro {
+
+    border-color: rgba(255, 101, 119, 0.2);
+
+    background: var(--color-rojo-suave);
+    color: var(--color-rojo);
+
+}
+
+.btn-peligro:hover {
+
+    border-color: rgba(255, 101, 119, 0.38);
+    background: rgba(255, 101, 119, 0.19);
+
+}
+
+
+/* =========================================================
+   ESTADO VACÍO
+========================================================= */
+
+.estado-vacio {
+
+    min-height: 370px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    padding: 45px 25px;
+
+    border: 1px dashed rgba(255, 255, 255, 0.14);
+    border-radius: var(--radio-grande);
+
+    background: var(--color-card);
+
+    text-align: center;
+
+}
+
+.estado-vacio-icono {
+
+    width: 78px;
+    height: 78px;
+
+    display: grid;
+    place-items: center;
+
+    margin-bottom: 20px;
+
+    border-radius: 23px;
+
+    background: var(--color-principal-suave);
+    color: var(--color-principal);
+
+    font-size: 1.8rem;
+
+}
+
+.estado-vacio h2 {
+
+    margin-bottom: 9px;
+
+    color: var(--color-texto);
+
+    font-size: 1.3rem;
+
+}
+
+.estado-vacio p {
+
+    max-width: 470px;
+
+    margin-bottom: 22px;
+
+    color: var(--color-texto-secundario);
+
+    font-size: 0.88rem;
+    line-height: 1.65;
+
+}
+
+
+/* =========================================================
+   MODAL DE CONFIRMACIÓN
+========================================================= */
+
+.modal-viaje-overlay {
+
+    width: 100%;
+    height: 100%;
+
+    position: fixed;
+    inset: 0;
+    z-index: 3000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(2, 8, 18, 0.75);
+    backdrop-filter: blur(7px);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition:
+        opacity 0.25s ease,
+        visibility 0.25s ease;
+
+}
+
+.modal-viaje-overlay.activo {
+
+    opacity: 1;
+    visibility: visible;
+
+}
+
+.modal-viaje {
+
+    width: min(100%, 470px);
+
+    padding: 28px;
+
+    border: 1px solid var(--color-borde);
+    border-radius: 22px;
+
+    background: var(--color-card);
+
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.42);
+
+    transform: translateY(20px) scale(0.97);
+
+    transition:
+        transform 0.25s ease;
+
+}
+
+.modal-viaje-overlay.activo .modal-viaje {
+
+    transform: translateY(0) scale(1);
+
+}
+
+.modal-icono {
+
+    width: 58px;
+    height: 58px;
+
+    display: grid;
+    place-items: center;
+
+    margin-bottom: 18px;
+
+    border-radius: 17px;
+
+    background: var(--color-rojo-suave);
+    color: var(--color-rojo);
+
+    font-size: 1.3rem;
+
+}
+
+.modal-viaje h3 {
+
+    margin-bottom: 9px;
+
+    color: var(--color-texto);
+
+    font-size: 1.3rem;
+
+}
+
+.modal-viaje p {
+
+    color: var(--color-texto-secundario);
+
+    font-size: 0.88rem;
+    line-height: 1.65;
+
+}
+
+.modal-acciones {
+
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+
+    margin-top: 25px;
+
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+.toast-contenedor {
+
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 4000;
+
+    width: min(380px, calc(100% - 48px));
+
+    display: grid;
+    gap: 11px;
+
+}
+
+.toast-viaje {
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 15px;
+
+    border: 1px solid var(--color-borde);
+    border-radius: 15px;
+
+    background: var(--color-card-secundario);
+
+    color: var(--color-texto-secundario);
+
+    box-shadow:
+        0 18px 42px rgba(0, 0, 0, 0.32);
+
+    opacity: 0;
+    transform: translateX(35px);
+
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease;
+
+}
+
+.toast-viaje.visible {
+
+    opacity: 1;
+    transform: translateX(0);
+
+}
+
+.toast-viaje.toast-exito {
+
+    border-color: rgba(152, 236, 99, 0.28);
+
+}
+
+.toast-viaje.toast-exito > i {
+
+    color: var(--color-principal);
+
+}
+
+.toast-viaje.toast-error {
+
+    border-color: rgba(255, 101, 119, 0.3);
+
+}
+
+.toast-viaje.toast-error > i {
+
+    color: var(--color-rojo);
+
+}
+
+.toast-viaje.toast-info {
+
+    border-color: rgba(76, 166, 255, 0.28);
+
+}
+
+.toast-viaje.toast-info > i {
+
+    color: var(--color-azul);
+
+}
+
+.toast-viaje span {
+
+    flex: 1;
+
+    font-size: 0.8rem;
+    line-height: 1.45;
+
+}
+
+.toast-cerrar {
+
+    width: 28px;
+    height: 28px;
+
+    display: grid;
+    place-items: center;
+
+    border: none;
+    border-radius: 8px;
+
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--color-texto-secundario);
+
+    cursor: pointer;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1350px) {
+
+    .estadisticas-viajes {
+
+        grid-template-columns:
+            repeat(3, minmax(170px, 1fr));
+
+    }
+
+    .informacion-viaje-grid {
+
+        grid-template-columns:
+            repeat(3, minmax(180px, 1fr));
+
+    }
+
+    .conductor-info {
+
+        grid-column: span 2;
+
+    }
+
+}
+
+
+@media (max-width: 1000px) {
+
+    .mis-viajes-main {
+
+        padding:
+            30px
+            24px
+            60px;
+
+    }
+
+    .encabezado-pagina {
+
+        align-items: flex-start;
+        flex-direction: column;
+
+    }
+
+    .estadisticas-viajes {
+
+        grid-template-columns:
+            repeat(2, minmax(170px, 1fr));
+
+    }
+
+    .informacion-viaje-grid {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+    }
+
+    .conductor-info {
+
+        grid-column: span 2;
+
+    }
+
+}
+
+
+@media (max-width: 760px) {
+
+    .mis-viajes-main,
+    .sidebar.active ~ .mis-viajes-main {
+
+        margin-left: 0;
+
+        padding:
+            95px
+            15px
+            45px;
+
+    }
+
+    .encabezado-pagina {
+
+        padding: 23px;
+
+        border-radius: 20px;
+
+    }
+
+    .encabezado-acciones,
+    .btn-buscar-viaje {
+
+        width: 100%;
+
+    }
+
+    .estadisticas-viajes {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 11px;
+
+    }
+
+    .estadistica-card {
+
+        min-height: 103px;
+
+        padding: 14px;
+
+    }
+
+    .estadistica-icono {
+
+        width: 42px;
+        height: 42px;
+
+    }
+
+    .filtros-encabezado {
+
+        align-items: flex-start;
+        flex-direction: column;
+
+    }
+
+    .cantidad-resultados {
+
+        align-self: flex-start;
+
+    }
+
+    .filtros-lista {
+
+        flex-wrap: nowrap;
+
+        padding-bottom: 5px;
+
+        overflow-x: auto;
+
+    }
+
+    .filtro-btn {
+
+        flex-shrink: 0;
+
+    }
+
+    .solicitud-card-header {
+
+        align-items: flex-start;
+        flex-direction: column;
+
+        padding: 19px;
+
+    }
+
+    .estados-solicitud {
+
+        justify-content: flex-start;
+
+    }
+
+    .ruta-viaje {
+
+        grid-template-columns: 1fr;
+        gap: 12px;
+
+        padding: 21px 19px;
+
+    }
+
+    .ruta-linea {
+
+        width: 2px;
+        height: 36px;
+
+        margin-left: 5px;
+        padding: 0;
+
+    }
+
+    .ruta-linea span {
+
+        width: 2px;
+        height: 100%;
+
+        background:
+            repeating-linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, 0.21) 0,
+                rgba(255, 255, 255, 0.21) 7px,
+                transparent 7px,
+                transparent 13px
+            );
+
+    }
+
+    .ruta-linea span::after {
+
+        content: "\f063";
+
+        top: auto;
+        right: auto;
+        bottom: -6px;
+        left: 50%;
+
+        transform: translateX(-50%);
+
+    }
+
+    .informacion-viaje-grid {
+
+        grid-template-columns: 1fr;
+
+        padding: 19px;
+
+    }
+
+    .conductor-info {
+
+        grid-column: auto;
+
+    }
+
+    .preferencias-viaje {
+
+        padding:
+            0
+            19px
+            20px;
+
+    }
+
+    .detalles-adicionales {
+
+        grid-template-columns: 1fr;
+
+        padding-right: 19px;
+        padding-left: 19px;
+
+    }
+
+    .detalles-adicionales.activo {
+
+        padding:
+            19px;
+
+    }
+
+    .solicitud-card-footer {
+
+        align-items: stretch;
+        flex-direction: column;
+
+        padding: 17px 19px;
+
+    }
+
+    .acciones-principales {
+
+        width: 100%;
+
+        flex-direction: column;
+
+    }
+
+    .btn-viaje {
+
+        width: 100%;
+
+    }
+
+    .modal-acciones {
+
+        flex-direction: column-reverse;
+
+    }
+
+    .modal-acciones .btn-viaje {
+
+        width: 100%;
+
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .estadisticas-viajes {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .encabezado-texto h1 {
+
+        font-size: 2rem;
+
+    }
+
+    .fecha-viaje {
+
+        align-items: flex-start;
+
+    }
+
+    .estado-badge {
+
+        white-space: normal;
+
+    }
+
+    .toast-contenedor {
+
+        right: 14px;
+        bottom: 14px;
+
+        width: calc(100% - 28px);
+
+    }
+
+}
+
+
+/* =========================================================
+   REDUCCIÓN DE MOVIMIENTO
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+
+        scroll-behavior: auto !important;
+
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+
+        transition-duration: 0.01ms !important;
+
+    }
+
+}
