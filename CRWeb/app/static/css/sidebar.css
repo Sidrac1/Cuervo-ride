@@ -63,28 +63,57 @@
     BOTÓN MENÚ
 =====================*/
 
-.menu-btn{
+.menu-btn {
+    width: 100%;
+    height: 70px;
 
-    height:70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-    display:flex;
-    justify-content:center;
-    align-items:center;
+    margin: 0;
+    padding: 0;
 
-    cursor:pointer;
+    background: transparent;
+    border: none;
+    outline: none;
 
-    color:white;
+    color: #ffffff;
 
-    font-size:24px;
+    font-family: inherit;
+    font-size: 24px;
 
-    transition:.3s;
+    cursor: pointer;
 
+    appearance: none;
+    -webkit-appearance: none;
+
+    transition:
+        color 0.3s ease,
+        background 0.3s ease;
 }
 
-.menu-btn:hover{
+.menu-btn i {
+    pointer-events: none;
+}
 
-    color:#6EE7B7;
+.menu-btn:hover {
+    background: #1f2937;
+    color: #98ec63;
+}
 
+.menu-btn:focus {
+    background: transparent;
+    outline: none;
+}
+
+.menu-btn:focus-visible {
+    outline: 2px solid #98ec63;
+    outline-offset: -4px;
+}
+
+.menu-btn:active {
+    background: #1f2937;
 }
 
 /*====================
@@ -187,62 +216,270 @@
 }
 
 /*====================
-    PERFIL INFERIOR
-=====================*/
-
-.bottom-profile{
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-
-    padding:30px;
-
-}
-
-.bottom-profile a{
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-
-    text-decoration:none;
-
-}
-
-.bottom-profile img{
-
-    width:55px;
-    height:55px;
-
-    border-radius:50%;
-
-    object-fit:cover;
-
-    cursor:pointer;
-
-    border:3px solid transparent;
-
-    transition:.3s;
-
-}
-
-.bottom-profile img:hover{
-
-    transform:scale(1.08);
-
-    border-color:#6EE7B7;
-
-    box-shadow:0 0 15px rgba(110,231,183,.35);
-
-}
-
-/*====================
     SCROLL
 =====================*/
 
 .sidebar::-webkit-scrollbar{
 
     width:0;
+
+}
+
+/* ==================================
+   LOGOUT INFERIOR
+================================== */
+
+.bottom-logout {
+    width: 100%;
+
+    margin-top: auto;
+
+    padding: 15px 10px 20px;
+}
+
+.logout-form {
+    width: 100%;
+}
+
+.logout-btn {
+    width: 100%;
+    min-height: 48px;
+
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    padding: 12px 15px;
+
+    border: none;
+    border-radius: 12px;
+
+    background: transparent;
+    color: #ffffff;
+
+    font-family: inherit;
+    font-size: 15px;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.logout-btn i {
+    min-width: 24px;
+
+    font-size: 19px;
+    text-align: center;
+}
+
+.logout-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+
+    transform: translateX(3px);
+}
+
+
+/* Sidebar cerrada */
+
+.sidebar:not(.active) .logout-btn {
+    justify-content: center;
+
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.sidebar:not(.active) .logout-btn span {
+    display: none;
+}
+
+
+/* ==================================
+   MODAL DE CERRAR SESIÓN
+================================== */
+
+.logout-modal-overlay {
+    position: fixed;
+    inset: 0;
+
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(2, 12, 24, 0.72);
+
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transition:
+        opacity 0.25s ease,
+        visibility 0.25s ease;
+}
+
+.logout-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+
+.logout-modal {
+    width: 100%;
+    max-width: 420px;
+
+    padding: 35px 30px;
+
+    border: 1px solid rgba(21, 85, 135, 0.18);
+    border-radius: 22px;
+
+    background: #ffffff;
+
+    text-align: center;
+
+    box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.32);
+
+    transform: translateY(20px) scale(0.96);
+
+    transition: transform 0.25s ease;
+}
+
+.logout-modal-overlay.active .logout-modal {
+    transform: translateY(0) scale(1);
+}
+
+
+.logout-modal-icon {
+    width: 70px;
+    height: 70px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 auto 20px;
+
+    border-radius: 50%;
+
+    background: rgba(19, 89, 145, 0.12);
+    color: #135991;
+
+    font-size: 28px;
+}
+
+
+.logout-modal h2 {
+    margin: 0 0 12px;
+
+    color: #0b2942;
+
+    font-size: 25px;
+    font-weight: 700;
+}
+
+
+.logout-modal p {
+    margin: 0;
+
+    color: #617083;
+
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+
+.logout-modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+
+    margin-top: 28px;
+}
+
+
+.modal-cancel-btn,
+.modal-confirm-btn {
+    min-width: 135px;
+
+    padding: 12px 20px;
+
+    border: none;
+    border-radius: 12px;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.modal-cancel-btn {
+    background: #eaf0f5;
+    color: #34495e;
+}
+
+.modal-cancel-btn:hover {
+    background: #dce5ed;
+
+    transform: translateY(-2px);
+}
+
+
+.modal-confirm-btn {
+    background: #135991;
+    color: #ffffff;
+
+    box-shadow:
+        0 8px 20px rgba(19, 89, 145, 0.25);
+}
+
+.modal-confirm-btn:hover {
+    background: #0d4776;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 10px 25px rgba(19, 89, 145, 0.35);
+}
+
+
+body.modal-open {
+    overflow: hidden;
+}
+
+
+/* Responsive */
+
+@media (max-width: 500px) {
+
+    .logout-modal {
+        padding: 30px 20px;
+    }
+
+    .logout-modal-actions {
+        flex-direction: column-reverse;
+    }
+
+    .modal-cancel-btn,
+    .modal-confirm-btn {
+        width: 100%;
+    }
 
 }
