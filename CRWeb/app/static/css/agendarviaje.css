@@ -1,116 +1,344 @@
+/*==================================================
+    CUERVO-RIDE
+    PÁGINA DE VIAJES / MAPA
+==================================================*/
+
+
+/*==================================================
+    VARIABLES
+==================================================*/
+
+:root{
+
+    --fondo-principal:#080e1d;
+    --fondo-secundario:#0d1628;
+
+    --panel:#111b2f;
+    --panel-secundario:#162136;
+    --panel-hover:#1c2a43;
+
+    --campo:#0c1527;
+    --campo-hover:#101d32;
+
+    --verde:#91ec57;
+    --verde-hover:#acf47f;
+    --verde-transparente:rgba(145, 236, 87, .12);
+
+    --texto-principal:#f7f9fc;
+    --texto-secundario:#aab7cc;
+    --texto-suave:#7f90aa;
+
+    --borde:#263650;
+    --borde-claro:#344967;
+    --borde-verde:rgba(145, 236, 87, .62);
+
+    --sidebar-cerrado:90px;
+    --sidebar-abierto:260px;
+
+    --radio-pequeno:10px;
+    --radio-medio:14px;
+    --radio-grande:20px;
+
+    --sombra-panel:
+        0 18px 42px rgba(0, 0, 0, .24);
+
+    --sombra-verde:
+        0 10px 24px rgba(145, 236, 87, .18);
+
+}
+
+
+/*==================================================
+    RESET
+==================================================*/
+
 *{
+
     margin:0;
     padding:0;
+
     box-sizing:border-box;
-    font-family:Arial, Helvetica, sans-serif;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
 }
 
 html,
 body{
+
     width:100%;
     min-height:100vh;
+
+}
+
+html{
+
+    scroll-behavior:smooth;
+
 }
 
 body{
-    background:#0c0f1c;
+
+    color:var(--texto-principal);
+
+    background:
+
+        radial-gradient(
+            circle at 88% 5%,
+            rgba(145, 236, 87, .055),
+            transparent 27%
+        ),
+
+        radial-gradient(
+            circle at 12% 100%,
+            rgba(49, 91, 166, .08),
+            transparent 30%
+        ),
+
+        var(--fondo-principal);
+
 }
 
-/*====================
-CONTENIDO
-=====================*/
+
+/*==================================================
+    CONTENIDO PRINCIPAL
+==================================================*/
 
 .content{
-    margin-left:90px;
-    width:calc(100% - 90px);
+
+    width:calc(100% - var(--sidebar-cerrado));
+
     min-height:100vh;
-    padding:30px 45px;
-    transition:.35s;
+
+    margin-left:var(--sidebar-cerrado);
+
+    padding:26px 28px 36px;
+
+    transition:
+        width .35s ease,
+        margin-left .35s ease;
+
 }
 
 .sidebar.active ~ .content{
-    margin-left:260px;
-    width:calc(100% - 260px);
+
+    width:calc(100% - var(--sidebar-abierto));
+
+    margin-left:var(--sidebar-abierto);
+
 }
 
+
+/*==================================================
+    HEADER
+==================================================*/
+
 header{
+
+    width:100%;
+    min-height:58px;
+
     display:flex;
     justify-content:flex-end;
     align-items:center;
-    margin-bottom:30px;
+
+    margin-bottom:28px;
+
 }
 
 .logo-text{
 
-    color:white;
-
-    font-size:35px;
-
-    font-weight:700;
-
     margin-left:auto;
 
-}
+    color:var(--texto-principal);
 
+    font-size:34px;
+    font-weight:800;
+
+    letter-spacing:-1.2px;
+
+}
 
 .logo-text span{
 
-    color:#98ec63;
+    color:var(--verde);
 
 }
 
-/*====================
-AGENDAR RAITE
-=====================*/
+
+/*==================================================
+    LAYOUT GENERAL
+==================================================*/
 
 .agendar{
+
+    width:100%;
+
     display:grid;
-    grid-template-columns:350px 1fr;
-    gap:40px;
+
+    grid-template-columns:
+        minmax(300px, 350px)
+        minmax(0, 1fr);
+
+    gap:30px;
+
     align-items:start;
+
 }
 
-/*====================
-PANEL IZQUIERDO
-=====================*/
+
+/*==================================================
+    PANEL IZQUIERDO
+==================================================*/
 
 .panel-izquierdo{
+
     width:100%;
+    min-width:0;
+
 }
 
-/* BUSCADOR */
+
+/*==================================================
+    BUSCADOR
+==================================================*/
 
 .busqueda{
-    display:flex;
+
+    width:100%;
+
+    display:grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        52px;
+
     align-items:center;
-    margin-bottom:25px;
+
+    gap:8px;
+
+    padding:8px;
+
+    margin-bottom:24px;
+
+    border:1px solid var(--borde-verde);
+    border-radius:16px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(17, 27, 47, .98),
+            rgba(13, 22, 40, .98)
+        );
+
+    box-shadow:
+        0 14px 34px rgba(0, 0, 0, .22);
+
 }
 
 .busqueda input{
-    flex:1;
-    height:55px;
-    border:2px solid #98ec63;
-    border-right:none;
-    border-radius:30px 0 0 30px;
-    background:#1b2338;
-    color:white;
-    padding:0 20px;
-    font-size:18px;
+
+    width:100%;
+    min-width:0;
+    height:50px;
+
+    padding:0 17px;
+
+    border:1px solid var(--borde);
+    border-radius:11px;
+
     outline:none;
+
+    background:var(--campo);
+    color:var(--texto-principal);
+
+    font-size:15px;
+
+    transition:
+        border-color .25s ease,
+        background .25s ease,
+        box-shadow .25s ease;
+
 }
 
 .busqueda input::placeholder{
-    color:#d0d0d0;
+
+    color:var(--texto-suave);
+
 }
 
-.busqueda button{
-    width:40px;
-    height:55px;
-    border:none;
-    background:#98ec63;
-    border-radius:0 30px 30px 0;
-    cursor:pointer;
-    font-size:22px;
+.busqueda input:hover{
+
+    border-color:var(--borde-claro);
+
+    background:var(--campo-hover);
+
 }
+
+.busqueda input:focus{
+
+    border-color:var(--verde);
+
+    background:#111e34;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(145, 236, 87, .10);
+
+}
+
+.busqueda button,
+.btn-buscar{
+
+    width:52px;
+    height:50px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    border:none;
+    border-radius:11px;
+
+    background:var(--verde);
+    color:#0b1424;
+
+    font-size:19px;
+
+    cursor:pointer;
+
+    transition:
+        background .25s ease,
+        transform .25s ease,
+        box-shadow .25s ease;
+
+}
+
+.busqueda button:hover,
+.btn-buscar:hover{
+
+    background:var(--verde-hover);
+
+    transform:translateY(-2px);
+
+    box-shadow:var(--sombra-verde);
+
+}
+
+.busqueda button:active,
+.btn-buscar:active{
+
+    transform:scale(.96);
+
+}
+
+
+/*==================================================
+    BOTÓN FILTRO
+==================================================*/
 
 .btn-filtro{
 
@@ -122,206 +350,688 @@ PANEL IZQUIERDO
     align-items:center;
 
     border:none;
-    border-radius:50%;
+    border-radius:11px;
 
-    background:#98ec63;
-    color:#11182c;
+    background:var(--verde);
+    color:#0b1424;
 
-    font-size:20px;
+    font-size:18px;
 
     cursor:pointer;
-
     text-decoration:none;
 
-    transition:.25s;
+    transition:
+        background .25s ease,
+        transform .25s ease,
+        box-shadow .25s ease;
 
 }
 
-.btn-buscar:hover,
 .btn-filtro:hover{
 
-    background:#b4f28d;
+    background:var(--verde-hover);
 
-    transform:scale(1.08);
+    transform:translateY(-2px);
+
+    box-shadow:var(--sombra-verde);
 
 }
 
-/* LISTA CONDUCTORES */
+
+/*==================================================
+    LISTA DE CONDUCTORES
+==================================================*/
 
 .lista-conductores{
-    background:#111827;
-    border:2px solid #98ec63;
-    border-radius:15px;
-    padding:15px;
-    height:650px;
+
+    width:100%;
+    height:620px;
+
+    padding:13px;
+
     overflow-y:auto;
+
+    border:1px solid var(--borde);
+    border-radius:var(--radio-grande);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(16, 26, 45, .98),
+            rgba(12, 21, 38, .98)
+        );
+
+    box-shadow:var(--sombra-panel);
+
 }
 
-/* Scroll */
+
+/*==================================================
+    SCROLL
+==================================================*/
 
 .lista-conductores::-webkit-scrollbar{
-    width:8px;
+
+    width:7px;
+
+}
+
+.lista-conductores::-webkit-scrollbar-track{
+
+    background:transparent;
+
 }
 
 .lista-conductores::-webkit-scrollbar-thumb{
-    background:#98ec63;
+
     border-radius:20px;
+
+    background:rgba(145, 236, 87, .52);
+
 }
 
-/* TARJETA */
+.lista-conductores::-webkit-scrollbar-thumb:hover{
+
+    background:var(--verde);
+
+}
+
+
+/*==================================================
+    TARJETAS DE CONDUCTOR
+==================================================*/
 
 .card-conductor{
+
+    position:relative;
+
+    width:100%;
+    min-height:92px;
+
     display:flex;
     align-items:center;
-    gap:15px;
-    background:#1f2a40;
-    border-radius:15px;
-    padding:15px;
-    margin-bottom:15px;
+
+    gap:14px;
+
+    padding:13px;
+
+    margin-bottom:11px;
+
+    border:1px solid transparent;
+    border-radius:14px;
+
+    background:var(--panel-secundario);
+
     cursor:pointer;
-    transition:.3s;
+
+    transition:
+        transform .25s ease,
+        border-color .25s ease,
+        background .25s ease,
+        box-shadow .25s ease;
+
+}
+
+.card-conductor:last-child{
+
+    margin-bottom:0;
+
 }
 
 .card-conductor:hover{
-    background:#31405d;
+
     transform:translateY(-2px);
+
+    border-color:
+        rgba(145, 236, 87, .32);
+
+    background:var(--panel-hover);
+
+    box-shadow:
+        0 10px 24px rgba(0, 0, 0, .18);
+
+}
+
+.card-conductor.active{
+
+    border-color:var(--verde);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(145, 236, 87, .09),
+            var(--panel-secundario)
+        );
+
 }
 
 .card-conductor img{
-    width:60px;
-    height:60px;
+
+    width:58px;
+    height:58px;
+
+    flex-shrink:0;
+
+    border:2px solid var(--verde);
     border-radius:50%;
-    border:2px solid #98ec63;
+
+    object-fit:cover;
+
 }
 
 .card-conductor h3{
-    color:white;
-    font-size:20px;
+
     margin-bottom:5px;
+
+    color:var(--texto-principal);
+
+    font-size:16px;
+    font-weight:700;
+
 }
 
 .card-conductor p{
-    color:#d2d2d2;
-    font-size:14px;
+
+    color:var(--texto-secundario);
+
+    font-size:13px;
+    line-height:1.45;
+
 }
 
-/*====================
-PANEL DERECHO
-=====================*/
+
+/*==================================================
+    PANEL DERECHO
+==================================================*/
 
 .panel-derecho{
+
     width:100%;
+    min-width:0;
+
 }
 
 .panel-derecho h1{
-    color:white;
-    font-size:40px;
-    margin-bottom:15px;
+
+    margin-bottom:7px;
+
+    color:var(--texto-principal);
+
+    font-size:31px;
+    font-weight:800;
+
+    letter-spacing:-.7px;
+
 }
 
 .panel-derecho h2{
-    color:white;
-    font-size:30px;
+
     margin-bottom:20px;
+
+    color:var(--texto-secundario);
+
+    font-size:17px;
+    font-weight:500;
+
+    line-height:1.45;
+
 }
 
-/* MAPA */
+
+/*==================================================
+    MAPA
+==================================================*/
 
 .mapa{
+
     width:100%;
-    height:550px;
-    border:3px solid #98ec63;
-    border-radius:20px;
-    background:#263249;
+    height:520px;
+
     display:flex;
     justify-content:center;
     align-items:center;
-    color:#9fb0d6;
-    font-size:24px;
-    margin-bottom:25px;
+
+    margin-bottom:22px;
+
+    overflow:hidden;
+
+    border:1px solid var(--borde-verde);
+    border-radius:var(--radio-grande);
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--panel-secundario),
+            var(--fondo-secundario)
+        );
+
+    color:var(--texto-secundario);
+
+    font-size:18px;
+
+    box-shadow:var(--sombra-panel);
+
 }
 
-/* INFORMACIÓN RUTA */
+#mapa,
+.mapa .leaflet-container{
+
+    width:100%;
+    height:100%;
+
+    border-radius:inherit;
+
+}
+
+
+/*==================================================
+    INFORMACIÓN DE RUTA
+==================================================*/
 
 .ruta-info{
+
+    width:100%;
+
     display:flex;
     justify-content:space-between;
     align-items:center;
+
     gap:20px;
+
+    padding:20px;
+
+    border:1px solid var(--borde);
+    border-radius:var(--radio-medio);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(17, 27, 47, .98),
+            rgba(13, 22, 40, .98)
+        );
+
+    box-shadow:
+        0 12px 30px rgba(0, 0, 0, .16);
+
 }
 
 .ruta-info div{
-    color:white;
+
+    min-width:0;
+
 }
 
 .ruta-info strong{
+
     display:block;
-    font-size:20px;
-    margin-bottom:8px;
+
+    margin-bottom:6px;
+
+    color:var(--texto-principal);
+
+    font-size:16px;
+    font-weight:700;
+
 }
 
 .ruta-info p{
-    font-size:18px;
-    color:#d5d5d5;
+
+    color:var(--texto-secundario);
+
+    font-size:14px;
+    line-height:1.5;
+
 }
 
 .ruta-info button{
+
+    min-width:145px;
+    min-height:48px;
+
+    padding:0 24px;
+
     border:none;
-    background:#98ec63;
-    color:#162216;
-    padding:16px 35px;
-    border-radius:15px;
-    font-size:18px;
-    font-weight:bold;
+    border-radius:12px;
+
+    background:var(--verde);
+    color:#0d1728;
+
+    font-size:15px;
+    font-weight:800;
+
     cursor:pointer;
-    transition:.3s;
+
+    transition:
+        background .25s ease,
+        transform .25s ease,
+        box-shadow .25s ease;
+
 }
 
 .ruta-info button:hover{
-    transform:scale(1.05);
+
+    background:var(--verde-hover);
+
+    transform:translateY(-2px);
+
+    box-shadow:var(--sombra-verde);
+
 }
 
-/*====================
-RESPONSIVE
-=====================*/
+.ruta-info button:active{
 
-@media(max-width:1100px){
+    transform:scale(.97);
+
+}
+
+
+/*==================================================
+    ESTADO VACÍO
+==================================================*/
+
+.estado-vacio{
+
+    min-height:220px;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
+    padding:25px;
+
+    color:var(--texto-secundario);
+
+    text-align:center;
+
+}
+
+.estado-vacio i{
+
+    margin-bottom:14px;
+
+    color:var(--verde);
+
+    font-size:34px;
+
+}
+
+.estado-vacio h3{
+
+    margin-bottom:7px;
+
+    color:var(--texto-principal);
+
+    font-size:18px;
+
+}
+
+.estado-vacio p{
+
+    max-width:320px;
+
+    font-size:14px;
+    line-height:1.6;
+
+}
+
+
+/*==================================================
+    RESPONSIVE: PANTALLAS MEDIANAS
+==================================================*/
+
+@media(max-width:1200px){
+
+    .content{
+
+        padding:24px 24px 32px;
+
+    }
 
     .agendar{
+
+        grid-template-columns:
+            minmax(280px, 320px)
+            minmax(0, 1fr);
+
+        gap:24px;
+
+    }
+
+    .panel-derecho h1{
+
+        font-size:28px;
+
+    }
+
+    .mapa{
+
+        height:480px;
+
+    }
+
+}
+
+
+/*==================================================
+    RESPONSIVE: TABLET
+==================================================*/
+
+@media(max-width:992px){
+
+    .agendar{
+
         grid-template-columns:1fr;
+
     }
 
     .lista-conductores{
-        height:350px;
+
+        height:360px;
+
+    }
+
+    .mapa{
+
+        height:430px;
+
     }
 
 }
+
+
+/*==================================================
+    RESPONSIVE: TABLET PEQUEÑA
+==================================================*/
 
 @media(max-width:768px){
 
     .content{
-        padding:20px;
+
+        padding:22px 18px 30px;
+
+    }
+
+    .sidebar.active ~ .content{
+
+        width:calc(100% - var(--sidebar-cerrado));
+
+        margin-left:var(--sidebar-cerrado);
+
+    }
+
+    header{
+
+        margin-bottom:20px;
+
     }
 
     .logo-text{
-        font-size:30px;
+
+        font-size:28px;
+
     }
 
     .panel-derecho h1{
-        font-size:32px;
+
+        font-size:25px;
+
     }
 
     .panel-derecho h2{
-        font-size:24px;
+
+        font-size:16px;
+
+    }
+
+    .lista-conductores{
+
+        height:340px;
+
     }
 
     .mapa{
-        height:400px;
+
+        height:390px;
+
     }
 
     .ruta-info{
+
         flex-direction:column;
         align-items:flex-start;
+
+    }
+
+    .ruta-info button{
+
+        width:100%;
+
+    }
+
+}
+
+
+/*==================================================
+    RESPONSIVE: MÓVIL
+==================================================*/
+
+@media(max-width:560px){
+
+    .content{
+
+        width:100%;
+
+        margin-left:0;
+
+        padding:82px 14px 24px;
+
+    }
+
+    .sidebar.active ~ .content{
+
+        width:100%;
+
+        margin-left:0;
+
+    }
+
+    header{
+
+        min-height:auto;
+
+        margin-bottom:18px;
+
+    }
+
+    .logo-text{
+
+        font-size:25px;
+
+    }
+
+    .busqueda{
+
+        grid-template-columns:1fr;
+
+        gap:10px;
+
+    }
+
+    .busqueda button,
+    .btn-buscar{
+
+        width:100%;
+
+    }
+
+    .lista-conductores{
+
+        height:320px;
+
+    }
+
+    .mapa{
+
+        height:330px;
+
+    }
+
+}
+
+
+/*==================================================
+    RESPONSIVE: MÓVIL PEQUEÑO
+==================================================*/
+
+@media(max-width:420px){
+
+    .content{
+
+        padding-left:12px;
+        padding-right:12px;
+
+    }
+
+    .logo-text{
+
+        font-size:22px;
+
+    }
+
+    .card-conductor{
+
+        min-height:82px;
+
+        gap:11px;
+
+        padding:11px;
+
+    }
+
+    .card-conductor img{
+
+        width:50px;
+        height:50px;
+
+    }
+
+    .card-conductor h3{
+
+        font-size:15px;
+
+    }
+
+    .card-conductor p{
+
+        font-size:12px;
+
+    }
+
+    .mapa{
+
+        height:300px;
+
     }
 
 }
