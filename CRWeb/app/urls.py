@@ -13,6 +13,7 @@ urlpatterns = [
     path("filtro-viajes/", views.filtroviajes, name="filtroviajes"),
     path("viajes/publicar/",views.publicar_viaje,name="publicar_viaje",),
     path("viajes/mis-viajes/",views.mis_viajes_conductor,name="mis_viajes_conductor",),
+    path("viajes/mis-viajes/pasajero/",views.mis_viajes_pasajero,name="mis_viajes_pasajero"),
     # TODO: placeholder mientras se construye la vista real de "mis viajes"
     # para pasajeros (historial de solicitudes). Por ahora apunta a la
     # pantalla de búsqueda para que el link del sidebar no truene con
