@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Filtro de Viajes</title>
-
+    <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 
@@ -38,33 +40,55 @@
 
        <div class="busqueda-container">
 
-            <div class="busqueda">
+    <div class="busqueda">
 
-                <input type="text" placeholder="Desde">
+        <input
+            type="text"
+            id="origen"
+            name="origen"
+            placeholder="Desde">
 
-                <input type="text" placeholder="Hacia">
+        <input
+            type="text"
+            id="destino"
+            name="destino"
+            placeholder="Hacia">
 
-            <div class="time-input">
+        <div class="time-input">
 
-                <input type="time" id="hora">
+            <input
+                type="text"
+                id="hora"
+                name="hora"
+                placeholder="Selecciona una hora"
+                autocomplete="off"
+                readonly>
 
-                <label for="hora">
-                    <i class="fa-regular fa-clock"></i>
-                </label>
+            <button
+                type="button"
+                class="btn-abrir-hora"
+                id="abrirHora"
+                aria-label="Seleccionar hora">
 
-            </div>
+                <i class="fa-regular fa-clock"></i>
 
-            <button class="btn-buscar">
-                <i class="fa-solid fa-magnifying-glass"></i>
             </button>
 
         </div>
+
+        <button
+            type="button"
+            class="btn-buscar">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+        </button>
 
     </div>
 
 </div>
 
-        <section class="agendar">
+<section class="agendar">
 
         
 
@@ -252,8 +276,9 @@
 
 </section>
     </main>
-
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="{% static 'js/perfil.js' %}"></script>
+    <script src="{% static 'js/filtroviaje.js' %}"></script>
 
 </body>
 </html>
