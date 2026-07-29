@@ -1,0 +1,1224 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Mis viajes | Cuervo-Ride</title>
+
+    <!-- Font Awesome -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    >
+
+    <!-- CSS de la página -->
+    <link
+        rel="stylesheet"
+        href="{% static 'css/mis_viajes_pasajero.css' %}"
+    >
+
+</head>
+
+<body>
+
+    <!-- Sidebar general -->
+    {% include 'components/sidebar.html' %}
+
+
+    <!-- =====================================================
+        CONTENIDO PRINCIPAL
+    ====================================================== -->
+
+    <main class="mis-viajes-main">
+
+
+        <!-- =================================================
+            ENCABEZADO
+        ================================================== -->
+
+        <section class="encabezado-pagina">
+
+            <div class="encabezado-texto">
+
+                <span class="encabezado-etiqueta">
+                    <i class="fa-solid fa-route"></i>
+                    Pasajero
+                </span>
+
+                <h1>Mis viajes</h1>
+
+                <p>
+                    Consulta el estado de tus solicitudes,
+                    revisa tus próximos viajes y administra
+                    tus reservaciones.
+                </p>
+
+            </div>
+
+            <div class="encabezado-acciones">
+
+                <a
+                    href="{% url 'home' %}"
+                    class="btn-buscar-viaje"
+                >
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    Buscar viaje
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+            MENSAJES DE DJANGO
+        ================================================== -->
+
+        {% if messages %}
+
+            <section class="mensajes-contenedor">
+
+                {% for message in messages %}
+
+                    <div class="mensaje mensaje-{{ message.tags }}">
+
+                        <i class="fa-solid fa-circle-info"></i>
+
+                        <span>
+                            {{ message }}
+                        </span>
+
+                        <button
+                            type="button"
+                            class="cerrar-mensaje"
+                            aria-label="Cerrar mensaje"
+                        >
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+
+                    </div>
+
+                {% endfor %}
+
+            </section>
+
+        {% endif %}
+
+
+        <!-- =================================================
+            ESTADÍSTICAS
+        ================================================== -->
+
+        <section class="estadisticas-viajes">
+
+
+            <!-- Total -->
+
+            <article class="estadistica-card">
+
+                <div class="estadistica-icono total">
+
+                    <i class="fa-solid fa-route"></i>
+
+                </div>
+
+                <div class="estadistica-contenido">
+
+                    <span class="estadistica-numero">
+                        {{ estadisticas.total|default:0 }}
+                    </span>
+
+                    <span class="estadistica-label">
+                        Total de solicitudes
+                    </span>
+
+                </div>
+
+            </article>
+
+
+            <!-- Pendientes -->
+
+            <article class="estadistica-card">
+
+                <div class="estadistica-icono pendientes">
+
+                    <i class="fa-solid fa-clock"></i>
+
+                </div>
+
+                <div class="estadistica-contenido">
+
+                    <span class="estadistica-numero">
+                        {{ estadisticas.pendientes|default:0 }}
+                    </span>
+
+                    <span class="estadistica-label">
+                        Pendientes
+                    </span>
+
+                </div>
+
+            </article>
+
+
+            <!-- Aceptadas -->
+
+            <article class="estadistica-card">
+
+                <div class="estadistica-icono aceptadas">
+
+                    <i class="fa-solid fa-circle-check"></i>
+
+                </div>
+
+                <div class="estadistica-contenido">
+
+                    <span class="estadistica-numero">
+                        {{ estadisticas.aceptadas|default:0 }}
+                    </span>
+
+                    <span class="estadistica-label">
+                        Aceptadas
+                    </span>
+
+                </div>
+
+            </article>
+
+
+            <!-- Completadas -->
+
+            <article class="estadistica-card">
+
+                <div class="estadistica-icono completadas">
+
+                    <i class="fa-solid fa-flag-checkered"></i>
+
+                </div>
+
+                <div class="estadistica-contenido">
+
+                    <span class="estadistica-numero">
+                        {{ estadisticas.completadas|default:0 }}
+                    </span>
+
+                    <span class="estadistica-label">
+                        Completadas
+                    </span>
+
+                </div>
+
+            </article>
+
+
+            <!-- Canceladas -->
+
+            <article class="estadistica-card">
+
+                <div class="estadistica-icono canceladas">
+
+                    <i class="fa-solid fa-circle-xmark"></i>
+
+                </div>
+
+                <div class="estadistica-contenido">
+
+                    <span class="estadistica-numero">
+                        {{ estadisticas.canceladas|default:0 }}
+                    </span>
+
+                    <span class="estadistica-label">
+                        Canceladas
+                    </span>
+
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- =================================================
+            FILTROS
+        ================================================== -->
+
+        <section class="filtros-viajes">
+
+            <div class="filtros-encabezado">
+
+                <div>
+
+                    <h2>
+                        Historial de solicitudes
+                    </h2>
+
+                    <p>
+                        Filtra tus viajes según el estado
+                        de la solicitud.
+                    </p>
+
+                </div>
+
+                <div class="cantidad-resultados">
+
+                    <i class="fa-solid fa-list"></i>
+
+                    <span>
+                        {{ solicitudes|length }}
+                        resultado{{ solicitudes|length|pluralize }}
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <nav
+                class="filtros-lista"
+                aria-label="Filtros de solicitudes"
+            >
+
+                <a
+                    href="?estado=todos"
+                    class="filtro-btn
+                    {% if filtro_actual == 'todos' %}
+                        active
+                    {% endif %}"
+                >
+                    Todos
+                </a>
+
+                <a
+                    href="?estado=pendientes"
+                    class="filtro-btn
+                    {% if filtro_actual == 'pendientes' %}
+                        active
+                    {% endif %}"
+                >
+                    Pendientes
+                </a>
+
+                <a
+                    href="?estado=aceptadas"
+                    class="filtro-btn
+                    {% if filtro_actual == 'aceptadas' %}
+                        active
+                    {% endif %}"
+                >
+                    Aceptadas
+                </a>
+
+                <a
+                    href="?estado=completadas"
+                    class="filtro-btn
+                    {% if filtro_actual == 'completadas' %}
+                        active
+                    {% endif %}"
+                >
+                    Completadas
+                </a>
+
+                <a
+                    href="?estado=rechazadas"
+                    class="filtro-btn
+                    {% if filtro_actual == 'rechazadas' %}
+                        active
+                    {% endif %}"
+                >
+                    Rechazadas
+                </a>
+
+                <a
+                    href="?estado=canceladas"
+                    class="filtro-btn
+                    {% if filtro_actual == 'canceladas' %}
+                        active
+                    {% endif %}"
+                >
+                    Canceladas
+                </a>
+
+            </nav>
+
+        </section>
+
+
+        <!-- =================================================
+            LISTADO DE SOLICITUDES
+        ================================================== -->
+
+        <section class="solicitudes-lista">
+
+
+            {% for solicitud in solicitudes %}
+
+
+                <article
+                    class="
+                        solicitud-card
+                        solicitud-{{ solicitud.estado }}
+                    "
+                    data-solicitud-id="{{ solicitud.id }}"
+                    data-estado="{{ solicitud.estado }}"
+                >
+
+
+                    <!-- =====================================
+                        ENCABEZADO DE LA TARJETA
+                    ====================================== -->
+
+                    <header class="solicitud-card-header">
+
+                        <div class="fecha-viaje">
+
+                            <div class="fecha-icono">
+
+                                <i class="fa-regular fa-calendar"></i>
+
+                            </div>
+
+                            <div>
+
+                                <span class="fecha-dia">
+
+                                    {{ solicitud.viaje.fecha_hora_salida|date:"l d \d\e F" }}
+
+                                </span>
+
+                                <span class="fecha-hora">
+
+                                    <i class="fa-regular fa-clock"></i>
+
+                                    {{ solicitud.viaje.fecha_hora_salida|date:"h:i A" }}
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="estados-solicitud">
+
+
+                            <!-- Estado de la solicitud -->
+
+                            <span
+                                class="
+                                    estado-badge
+                                    estado-solicitud
+                                    estado-{{ solicitud.estado }}
+                                "
+                            >
+
+                                {% if solicitud.estado == "pendiente" %}
+
+                                    <i class="fa-solid fa-clock"></i>
+
+                                {% elif solicitud.estado == "aceptada" %}
+
+                                    <i class="fa-solid fa-circle-check"></i>
+
+                                {% elif solicitud.estado == "rechazada" %}
+
+                                    <i class="fa-solid fa-circle-xmark"></i>
+
+                                {% elif solicitud.estado == "cancelada" %}
+
+                                    <i class="fa-solid fa-ban"></i>
+
+                                {% elif solicitud.estado == "completada" %}
+
+                                    <i class="fa-solid fa-flag-checkered"></i>
+
+                                {% elif solicitud.estado == "no_presentado" %}
+
+                                    <i class="fa-solid fa-user-slash"></i>
+
+                                {% endif %}
+
+                                {{ solicitud.get_estado_display }}
+
+                            </span>
+
+
+                            <!-- Estado del viaje -->
+
+                            <span
+                                class="
+                                    estado-badge
+                                    estado-viaje
+                                    viaje-{{ solicitud.viaje.estado }}
+                                "
+                            >
+
+                                {% if solicitud.viaje.estado == "disponible" %}
+
+                                    <i class="fa-solid fa-circle"></i>
+
+                                {% elif solicitud.viaje.estado == "completo" %}
+
+                                    <i class="fa-solid fa-users"></i>
+
+                                {% elif solicitud.viaje.estado == "en_curso" %}
+
+                                    <i class="fa-solid fa-car-side"></i>
+
+                                {% elif solicitud.viaje.estado == "finalizado" %}
+
+                                    <i class="fa-solid fa-location-dot"></i>
+
+                                {% elif solicitud.viaje.estado == "cancelado" %}
+
+                                    <i class="fa-solid fa-triangle-exclamation"></i>
+
+                                {% else %}
+
+                                    <i class="fa-solid fa-circle-info"></i>
+
+                                {% endif %}
+
+                                {{ solicitud.viaje.get_estado_display }}
+
+                            </span>
+
+                        </div>
+
+                    </header>
+
+
+                    <!-- =====================================
+                        RUTA
+                    ====================================== -->
+
+                    <section class="ruta-viaje">
+
+                        <div class="ruta-punto ruta-origen">
+
+                            <span class="punto-marcador"></span>
+
+                            <div class="ruta-informacion">
+
+                                <span class="ruta-label">
+                                    Origen
+                                </span>
+
+                                <strong>
+                                    {{ solicitud.viaje.origen }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="ruta-linea">
+
+                            <span></span>
+
+                        </div>
+
+
+                        <div class="ruta-punto ruta-destino">
+
+                            <span class="punto-marcador"></span>
+
+                            <div class="ruta-informacion">
+
+                                <span class="ruta-label">
+                                    Destino
+                                </span>
+
+                                <strong>
+                                    {{ solicitud.viaje.destino }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- =====================================
+                        INFORMACIÓN PRINCIPAL
+                    ====================================== -->
+
+                    <section class="informacion-viaje-grid">
+
+
+                        <!-- Conductor -->
+
+                        <div class="conductor-info">
+
+                            <div class="conductor-foto">
+
+                                {% if solicitud.viaje.conductor.usuario.foto %}
+
+                                    <img
+                                        src="{{ solicitud.viaje.conductor.usuario.foto.url }}"
+                                        alt="Foto de {{ solicitud.viaje.conductor.usuario.nombre_completo }}"
+                                    >
+
+                                {% else %}
+
+                                    <i class="fa-solid fa-user"></i>
+
+                                {% endif %}
+
+                            </div>
+
+                            <div class="conductor-datos">
+
+                                <span class="info-label">
+                                    Conductor
+                                </span>
+
+                                <strong>
+                                    {{ solicitud.viaje.conductor.usuario.nombre_completo }}
+                                </strong>
+
+                                <span class="conductor-estado">
+
+                                    <i class="fa-solid fa-shield-halved"></i>
+
+                                    {{ solicitud.viaje.conductor.get_estado_verificacion_display }}
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Vehículo -->
+
+                        <div class="info-bloque">
+
+                            <div class="info-icono">
+
+                                <i class="fa-solid fa-car"></i>
+
+                            </div>
+
+                            <div>
+
+                                <span class="info-label">
+                                    Vehículo
+                                </span>
+
+                                <strong>
+                                    {{ solicitud.viaje.vehiculo.marca }}
+                                    {{ solicitud.viaje.vehiculo.modelo }}
+                                </strong>
+
+                                <small>
+                                    {{ solicitud.viaje.vehiculo.color }}
+                                    ·
+                                    {{ solicitud.viaje.vehiculo.placas }}
+                                </small>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Asientos -->
+
+                        <div class="info-bloque">
+
+                            <div class="info-icono">
+
+                                <i class="fa-solid fa-users"></i>
+
+                            </div>
+
+                            <div>
+
+                                <span class="info-label">
+                                    Asientos solicitados
+                                </span>
+
+                                <strong>
+                                    {{ solicitud.asientos_solicitados }}
+                                </strong>
+
+                                <small>
+                                    lugar{{ solicitud.asientos_solicitados|pluralize:"es" }}
+                                    reservado{{ solicitud.asientos_solicitados|pluralize:"s" }}
+                                </small>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Precio -->
+
+                        <div class="info-bloque">
+
+                            <div class="info-icono">
+
+                                <i class="fa-solid fa-dollar-sign"></i>
+
+                            </div>
+
+                            <div>
+
+                                <span class="info-label">
+                                    Costo por pasajero
+                                </span>
+
+                                <strong>
+                                    ${{ solicitud.viaje.costo_por_pasajero|floatformat:2 }}
+                                </strong>
+
+                                <small>
+                                    MXN
+                                </small>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Llegada -->
+
+                        <div class="info-bloque">
+
+                            <div class="info-icono">
+
+                                <i class="fa-solid fa-location-arrow"></i>
+
+                            </div>
+
+                            <div>
+
+                                <span class="info-label">
+                                    Llegada estimada
+                                </span>
+
+                                <strong>
+
+                                    {% if solicitud.viaje.fecha_hora_llegada_estimada %}
+
+                                        {{ solicitud.viaje.fecha_hora_llegada_estimada|date:"h:i A" }}
+
+                                    {% else %}
+
+                                        Por confirmar
+
+                                    {% endif %}
+
+                                </strong>
+
+                                <small>
+
+                                    {% if solicitud.viaje.fecha_hora_llegada_estimada %}
+
+                                        {{ solicitud.viaje.fecha_hora_llegada_estimada|date:"d/m/Y" }}
+
+                                    {% else %}
+
+                                        Sin horario estimado
+
+                                    {% endif %}
+
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- =====================================
+                        PREFERENCIAS DEL VIAJE
+                    ====================================== -->
+
+                    <section class="preferencias-viaje">
+
+                        {% if solicitud.viaje.permite_mascota %}
+
+                            <span class="preferencia-chip">
+
+                                <i class="fa-solid fa-paw"></i>
+
+                                Mascotas permitidas
+
+                            </span>
+
+                        {% endif %}
+
+
+                        {% if solicitud.viaje.acepta_silla_ruedas %}
+
+                            <span class="preferencia-chip">
+
+                                <i class="fa-solid fa-wheelchair"></i>
+
+                                Accesible
+
+                            </span>
+
+                        {% endif %}
+
+
+                        {% if solicitud.requiere_asistencia %}
+
+                            <span class="preferencia-chip asistencia">
+
+                                <i class="fa-solid fa-hand-holding-medical"></i>
+
+                                Asistencia solicitada
+
+                            </span>
+
+                        {% endif %}
+
+                    </section>
+
+
+                    <!-- =====================================
+                        DETALLES ADICIONALES
+                    ====================================== -->
+
+                    <section
+                        class="detalles-adicionales"
+                        id="detalles-{{ solicitud.id }}"
+                    >
+
+
+                        <div class="detalle-item">
+
+                            <span class="detalle-label">
+
+                                <i class="fa-solid fa-location-crosshairs"></i>
+
+                                Punto de recogida
+
+                            </span>
+
+                            <p>
+
+                                {% if solicitud.punto_recogida %}
+
+                                    {{ solicitud.punto_recogida }}
+
+                                {% else %}
+
+                                    No especificado.
+
+                                {% endif %}
+
+                            </p>
+
+                        </div>
+
+
+                        <div class="detalle-item">
+
+                            <span class="detalle-label">
+
+                                <i class="fa-solid fa-location-dot"></i>
+
+                                Punto de descenso
+
+                            </span>
+
+                            <p>
+
+                                {% if solicitud.punto_descenso %}
+
+                                    {{ solicitud.punto_descenso }}
+
+                                {% else %}
+
+                                    No especificado.
+
+                                {% endif %}
+
+                            </p>
+
+                        </div>
+
+
+                        <div class="detalle-item">
+
+                            <span class="detalle-label">
+
+                                <i class="fa-solid fa-comment"></i>
+
+                                Comentario enviado
+
+                            </span>
+
+                            <p>
+
+                                {% if solicitud.comentario %}
+
+                                    {{ solicitud.comentario }}
+
+                                {% else %}
+
+                                    No agregaste ningún comentario.
+
+                                {% endif %}
+
+                            </p>
+
+                        </div>
+
+
+                        {% if solicitud.viaje.indicaciones %}
+
+                            <div class="detalle-item">
+
+                                <span class="detalle-label">
+
+                                    <i class="fa-solid fa-circle-info"></i>
+
+                                    Indicaciones del conductor
+
+                                </span>
+
+                                <p>
+                                    {{ solicitud.viaje.indicaciones }}
+                                </p>
+
+                            </div>
+
+                        {% endif %}
+
+
+                        <div class="detalle-item">
+
+                            <span class="detalle-label">
+
+                                <i class="fa-regular fa-calendar-check"></i>
+
+                                Solicitud enviada
+
+                            </span>
+
+                            <p>
+                                {{ solicitud.fecha_solicitud|date:"d/m/Y h:i A" }}
+                            </p>
+
+                        </div>
+
+
+                        {% if solicitud.fecha_respuesta %}
+
+                            <div class="detalle-item">
+
+                                <span class="detalle-label">
+
+                                    <i class="fa-solid fa-reply"></i>
+
+                                    Respuesta recibida
+
+                                </span>
+
+                                <p>
+                                    {{ solicitud.fecha_respuesta|date:"d/m/Y h:i A" }}
+                                </p>
+
+                            </div>
+
+                        {% endif %}
+
+                    </section>
+
+
+                    <!-- =====================================
+                        PIE Y BOTONES
+                    ====================================== -->
+
+                    <footer class="solicitud-card-footer">
+
+
+                        <button
+                            type="button"
+                            class="btn-viaje btn-secundario"
+                            data-action="detalles"
+                            data-solicitud="{{ solicitud.id }}"
+                        >
+
+                            <i class="fa-solid fa-chevron-down"></i>
+
+                            <span>
+                                Ver detalles
+                            </span>
+
+                        </button>
+
+
+                        <div class="acciones-principales">
+
+
+                            <!-- Solicitud pendiente -->
+
+                            {% if solicitud.estado == "pendiente" %}
+
+                                <button
+                                    type="button"
+                                    class="btn-viaje btn-peligro"
+                                    data-action="cancelar"
+                                    data-solicitud="{{ solicitud.id }}"
+                                >
+
+                                    <i class="fa-solid fa-xmark"></i>
+
+                                    Cancelar solicitud
+
+                                </button>
+
+
+                            <!-- Solicitud aceptada -->
+
+                            {% elif solicitud.estado == "aceptada" %}
+
+
+                                {% if solicitud.viaje.estado == "en_curso" %}
+
+                                    <button
+                                        type="button"
+                                        class="btn-viaje btn-principal"
+                                        data-action="continuar"
+                                        data-solicitud="{{ solicitud.id }}"
+                                    >
+
+                                        <i class="fa-solid fa-location-arrow"></i>
+
+                                        Continuar viaje
+
+                                    </button>
+
+
+                                {% elif solicitud.viaje.estado == "finalizado" %}
+
+                                    <button
+                                        type="button"
+                                        class="btn-viaje btn-principal"
+                                        data-action="calificar"
+                                        data-solicitud="{{ solicitud.id }}"
+                                    >
+
+                                        <i class="fa-solid fa-star"></i>
+
+                                        Calificar conductor
+
+                                    </button>
+
+
+                                {% else %}
+
+                                    <button
+                                        type="button"
+                                        class="btn-viaje btn-secundario"
+                                        data-action="chat"
+                                        data-solicitud="{{ solicitud.id }}"
+                                    >
+
+                                        <i class="fa-solid fa-comments"></i>
+
+                                        Abrir chat
+
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        class="btn-viaje btn-principal"
+                                        data-action="ruta"
+                                        data-solicitud="{{ solicitud.id }}"
+                                    >
+
+                                        <i class="fa-solid fa-map-location-dot"></i>
+
+                                        Ver ruta
+
+                                    </button>
+
+                                {% endif %}
+
+
+                            <!-- Solicitud completada -->
+
+                            {% elif solicitud.estado == "completada" %}
+
+                                <button
+                                    type="button"
+                                    class="btn-viaje btn-secundario"
+                                    data-action="resumen"
+                                    data-solicitud="{{ solicitud.id }}"
+                                >
+
+                                    <i class="fa-solid fa-receipt"></i>
+
+                                    Ver resumen
+
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="btn-viaje btn-principal"
+                                    data-action="calificar"
+                                    data-solicitud="{{ solicitud.id }}"
+                                >
+
+                                    <i class="fa-solid fa-star"></i>
+
+                                    Calificar
+
+                                </button>
+
+
+                            <!-- Rechazada -->
+
+                            {% elif solicitud.estado == "rechazada" %}
+
+                                <a
+                                    href="{% url 'home' %}"
+                                    class="btn-viaje btn-principal"
+                                >
+
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+
+                                    Buscar otro viaje
+
+                                </a>
+
+
+                            <!-- Cancelada -->
+
+                            {% elif solicitud.estado == "cancelada" %}
+
+                                <a
+                                    href="{% url 'home' %}"
+                                    class="btn-viaje btn-principal"
+                                >
+
+                                    <i class="fa-solid fa-rotate-right"></i>
+
+                                    Buscar otro viaje
+
+                                </a>
+
+
+                            <!-- No presentado -->
+
+                            {% elif solicitud.estado == "no_presentado" %}
+
+                                <button
+                                    type="button"
+                                    class="btn-viaje btn-secundario"
+                                    data-action="soporte"
+                                    data-solicitud="{{ solicitud.id }}"
+                                >
+
+                                    <i class="fa-solid fa-headset"></i>
+
+                                    Contactar soporte
+
+                                </button>
+
+                            {% endif %}
+
+                        </div>
+
+                    </footer>
+
+                </article>
+
+
+            {% empty %}
+
+
+                <!-- =========================================
+                    ESTADO VACÍO
+                ========================================== -->
+
+                <section class="estado-vacio">
+
+                    <div class="estado-vacio-icono">
+
+                        <i class="fa-solid fa-route"></i>
+
+                    </div>
+
+                    <h2>
+                        No tienes viajes en esta categoría
+                    </h2>
+
+                    <p>
+
+                        {% if filtro_actual == "todos" %}
+
+                            Todavía no has solicitado un lugar
+                            en ningún viaje.
+
+                        {% elif filtro_actual == "pendientes" %}
+
+                            No tienes solicitudes pendientes.
+
+                        {% elif filtro_actual == "aceptadas" %}
+
+                            No tienes solicitudes aceptadas.
+
+                        {% elif filtro_actual == "completadas" %}
+
+                            Todavía no tienes viajes completados.
+
+                        {% elif filtro_actual == "rechazadas" %}
+
+                            No tienes solicitudes rechazadas.
+
+                        {% elif filtro_actual == "canceladas" %}
+
+                            No tienes solicitudes canceladas.
+
+                        {% endif %}
+
+                    </p>
+
+                    <a
+                        href="{% url 'home' %}"
+                        class="btn-buscar-viaje"
+                    >
+
+                        <i class="fa-solid fa-magnifying-glass"></i>
+
+                        Buscar un viaje
+
+                    </a>
+
+                </section>
+
+
+            {% endfor %}
+
+        </section>
+
+    </main>
+
+
+    <!-- JavaScript -->
+    <script
+        src="{% static 'js/mis_viajes_pasajero.js' %}"
+    ></script>
+
+</body>
+
+</html>
