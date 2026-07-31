@@ -6,11 +6,12 @@
         <h2 id="nombreTitulo">Cargando...</h2>
 
         <button class="tab-btn active" id="btnGeneral">Información General</button>
+        <button class="tab-btn" id="btnVerificacion" style="display:none;">Verificación de Conductor</button>
         <button class="tab-btn" id="btnMedico">Expediente Médico</button>
     </aside>
 
-    <!--================ PANEL =================-->
-    <section class="usuario-panel">
+    <!--================ PANEL: INFORMACIÓN GENERAL =================-->
+    <section class="usuario-panel" id="panelGeneral">
         <h2>Información General</h2>
         <form id="formGeneral">
             <input type="hidden" id="usuarioId">
@@ -53,8 +54,10 @@
                 <div class="campo">
                     <label>Estado</label>
                     <select id="estado">
-                        <option value="Activo">Activo</option>
-                        <option value="Inactivo">Inactivo</option>
+                        <option value="activa">Activa</option>
+                        <option value="suspendida">Suspendida</option>
+                        <option value="bloqueada">Bloqueada</option>
+                        <option value="pendiente">Pendiente</option>
                     </select>
                 </div>
 
@@ -74,5 +77,15 @@
                 <button type="submit" id="guardar">Guardar Cambios</button>
             </div>
         </form>
+    </section>
+
+    <!--================ PANEL: VERIFICACIÓN (AGREGADO) =================-->
+    <section class="usuario-panel" id="panelVerificacion" style="display: none;">
+        <h2>Verificación de Conductor y Vehículo</h2>
+        
+        <!-- Aquí usuario-info.js inyectará la licencia y datos del vehículo -->
+        <div id="verificacionContenido">
+            <p>Cargando información de verificación...</p>
+        </div>
     </section>
 </div>

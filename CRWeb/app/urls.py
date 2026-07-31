@@ -42,4 +42,16 @@ urlpatterns = [
     path('admin-panel/alertas/', views.panel_alertas, name='panel_alertas'),
     path('api/admin/usuarios/<int:usuario_id>/', views.api_obtener_usuario, name='api_obtener_usuario'),
     path('api/admin/usuarios/<int:usuario_id>/actualizar/', views.api_actualizar_usuario, name='api_actualizar_usuario'),
+    path('api/admin/conductores/<int:usuario_id>/verificar/', views.api_verificar_conductor, name='api_verificar_conductor'),
+    path('api/admin/vehiculos/<int:vehiculo_id>/verificar/', views.api_verificar_vehiculo, name='api_verificar_vehiculo'),
+    path(
+        "api/admin/usuarios/<int:usuario_id>/expediente-medico/",
+        views.api_obtener_expediente_medico,
+        name="api_obtener_expediente_medico",
+    ),
+    path(
+        "api/admin/usuarios/<int:usuario_id>/expediente-medico/actualizar/",
+        views.api_actualizar_expediente_medico,
+        name="api_actualizar_expediente_medico",
+    ),
 ]

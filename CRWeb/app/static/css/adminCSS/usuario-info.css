@@ -406,3 +406,177 @@
     }
 
 }
+
+/*==================================================
+        ESTILOS DEL PANEL DE VERIFICACIÓN (TEMA OSCURO)
+==================================================*/
+
+#panelVerificacion {
+    /* Mantiene las dimensiones del usuario-panel original */
+    padding: 0;
+}
+
+/* Tarjetas para Licencia y Vehículo */
+.verificacion-bloque {
+    background: #132232;
+    border: 2px solid #1b3044;
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 25px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.verificacion-bloque:hover {
+    border-color: #7fd44d;
+    box-shadow: 0 0 12px rgba(127, 212, 77, 0.15);
+}
+
+.verificacion-bloque h3 {
+    margin-top: 0;
+    margin-bottom: 18px;
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 600;
+    border-bottom: 2px solid #1b3044;
+    padding-bottom: 10px;
+}
+
+.verificacion-bloque p {
+    margin: 10px 0;
+    color: #d7e3ec;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.verificacion-bloque strong {
+    color: #ffffff;
+}
+
+/* Badges de Estado integradas a la paleta */
+.badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge.aprobado, 
+.badge.activa {
+    background: rgba(127, 212, 77, 0.15);
+    color: #7fd44d;
+    border: 1px solid #7fd44d;
+}
+
+.badge.pendiente {
+    background: rgba(234, 179, 8, 0.15);
+    color: #facc15;
+    border: 1px solid #facc15;
+}
+
+.badge.rechazado, 
+.badge.bloqueada, 
+.badge.suspendida {
+    background: rgba(216, 67, 67, 0.15);
+    color: #d84343;
+    border: 1px solid #d84343;
+}
+
+/* Contenedor y Botones para ver Fotos / Documentos */
+.documentos-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 20px 0 !important;
+    padding: 16px;
+    background: #101c2a;
+    border-radius: 10px;
+    border: 1px dashed #1b3044;
+}
+
+.btn-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: #1b3044;
+    color: #7fd44d;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    border: 1px solid transparent;
+}
+
+.btn-link:hover {
+    background: #7fd44d;
+    color: #11182c;
+    transform: translateY(-2px);
+}
+
+/* Botones de Acción (Aprobar y Rechazar) */
+.acciones-verificacion {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 20px !important;
+}
+
+.btn-aprobar, 
+.btn-rechazar {
+    height: 48px;
+    padding: 0 24px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Botón Aprobar (Igual a #guardar) */
+.btn-aprobar {
+    background: #7fd44d;
+    color: #11182c;
+}
+
+.btn-aprobar:hover {
+    background: #91df60;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(127, 212, 77, 0.3);
+}
+
+/* Botón Rechazar (Igual a #volver) */
+.btn-rechazar {
+    background: #d84343;
+    color: #ffffff;
+}
+
+.btn-rechazar:hover {
+    background: #bf3434;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(216, 67, 67, 0.3);
+}
+
+/* Adaptación Responsive */
+@media(max-width: 700px) {
+    .acciones-verificacion {
+        flex-direction: column;
+    }
+
+    .btn-aprobar, 
+    .btn-rechazar {
+        width: 100%;
+    }
+
+    .documentos-grid {
+        flex-direction: column;
+    }
+
+    .btn-link {
+        justify-content: center;
+    }
+}

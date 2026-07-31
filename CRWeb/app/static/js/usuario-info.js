@@ -1,130 +1,297 @@
- /*=====================================
-                                    USUARIO INFO
-                            =====================================*/
+/*=====================================
+        USUARIO INFO
+=====================================*/
 
-                            function iniciarUsuarioInfo() {
+function iniciarUsuarioInfo(usuarioIdParam = null) {
+    console.log("Vista Información Usuario cargada");
 
-                                console.log("Vista Información Usuario cargada");
+    // OBTENER ID (Parámetro o sessionStorage)
+    const usuarioId = usuarioIdParam || sessionStorage.getItem("usuarioId") || window.ADMIN_STATE?.usuarioId;
 
-                                //==========================
-                                // OBTENER USUARIO
-                                //==========================
+    if (!usuarioId) {
+        alert("No se encontró información del usuario.");
+        cargarVista("usuarios");
+        return;
+    }
 
-                                const usuario = JSON.parse(sessionStorage.getItem("usuario"));
+    sessionStorage.setItem("usuarioId", usuarioId);
 
-                                if (!usuario) {
+    // CONSULTAR INFORMACIÓN DE LA API
+    fetch(`/api/admin/usuarios/${usuarioId}/`)
+        .then((res) => res.json())
+        .then((data) => {
+            if (!data.ok) {
+                alert(data.error || "No se pudo cargar la información del usuario.");
+                cargarVista("usuarios");
+                return;
+            }
+            pintarUsuario(data.usuario);
+        })
+        .catch((err) => {
+            console.error("Error al cargar usuario:", err);
+            alert("Error de conexión al cargar la información del usuario.");
+        });
 
-                                    alert("No se encontró información del usuario.");
+    // BOTÓN REGRESAR
+    const btnVolver = document.getElementById("volver");
+    if (btnVolver) {
+        btnVolver.addEventListener("click", () => cargarVista("usuarios"));
+    }
 
-                                    cargarVista("usuarios");
+    // MANEJO DE PESTAÑAS
+    const btnGeneral = document.getElementById("btnGeneral");
+    const btnMedico = document.getElementById("btnMedico");
+    const btnVerificacion = document.getElementById("btnVerificacion");
+    const panelGeneral = document.getElementById("panelGeneral");
+    const panelVerificacion = document.getElementById("panelVerificacion");
 
-                                    return;
+    function mostrarPanel(panelActivo) {
+        if (panelGeneral) panelGeneral.style.display = panelGeneral === panelActivo ? "block" : "none";
+        if (panelVerificacion) panelVerificacion.style.display = panelVerificacion === panelActivo ? "block" : "none";
 
-                                }
+        if (btnGeneral) btnGeneral.classList.remove("active");
+        if (btnVerificacion) btnVerificacion.classList.remove("active");
+    }
 
-                                //==========================
-                                // FOTO Y NOMBRE
-                                //==========================
+    if (btnGeneral) {
+        btnGeneral.addEventListener("click", () => {
+            mostrarPanel(panelGeneral);
+            btnGeneral.classList.add("active");
+        });
+    }
 
-                                document.getElementById("fotoUsuario").src = "img/admin.png";
+    if (btnVerificacion) {
+        btnVerificacion.addEventListener("click", () => {
+            mostrarPanel(panelVerificacion);
+            btnVerificacion.classList.add("active");
+        });
+    }
 
-                                document.getElementById("nombreTitulo").textContent = usuario.nombre;
+    if (btnMedico) {
+        btnMedico.addEventListener("click", () => cargarVista("expediente", usuarioId));
+    }
 
+    // GUARDAR INFORMACIÓN GENERAL
+    const formGeneral = document.getElementById("formGeneral");
+    if (formGeneral) {
+        formGeneral.addEventListener("submit", function (e) {
+            e.preventDefault();
 
-                                //==========================
-                                // LLENAR FORMULARIO
-                                //==========================
+            const payload = {
+                nombre: document.getElementById("nombre")?.value || "",
+                correo: document.getElementById("correo")?.value || "",
+                matricula: document.getElementById("matricula")?.value || "",
+                cuatrimestre: document.getElementById("cuatrimestre")?.value || "",
+                carrera: document.getElementById("carrera")?.value || "",
+                rol: document.getElementById("rol")?.value || "",
+                estado: document.getElementById("estado")?.value || "",
+                telefono: document.getElementById("telefono")?.value || "",
+            };
 
-                                document.getElementById("nombre").value = usuario.nombre || "";
+            const passElem = document.getElementById("password");
+            if (passElem && passElem.value.trim()) {
+                payload.password = passElem.value;
+            }
 
-                                document.getElementById("correo").value = usuario.correo || "";
+            fetch(`/api/admin/usuarios/${usuarioId}/actualizar/`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": obtenerCSRFToken(),
+                },
+                body: JSON.stringify(payload),
+            })
+                .then((res) => res.json())
+                .then((data) => {
+                    if (data.ok) {
+                        alert("Información guardada correctamente.");
+                        if (passElem) passElem.value = "";
+                        iniciarUsuarioInfo(usuarioId);
+                    } else {
+                        alert(data.error || "No se pudo guardar la información.");
+                    }
+                })
+                .catch((err) => {
+                    console.error("Error al guardar:", err);
+                    alert("Error de conexión al guardar los datos.");
+                });
+        });
+    }
 
-                                document.getElementById("matricula").value = usuario.matricula || "";
+    // PINTAR DATOS DE USUARIO
+    function pintarUsuario(usuario) {
+        const foto = document.getElementById("fotoUsuario");
+        if (foto) foto.src = usuario.foto || "/static/img/admin.png";
 
-                                document.getElementById("cuatrimestre").value = usuario.cuatrimestre || "";
+        if (document.getElementById("nombreTitulo")) document.getElementById("nombreTitulo").textContent = usuario.nombre || "Usuario";
+        if (document.getElementById("nombre")) document.getElementById("nombre").value = usuario.nombre || "";
+        if (document.getElementById("correo")) document.getElementById("correo").value = usuario.correo || "";
+        if (document.getElementById("matricula")) document.getElementById("matricula").value = usuario.matricula || "";
+        if (document.getElementById("cuatrimestre")) document.getElementById("cuatrimestre").value = usuario.cuatrimestre || "";
+        if (document.getElementById("carrera")) document.getElementById("carrera").value = usuario.carrera || "";
+        if (document.getElementById("rol")) document.getElementById("rol").value = (usuario.rol || "").toLowerCase();
+        if (document.getElementById("estado")) document.getElementById("estado").value = usuario.estado || "activa";
+        if (document.getElementById("password")) document.getElementById("password").value = "";
+        if (document.getElementById("telefono")) document.getElementById("telefono").value = usuario.telefono || "";
 
-                                document.getElementById("carrera").value = usuario.carrera || "";
+        // Habilitar / Mostrar la pestaña de verificación siempre que aplique
+        if (btnVerificacion) {
+            btnVerificacion.style.display = "";
+            pintarVerificacion(usuario);
+        }
+    }
 
-                                document.getElementById("rol").value = usuario.rol || "";
+    // PINTAR SECCIÓN DE VERIFICACIÓN (CONDUCTOR Y VEHÍCULO)
+    function pintarVerificacion(usuario) {
+        const conductor = usuario.conductor;
+        const vehiculo = usuario.vehiculo;
+        const contenedor = document.getElementById("verificacionContenido");
 
-                                document.getElementById("estado").value = usuario.estado || "";
+        if (!contenedor) return;
 
-                                document.getElementById("password").value = usuario.password || "";
+        if (!conductor || Object.keys(conductor).length === 0) {
+            contenedor.innerHTML = "<p style='padding:20px; color:#666;'>Este usuario no tiene solicitud de licencia pendiente ni datos de conductor asociados.</p>";
+            return;
+        }
 
-                                document.getElementById("telefono").value = usuario.telefono || "";
+        const fotoFrontalHtml = conductor.foto_licencia_frontal
+            ? `<a href="${conductor.foto_licencia_frontal}" target="_blank" class="btn-link">Ver foto frontal</a>`
+            : "<span>Sin foto frontal</span>";
 
+        const fotoReversoHtml = conductor.foto_licencia_reverso
+            ? `<a href="${conductor.foto_licencia_reverso}" target="_blank" class="btn-link">Ver foto posterior</a>`
+            : "<span>Sin foto posterior</span>";
 
-                                //==========================
-                                // BOTÓN REGRESAR
-                                //==========================
+        let vehiculoHtml = "<p style='margin-top:20px; color:#666;'>Este usuario todavía no ha registrado un vehículo.</p>";
 
-                                document.getElementById("volver").addEventListener("click", () => {
+        if (vehiculo && Object.keys(vehiculo).length > 0) {
+            const fotoVehiculoHtml = vehiculo.foto
+                ? `<a href="${vehiculo.foto}" target="_blank" class="btn-link">Ver foto vehículo</a>`
+                : "<span>Sin foto</span>";
 
-                                    cargarVista("usuarios");
+            const tarjetaCirculacionHtml = vehiculo.tarjeta_circulacion
+                ? `<a href="${vehiculo.tarjeta_circulacion}" target="_blank" class="btn-link">Ver tarjeta de circulación</a>`
+                : "<span>Sin tarjeta</span>";
 
-                                });
+            const seguroHtml = vehiculo.documento_seguro
+                ? `<a href="${vehiculo.documento_seguro}" target="_blank" class="btn-link">Ver póliza de seguro</a>`
+                : "<span>Sin seguro</span>";
 
+            vehiculoHtml = `
+                <div class="verificacion-bloque" style="margin-top: 25px; border-top: 1px solid #ddd; padding-top: 15px;">
+                    <h3>Información del Vehículo</h3>
+                    <p><strong>Marca/Modelo:</strong> ${vehiculo.marca || ""} ${vehiculo.modelo || ""} (${vehiculo.anio || ""})</p>
+                    <p><strong>Placas:</strong> ${vehiculo.placas || "N/A"} | <strong>Color:</strong> ${vehiculo.color || "N/A"}</p>
+                    <p><strong>Estado Vehículo:</strong> <span class="badge ${vehiculo.estado}">${vehiculo.estado_display || vehiculo.estado || "Pendiente"}</span></p>
+                    ${vehiculo.motivo_rechazo ? `<p style="color:red;"><strong>Motivo rechazo:</strong> ${vehiculo.motivo_rechazo}</p>` : ""}
 
-                                //==========================
-                                // GUARDAR
-                                //==========================
+                    <div class="documentos-grid" style="margin: 10px 0;">
+                        ${fotoVehiculoHtml} | ${tarjetaCirculacionHtml} | ${seguroHtml}
+                    </div>
 
-                                document.getElementById("formGeneral").addEventListener("submit", function(e){
+                    <div class="acciones-verificacion" style="margin-top: 10px;">
+                        <button type="button" class="btn-aprobar" onclick="verificarVehiculo(${vehiculo.id}, 'aprobado')">Aprobar Vehículo</button>
+                        <button type="button" class="btn-rechazar" onclick="verificarVehiculo(${vehiculo.id}, 'rechazado')">Rechazar Vehículo</button>
+                    </div>
+                </div>
+            `;
+        }
 
-                                    e.preventDefault();
+        contenedor.innerHTML = `
+            <div class="verificacion-bloque">
+                <h3>Licencia de Conducir</h3>
+                <p><strong>Número de Licencia:</strong> ${conductor.numero_licencia || "No registrada"}</p>
+                <p><strong>Vencimiento:</strong> ${conductor.fecha_vencimiento || "No registrada"}</p>
+                <p><strong>Estado Licencia:</strong> <span class="badge ${conductor.estado_verificacion}">${conductor.estado_verificacion_display || conductor.estado_verificacion || "Pendiente"}</span></p>
+                ${conductor.motivo_rechazo ? `<p style="color:red;"><strong>Motivo rechazo:</strong> ${conductor.motivo_rechazo}</p>` : ""}
 
-                                    usuario.nombre = document.getElementById("nombre").value;
+                <div class="documentos-grid" style="margin: 10px 0;">
+                    ${fotoFrontalHtml} | ${fotoReversoHtml}
+                </div>
 
-                                    usuario.correo = document.getElementById("correo").value;
+                <div class="acciones-verificacion" style="margin-top: 10px;">
+                    <button type="button" class="btn-aprobar" onclick="verificarConductor(${usuario.id}, 'aprobado')">Aprobar Licencia</button>
+                    <button type="button" class="btn-rechazar" onclick="verificarConductor(${usuario.id}, 'rechazado')">Rechazar Licencia</button>
+                </div>
+            </div>
 
-                                    usuario.matricula = document.getElementById("matricula").value;
+            ${vehiculoHtml}
+        `;
+    }
+}
 
-                                    usuario.cuatrimestre = document.getElementById("cuatrimestre").value;
+// FUNCIONES GLOBALES PARA VERIFICAR VÍA API
+async function verificarConductor(usuarioId, decision) {
+    let motivo = "";
+    if (decision === "rechazado") {
+        motivo = prompt("Ingresa el motivo del rechazo:");
+        if (!motivo) return;
+    }
 
-                                    usuario.carrera = document.getElementById("carrera").value;
+    try {
+        const res = await fetch(`/api/admin/conductores/${usuarioId}/verificar/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": obtenerCSRFToken(),
+            },
+            body: JSON.stringify({ decision, motivo }),
+        });
+        const data = await res.json();
+        if (data.ok) {
+            alert(data.mensaje || "Conductor verificado correctamente.");
+            iniciarUsuarioInfo(usuarioId);
+        } else {
+            alert("Error: " + (data.error || "No se pudo actualizar"));
+        }
+    } catch (e) {
+        console.error(e);
+        alert("Error de conexión al verificar el conductor.");
+    }
+}
 
-                                    usuario.rol = document.getElementById("rol").value;
+async function verificarVehiculo(vehiculoId, decision) {
+    let motivo = "";
+    if (decision === "rechazado") {
+        motivo = prompt("Ingresa el motivo del rechazo del vehículo:");
+        if (!motivo) return;
+    }
 
-                                    usuario.estado = document.getElementById("estado").value;
+    try {
+        const res = await fetch(`/api/admin/vehiculos/${vehiculoId}/verificar/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": obtenerCSRFToken(),
+            },
+            body: JSON.stringify({ decision, motivo }),
+        });
+        const data = await res.json();
+        if (data.ok) {
+            alert(data.mensaje || "Vehículo verificado correctamente.");
+            const usuarioId = sessionStorage.getItem("usuarioId");
+            iniciarUsuarioInfo(usuarioId);
+        } else {
+            alert("Error: " + (data.error || "No se pudo actualizar"));
+        }
+    } catch (e) {
+        console.error(e);
+        alert("Error de conexión al verificar el vehículo.");
+    }
+}
 
-                                    usuario.password = document.getElementById("password").value;
-
-                                    usuario.telefono = document.getElementById("telefono").value;
-
-                                    sessionStorage.setItem(
-
-                                        "usuario",
-
-                                        JSON.stringify(usuario)
-
-                                    );
-
-                                    alert("Información guardada correctamente.");
-
-                                });
-
-
-                                //==========================
-                                // BOTONES LATERALES
-                                //==========================
-
-                                const btnGeneral = document.getElementById("btnGeneral");
-
-                                const btnMedico = document.getElementById("btnMedico");
-
-                                btnGeneral.addEventListener("click", () => {
-
-                                    btnGeneral.classList.add("activa");
-
-                                    btnMedico.classList.remove("activa");
-
-                                });
-
-                                btnMedico.addEventListener("click", () => {
-
-                                    cargarVista("expediente");
-
-                                });
-
-                            }
-
+/* Función Auxiliar para Obtener la Cookie CSRF */
+function obtenerCSRFToken() {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split(";");
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, 10) === "csrftoken=") {
+                cookieValue = decodeURIComponent(cookie.substring(10));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}

@@ -2,21 +2,12 @@
 <div class="usuario-card">
     <!--================ SIDEBAR =================-->
     <aside class="usuario-sidebar">
-        <img
-            id="fotoUsuario"
-            src="{% static 'img/admin.png' %}"
-            class="foto-usuario"
-            alt="Usuario">
+        <img id="fotoUsuario" src="{% static 'img/admin.png' %}" class="foto-usuario" alt="Usuario">
+        <h2 id="nombreTitulo">Cargando...</h2>
 
-        <h2 id="nombreTitulo">Carlos Méndez</h2>
-
-        <button class="tab-btn" id="btnGeneral">
-            Información General
-        </button>
-
-        <button class="tab-btn active" id="btnMedico">
-            Expediente Médico
-        </button>
+        <button class="tab-btn " id="btnGeneral">Información General</button>
+        <button class="tab-btn" id="btnVerificacion" >Verificación de Conductor</button>
+        <button class="tab-btn active" id="btnMedico">Expediente Médico</button>
     </aside>
 
     <!--================ PANEL =================-->
