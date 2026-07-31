@@ -9,7 +9,8 @@ from .constants import UTT_NOMBRE, UTT_LATITUD, UTT_LONGITUD
 
 
 class PublicarViajeForm(forms.ModelForm):
-
+    destino_latitud = forms.FloatField(widget=forms.HiddenInput(), required=False)
+    destino_longitud = forms.FloatField(widget=forms.HiddenInput(), required=False)
     class Meta:
         model = Viaje
 

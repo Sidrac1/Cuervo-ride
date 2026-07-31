@@ -1,509 +1,210 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Publicar viaje | Cuervo-Ride</title>
 
-    <!-- Leaflet -->
-    <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    >
-
-    <!-- Font Awesome -->
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-    >
-
-    <link
-        rel="stylesheet"
-        href="{% static 'css/publicar_viaje.css' %}"
-    >
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/publicar_viaje.css' %}">
 </head>
-
 <body>
 
     {% include "components/sidebar.html" %}
 
     <main class="contenedor-publicar">
-
-        <!-- ======================================
-                    PANEL DEL FORMULARIO
-        ======================================= -->
-
         <section class="panel-formulario">
-
             <header class="encabezado-formulario">
-
                 <span class="encabezado-icono">
                     <i class="fa-solid fa-route"></i>
                 </span>
-
                 <div>
                     <h1>Publicar viaje</h1>
-
-                    <p>
-                        Indica el recorrido que realizarás y
-                        selecciona los lugares directamente en el mapa.
-                    </p>
+                    <p>Indica tu destino y fecha de salida. Los asientos se tomarán de la capacidad registrada en tu vehículo.</p>
                 </div>
-
             </header>
 
             {% if messages %}
-
                 <div class="mensajes-django">
-
                     {% for message in messages %}
-
-                        <div class="mensaje {{ message.tags }}">
-                            {{ message }}
-                        </div>
-
+                        <div class="mensaje {{ message.tags }}">{{ message }}</div>
                     {% endfor %}
-
                 </div>
-
             {% endif %}
 
-            <form
-                method="POST"
-                id="formPublicarViaje"
-                novalidate
-            >
-
+            <form method="POST" id="formPublicarViaje" novalidate>
                 {% csrf_token %}
 
-                <!-- Errores generales -->
-
                 {% if formulario.non_field_errors %}
-
                     <div class="errores-generales">
-
                         {% for error in formulario.non_field_errors %}
-
-                            <p>
-                                <i class="fa-solid fa-circle-exclamation"></i>
-                                {{ error }}
-                            </p>
-
+                            <p><i class="fa-solid fa-circle-exclamation"></i> {{ error }}</p>
                         {% endfor %}
-
                     </div>
-
                 {% endif %}
 
                 <!-- Vehículo -->
-
                 <div class="campo-formulario">
-
                     <label for="{{ formulario.vehiculo.id_for_label }}">
-                        <i class="fa-solid fa-car-side"></i>
-                        Vehículo
+                        <i class="fa-solid fa-car-side"></i> Vehículo
                     </label>
-
                     {{ formulario.vehiculo }}
-
                     {% for error in formulario.vehiculo.errors %}
-                        <span class="error-campo">
-                            {{ error }}
-                        </span>
+                        <span class="error-campo">{{ error }}</span>
                     {% endfor %}
-
-                    <p class="ayuda-campo" id="vehiculoInfo">
-                        Selecciona el vehículo que utilizarás.
-                    </p>
-
                 </div>
 
-                <!-- ======================================
-                            ORIGEN (fijo: siempre la UTT)
-                ======================================= -->
-
+                <!-- Origen (fijo: UTT) -->
                 <div class="campo-formulario campo-ubicacion">
-
-                    <label>
-                        <span class="punto-ruta punto-origen"></span>
-                        Punto de origen
-                    </label>
-
+                    <label><span class="punto-ruta punto-origen"></span> Punto de origen</label>
                     <div class="ubicacion-fija" title="El origen siempre es la Universidad Tecnológica de Tijuana">
                         <i class="fa-solid fa-location-dot"></i>
-                        <span>Universidad Tecnológica de Tijuana</span>
+                        <span>Universidad Tecnológica de Tijuana (UTT)</span>
                     </div>
-
-                    <!-- Se manda igual por POST, pero ya no es editable por
-                         el usuario -- el servidor también lo fuerza en
-                         PublicarViajeForm.clean(), así que aunque alguien
-                         intente mandar otro valor, no tiene efecto. -->
-                    <input type="hidden" name="origen" value="{{ formulario.initial.origen }}">
-                    <input type="hidden" name="origen_latitud" value="{{ formulario.initial.origen_latitud }}">
-                    <input type="hidden" name="origen_longitud" value="{{ formulario.initial.origen_longitud }}">
-
+                    <input type="hidden" name="origen" id="id_origen" value="Universidad Tecnológica de Tijuana">
+                    <input type="hidden" name="origen_latitud" id="id_origen_latitud" value="32.460963">
+                    <input type="hidden" name="origen_longitud" id="id_origen_longitud" value="-116.824371">
                 </div>
 
-                <!-- ======================================
-                            DESTINO
-                ======================================= -->
-
+                <!-- Destino por Selección de Colonia -->
                 <div class="campo-formulario campo-ubicacion">
-
-                    <label for="{{ formulario.destino.id_for_label }}">
-                        <span class="punto-ruta punto-destino"></span>
-                        Destino
+                    <label for="selectColoniaRapida">
+                        <span class="punto-ruta punto-destino"></span> Selecciona la colonia de destino
                     </label>
+                    
+                    <!-- Selección rápida por Colonia -->
+                    <select id="selectColoniaRapida" class="select-colonia-tijuana" style="margin-bottom: 8px; width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc;">
+                        <option value="">-- Elige una colonia de Tijuana --</option>
+                        <!-- Asegúrate de que tengan máximo 6 decimales -->
+                        <option value="32.502800,-116.924800">Colonia Otay Constituyentes</option>
+                        <option value="32.518100,-116.963100">Colonia Otay Universidad / UABC</option>
+                        <option value="32.501500,-116.996100">Fraccionamiento El Lago</option>
+                        <option value="32.493200,-116.936000">Colonia Villa Fontana</option>
+                        <option value="32.484100,-116.883100">Colonia El Refugio</option>
+                        <option value="32.531200,-117.036000">Zona Centro / Río</option>
+                        <option value="32.461100,-116.975400">Colonia Santa Fe</option>
+                        <option value="32.433200,-116.852100">Colonia El Florido</option>
+                    </select>
 
-                    <div class="buscador-ubicacion">
+                    <!-- Campo oculto para registrar el nombre de la colonia en Django -->
+                    <input type="hidden" name="destino" id="id_destino" value="{{ formulario.destino.value|default:'' }}">
 
-                        {{ formulario.destino }}
-
-                        <button
-                            type="button"
-                            class="btn-buscar-ubicacion"
-                            id="buscarDestino"
-                            aria-label="Buscar destino"
-                        >
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                        </button>
-
+                    <div class="ubicacion-seleccionada" id="destinoSeleccionado" {% if not request.POST.destino %}hidden{% endif %} style="margin-top: 6px;">
+                        <i class="fa-solid fa-circle-check" style="color: #28a745;"></i>
+                        <span style="font-weight: 600;">{% if request.POST.destino %}Destino: {{ request.POST.destino }}{% endif %}</span>
                     </div>
-
-                    <div
-                        class="resultados-ubicacion"
-                        id="resultadosDestino"
-                        hidden
-                    ></div>
-
-                    <div
-                        class="ubicacion-seleccionada"
-                        id="destinoSeleccionado"
-                        hidden
-                    >
-                        <i class="fa-solid fa-circle-check"></i>
-
-                        <span></span>
-                    </div>
-
                     {% for error in formulario.destino.errors %}
-                        <span class="error-campo">
-                            {{ error }}
-                        </span>
+                        <span class="error-campo" style="color: red; display: block; margin-top: 5px;">{{ error }}</span>
                     {% endfor %}
-
                 </div>
 
-                <!-- Coordenadas ocultas (solo destino -- el origen ya se
-                     manda arriba como campo fijo) -->
+                <!-- Coordenadas ocultas -->
+                <input type="hidden" name="destino_latitud" id="id_destino_latitud" value="{{ formulario.destino_latitud.value|default:'' }}">
+                <input type="hidden" name="destino_longitud" id="id_destino_longitud" value="{{ formulario.destino_longitud.value|default:'' }}">               
 
-                {{ formulario.destino_latitud }}
-                {{ formulario.destino_longitud }}
-
-                {% for error in formulario.origen_latitud.errors %}
-                    <span class="error-campo">
-                        {{ error }}
-                    </span>
-                {% endfor %}
-
-                {% for error in formulario.origen_longitud.errors %}
-                    <span class="error-campo">
-                        {{ error }}
-                    </span>
-                {% endfor %}
-
-                {% for error in formulario.destino_latitud.errors %}
-                    <span class="error-campo">
-                        {{ error }}
-                    </span>
-                {% endfor %}
-
-                {% for error in formulario.destino_longitud.errors %}
-                    <span class="error-campo">
-                        {{ error }}
-                    </span>
-                {% endfor %}
-
-                <!-- Fecha y hora -->
-
-                <div class="fila-formulario">
-
-                    <div class="campo-formulario">
-
-                        <label for="{{ formulario.fecha_hora_salida.id_for_label }}">
-                            <i class="fa-regular fa-calendar"></i>
-                            Salida
-                        </label>
-
-                        {{ formulario.fecha_hora_salida }}
-
-                        {% for error in formulario.fecha_hora_salida.errors %}
-                            <span class="error-campo">
-                                {{ error }}
-                            </span>
-                        {% endfor %}
-
-                    </div>
-
-                    <div class="campo-formulario">
-
-                        <label for="{{ formulario.fecha_hora_llegada_estimada.id_for_label }}">
-                            <i class="fa-regular fa-clock"></i>
-                            Llegada estimada
-                        </label>
-
-                        {{ formulario.fecha_hora_llegada_estimada }}
-
-                        {% for error in formulario.fecha_hora_llegada_estimada.errors %}
-                            <span class="error-campo">
-                                {{ error }}
-                            </span>
-                        {% endfor %}
-
-                    </div>
-
-                </div>
-
-                <!-- Asientos y costo -->
-
-                <div class="fila-formulario">
-
-                    <div class="campo-formulario">
-
-                        <label for="{{ formulario.asientos_totales.id_for_label }}">
-                            <i class="fa-solid fa-users"></i>
-                            Asientos
-                        </label>
-
-                        {{ formulario.asientos_totales }}
-
-                        {% for error in formulario.asientos_totales.errors %}
-                            <span class="error-campo">
-                                {{ error }}
-                            </span>
-                        {% endfor %}
-
-                    </div>
-
-                    <div class="campo-formulario">
-
-                        <label for="{{ formulario.costo_por_pasajero.id_for_label }}">
-                            <i class="fa-solid fa-dollar-sign"></i>
-                            Costo por pasajero
-                        </label>
-
-                        <div class="campo-moneda">
-                            <span>$</span>
-
-                            {{ formulario.costo_por_pasajero }}
-
-                            <small>MXN</small>
-                        </div>
-
-                        {% for error in formulario.costo_por_pasajero.errors %}
-                            <span class="error-campo">
-                                {{ error }}
-                            </span>
-                        {% endfor %}
-
-                    </div>
-
-                </div>
-
-                <!-- Indicaciones -->
-
+                <!-- Fecha y Hora de Salida -->
                 <div class="campo-formulario">
-
-                    <label for="{{ formulario.indicaciones.id_for_label }}">
-                        <i class="fa-solid fa-circle-info"></i>
-                        Indicaciones adicionales
+                    <label for="{{ formulario.fecha_hora_salida.id_for_label }}">
+                        <i class="fa-regular fa-calendar"></i> Fecha y hora de salida
                     </label>
+                    {{ formulario.fecha_hora_salida }}
+                    {% for error in formulario.fecha_hora_salida.errors %}
+                        <span class="error-campo">{{ error }}</span>
+                    {% endfor %}
+                </div>
+                <!-- Costo por Pasajero -->
+                <div class="campo-formulario">
+                    <label for="{{ formulario.costo_por_pasajero.id_for_label }}">
+                        <i class="fa-solid fa-dollar-sign"></i> Costo por pasajero
+                    </label>
+                    {{ formulario.costo_por_pasajero }}
+                    {% for error in formulario.costo_por_pasajero.errors %}
+                        <span class="error-campo">{{ error }}</span>
+                    {% endfor %}
+                </div>
 
+                <!-- Asientos Totales -->
+                <div class="campo-formulario">
+                    <label for="{{ formulario.asientos_totales.id_for_label }}">
+                        <i class="fa-solid fa-chair"></i> Asientos disponibles
+                    </label>
+                    {{ formulario.asientos_totales }}
+                    {% for error in formulario.asientos_totales.errors %}
+                        <span class="error-campo">{{ error }}</span>
+                    {% endfor %}
+                </div>
+                <!-- Indicaciones -->
+                <div class="campo-formulario">
+                    <label for="{{ formulario.indicaciones.id_for_label }}">
+                        <i class="fa-solid fa-circle-info"></i> Indicaciones adicionales
+                    </label>
                     {{ formulario.indicaciones }}
-
                     <div class="contador-caracteres">
                         <span id="contadorIndicaciones">0</span>/500
                     </div>
-
                     {% for error in formulario.indicaciones.errors %}
-                        <span class="error-campo">
-                            {{ error }}
-                        </span>
+                        <span class="error-campo">{{ error }}</span>
                     {% endfor %}
-
                 </div>
 
                 <!-- Preferencias -->
-
                 <fieldset class="preferencias-viaje">
-
-                    <legend>Preferencias del viaje</legend>
-
+                    <legend>Accesibilidad</legend>
                     <label class="opcion-preferencia">
-
-                        {{ formulario.permite_mascota }}
-
-                        <span class="interruptor"></span>
-
-                        <span class="preferencia-contenido">
-
-                            <i class="fa-solid fa-paw"></i>
-
-                            <span>
-                                <strong>Permitir mascotas</strong>
-                                <small>
-                                    Los pasajeros podrán viajar con mascota.
-                                </small>
-                            </span>
-
-                        </span>
-
-                    </label>
-
-                    <label class="opcion-preferencia">
-
                         {{ formulario.acepta_silla_ruedas }}
-
                         <span class="interruptor"></span>
-
                         <span class="preferencia-contenido">
-
                             <i class="fa-solid fa-wheelchair"></i>
-
                             <span>
-                                <strong>Aceptar silla de ruedas</strong>
-                                <small>
-                                    Indica que puedes transportar este apoyo.
-                                </small>
+                                <strong>Aceptar silla de ruedas / Apoyos</strong>
+                                <small>Indica que tu vehículo puede transportar este equipamiento.</small>
                             </span>
-
                         </span>
-
                     </label>
-
                 </fieldset>
 
-                <!-- Resumen móvil -->
-
-                <div
-                    class="resumen-ruta resumen-ruta-movil"
-                    id="resumenRutaMovil"
-                    hidden
-                >
-
-                    <div>
-                        <span>Distancia</span>
-                        <strong data-ruta-distancia>--</strong>
-                    </div>
-
-                    <div>
-                        <span>Duración estimada</span>
-                        <strong data-ruta-duracion>--</strong>
-                    </div>
-
-                </div>
-
-                <button
-                    type="submit"
-                    class="btn-publicar"
-                    id="btnPublicarViaje"
-                >
+                <button type="submit" class="btn-publicar" id="btnPublicarViaje">
                     <span class="btn-texto">
-                        <i class="fa-solid fa-paper-plane"></i>
-                        Publicar viaje
+                        <i class="fa-solid fa-paper-plane"></i> Publicar viaje
                     </span>
-
                     <span class="btn-cargando" hidden>
-                        <i class="fa-solid fa-spinner fa-spin"></i>
-                        Publicando...
+                        <i class="fa-solid fa-spinner fa-spin"></i> Publicando...
                     </span>
                 </button>
-
+                {% if formulario.errors %}
+    <div class="alert alert-danger" style="background-color: #f8d7da; color: #721c24; padding: 12px; border-radius: 6px; margin-bottom: 15px;">
+        <strong><i class="fa-solid fa-triangle-exclamation"></i> Por favor corrige los siguientes errores:</strong>
+        <ul style="margin-bottom: 0; padding-left: 20px;">
+            {% for field, errors in formulario.errors.items %}
+                {% for error in errors %}
+                    <li><strong>{{ field|capfirst }}:</strong> {{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
             </form>
-
         </section>
 
-        <!-- ======================================
-                        PANEL DEL MAPA
-        ======================================= -->
-
+        <!-- Panel del Mapa -->
         <section class="panel-mapa">
-
             <div id="mapa"></div>
-
             <div class="mapa-encabezado">
-
                 <div>
                     <i class="fa-solid fa-map-location-dot"></i>
-
-                    <span>
-                        Selecciona el origen y el destino
-                    </span>
+                    <span>Ubicación en el mapa</span>
                 </div>
-
-                <button
-                    type="button"
-                    id="centrarMapa"
-                    title="Centrar mapa"
-                >
+                <button type="button" id="centrarMapa" title="Centrar mapa">
                     <i class="fa-solid fa-crosshairs"></i>
                 </button>
-
             </div>
-
-            <div
-                class="mapa-mensaje"
-                id="mapaMensaje"
-            >
-                <i class="fa-solid fa-location-dot"></i>
-
-                <span>
-                    Busca y selecciona dos ubicaciones para crear la ruta.
-                </span>
-            </div>
-
-            <div
-                class="resumen-ruta resumen-ruta-mapa"
-                id="resumenRutaMapa"
-                hidden
-            >
-
-                <div>
-                    <span>Distancia</span>
-                    <strong data-ruta-distancia>--</strong>
-                </div>
-
-                <div>
-                    <span>Duración estimada</span>
-                    <strong data-ruta-duracion>--</strong>
-                </div>
-
-            </div>
-
         </section>
-
     </main>
 
-    <script
-        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    ></script>
-
-    <script
-        src="{% static 'js/mapa_publicar.js' %}"
-    ></script>
-
-    <script
-        src="{% static 'js/publicar_viaje.js' %}"
-    ></script>
-
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="{% static 'js/mapa_publicar.js' %}"></script>
+    <script src="{% static 'js/publicar_viaje.js' %}"></script>
 </body>
-
 </html>

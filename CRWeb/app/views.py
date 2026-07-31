@@ -13,9 +13,11 @@ from django.contrib.auth.decorators import (
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
+from django.db.models import Q
 from django.http import Http404, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.utils import timezone
 from django.views.decorators.http import require_POST, require_http_methods
 
 import json
@@ -27,7 +29,7 @@ from .models import (
     Viaje,
     SalaChat,
     AlertaEmergencia,
-
+    SolicitudViaje,
 )
 from .forms import PublicarViajeForm
 from .validators import validar_imagen_jpeg
@@ -94,7 +96,6 @@ def agendarviaje(request):
 
 def filtroviajes(request):
     return render(request, "filtroviajes.html")
-
 
 
 # =========================================================
@@ -238,7 +239,7 @@ def register(request):
                 "No fue posible crear la cuenta. El correo o la matrícula ya están registrados.",
             )
             return render(request, "forms/register.html", {"datos": datos_formulario})
-        except Exception as error:
+        except Exception:
             messages.error(request, "Ocurrió un error inesperado al crear la cuenta.")
             return render(request, "forms/register.html", {"datos": datos_formulario})
 
@@ -339,11 +340,12 @@ def perfil(request):
                 messages.info(request, "Tu cuenta ya tenía el rol de pasajero.")
 
             return redirect("perfil")
+
         # ----------------------------------------------------
         # FORMULARIO: Datos Conductor
         # ----------------------------------------------------
         if tipo_formulario == "datos_conductor":
-            if not request.user.es_conductor:
+            if not getattr(request.user, "es_conductor", False) and obtener_rol(request.user) != Usuario.Roles.CONDUCTOR:
                 messages.error(request, "Solo los usuarios con rol de conductor pueden editar esta información.")
                 return redirect("perfil")
 
@@ -400,7 +402,7 @@ def perfil(request):
         # FORMULARIO: Vehiculo
         # ----------------------------------------------------
         if tipo_formulario == "vehiculo":
-            if not request.user.es_conductor:
+            if not getattr(request.user, "es_conductor", False) and obtener_rol(request.user) != Usuario.Roles.CONDUCTOR:
                 messages.error(request, "Solo los usuarios con rol de conductor pueden registrar un vehículo.")
                 return redirect("perfil")
 
@@ -433,15 +435,16 @@ def perfil(request):
             vehiculo.color = request.POST.get("color", "").strip()
             vehiculo.placas = request.POST.get("placas", "").strip().upper()
 
-            capacidad = request.POST.get("capacidad")
-            if capacidad:
-                vehiculo.capacidad = int(capacidad)
-
             try:
                 vehiculo.anio = int(request.POST.get("anio", 0))
-                vehiculo.capacidad = int(request.POST.get("capacidad", 0))
+                # Lee 'asientos' o 'capacidad' según la implementación del modelo
+                capacidad_val = request.POST.get("asientos") or request.POST.get("capacidad", 0)
+                if hasattr(vehiculo, "asientos"):
+                    vehiculo.asientos = int(capacidad_val)
+                if hasattr(vehiculo, "capacidad"):
+                    vehiculo.capacidad = int(capacidad_val)
             except (TypeError, ValueError):
-                messages.error(request, "Año y capacidad deben ser números.")
+                messages.error(request, "Año y capacidad deben ser números válidos.")
                 return redirect("perfil")
 
             if foto_vehiculo is not None:
@@ -502,158 +505,88 @@ def perfil(request):
 
     return render(request, "perfil/perfil.html", contexto)
 
+
 # =========================================================
-# PUBLICAR VIAJE
+# PUBLICAR VIAJE (CONDUCTOR)
 # =========================================================
 
 @login_required(login_url="login")
 def publicar_viaje(request):
 
-    if not request.user.es_conductor:
-        messages.error(
-            request,
-            "Solo los usuarios con rol de conductor "
-            "pueden publicar viajes."
-        )
+    if obtener_rol(request.user) != Usuario.Roles.CONDUCTOR:
+        messages.error(request, "Solo los usuarios con rol de conductor pueden publicar viajes.")
         return redirect("home")
 
     try:
         perfil_conductor = request.user.perfil_conductor
-
     except PerfilConductor.DoesNotExist:
-        messages.warning(
-            request,
-            "Debes completar primero tu perfil de conductor."
-        )
-
+        messages.warning(request, "Debes completar primero tu perfil de conductor.")
         base_url = reverse("perfil")
-        query_string = urlencode({
-            "tab": "vehiculo"
-        })
+        query_string = urlencode({"tab": "vehiculo"})
+        return redirect(f"{base_url}?{query_string}")
 
-        return redirect(
-            f"{base_url}?{query_string}"
-        )
-
-    if (
-        perfil_conductor.estado_verificacion
-        != PerfilConductor.EstadosVerificacion.APROBADO
-    ):
-        messages.warning(
-            request,
-            "Tu perfil de conductor debe estar aprobado "
-            "antes de publicar viajes."
-        )
-
+    if perfil_conductor.estado_verificacion != PerfilConductor.EstadosVerificacion.APROBADO:
+        messages.warning(request, "Tu perfil de conductor debe estar aprobado antes de publicar viajes.")
         return redirect("perfil")
 
-    vehiculos_disponibles = (
-        Vehiculo.objects.filter(
-            conductor=perfil_conductor,
-            activo=True,
-            estado=Vehiculo.EstadosVehiculo.APROBADO,
-        )
-        .order_by("-fecha_registro")
-    )
+    vehiculos_disponibles = Vehiculo.objects.filter(
+        conductor=perfil_conductor,
+        activo=True,
+        estado=Vehiculo.EstadosVehiculo.APROBADO,
+    ).order_by("-fecha_registro")
 
     if not vehiculos_disponibles.exists():
-        messages.warning(
-            request,
-            "Necesitas tener al menos un vehículo aprobado "
-            "y activo para publicar un viaje."
-        )
-
+        messages.warning(request, "Necesitas tener al menos un vehículo aprobado y activo para publicar un viaje.")
         base_url = reverse("perfil")
-        query_string = urlencode({
-            "tab": "vehiculo"
-        })
-
-        return redirect(
-            f"{base_url}?{query_string}"
-        )
+        query_string = urlencode({"tab": "vehiculo"})
+        return redirect(f"{base_url}?{query_string}")
 
     if request.method == "POST":
-
-        formulario = PublicarViajeForm(
-            request.POST,
-            conductor=perfil_conductor,
-        )
+        formulario = PublicarViajeForm(request.POST, conductor=perfil_conductor)
 
         if formulario.is_valid():
-
             try:
                 with transaction.atomic():
-
-                    viaje = formulario.save(
-                        commit=False
-                    )
-
+                    viaje = formulario.save(commit=False)
                     viaje.conductor = perfil_conductor
 
-                    viaje.asientos_disponibles = (
-                        viaje.asientos_totales
-                    )
+                    # Obtención de los asientos desde el vehículo seleccionado
+                    capacidad_asientos = getattr(viaje.vehiculo, "asientos", None) or getattr(viaje.vehiculo, "capacidad", 4)
+                    viaje.asientos_totales = capacidad_asientos
+                    viaje.asientos_disponibles = capacidad_asientos
 
-                    viaje.estado = (
-                        Viaje.EstadosViaje.DISPONIBLE
-                    )
-
+                    viaje.estado = Viaje.EstadosViaje.DISPONIBLE
                     viaje.full_clean()
                     viaje.save()
 
-                    SalaChat.objects.create(
-                        viaje=viaje,
-                        activa=True,
-                    )
+                    # Sala de chat para los pasajeros del viaje
+                    SalaChat.objects.create(viaje=viaje, activa=True)
+
+                    messages.success(request, "El viaje fue publicado correctamente.")
+                    print("❌ ERRORES DEL FORMULARIO:", formulario.errors.as_json())
+                    return redirect("mis_viajes_conductor")
 
             except ValidationError as error:
-
                 if hasattr(error, "message_dict"):
-                    for campo, errores in (
-                        error.message_dict.items()
-                    ):
+                    for campo, errores in error.message_dict.items():
                         for mensaje in errores:
-
                             if campo in formulario.fields:
-                                formulario.add_error(
-                                    campo,
-                                    mensaje,
-                                )
+                                formulario.add_error(campo, mensaje)
                             else:
-                                formulario.add_error(
-                                    None,
-                                    mensaje,
-                                )
+                                formulario.add_error(None, mensaje)
                 else:
-                    formulario.add_error(
-                        None,
-                        error.message,
-                    )
+                    formulario.add_error(None, error.message)
 
             except IntegrityError:
-
-                formulario.add_error(
-                    None,
-                    (
-                        "No fue posible publicar el viaje. "
-                        "Inténtalo nuevamente."
-                    ),
-                )
-
-            else:
-
-                messages.success(
-                    request,
-                    "El viaje fue publicado correctamente."
-                )
-
-                return redirect("mis_viajes_conductor")
-
+                formulario.add_error(None, "No fue posible publicar el viaje. Inténtalo nuevamente.")
     else:
-
-        formulario = PublicarViajeForm(
-            conductor=perfil_conductor,
-        )
+        # Valores iniciales estándar
+        datos_iniciales = {
+            "origen": "Universidad Tecnológica de Tijuana",
+            "origen_latitud": 32.4619,
+            "origen_longitud": -116.8275,
+        }
+        formulario = PublicarViajeForm(initial=datos_iniciales, conductor=perfil_conductor)
 
     contexto = {
         "formulario": formulario,
@@ -661,34 +594,79 @@ def publicar_viaje(request):
         "vehiculos_disponibles": vehiculos_disponibles,
     }
 
-    return render(
-        request,
-        "viajes/publicar_viaje.html",
-        contexto,
+    return render(request, "viajes/publicar_viaje.html", contexto)
+
+
+# =========================================================
+# BÚSQUEDA DE VIAJES PARA PASAJEROS (AJAX / API)
+# =========================================================
+
+@login_required(login_url="login")
+def buscar_viajes_pasajero(request):
+    """
+    Retorna viajes disponibles filtrados opcionalmente por colonia/destino o texto.
+    """
+    query = request.GET.get("q", "").strip()
+
+    # Viajes futuros con lugares y en estado disponible
+    viajes_query = Viaje.objects.filter(
+        fecha_hora_salida__gt=timezone.now(),
+        asientos_disponibles__gt=0,
+        estado=Viaje.EstadosViaje.DISPONIBLE
     )
 
-#==========================================================
-# Mis Viajes - Conductor
-#==========================================================
+    if query:
+        viajes_query = viajes_query.filter(
+            Q(destino__icontains=query) |
+            Q(indicaciones__icontains=query)
+        )
+
+    viajes_query = viajes_query.select_related(
+        "conductor__usuario", "vehiculo"
+    ).order_by("fecha_hora_salida")
+
+    datos_viajes = []
+    for viaje in viajes_query:
+        nombre_conductor = (
+            viaje.conductor.usuario.get_full_name() 
+            or viaje.conductor.usuario.nombre 
+            or viaje.conductor.usuario.username
+        )
+        vehiculo_str = f"{viaje.vehiculo.marca} {viaje.vehiculo.modelo}" if viaje.vehiculo else ""
+
+        datos_viajes.append({
+            "id": viaje.id,
+            "conductor": nombre_conductor,
+            "origen": viaje.origen,
+            "destino": viaje.destino,
+            "destino_latitud": getattr(viaje, "destino_latitud", None),
+            "destino_longitud": getattr(viaje, "destino_longitud", None),
+            "fecha_salida": viaje.fecha_hora_salida.strftime("%d/%m/%Y"),
+            "hora_salida": viaje.fecha_hora_salida.strftime("%H:%M"),
+            "asientos_disponibles": viaje.asientos_disponibles,
+            "vehiculo": vehiculo_str,
+            "acepta_silla_ruedas": getattr(viaje, "acepta_silla_ruedas", False),
+            "indicaciones": viaje.indicaciones or "",
+        })
+
+    return JsonResponse({"ok": True, "total": len(datos_viajes), "viajes": datos_viajes})
+
+
+# =========================================================
+# MIS VIAJES - CONDUCTOR
+# =========================================================
 
 @login_required(login_url="login")
 def mis_viajes_conductor(request):
 
-    if request.user.rol != request.user.Roles.CONDUCTOR:
-        messages.error(
-            request,
-            "Esta sección está disponible únicamente para conductores."
-        )
+    if obtener_rol(request.user) != Usuario.Roles.CONDUCTOR:
+        messages.error(request, "Esta sección está disponible únicamente para conductores.")
         return redirect("home")
 
     try:
         perfil_conductor = request.user.perfil_conductor
     except PerfilConductor.DoesNotExist:
-        messages.warning(
-            request,
-            "Primero debes completar tu perfil de conductor."
-        )
-
+        messages.warning(request, "Primero debes completar tu perfil de conductor.")
         return redirect("perfil")
 
     filtro = request.GET.get("estado", "todos").lower()
@@ -773,14 +751,15 @@ def mis_viajes_conductor(request):
         contexto
     )
 
-#==========================================================
-# Mis viajes - Pasajero
-#==========================================================
 
-@login_required
+# =========================================================
+# MIS VIAJES - PASAJERO
+# =========================================================
+
+@login_required(login_url="login")
 def mis_viajes_pasajero(request):
 
-    if request.user.rol != "pasajero":
+    if obtener_rol(request.user) != Usuario.Roles.PASAJERO:
         return render(request, "403.html", status=403)
 
     filtro = request.GET.get("estado", "todos")
@@ -854,8 +833,9 @@ def mis_viajes_pasajero(request):
         },
     )
 
+
 # =========================================================
-# PANEL ADMINISTRATIVO
+# PANEL ADMINISTRATIVO Y VISTAS ASOCIADAS
 # =========================================================
 
 VISTAS_ADMIN = {
@@ -873,6 +853,7 @@ VISTAS_ADMIN = {
 def index(request):
     return render(request, "dashAd/index.html")
 
+
 @user_passes_test(es_administrador, login_url="login")
 def cargar_vista(request, vista):
     plantilla = VISTAS_ADMIN.get(vista)
@@ -881,8 +862,24 @@ def cargar_vista(request, vista):
 
     contexto = {}
 
-    if vista == "usuarios":
+    if vista == "inicio":
+        contexto["total_usuarios"] = Usuario.objects.count()
+        contexto["total_alertas_activas"] = AlertaEmergencia.objects.filter(
+            estado=AlertaEmergencia.EstadosAlerta.ACTIVA
+        ).count()
+
+    elif vista == "usuarios":
         contexto["usuarios"] = Usuario.objects.all().order_by("-id")
+
+    elif vista == "rides":
+        contexto["rides"] = Viaje.objects.select_related(
+            "conductor__usuario", "vehiculo"
+        ).order_by("-fecha_hora_salida")
+
+    elif vista == "alertas":
+        contexto["alertas"] = AlertaEmergencia.objects.select_related(
+            "usuario", "viaje"
+        ).order_by("-fecha_activacion")
 
     return render(request, plantilla, contexto)
 
@@ -891,10 +888,6 @@ def cargar_vista(request, vista):
 def panel_admin(request):
     return redirect("index")
 
-
-# ========================================================
-# CONTEO DE ALERTAS PARA EL ADMINISTRADOR
-# ========================================================
 
 @user_passes_test(es_administrador, login_url="login")
 def panel_alertas(request):
@@ -930,7 +923,7 @@ def logout_view(request):
 
 
 # =========================================================
-# API REST JSON PARA USUARIOS EN EL PANEL ADMIN
+# API REST JSON PARA USUARIOS Y VERIFICACIÓN (ADMIN)
 # =========================================================
 
 @user_passes_test(es_administrador, login_url="login")
@@ -984,6 +977,7 @@ def api_obtener_usuario(request, usuario_id):
                         .first()
                     )
                     if vehiculo is not None:
+                        capacidad_val = getattr(vehiculo, "asientos", None) or getattr(vehiculo, "capacidad", None)
                         data["vehiculo"] = {
                             "id": vehiculo.id,
                             "marca": vehiculo.marca,
@@ -991,7 +985,7 @@ def api_obtener_usuario(request, usuario_id):
                             "anio": vehiculo.anio,
                             "color": vehiculo.color,
                             "placas": vehiculo.placas,
-                            "capacidad": vehiculo.capacidad,
+                            "capacidad": capacidad_val,
                             "foto": vehiculo.foto.url if vehiculo.foto else None,
                             "tarjeta_circulacion": (
                                 vehiculo.tarjeta_circulacion.url if vehiculo.tarjeta_circulacion else None
@@ -1056,9 +1050,6 @@ def api_actualizar_usuario(request, usuario_id):
     except Exception as e:
         return JsonResponse({"ok": False, "error": str(e)}, status=500)
 
-# =========================================================
-# VERIFICACIÓN DE CONDUCTOR / VEHÍCULO (panel admin)
-# =========================================================
 
 @user_passes_test(es_administrador, login_url="login")
 @require_http_methods(["POST"])
@@ -1137,41 +1128,6 @@ def api_verificar_vehiculo(request, vehiculo_id):
         return JsonResponse({"ok": False, "error": str(e)}, status=500)
 
 
-# =========================================================
-# VISTAS Y ENDPOINTS ADICIONALES PARA PANEL DE ADMINISTRACIÓN
-# =========================================================
-
-@user_passes_test(es_administrador, login_url="login")
-def cargar_vista(request, vista):
-    plantilla = VISTAS_ADMIN.get(vista)
-    if plantilla is None:
-        raise Http404("Vista administrativa no encontrada.")
-
-    contexto = {}
-
-    if vista == "inicio":
-        contexto["total_usuarios"] = Usuario.objects.count()
-        contexto["total_alertas_activas"] = AlertaEmergencia.objects.filter(
-            estado=AlertaEmergencia.EstadosAlerta.ACTIVA
-        ).count()
-
-    elif vista == "usuarios":
-        contexto["usuarios"] = Usuario.objects.all().order_by("-id")
-
-    elif vista == "rides":
-        # Carga los viajes con sus datos de conductor y vehículo
-        contexto["rides"] = Viaje.objects.select_related(
-            "conductor__usuario", "vehiculo"
-        ).order_by("-fecha_hora_salida")
-
-    elif vista == "alertas":
-        contexto["alertas"] = AlertaEmergencia.objects.select_related(
-            "usuario", "viaje"
-        ).order_by("-fecha_activacion")
-
-    return render(request, plantilla, contexto)
-
-
 @user_passes_test(es_administrador, login_url="login")
 def api_obtener_expediente_medico(request, usuario_id):
     """
@@ -1181,9 +1137,11 @@ def api_obtener_expediente_medico(request, usuario_id):
         usuario = Usuario.objects.get(pk=usuario_id)
         info, _ = InformacionMedica.objects.get_or_create(usuario=usuario)
 
+        nombre_completo = getattr(usuario, "nombre_completo", f"{usuario.nombre} {getattr(usuario, 'first_name', '')}".strip())
+
         data = {
             "usuario_id": usuario.id,
-            "nombre_completo": usuario.nombre_completo,
+            "nombre_completo": nombre_completo,
             "tipo_sangre": info.tipo_sangre or "",
             "discapacidad": info.discapacidad,
             "tipo_discapacidad": info.tipo_discapacidad or "",
@@ -1195,7 +1153,7 @@ def api_obtener_expediente_medico(request, usuario_id):
             "telefono_contacto": info.telefono_contacto or "",
             "parentesco_contacto": info.parentesco_contacto or "",
             "observaciones": info.observaciones or "",
-            "verificado": info.verificado,
+            "verificado": getattr(info, "verificado", False),
         }
         return JsonResponse({"ok": True, "expediente": data})
     except Usuario.DoesNotExist:

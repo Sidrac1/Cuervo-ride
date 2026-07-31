@@ -1,66 +1,63 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
+    const inputBusqueda = document.getElementById("buscarColoniaDestino");
+    const contenedorResultados = document.getElementById("listaViajes");
 
-    const campoHora = document.getElementById("hora");
-    const botonHora = document.getElementById("abrirHora");
+    let timeoutBusqueda = null;
 
-    if (!campoHora) {
-        console.error("No se encontró el campo de hora.");
-        return;
+    if (inputBusqueda) {
+        inputBusqueda.addEventListener("input", (e) => {
+            clearTimeout(timeoutBusqueda);
+            const query = e.target.value.trim();
+
+            // Esperar 300ms después de que el usuario deje de escribir
+            timeoutBusqueda = setTimeout(() => {
+                obtenerViajes(query);
+            }, 300);
+        });
     }
 
-    if (typeof flatpickr === "undefined") {
-        console.error("Flatpickr no se cargó correctamente.");
-        return;
+    async function obtenerViajes(colonia) {
+        try {
+            const respuesta = await fetch(`/api/viajes/buscar/?q=${encodeURIComponent(colonia)}`);
+            const data = await respuesta.json();
+
+            if (data.ok) {
+                renderizarViajes(data.viajes);
+            }
+        } catch (error) {
+            console.error("Error al buscar viajes:", error);
+        }
     }
 
-    const selectorHora = flatpickr(campoHora, {
+    function renderizarViajes(viajes) {
+        if (!contenedorResultados) return;
+        contenedorResultados.innerHTML = "";
 
-        // Mostrar únicamente hora
-        enableTime: true,
-        noCalendar: true,
-
-        // Formato de 24 horas
-        time_24hr: true,
-
-        // Valor mostrado y enviado
-        dateFormat: "H:i",
-
-        // Intervalos de cinco minutos
-        minuteIncrement: 5,
-
-        // No permitir escribir manualmente
-        allowInput: false,
-
-        // Abrir al presionar el input
-        clickOpens: true,
-
-        // Posición del cuadro
-        position: "below right",
-
-        // Clase personalizada
-        onReady: function (
-            selectedDates,
-            dateStr,
-            instance
-        ) {
-
-            instance.calendarContainer.classList.add(
-                "cuervo-time-picker"
-            );
-
+        if (viajes.length === 0) {
+            contenedorResultados.innerHTML = `<p class="sin-resultados">No se encontraron viajes hacia o cerca de esa ubicación.</p>`;
+            return;
         }
 
-    });
-
-
-    if (botonHora) {
-
-        botonHora.addEventListener("click", function () {
-
-            selectorHora.open();
-
+        viajes.forEach((v) => {
+            const tarjeta = document.createElement("div");
+            tarjeta.className = "tarjeta-viaje";
+            tarjeta.innerHTML = `
+                <div class="cabecera-viaje">
+                    <strong>${v.conductor}</strong>
+                    <span>${v.vehiculo}</span>
+                </div>
+                <div class="detalles-ruta">
+                    <p><strong>Origen:</strong> ${v.origen}</p>
+                    <p><strong>Destino:</strong> ${v.destino}</p>
+                    <p><strong>Salida:</strong> ${v.salida}</p>
+                    <p><strong>Asientos disponibles:</strong> ${v.asientos_disponibles}</p>
+                </div>
+                <button onclick="solicitarUnirse(${v.id})" class="btn-solicitar">Solicitar viaje</button>
+            `;
+            contenedorResultados.appendChild(tarjeta);
         });
-
     }
 
+    // Carga inicial de viajes disponibles
+    obtenerViajes("");
 });

@@ -1,410 +1,121 @@
 "use strict";
 
 document.addEventListener("DOMContentLoaded", () => {
+    const formulario = document.getElementById("formPublicarViaje");
+    if (!formulario) return;
 
-    const formulario = document.getElementById(
-        "formPublicarViaje"
-    );
-
-    if (!formulario) {
-        return;
-    }
-
-    const botonPublicar = document.getElementById(
-        "btnPublicarViaje"
-    );
-
-    const textoBoton = botonPublicar?.querySelector(
-        ".btn-texto"
-    );
-
-    const cargandoBoton = botonPublicar?.querySelector(
-        ".btn-cargando"
-    );
-
-    const indicaciones = document.getElementById(
-        "id_indicaciones"
-    );
-
-    const contadorIndicaciones = document.getElementById(
-        "contadorIndicaciones"
-    );
-
-    const fechaSalida = document.getElementById(
-        "id_fecha_hora_salida"
-    );
-
-    const fechaLlegada = document.getElementById(
-        "id_fecha_hora_llegada_estimada"
-    );
-
-    const asientos = document.getElementById(
-        "id_asientos_totales"
-    );
-
-    const vehiculo = document.getElementById(
-        "id_vehiculo"
-    );
+    const botonPublicar = document.getElementById("btnPublicarViaje");
+    const textoBoton = botonPublicar?.querySelector(".btn-texto");
+    const cargandoBoton = botonPublicar?.querySelector(".btn-cargando");
+    const indicaciones = document.getElementById("id_indicaciones");
+    const contadorIndicaciones = document.getElementById("contadorIndicaciones");
+    const fechaSalida = document.getElementById("id_fecha_hora_salida");
+    const vehiculo = document.getElementById("id_vehiculo");
+    const selectColonia = document.getElementById("selectColoniaRapida");
+    const campoDestino = document.getElementById("id_destino");
 
     let enviando = false;
 
-    /*==================================================
-                      CONTADOR DE TEXTO
-    ==================================================*/
-
+    // Contador de texto
     function actualizarContador() {
-        if (
-            !indicaciones
-            || !contadorIndicaciones
-        ) {
-            return;
+        if (indicaciones && contadorIndicaciones) {
+            contadorIndicaciones.textContent = indicaciones.value.length;
         }
-
-        contadorIndicaciones.textContent =
-            indicaciones.value.length;
     }
-
-    indicaciones?.addEventListener(
-        "input",
-        actualizarContador
-    );
-
+    indicaciones?.addEventListener("input", actualizarContador);
     actualizarContador();
 
-    /*==================================================
-                  FECHA MÍNIMA DE SALIDA
-    ==================================================*/
-
-    function formatearFechaLocal(fecha) {
-        const compensacion =
-            fecha.getTimezoneOffset() * 60000;
-
-        return new Date(
-            fecha.getTime() - compensacion
-        )
-            .toISOString()
-            .slice(0, 16);
-    }
-
+    // Configurar fecha mínima de salida (ahora mismo en adelante)
     function configurarFechaMinima() {
-        if (!fechaSalida) {
-            return;
-        }
-
+        if (!fechaSalida) return;
         const ahora = new Date();
-
-        fechaSalida.min =
-            formatearFechaLocal(ahora);
-
-        if (fechaLlegada) {
-            fechaLlegada.min =
-                fechaSalida.value
-                || fechaSalida.min;
-        }
+        const compensacion = ahora.getTimezoneOffset() * 60000;
+        fechaSalida.min = new Date(ahora.getTime() - compensacion).toISOString().slice(0, 16);
     }
-
-    fechaSalida?.addEventListener(
-        "change",
-        () => {
-            if (!fechaLlegada) {
-                return;
-            }
-
-            fechaLlegada.min =
-                fechaSalida.value;
-
-            if (
-                fechaLlegada.value
-                && fechaLlegada.value
-                <= fechaSalida.value
-            ) {
-                fechaLlegada.value = "";
-            }
-        }
-    );
-
     configurarFechaMinima();
 
-    /*==================================================
-                     MENSAJES DE ERROR
-    ==================================================*/
-
+    // Eliminar / Mostrar errores del cliente
     function eliminarErrorCliente(campo) {
-        const contenedor = campo.closest(
-            ".campo-formulario"
-        );
-
-        campo.classList.remove(
-            "campo-invalido"
-        );
-
-        contenedor
-            ?.querySelector(
-                ".error-cliente"
-            )
-            ?.remove();
+        const contenedor = campo.closest(".campo-formulario");
+        campo.classList.remove("campo-invalido");
+        contenedor?.querySelector(".error-cliente")?.remove();
     }
 
-    function mostrarErrorCliente(
-        campo,
-        mensaje
-    ) {
+    function mostrarErrorCliente(campo, mensaje) {
         eliminarErrorCliente(campo);
-
-        campo.classList.add(
-            "campo-invalido"
-        );
-
-        const error = document.createElement(
-            "span"
-        );
-
-        error.className =
-            "error-campo error-cliente";
-
+        campo.classList.add("campo-invalido");
+        const error = document.createElement("span");
+        error.className = "error-campo error-cliente";
         error.textContent = mensaje;
-
-        const contenedor = campo.closest(
-            ".campo-formulario"
-        );
-
-        contenedor?.appendChild(error);
+        campo.closest(".campo-formulario")?.appendChild(error);
     }
 
-    function validarCampoObligatorio(
-        campo,
-        mensaje
-    ) {
-        if (!campo || campo.value.trim()) {
-            return true;
-        }
-
-        mostrarErrorCliente(
-            campo,
-            mensaje
-        );
-
-        return false;
-    }
-
-    /*==================================================
-                    VALIDACIÓN GENERAL
-    ==================================================*/
-
+    // Validación general simplificada
     function validarFormulario() {
         let valido = true;
         let primerCampoInvalido = null;
 
-        formulario.querySelectorAll(
-            ".error-cliente"
-        ).forEach((error) => error.remove());
+        formulario.querySelectorAll(".error-cliente").forEach((e) => e.remove());
+        formulario.querySelectorAll(".campo-invalido").forEach((c) => c.classList.remove("campo-invalido"));
 
-        formulario.querySelectorAll(
-            ".campo-invalido"
-        ).forEach((campo) => {
-            campo.classList.remove(
-                "campo-invalido"
-            );
-        });
-
-        const camposObligatorios = [
-            {
-                campo: vehiculo,
-                mensaje:
-                    "Selecciona el vehículo del viaje.",
-            },
-            {
-                campo: document.getElementById(
-                    "id_origen"
-                ),
-                mensaje:
-                    "Selecciona un punto de origen.",
-            },
-            {
-                campo: document.getElementById(
-                    "id_destino"
-                ),
-                mensaje:
-                    "Selecciona el destino.",
-            },
-            {
-                campo: fechaSalida,
-                mensaje:
-                    "Selecciona la fecha y hora de salida.",
-            },
-            {
-                campo: asientos,
-                mensaje:
-                    "Indica cuántos asientos ofrecerás.",
-            },
-        ];
-
-        camposObligatorios.forEach((elemento) => {
-            const campoValido =
-                validarCampoObligatorio(
-                    elemento.campo,
-                    elemento.mensaje
-                );
-
-            if (!campoValido) {
-                valido = false;
-
-                primerCampoInvalido ??=
-                    elemento.campo;
-            }
-        });
-
-        const mapa = window.CUERVO_RIDE_MAPA;
-
-        if (
-            mapa
-            && !mapa.tieneOrigen()
-        ) {
-            const campo = document.getElementById(
-                "id_origen"
-            );
-
-            mostrarErrorCliente(
-                campo,
-                "Busca y selecciona un origen válido."
-            );
-
+        // Verificar Vehículo
+        if (!vehiculo?.value.trim()) {
+            mostrarErrorCliente(vehiculo, "Selecciona un vehículo.");
             valido = false;
-            primerCampoInvalido ??= campo;
+            primerCampoInvalido = primerCampoInvalido || vehiculo;
         }
 
-        if (
-            mapa
-            && !mapa.tieneDestino()
-        ) {
-            const campo = document.getElementById(
-                "id_destino"
-            );
-
-            mostrarErrorCliente(
-                campo,
-                "Busca y selecciona un destino válido."
-            );
-
+        // Verificar Destino
+        if (!campoDestino?.value.trim()) {
+            mostrarErrorCliente(selectColonia, "Debes seleccionar una colonia de la lista o marcar un punto en el mapa.");
             valido = false;
-            primerCampoInvalido ??= campo;
+            primerCampoInvalido = primerCampoInvalido || selectColonia;
         }
 
-        if (
-            fechaSalida?.value
-            && new Date(fechaSalida.value)
-            <= new Date()
-        ) {
-            mostrarErrorCliente(
-                fechaSalida,
-                "La salida debe programarse para una fecha futura."
-            );
-
+        // Verificar Fecha de Salida
+        if (!fechaSalida?.value.trim()) {
+            mostrarErrorCliente(fechaSalida, "Selecciona la fecha y hora de salida.");
             valido = false;
-            primerCampoInvalido ??=
-                fechaSalida;
-        }
-
-        if (
-            fechaLlegada?.value
-            && fechaSalida?.value
-            && fechaLlegada.value
-            <= fechaSalida.value
-        ) {
-            mostrarErrorCliente(
-                fechaLlegada,
-                "La llegada debe ser posterior a la salida."
-            );
-
-            valido = false;
-            primerCampoInvalido ??=
-                fechaLlegada;
-        }
-
-        const cantidadAsientos = Number.parseInt(
-            asientos?.value,
-            10
-        );
-
-        if (
-            asientos?.value
-            && (
-                !Number.isInteger(cantidadAsientos)
-                || cantidadAsientos < 1
-            )
-        ) {
-            mostrarErrorCliente(
-                asientos,
-                "Debes ofrecer al menos un asiento."
-            );
-
-            valido = false;
-            primerCampoInvalido ??= asientos;
+            primerCampoInvalido = primerCampoInvalido || fechaSalida;
         }
 
         if (primerCampoInvalido) {
-            primerCampoInvalido.scrollIntoView({
-                behavior: "smooth",
-                block: "center",
-            });
-
-            primerCampoInvalido.focus();
+            primerCampoInvalido.scrollIntoView({ behavior: "smooth", block: "center" });
         }
 
         return valido;
     }
 
-    /*==================================================
-                       ENVÍO DEL FORM
-    ==================================================*/
-
-    function establecerEstadoEnvio(cargando) {
-        enviando = cargando;
-
-        if (!botonPublicar) {
-            return;
-        }
-
-        botonPublicar.disabled = cargando;
-
-        if (textoBoton) {
-            textoBoton.hidden = cargando;
-        }
-
-        if (cargandoBoton) {
-            cargandoBoton.hidden = !cargando;
-        }
+formulario.addEventListener("submit", (e) => {
+    if (enviando) {
+        e.preventDefault();
+        return;
     }
 
-    formulario.addEventListener(
-        "submit",
-        (evento) => {
-            if (enviando) {
-                evento.preventDefault();
-                return;
-            }
+    // 🔒 ASEGURAR REDONDEO A 6 DECIMALES JUSTO ANTES DE ENVIAR
+    const latInput = document.getElementById("id_destino_latitud");
+    const lonInput = document.getElementById("id_destino_longitud");
 
-            if (!validarFormulario()) {
-                evento.preventDefault();
-                return;
-            }
+    if (latInput && latInput.value) {
+        latInput.value = parseFloat(latInput.value).toFixed(6);
+    }
+    if (lonInput && lonInput.value) {
+        lonInput.value = parseFloat(lonInput.value).toFixed(6);
+    }
 
-            establecerEstadoEnvio(true);
-        }
-    );
+    if (!validarFormulario()) {
+        e.preventDefault();
+        return;
+    }
 
-    formulario.querySelectorAll(
-        "input, select, textarea"
-    ).forEach((campo) => {
-        campo.addEventListener(
-            "input",
-            () => eliminarErrorCliente(campo)
-        );
+    enviando = true;
+    if (botonPublicar) botonPublicar.disabled = true;
+    if (textoBoton) textoBoton.hidden = true;
+    if (cargandoBoton) cargandoBoton.hidden = false;
+});
 
-        campo.addEventListener(
-            "change",
-            () => eliminarErrorCliente(campo)
-        );
+    formulario.querySelectorAll("input, select, textarea").forEach((campo) => {
+        campo.addEventListener("input", () => eliminarErrorCliente(campo));
+        campo.addEventListener("change", () => eliminarErrorCliente(campo));
     });
-
 });
