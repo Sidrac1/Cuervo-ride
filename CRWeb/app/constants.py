@@ -7,6 +7,9 @@ Quien esté integrando la API de mapas debe verificar y, si hace falta,
 corregir estas coordenadas con el valor exacto del campus.
 """
 
-UTT_NOMBRE = "Universidad Tecnológica de Tijuana"
-UTT_LATITUD = "32.4664000"
-UTT_LONGITUD = "-116.7898000"
+UTT_NOMBRE = (
+    "Universidad Tecnológica de Tijuana"
+)
+
+UTT_LATITUD = "32.460963"
+UTT_LONGITUD = "-116.824371"

@@ -4,13 +4,16 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
+from .constants import (
+    UTT_LATITUD,
+    UTT_LONGITUD,
+    UTT_NOMBRE,
+)
 from .models import Viaje, Vehiculo
-from .constants import UTT_NOMBRE, UTT_LATITUD, UTT_LONGITUD
 
 
 class PublicarViajeForm(forms.ModelForm):
-    destino_latitud = forms.FloatField(widget=forms.HiddenInput(), required=False)
-    destino_longitud = forms.FloatField(widget=forms.HiddenInput(), required=False)
+
     class Meta:
         model = Viaje
 
@@ -260,8 +263,17 @@ class PublicarViajeForm(forms.ModelForm):
         # El origen SIEMPRE es la UTT, sin importar qué haya llegado en el
         # POST -- así que lo forzamos aquí, sea cual sea el valor enviado.
         cleaned_data["origen"] = UTT_NOMBRE
-        cleaned_data["origen_latitud"] = Decimal(UTT_LATITUD)
-        cleaned_data["origen_longitud"] = Decimal(UTT_LONGITUD)
+        cleaned_data["origen_latitud"] = Decimal(
+            str(UTT_LATITUD)
+        ).quantize(
+            Decimal("0.0000001")
+        )
+
+        cleaned_data["origen_longitud"] = Decimal(
+            str(UTT_LONGITUD)
+        ).quantize(
+            Decimal("0.0000001")
+        )
 
         vehiculo = cleaned_data.get("vehiculo")
         fecha_salida = cleaned_data.get(

@@ -1,389 +1,427 @@
+<form
+    method="POST"
+    enctype="multipart/form-data"
+    class="formulario"
+    id="formVehiculo">
 
+    {% csrf_token %}
 
-                            <form
-                                method="POST"
-                                enctype="multipart/form-data"
-                                class="formulario"
-                                id="formVehiculo">
+    <input
+        type="hidden"
+        name="tipo_formulario"
+        value="vehiculo">
 
-                                {% csrf_token %}
 
-                                <input
-                                    type="hidden"
-                                    name="tipo_formulario"
-                                    value="vehiculo">
+    <!-- =========================================
+        DUEÑO DEL VEHÍCULO
+    ========================================== -->
 
+    <div class="campo">
 
-                                <!-- PROPIETARIO -->
+        <label for="duenoVehiculo">
+            Dueño del vehículo
+        </label>
 
-                                <div class="campo">
+        <div class="input-box">
 
-                                    <label for="duenoVehiculo">
-                                        Dueño del vehículo
-                                    </label>
+            <input
+                type="text"
+                id="duenoVehiculo"
+                name="dueno"
+                value="{{ vehiculo.dueno|default:'' }}"
+                placeholder="Nombre completo del propietario"
+                maxlength="150"
+                readonly>
 
-                                    <div class="input-box">
+            <button
+                type="button"
+                class="editar"
+                aria-label="Editar dueño del vehículo">
 
-                                        <input
-                                            type="text"
-                                            id="duenoVehiculo"
-                                            name="nombre_propietario"
-                                            value="{{ vehiculo.nombre_propietario|default:'' }}"
-                                            placeholder="Nombre completo del propietario"
-                                            maxlength="150"
-                                            readonly>
+                <i class="fa-solid fa-pencil"></i>
 
-                                        <button
-                                            type="button"
-                                            class="editar"
-                                            aria-label="Editar propietario">
+            </button>
 
-                                            <i class="fa-solid fa-pencil"></i>
+        </div>
 
-                                        </button>
+    </div>
 
-                                    </div>
 
-                                </div>
+    <!-- =========================================
+        MARCA
+    ========================================== -->
 
+    <div class="campo">
 
-                                <!-- MARCA -->
+        <label for="marcaVehiculo">
+            Marca
+        </label>
 
-                                <div class="campo">
+        <div class="input-box">
 
-                                    <label for="marcaVehiculo">
-                                        Marca
-                                    </label>
+            <input
+                type="text"
+                id="marcaVehiculo"
+                name="marca"
+                value="{{ vehiculo.marca|default:'' }}"
+                placeholder="Ejemplo: Nissan"
+                maxlength="100"
+                readonly>
 
-                                    <div class="input-box">
+            <button
+                type="button"
+                class="editar"
+                aria-label="Editar marca">
 
-                                        <input
-                                            type="text"
-                                            id="marcaVehiculo"
-                                            name="marca"
-                                            value="{{ vehiculo.marca|default:'' }}"
-                                            placeholder="Ejemplo: Nissan"
-                                            maxlength="80"
-                                            readonly>
+                <i class="fa-solid fa-pencil"></i>
 
-                                        <button
-                                            type="button"
-                                            class="editar"
-                                            aria-label="Editar marca">
+            </button>
 
-                                            <i class="fa-solid fa-pencil"></i>
+        </div>
 
-                                        </button>
+    </div>
 
-                                    </div>
 
-                                </div>
+    <!-- =========================================
+        MODELO
+    ========================================== -->
 
+    <div class="campo">
 
-                                <!-- MODELO -->
+        <label for="modeloVehiculo">
+            Modelo
+        </label>
 
-                                <div class="campo">
+        <div class="input-box">
 
-                                    <label for="modeloVehiculo">
-                                        Modelo
-                                    </label>
+            <input
+                type="text"
+                id="modeloVehiculo"
+                name="modelo"
+                value="{{ vehiculo.modelo|default:'' }}"
+                placeholder="Ejemplo: Versa"
+                maxlength="100"
+                readonly>
 
-                                    <div class="input-box">
+            <button
+                type="button"
+                class="editar"
+                aria-label="Editar modelo">
 
-                                        <input
-                                            type="text"
-                                            id="modeloVehiculo"
-                                            name="modelo"
-                                            value="{{ vehiculo.modelo|default:'' }}"
-                                            placeholder="Ejemplo: Versa"
-                                            maxlength="80"
-                                            readonly>
+                <i class="fa-solid fa-pencil"></i>
 
-                                        <button
-                                            type="button"
-                                            class="editar"
-                                            aria-label="Editar modelo">
+            </button>
 
-                                            <i class="fa-solid fa-pencil"></i>
+        </div>
 
-                                        </button>
+    </div>
 
-                                    </div>
 
-                                </div>
+    <!-- =========================================
+        PLACAS
+    ========================================== -->
 
+    <div class="campo">
 
-                                <!-- PLACAS -->
+        <label for="placasVehiculo">
+            Placas del vehículo
+        </label>
 
-                                <div class="campo">
+        <div class="input-box">
 
-                                    <label for="placasVehiculo">
-                                        Placas del vehículo
-                                    </label>
+            <input
+                type="text"
+                id="placasVehiculo"
+                name="placas"
+                value="{{ vehiculo.placas|default:'' }}"
+                placeholder="Ejemplo: ABC-123"
+                maxlength="20"
+                autocomplete="off"
+                readonly>
 
-                                    <div class="input-box">
+            <button
+                type="button"
+                class="editar"
+                aria-label="Editar placas">
 
-                                        <input
-                                            type="text"
-                                            id="placasVehiculo"
-                                            name="placas"
-                                            value="{{ vehiculo.placas|default:'' }}"
-                                            placeholder="Ejemplo: ABC-123"
-                                            maxlength="20"
-                                            readonly>
+                <i class="fa-solid fa-pencil"></i>
 
-                                        <button
-                                            type="button"
-                                            class="editar"
-                                            aria-label="Editar placas">
+            </button>
 
-                                            <i class="fa-solid fa-pencil"></i>
+        </div>
 
-                                        </button>
+    </div>
 
-                                    </div>
 
-                                </div>
+    <!-- =========================================
+        AÑO
+    ========================================== -->
 
+    <div class="campo">
 
-                                <!-- AÑO -->
+        <label for="anioVehiculo">
+            Año
+        </label>
 
-                                <div class="campo">
+        <div class="input-box">
 
-                                    <label for="anioVehiculo">
-                                        Año
-                                    </label>
+            <input
+                type="number"
+                id="anioVehiculo"
+                name="anio"
+                value="{{ vehiculo.anio|default:'' }}"
+                placeholder="Ejemplo: 2022"
+                min="1980"
+                max="2100"
+                inputmode="numeric"
+                readonly>
 
-                                    <div class="input-box">
+            <button
+                type="button"
+                class="editar"
+                aria-label="Editar año">
 
-                                        <input
-                                            type="number"
-                                            id="anioVehiculo"
-                                            name="anio"
-                                            value="{{ vehiculo.anio|default:'' }}"
-                                            placeholder="Ejemplo: 2022"
-                                            min="1990"
-                                            max="2100"
-                                            readonly>
+                <i class="fa-solid fa-pencil"></i>
 
-                                        <button
-                                            type="button"
-                                            class="editar"
-                                            aria-label="Editar año">
+            </button>
 
-                                            <i class="fa-solid fa-pencil"></i>
+        </div>
 
-                                        </button>
+    </div>
 
-                                    </div>
 
-                                </div>
+    <!-- =========================================
+        COLOR
+    ========================================== -->
 
+    <div class="campo">
 
-                                <!-- COLOR -->
+        <label for="colorVehiculo">
+            Color
+        </label>
 
-                                <div class="campo">
+        <div class="input-box">
 
-                                    <label for="colorVehiculo">
-                                        Color
-                                    </label>
+            <input
+                type="text"
+                id="colorVehiculo"
+                name="color"
+                value="{{ vehiculo.color|default:'' }}"
+                placeholder="Ejemplo: Blanco"
+                maxlength="50"
+                readonly>
 
-                                    <div class="input-box">
+            <button
+                type="button"
+                class="editar"
+                aria-label="Editar color">
 
-                                        <input
-                                            type="text"
-                                            id="colorVehiculo"
-                                            name="color"
-                                            value="{{ vehiculo.color|default:'' }}"
-                                            placeholder="Ejemplo: Blanco"
-                                            maxlength="50"
-                                            readonly>
+                <i class="fa-solid fa-pencil"></i>
 
-                                        <button
-                                            type="button"
-                                            class="editar"
-                                            aria-label="Editar color">
+            </button>
 
-                                            <i class="fa-solid fa-pencil"></i>
+        </div>
 
-                                        </button>
+    </div>
 
-                                    </div>
 
-                                </div>
+    <!-- =========================================
+        CAPACIDAD
+    ========================================== -->
 
+    <div class="campo">
 
-                                <!-- CAPACIDAD -->
+        <label for="capacidadVehiculo">
+            Capacidad de pasajeros
+        </label>
 
-                                <div class="campo">
+        <div class="input-box">
 
-                                    <label for="capacidadVehiculo">
-                                        Capacidad de pasajeros
-                                    </label>
+            <input
+                type="number"
+                id="capacidadVehiculo"
+                name="capacidad"
+                value="{{ vehiculo.capacidad|default:'' }}"
+                placeholder="Ejemplo: 4"
+                min="1"
+                max="20"
+                inputmode="numeric"
+                readonly>
 
-                                    <div class="input-box">
+            <button
+                type="button"
+                class="editar"
+                aria-label="Editar capacidad">
 
-                                        <input
-                                            type="number"
-                                            id="capacidadVehiculo"
-                                            name="capacidad_pasajeros"
-                                            value="{{ vehiculo.capacidad_pasajeros|default:'' }}"
-                                            placeholder="Ejemplo: 4"
-                                            min="1"
-                                            max="8"
-                                            readonly>
+                <i class="fa-solid fa-pencil"></i>
 
-                                        <button
-                                            type="button"
-                                            class="editar"
-                                            aria-label="Editar capacidad">
+            </button>
 
-                                            <i class="fa-solid fa-pencil"></i>
+        </div>
 
-                                        </button>
+    </div>
 
-                                    </div>
 
-                                </div>
+    <!-- =========================================
+        FOTO DEL VEHÍCULO
+    ========================================== -->
 
+    <div class="campo campo-archivo">
 
-                                <!-- FOTO DEL VEHÍCULO -->
+        <label for="fotoVehiculo">
+            Fotografía del vehículo
+        </label>
 
-                                <div class="campo">
+        {% if vehiculo.foto %}
 
-                                    <label for="fotoVehiculo">
-                                        Fotografía del vehículo
-                                    </label>
+            <div class="archivo-actual">
 
-                                    {% if vehiculo.foto_vehiculo %}
+                <i class="fa-solid fa-image"></i>
 
-                                        <div class="archivo-actual">
+                <a
+                    href="{{ vehiculo.foto.url }}"
+                    target="_blank"
+                    rel="noopener noreferrer">
 
-                                            <a
-                                                href="{{ vehiculo.foto_vehiculo.url }}"
-                                                target="_blank"
-                                                rel="noopener noreferrer">
+                    Ver fotografía actual
 
-                                                Ver fotografía actual
+                </a>
 
-                                            </a>
+            </div>
 
-                                        </div>
+        {% endif %}
 
-                                    {% endif %}
+        <div class="input-box input-archivo">
 
-                                    <div class="input-box input-archivo">
+            <input
+                type="file"
+                id="fotoVehiculo"
+                name="foto_vehiculo"
+                accept=".jpg,.jpeg,image/jpeg">
 
-                                        <input
-                                            type="file"
-                                            id="fotoVehiculo"
-                                            name="foto_vehiculo"
-                                            accept="image/png,image/jpeg,image/webp"
-                                            disabled>
+        </div>
 
-                                    </div>
+        <small class="ayuda-archivo">
+            Formato permitido: JPG o JPEG.
+        </small>
 
-                                </div>
+    </div>
 
 
-                                <!-- TARJETA DE CIRCULACIÓN -->
+    <!-- =========================================
+        TARJETA DE CIRCULACIÓN
+    ========================================== -->
 
-                                <div class="campo">
+    <div class="campo campo-archivo">
 
-                                    <label for="tarjetaCirculacion">
-                                        Tarjeta de circulación
-                                    </label>
+        <label for="tarjetaCirculacion">
+            Tarjeta de circulación
+        </label>
 
-                                    {% if vehiculo.tarjeta_circulacion %}
+        {% if vehiculo.tarjeta_circulacion %}
 
-                                        <div class="archivo-actual">
+            <div class="archivo-actual">
 
-                                            <a
-                                                href="{{ vehiculo.tarjeta_circulacion.url }}"
-                                                target="_blank"
-                                                rel="noopener noreferrer">
+                <i class="fa-solid fa-file-image"></i>
 
-                                                Ver archivo actual
+                <a
+                    href="{{ vehiculo.tarjeta_circulacion.url }}"
+                    target="_blank"
+                    rel="noopener noreferrer">
 
-                                            </a>
+                    Ver tarjeta actual
 
-                                        </div>
+                </a>
 
-                                    {% endif %}
+            </div>
 
-                                    <div class="input-box input-archivo">
+        {% endif %}
 
-                                        <input
-                                            type="file"
-                                            id="tarjetaCirculacion"
-                                            name="tarjeta_circulacion"
-                                            accept="image/png,image/jpeg,image/webp,application/pdf"
-                                            disabled>
+        <div class="input-box input-archivo">
 
-                                    </div>
+            <input
+                type="file"
+                id="tarjetaCirculacion"
+                name="tarjeta_circulacion"
+                accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
 
-                                </div>
+        </div>
 
+        <small class="ayuda-archivo">
+            Sube una imagen legible de la tarjeta.
+        </small>
 
-                                <!-- PÓLIZA DE SEGURO -->
+    </div>
 
-                                <div class="campo">
 
-                                    <label for="polizaSeguro">
-                                        Póliza de seguro
-                                    </label>
+    <!-- =========================================
+        DOCUMENTO DEL SEGURO
+    ========================================== -->
 
-                                    {% if vehiculo.poliza_seguro %}
+    <div class="campo campo-archivo">
 
-                                        <div class="archivo-actual">
+        <label for="polizaSeguro">
+            Documento del seguro
+        </label>
 
-                                            <a
-                                                href="{{ vehiculo.poliza_seguro.url }}"
-                                                target="_blank"
-                                                rel="noopener noreferrer">
+        {% if vehiculo.documento_seguro %}
 
-                                                Ver archivo actual
+            <div class="archivo-actual">
 
-                                            </a>
+                <i class="fa-solid fa-file-shield"></i>
 
-                                        </div>
+                <a
+                    href="{{ vehiculo.documento_seguro.url }}"
+                    target="_blank"
+                    rel="noopener noreferrer">
 
-                                    {% endif %}
+                    Ver documento actual
 
-                                    <div class="input-box input-archivo">
+                </a>
 
-                                        <input
-                                            type="file"
-                                            id="polizaSeguro"
-                                            name="poliza_seguro"
-                                            accept="image/png,image/jpeg,image/webp,application/pdf"
-                                            disabled>
+            </div>
 
-                                    </div>
+        {% endif %}
 
-                                </div>
+        <div class="input-box input-archivo">
 
+            <input
+                type="file"
+                id="polizaSeguro"
+                name="poliza_seguro"
+                accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
 
-                                <!-- BOTONES -->
+        </div>
 
-                                <div class="botones oculto">
+        <small class="ayuda-archivo">
+            Sube una imagen legible del documento del seguro.
+        </small>
 
-                                    <button
-                                        type="button"
-                                        class="cancelar">
+    </div>
 
-                                        Cancelar
 
-                                    </button>
+    <!-- =========================================
+        BOTONES
+    ========================================== -->
 
-                                    <button
-                                        type="submit"
-                                        class="guardar">
+    <div class="botones oculto">
 
-                                        Guardar
+        <button
+            type="button"
+            class="cancelar">
 
-                                    </button>
+            Cancelar
 
-                                </div>
+        </button>
 
-                            </form>
+        <button
+            type="submit"
+            class="guardar">
+
+            Guardar
+
+        </button>
+
+    </div>
+
+</form>

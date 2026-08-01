@@ -414,7 +414,7 @@ def perfil(request):
                 .first()
             )
 
-            foto_vehiculo = request.FILES.get("foto_vehiculo")
+            foto_vehiculo = request.FILES.get("foto")
 
             if foto_vehiculo is not None:
                 try:
