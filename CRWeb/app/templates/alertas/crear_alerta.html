@@ -1,0 +1,309 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Crear alerta | Cuervo-Ride
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/sidebar.css' %}">
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/crear_alerta.css' %}">
+
+</head>
+
+<body>
+
+    {% include 'components/sidebar.html' %}
+
+    <main class="alerta-main">
+
+        <section class="alerta-contenedor">
+
+            <header class="alerta-header">
+
+                <div class="alerta-header-icono">
+
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+
+                </div>
+
+                <div>
+
+                    <span class="alerta-etiqueta">
+                        Emergencia durante el viaje
+                    </span>
+
+                    <h1>
+                        Crear alerta
+                    </h1>
+
+                    <p>
+                        Envía una alerta al equipo de administración
+                        y registra lo que está ocurriendo.
+                    </p>
+
+                </div>
+
+            </header>
+
+
+            {% if messages %}
+
+                <div class="mensajes-alerta">
+
+                    {% for message in messages %}
+
+                        <div class="mensaje {{ message.tags }}">
+
+                            <i class="fa-solid fa-circle-info"></i>
+
+                            <span>
+                                {{ message }}
+                            </span>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+
+            <section class="viaje-resumen">
+
+                <div class="viaje-ruta">
+
+                    <div>
+
+                        <span>
+                            Origen
+                        </span>
+
+                        <strong>
+                            {{ viaje.origen }}
+                        </strong>
+
+                    </div>
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                    <div>
+
+                        <span>
+                            Destino
+                        </span>
+
+                        <strong>
+                            {{ viaje.destino }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+                <div class="viaje-datos">
+
+                    <span>
+                        <i class="fa-solid fa-user"></i>
+                        {{ viaje.conductor.usuario.nombre_completo }}
+                    </span>
+
+                    <span>
+                        <i class="fa-solid fa-car"></i>
+                        {{ viaje.vehiculo.marca }}
+                        {{ viaje.vehiculo.modelo }}
+                    </span>
+
+                </div>
+
+            </section>
+
+
+            <form
+                method="POST"
+                class="alerta-form"
+                id="alertaForm">
+
+                {% csrf_token %}
+
+
+                <div class="campo-alerta">
+
+                    <label for="tipoAlerta">
+                        Tipo de emergencia
+                    </label>
+
+                    <select
+                        id="tipoAlerta"
+                        name="tipo"
+                        required>
+
+                        <option value="">
+                            Selecciona una opción
+                        </option>
+
+                        {% for valor, etiqueta in tipos_alerta %}
+
+                            <option
+                                value="{{ valor }}"
+                                {% if datos.tipo == valor %}
+                                    selected
+                                {% endif %}>
+
+                                {{ etiqueta }}
+
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <div class="campo-alerta campo-completo">
+
+                    <label for="descripcionAlerta">
+                        Describe lo que está ocurriendo
+                    </label>
+
+                    <textarea
+                        id="descripcionAlerta"
+                        name="descripcion"
+                        maxlength="1000"
+                        rows="6"
+                        required
+                        placeholder="Explica brevemente la situación...">{{ datos.descripcion|default:'' }}</textarea>
+
+                    <div class="contador-caracteres">
+
+                        <span id="contadorDescripcion">
+                            0
+                        </span>
+
+                        / 1000
+
+                    </div>
+
+                </div>
+
+
+                <section class="ubicacion-alerta">
+
+                    <div class="ubicacion-info">
+
+                        <div class="ubicacion-icono">
+
+                            <i class="fa-solid fa-location-crosshairs"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h2>
+                                Ubicación actual
+                            </h2>
+
+                            <p id="estadoUbicacion">
+                                Aún no se ha obtenido tu ubicación.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="btn-ubicacion"
+                        id="obtenerUbicacion">
+
+                        <i class="fa-solid fa-location-dot"></i>
+
+                        Compartir ubicación
+
+                    </button>
+
+                    <input
+                        type="hidden"
+                        id="latitud"
+                        name="latitud"
+                        value="{{ datos.latitud|default:'' }}">
+
+                    <input
+                        type="hidden"
+                        id="longitud"
+                        name="longitud"
+                        value="{{ datos.longitud|default:'' }}">
+
+                </section>
+
+
+                <div class="aviso-emergencia">
+
+                    <i class="fa-solid fa-shield-halved"></i>
+
+                    <p>
+                        Utiliza esta función únicamente cuando exista
+                        una situación real de emergencia o riesgo.
+                    </p>
+
+                </div>
+
+
+                <div class="acciones-alerta">
+
+                    <a
+                        href="{% url 'ride_en_progreso' viaje.id %}"
+                        class="btn-cancelar">
+
+                        <i class="fa-solid fa-arrow-left"></i>
+
+                        Volver al viaje
+
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="btn-enviar-alerta"
+                        id="enviarAlerta">
+
+                        <i class="fa-solid fa-bell"></i>
+
+                        Enviar alerta
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+    </main>
+
+    <script
+        src="{% static 'js/crear_alerta.js' %}">
+    </script>
+
+</body>
+
+</html>

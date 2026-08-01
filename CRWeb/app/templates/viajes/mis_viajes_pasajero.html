@@ -9,22 +9,21 @@
 
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+        content="width=device-width, initial-scale=1.0">
 
-    <title>Mis viajes | Cuervo-Ride</title>
+    <title>
+        Mis viajes | Cuervo-Ride
+    </title>
 
     <!-- Font Awesome -->
     <link
         rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-    >
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 
     <!-- CSS de la página -->
     <link
         rel="stylesheet"
-        href="{% static 'css/mis_viajes_pasajero.css' %}"
-    >
+        href="{% static 'css/mis_viajes_pasajero.css' %}">
 
 </head>
 
@@ -50,11 +49,16 @@
             <div class="encabezado-texto">
 
                 <span class="encabezado-etiqueta">
+
                     <i class="fa-solid fa-route"></i>
+
                     Pasajero
+
                 </span>
 
-                <h1>Mis viajes</h1>
+                <h1>
+                    Mis viajes
+                </h1>
 
                 <p>
                     Consulta el estado de tus solicitudes,
@@ -64,14 +68,17 @@
 
             </div>
 
+
             <div class="encabezado-acciones">
 
                 <a
-                    href="{% url 'home' %}"
-                    class="btn-buscar-viaje"
-                >
+                    href="{% url 'agendarviaje' %}"
+                    class="btn-buscar-viaje">
+
                     <i class="fa-solid fa-magnifying-glass"></i>
+
                     Buscar viaje
+
                 </a>
 
             </div>
@@ -91,7 +98,23 @@
 
                     <div class="mensaje mensaje-{{ message.tags }}">
 
-                        <i class="fa-solid fa-circle-info"></i>
+                        {% if message.tags == "success" %}
+
+                            <i class="fa-solid fa-circle-check"></i>
+
+                        {% elif message.tags == "warning" %}
+
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+
+                        {% elif message.tags == "error" %}
+
+                            <i class="fa-solid fa-circle-exclamation"></i>
+
+                        {% else %}
+
+                            <i class="fa-solid fa-circle-info"></i>
+
+                        {% endif %}
 
                         <span>
                             {{ message }}
@@ -100,9 +123,10 @@
                         <button
                             type="button"
                             class="cerrar-mensaje"
-                            aria-label="Cerrar mensaje"
-                        >
+                            aria-label="Cerrar mensaje">
+
                             <i class="fa-solid fa-xmark"></i>
+
                         </button>
 
                     </div>
@@ -134,11 +158,15 @@
                 <div class="estadistica-contenido">
 
                     <span class="estadistica-numero">
+
                         {{ estadisticas.total|default:0 }}
+
                     </span>
 
                     <span class="estadistica-label">
+
                         Total de solicitudes
+
                     </span>
 
                 </div>
@@ -159,11 +187,15 @@
                 <div class="estadistica-contenido">
 
                     <span class="estadistica-numero">
+
                         {{ estadisticas.pendientes|default:0 }}
+
                     </span>
 
                     <span class="estadistica-label">
+
                         Pendientes
+
                     </span>
 
                 </div>
@@ -184,11 +216,15 @@
                 <div class="estadistica-contenido">
 
                     <span class="estadistica-numero">
+
                         {{ estadisticas.aceptadas|default:0 }}
+
                     </span>
 
                     <span class="estadistica-label">
+
                         Aceptadas
+
                     </span>
 
                 </div>
@@ -209,11 +245,15 @@
                 <div class="estadistica-contenido">
 
                     <span class="estadistica-numero">
+
                         {{ estadisticas.completadas|default:0 }}
+
                     </span>
 
                     <span class="estadistica-label">
+
                         Completadas
+
                     </span>
 
                 </div>
@@ -234,11 +274,15 @@
                 <div class="estadistica-contenido">
 
                     <span class="estadistica-numero">
+
                         {{ estadisticas.canceladas|default:0 }}
+
                     </span>
 
                     <span class="estadistica-label">
+
                         Canceladas
+
                     </span>
 
                 </div>
@@ -269,13 +313,17 @@
 
                 </div>
 
+
                 <div class="cantidad-resultados">
 
                     <i class="fa-solid fa-list"></i>
 
                     <span>
+
                         {{ solicitudes|length }}
+
                         resultado{{ solicitudes|length|pluralize }}
+
                     </span>
 
                 </div>
@@ -285,67 +333,60 @@
 
             <nav
                 class="filtros-lista"
-                aria-label="Filtros de solicitudes"
-            >
+                aria-label="Filtros de solicitudes">
+
 
                 <a
                     href="?estado=todos"
-                    class="filtro-btn
-                    {% if filtro_actual == 'todos' %}
-                        active
-                    {% endif %}"
-                >
+                    class="filtro-btn {% if filtro_actual == 'todos' %}active{% endif %}">
+
                     Todos
+
                 </a>
+
 
                 <a
                     href="?estado=pendientes"
-                    class="filtro-btn
-                    {% if filtro_actual == 'pendientes' %}
-                        active
-                    {% endif %}"
-                >
+                    class="filtro-btn {% if filtro_actual == 'pendientes' %}active{% endif %}">
+
                     Pendientes
+
                 </a>
+
 
                 <a
                     href="?estado=aceptadas"
-                    class="filtro-btn
-                    {% if filtro_actual == 'aceptadas' %}
-                        active
-                    {% endif %}"
-                >
+                    class="filtro-btn {% if filtro_actual == 'aceptadas' %}active{% endif %}">
+
                     Aceptadas
+
                 </a>
+
 
                 <a
                     href="?estado=completadas"
-                    class="filtro-btn
-                    {% if filtro_actual == 'completadas' %}
-                        active
-                    {% endif %}"
-                >
+                    class="filtro-btn {% if filtro_actual == 'completadas' %}active{% endif %}">
+
                     Completadas
+
                 </a>
+
 
                 <a
                     href="?estado=rechazadas"
-                    class="filtro-btn
-                    {% if filtro_actual == 'rechazadas' %}
-                        active
-                    {% endif %}"
-                >
+                    class="filtro-btn {% if filtro_actual == 'rechazadas' %}active{% endif %}">
+
                     Rechazadas
+
                 </a>
+
 
                 <a
                     href="?estado=canceladas"
-                    class="filtro-btn
-                    {% if filtro_actual == 'canceladas' %}
-                        active
-                    {% endif %}"
-                >
+                    class="filtro-btn {% if filtro_actual == 'canceladas' %}active{% endif %}">
+
                     Canceladas
+
                 </a>
 
             </nav>
@@ -359,18 +400,13 @@
 
         <section class="solicitudes-lista">
 
-
             {% for solicitud in solicitudes %}
 
-
                 <article
-                    class="
-                        solicitud-card
-                        solicitud-{{ solicitud.estado }}
-                    "
+                    class="solicitud-card solicitud-{{ solicitud.estado }}"
                     data-solicitud-id="{{ solicitud.id }}"
-                    data-estado="{{ solicitud.estado }}"
-                >
+                    data-viaje-id="{{ solicitud.viaje.id }}"
+                    data-estado="{{ solicitud.estado }}">
 
 
                     <!-- =====================================
@@ -414,12 +450,7 @@
                             <!-- Estado de la solicitud -->
 
                             <span
-                                class="
-                                    estado-badge
-                                    estado-solicitud
-                                    estado-{{ solicitud.estado }}
-                                "
-                            >
+                                class="estado-badge estado-solicitud estado-{{ solicitud.estado }}">
 
                                 {% if solicitud.estado == "pendiente" %}
 
@@ -455,12 +486,7 @@
                             <!-- Estado del viaje -->
 
                             <span
-                                class="
-                                    estado-badge
-                                    estado-viaje
-                                    viaje-{{ solicitud.viaje.estado }}
-                                "
-                            >
+                                class="estado-badge estado-viaje viaje-{{ solicitud.viaje.estado }}">
 
                                 {% if solicitud.viaje.estado == "disponible" %}
 
@@ -567,8 +593,7 @@
 
                                     <img
                                         src="{{ solicitud.viaje.conductor.usuario.foto.url }}"
-                                        alt="Foto de {{ solicitud.viaje.conductor.usuario.nombre_completo }}"
-                                    >
+                                        alt="Foto de {{ solicitud.viaje.conductor.usuario.nombre_completo }}">
 
                                 {% else %}
 
@@ -577,6 +602,7 @@
                                 {% endif %}
 
                             </div>
+
 
                             <div class="conductor-datos">
 
@@ -618,14 +644,20 @@
                                 </span>
 
                                 <strong>
+
                                     {{ solicitud.viaje.vehiculo.marca }}
                                     {{ solicitud.viaje.vehiculo.modelo }}
+
                                 </strong>
 
                                 <small>
+
                                     {{ solicitud.viaje.vehiculo.color }}
+
                                     ·
+
                                     {{ solicitud.viaje.vehiculo.placas }}
+
                                 </small>
 
                             </div>
@@ -654,8 +686,11 @@
                                 </strong>
 
                                 <small>
+
                                     lugar{{ solicitud.asientos_solicitados|pluralize:"es" }}
+
                                     reservado{{ solicitud.asientos_solicitados|pluralize:"s" }}
+
                                 </small>
 
                             </div>
@@ -680,7 +715,9 @@
                                 </span>
 
                                 <strong>
+
                                     ${{ solicitud.viaje.costo_por_pasajero|floatformat:2 }}
+
                                 </strong>
 
                                 <small>
@@ -747,47 +784,51 @@
                         PREFERENCIAS DEL VIAJE
                     ====================================== -->
 
-                    <section class="preferencias-viaje">
+                    {% if solicitud.viaje.permite_mascota or solicitud.viaje.acepta_silla_ruedas or solicitud.requiere_asistencia %}
 
-                        {% if solicitud.viaje.permite_mascota %}
+                        <section class="preferencias-viaje">
 
-                            <span class="preferencia-chip">
+                            {% if solicitud.viaje.permite_mascota %}
 
-                                <i class="fa-solid fa-paw"></i>
+                                <span class="preferencia-chip">
 
-                                Mascotas permitidas
+                                    <i class="fa-solid fa-paw"></i>
 
-                            </span>
+                                    Mascotas permitidas
 
-                        {% endif %}
+                                </span>
 
-
-                        {% if solicitud.viaje.acepta_silla_ruedas %}
-
-                            <span class="preferencia-chip">
-
-                                <i class="fa-solid fa-wheelchair"></i>
-
-                                Accesible
-
-                            </span>
-
-                        {% endif %}
+                            {% endif %}
 
 
-                        {% if solicitud.requiere_asistencia %}
+                            {% if solicitud.viaje.acepta_silla_ruedas %}
 
-                            <span class="preferencia-chip asistencia">
+                                <span class="preferencia-chip">
 
-                                <i class="fa-solid fa-hand-holding-medical"></i>
+                                    <i class="fa-solid fa-wheelchair"></i>
 
-                                Asistencia solicitada
+                                    Accesible
 
-                            </span>
+                                </span>
 
-                        {% endif %}
+                            {% endif %}
 
-                    </section>
+
+                            {% if solicitud.requiere_asistencia %}
+
+                                <span class="preferencia-chip asistencia">
+
+                                    <i class="fa-solid fa-hand-holding-medical"></i>
+
+                                    Asistencia solicitada
+
+                                </span>
+
+                            {% endif %}
+
+                        </section>
+
+                    {% endif %}
 
 
                     <!-- =====================================
@@ -796,8 +837,7 @@
 
                     <section
                         class="detalles-adicionales"
-                        id="detalles-{{ solicitud.id }}"
-                    >
+                        id="detalles-{{ solicitud.id }}">
 
 
                         <div class="detalle-item">
@@ -913,7 +953,9 @@
                             </span>
 
                             <p>
+
                                 {{ solicitud.fecha_solicitud|date:"d/m/Y h:i A" }}
+
                             </p>
 
                         </div>
@@ -932,7 +974,9 @@
                                 </span>
 
                                 <p>
+
                                     {{ solicitud.fecha_respuesta|date:"d/m/Y h:i A" }}
+
                                 </p>
 
                             </div>
@@ -949,12 +993,13 @@
                     <footer class="solicitud-card-footer">
 
 
+                        <!-- VER DETALLES -->
+
                         <button
                             type="button"
                             class="btn-viaje btn-secundario"
                             data-action="detalles"
-                            data-solicitud="{{ solicitud.id }}"
-                        >
+                            data-solicitud="{{ solicitud.id }}">
 
                             <i class="fa-solid fa-chevron-down"></i>
 
@@ -968,7 +1013,7 @@
                         <div class="acciones-principales">
 
 
-                            <!-- Solicitud pendiente -->
+                            <!-- SOLICITUD PENDIENTE -->
 
                             {% if solicitud.estado == "pendiente" %}
 
@@ -976,8 +1021,7 @@
                                     type="button"
                                     class="btn-viaje btn-peligro"
                                     data-action="cancelar"
-                                    data-solicitud="{{ solicitud.id }}"
-                                >
+                                    data-solicitud="{{ solicitud.id }}">
 
                                     <i class="fa-solid fa-xmark"></i>
 
@@ -986,9 +1030,31 @@
                                 </button>
 
 
-                            <!-- Solicitud aceptada -->
+                            <!-- SOLICITUD ACEPTADA -->
 
                             {% elif solicitud.estado == "aceptada" %}
+
+
+                                <!-- CHAT: SIEMPRE DISPONIBLE PARA ACEPTADOS -->
+
+                                <a
+                                    href="{% url 'chat_viaje' solicitud.viaje.id %}"
+                                    class="btn-viaje btn-chat"
+                                    aria-label="Abrir chat del viaje">
+
+                                    <i class="fa-solid fa-comments"></i>
+
+                                    {% if solicitud.viaje.estado == "finalizado" or solicitud.viaje.estado == "cancelado" %}
+
+                                        Ver chat
+
+                                    {% else %}
+
+                                        Abrir chat
+
+                                    {% endif %}
+
+                                </a>
 
 
                                 {% if solicitud.viaje.estado == "en_curso" %}
@@ -997,8 +1063,7 @@
                                         type="button"
                                         class="btn-viaje btn-principal"
                                         data-action="continuar"
-                                        data-solicitud="{{ solicitud.id }}"
-                                    >
+                                        data-solicitud="{{ solicitud.id }}">
 
                                         <i class="fa-solid fa-location-arrow"></i>
 
@@ -1013,8 +1078,7 @@
                                         type="button"
                                         class="btn-viaje btn-principal"
                                         data-action="calificar"
-                                        data-solicitud="{{ solicitud.id }}"
-                                    >
+                                        data-solicitud="{{ solicitud.id }}">
 
                                         <i class="fa-solid fa-star"></i>
 
@@ -1023,27 +1087,13 @@
                                     </button>
 
 
-                                {% else %}
-
-                                    <button
-                                        type="button"
-                                        class="btn-viaje btn-secundario"
-                                        data-action="chat"
-                                        data-solicitud="{{ solicitud.id }}"
-                                    >
-
-                                        <i class="fa-solid fa-comments"></i>
-
-                                        Abrir chat
-
-                                    </button>
+                                {% elif solicitud.viaje.estado != "cancelado" %}
 
                                     <button
                                         type="button"
                                         class="btn-viaje btn-principal"
                                         data-action="ruta"
-                                        data-solicitud="{{ solicitud.id }}"
-                                    >
+                                        data-solicitud="{{ solicitud.id }}">
 
                                         <i class="fa-solid fa-map-location-dot"></i>
 
@@ -1054,7 +1104,7 @@
                                 {% endif %}
 
 
-                            <!-- Solicitud completada -->
+                            <!-- SOLICITUD COMPLETADA -->
 
                             {% elif solicitud.estado == "completada" %}
 
@@ -1062,8 +1112,7 @@
                                     type="button"
                                     class="btn-viaje btn-secundario"
                                     data-action="resumen"
-                                    data-solicitud="{{ solicitud.id }}"
-                                >
+                                    data-solicitud="{{ solicitud.id }}">
 
                                     <i class="fa-solid fa-receipt"></i>
 
@@ -1075,8 +1124,7 @@
                                     type="button"
                                     class="btn-viaje btn-principal"
                                     data-action="calificar"
-                                    data-solicitud="{{ solicitud.id }}"
-                                >
+                                    data-solicitud="{{ solicitud.id }}">
 
                                     <i class="fa-solid fa-star"></i>
 
@@ -1085,14 +1133,13 @@
                                 </button>
 
 
-                            <!-- Rechazada -->
+                            <!-- RECHAZADA -->
 
                             {% elif solicitud.estado == "rechazada" %}
 
                                 <a
-                                    href="{% url 'home' %}"
-                                    class="btn-viaje btn-principal"
-                                >
+                                    href="{% url 'agendarviaje' %}"
+                                    class="btn-viaje btn-principal">
 
                                     <i class="fa-solid fa-magnifying-glass"></i>
 
@@ -1101,14 +1148,13 @@
                                 </a>
 
 
-                            <!-- Cancelada -->
+                            <!-- CANCELADA -->
 
                             {% elif solicitud.estado == "cancelada" %}
 
                                 <a
-                                    href="{% url 'home' %}"
-                                    class="btn-viaje btn-principal"
-                                >
+                                    href="{% url 'agendarviaje' %}"
+                                    class="btn-viaje btn-principal">
 
                                     <i class="fa-solid fa-rotate-right"></i>
 
@@ -1117,7 +1163,7 @@
                                 </a>
 
 
-                            <!-- No presentado -->
+                            <!-- NO PRESENTADO -->
 
                             {% elif solicitud.estado == "no_presentado" %}
 
@@ -1125,8 +1171,7 @@
                                     type="button"
                                     class="btn-viaje btn-secundario"
                                     data-action="soporte"
-                                    data-solicitud="{{ solicitud.id }}"
-                                >
+                                    data-solicitud="{{ solicitud.id }}">
 
                                     <i class="fa-solid fa-headset"></i>
 
@@ -1194,9 +1239,8 @@
                     </p>
 
                     <a
-                        href="{% url 'home' %}"
-                        class="btn-buscar-viaje"
-                    >
+                        href="{% url 'agendarviaje' %}"
+                        class="btn-buscar-viaje">
 
                         <i class="fa-solid fa-magnifying-glass"></i>
 
@@ -1206,7 +1250,6 @@
 
                 </section>
 
-
             {% endfor %}
 
         </section>
@@ -1214,10 +1257,9 @@
     </main>
 
 
-    <!-- JavaScript -->
     <script
-        src="{% static 'js/mis_viajes_pasajero.js' %}"
-    ></script>
+        src="{% static 'js/mis_viajes_pasajero.js' %}">
+    </script>
 
 </body>
 

@@ -1,0 +1,359 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Chat del viaje | Cuervo-Ride
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/sidebar.css' %}">
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/chat_viaje.css' %}">
+
+</head>
+
+<body>
+
+    {% include 'components/sidebar.html' %}
+
+
+    <main
+        class="chat-main"
+        data-viaje-id="{{ viaje.id }}"
+        data-usuario-id="{{ request.user.id }}">
+
+        <section class="chat-layout">
+
+
+            <!-- =========================================
+                INFORMACIÓN DEL VIAJE
+            ========================================== -->
+
+            <aside class="chat-info-panel">
+
+                <div class="chat-info-header">
+
+                    <span class="estado-chat">
+
+                        {% if sala.activa %}
+
+                            <i class="fa-solid fa-circle"></i>
+                            Chat activo
+
+                        {% else %}
+
+                            <i class="fa-solid fa-circle-xmark"></i>
+                            Chat finalizado
+
+                        {% endif %}
+
+                    </span>
+
+                    <h1>
+                        Chat del viaje
+                    </h1>
+
+                    <p>
+                        Comunicación entre el conductor y los
+                        pasajeros aceptados.
+                    </p>
+
+                </div>
+
+
+                <div class="ruta-chat">
+
+                    <div class="ruta-punto">
+
+                        <span class="punto origen"></span>
+
+                        <div>
+
+                            <small>
+                                Origen
+                            </small>
+
+                            <strong>
+                                {{ viaje.origen }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                    <div class="ruta-linea"></div>
+
+                    <div class="ruta-punto">
+
+                        <span class="punto destino"></span>
+
+                        <div>
+
+                            <small>
+                                Destino
+                            </small>
+
+                            <strong>
+                                {{ viaje.destino }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="participantes-chat">
+
+                    <div class="participantes-header">
+
+                        <h2>
+                            Participantes
+                        </h2>
+
+                        <span>
+                            {{ participantes|length }}
+                        </span>
+
+                    </div>
+
+                    <div class="participantes-lista">
+
+                        {% for participante in participantes %}
+
+                            <div class="participante">
+
+                                <div class="participante-foto">
+
+                                    {% if participante.foto %}
+
+                                        <img
+                                            src="{{ participante.foto.url }}"
+                                            alt="{{ participante.nombre_completo }}">
+
+                                    {% else %}
+
+                                        <i class="fa-solid fa-user"></i>
+
+                                    {% endif %}
+
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        {{ participante.nombre_completo }}
+                                    </strong>
+
+                                    <small>
+
+                                        {% if participante.id == viaje.conductor.usuario_id %}
+                                            Conductor
+                                        {% else %}
+                                            Pasajero
+                                        {% endif %}
+
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+
+                <a
+                    href="{% url 'crear_alerta_viaje' viaje.id %}"
+                    class="btn-alerta-chat">
+
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+
+                    Crear alerta de emergencia
+
+                </a>
+
+            </aside>
+
+
+            <!-- =========================================
+                ÁREA DEL CHAT
+            ========================================== -->
+
+            <section class="chat-conversacion">
+
+                <header class="conversacion-header">
+
+                    <div>
+
+                        <span class="conversacion-etiqueta">
+                            Viaje #{{ viaje.id }}
+                        </span>
+
+                        <h2>
+                            {{ viaje.origen }} → {{ viaje.destino }}
+                        </h2>
+
+                    </div>
+
+                    <a
+                        href="{% url 'home' %}"
+                        class="btn-salir-chat"
+                        aria-label="Salir del chat">
+
+                        <i class="fa-solid fa-xmark"></i>
+
+                    </a>
+
+                </header>
+
+
+                <div
+                    class="mensajes-chat"
+                    id="mensajesChat">
+
+                    {% for mensaje in mensajes_chat %}
+
+                        <article
+                            class="mensaje-chat
+                            {% if mensaje.emisor_id == request.user.id %}
+                                mensaje-propio
+                            {% else %}
+                                mensaje-ajeno
+                            {% endif %}"
+                            data-mensaje-id="{{ mensaje.id }}">
+
+                            <div class="mensaje-avatar">
+
+                                {% if mensaje.emisor.foto %}
+
+                                    <img
+                                        src="{{ mensaje.emisor.foto.url }}"
+                                        alt="{{ mensaje.emisor.nombre_completo }}">
+
+                                {% else %}
+
+                                    <i class="fa-solid fa-user"></i>
+
+                                {% endif %}
+
+                            </div>
+
+                            <div class="mensaje-contenido">
+
+                                <div class="mensaje-cabecera">
+
+                                    <strong>
+                                        {{ mensaje.emisor.nombre_completo }}
+                                    </strong>
+
+                                    <time>
+                                        {{ mensaje.fecha_envio|date:"H:i" }}
+                                    </time>
+
+                                </div>
+
+                                <p>
+                                    {{ mensaje.contenido }}
+                                </p>
+
+                            </div>
+
+                        </article>
+
+                    {% empty %}
+
+                        <div
+                            class="chat-vacio"
+                            id="chatVacio">
+
+                            <i class="fa-regular fa-comments"></i>
+
+                            <h3>
+                                Aún no hay mensajes
+                            </h3>
+
+                            <p>
+                                Escribe el primer mensaje para
+                                comenzar la conversación.
+                            </p>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+
+                <div
+                    class="mensaje-error-chat"
+                    id="mensajeErrorChat"
+                    hidden>
+                </div>
+
+
+                <form
+                    class="form-enviar-mensaje"
+                    id="formEnviarMensaje">
+
+                    {% csrf_token %}
+
+                    <textarea
+                        id="contenidoMensaje"
+                        name="contenido"
+                        maxlength="1000"
+                        rows="1"
+                        placeholder="Escribe un mensaje..."
+                        {% if not sala.activa %}
+                            disabled
+                        {% endif %}></textarea>
+
+                    <button
+                        type="submit"
+                        id="botonEnviarMensaje"
+                        aria-label="Enviar mensaje"
+                        {% if not sala.activa %}
+                            disabled
+                        {% endif %}>
+
+                        <i class="fa-solid fa-paper-plane"></i>
+
+                    </button>
+
+                </form>
+
+            </section>
+
+        </section>
+
+    </main>
+
+
+    <script src="{% static 'js/sidebarP.js' %}"></script>
+
+    <script src="{% static 'js/chat_viaje.js' %}"></script>
+
+</body>
+
+</html>

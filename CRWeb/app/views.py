@@ -15,7 +15,7 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 from django.db.models import Q
 from django.http import Http404, JsonResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_http_methods
@@ -28,6 +28,8 @@ from .models import (
     Vehiculo,
     Viaje,
     SalaChat,
+    Mensaje,
+    LecturaMensaje,
     AlertaEmergencia,
     SolicitudViaje,
 )
@@ -76,6 +78,27 @@ def redirigir_segun_rol(usuario):
 
 def valor_booleano(request, nombre):
     return request.POST.get(nombre) in {"on", "true", "True", "1", "si", "sí"}
+
+def usuario_pertenece_al_viaje(usuario, viaje):
+    """
+    Determina si el usuario puede acceder al viaje y a su chat.
+
+    Puede acceder:
+    - El conductor propietario del viaje.
+    - Un pasajero cuya solicitud haya sido aceptada.
+    """
+
+    if (
+        viaje.conductor_id
+        and viaje.conductor.usuario_id == usuario.id
+    ):
+        return True
+
+    return SolicitudViaje.objects.filter(
+        viaje=viaje,
+        pasajero=usuario,
+        estado=SolicitudViaje.EstadosSolicitud.ACEPTADA,
+    ).exists()
 
 
 # =========================================================
@@ -596,6 +619,427 @@ def publicar_viaje(request):
 
     return render(request, "viajes/publicar_viaje.html", contexto)
 
+# =========================================================
+# CHAT DEL VIAJE
+# =========================================================
+
+@login_required(login_url="login")
+def chat_viaje(request, viaje_id):
+
+    viaje = get_object_or_404(
+        Viaje.objects.select_related(
+            "conductor__usuario",
+            "vehiculo",
+        ),
+        pk=viaje_id,
+    )
+
+    if not usuario_pertenece_al_viaje(
+        request.user,
+        viaje,
+    ):
+        messages.error(
+            request,
+            "No tienes permiso para entrar al chat de este viaje.",
+        )
+
+        return redirect("home")
+
+    sala, _ = SalaChat.objects.get_or_create(
+        viaje=viaje,
+        defaults={
+            "activa": True,
+        },
+    )
+
+    mensajes_chat = (
+        Mensaje.objects
+        .filter(
+            sala=sala,
+            eliminado=False,
+        )
+        .select_related("emisor")
+        .order_by("fecha_envio")
+    )
+
+    solicitudes_aceptadas = (
+        SolicitudViaje.objects
+        .filter(
+            viaje=viaje,
+            estado=SolicitudViaje.EstadosSolicitud.ACEPTADA,
+        )
+        .select_related("pasajero")
+        .order_by("fecha_solicitud")
+    )
+
+    participantes = [
+        viaje.conductor.usuario,
+    ]
+
+    participantes.extend(
+        solicitud.pasajero
+        for solicitud in solicitudes_aceptadas
+    )
+
+    # Registrar como leídos todos los mensajes de otros usuarios.
+    lecturas_nuevas = []
+
+    for mensaje in mensajes_chat:
+
+        if mensaje.emisor_id == request.user.id:
+            continue
+
+        lecturas_nuevas.append(
+            LecturaMensaje(
+                mensaje=mensaje,
+                usuario=request.user,
+            )
+        )
+
+    if lecturas_nuevas:
+
+        LecturaMensaje.objects.bulk_create(
+            lecturas_nuevas,
+            ignore_conflicts=True,
+        )
+
+    contexto = {
+        "viaje": viaje,
+        "sala": sala,
+        "mensajes_chat": mensajes_chat,
+        "participantes": participantes,
+        "es_conductor": (
+            viaje.conductor.usuario_id
+            == request.user.id
+        ),
+    }
+
+    return render(
+        request,
+        "chat/chat_viaje.html",
+        contexto,
+    )
+
+#==========================================================
+# Vista temporal para guardar mensajes del chat
+#==========================================================
+
+@login_required(login_url="login")
+@require_POST
+def enviar_mensaje_chat(request, viaje_id):
+
+    viaje = get_object_or_404(
+        Viaje.objects.select_related(
+            "conductor__usuario",
+        ),
+        pk=viaje_id,
+    )
+
+    if not usuario_pertenece_al_viaje(
+        request.user,
+        viaje,
+    ):
+        return JsonResponse(
+            {
+                "ok": False,
+                "error": (
+                    "No tienes permiso para escribir "
+                    "en este chat."
+                ),
+            },
+            status=403,
+        )
+
+    sala = get_object_or_404(
+        SalaChat,
+        viaje=viaje,
+    )
+
+    if not sala.activa:
+
+        return JsonResponse(
+            {
+                "ok": False,
+                "error": (
+                    "La sala de chat ya no está activa."
+                ),
+            },
+            status=403,
+        )
+
+    contenido = request.POST.get(
+        "contenido",
+        "",
+    ).strip()
+
+    if not contenido:
+
+        return JsonResponse(
+            {
+                "ok": False,
+                "error": (
+                    "El mensaje no puede estar vacío."
+                ),
+            },
+            status=400,
+        )
+
+    if len(contenido) > 1000:
+
+        return JsonResponse(
+            {
+                "ok": False,
+                "error": (
+                    "El mensaje no puede superar "
+                    "los 1000 caracteres."
+                ),
+            },
+            status=400,
+        )
+
+    mensaje = Mensaje.objects.create(
+        sala=sala,
+        emisor=request.user,
+        contenido=contenido,
+    )
+
+    return JsonResponse(
+        {
+            "ok": True,
+            "mensaje": {
+                "id": mensaje.id,
+                "contenido": mensaje.contenido,
+                "emisor_id": request.user.id,
+                "emisor": request.user.nombre_completo,
+                "foto": (
+                    request.user.foto.url
+                    if request.user.foto
+                    else ""
+                ),
+                "fecha": mensaje.fecha_envio.strftime(
+                    "%H:%M"
+                ),
+                "es_propio": True,
+            },
+        },
+        status=201,
+    )
+
+#==========================================================
+# Crear Alertas
+#==========================================================
+
+def usuario_pertenece_al_viaje(usuario, viaje):
+    """
+    Permite participar al conductor del viaje o a un pasajero
+    cuya solicitud haya sido aceptada.
+    """
+
+    if viaje.conductor.usuario_id == usuario.id:
+        return True
+
+    return SolicitudViaje.objects.filter(
+        viaje=viaje,
+        pasajero=usuario,
+        estado=SolicitudViaje.EstadosSolicitud.ACEPTADA,
+    ).exists()
+
+
+@login_required(login_url="login")
+def crear_alerta_viaje(request, viaje_id):
+
+    viaje = get_object_or_404(
+        Viaje.objects.select_related(
+            "conductor__usuario",
+            "vehiculo",
+        ),
+        pk=viaje_id,
+    )
+
+    if not usuario_pertenece_al_viaje(
+        request.user,
+        viaje,
+    ):
+        messages.error(
+            request,
+            "No tienes permiso para crear alertas en este viaje.",
+        )
+
+        return redirect("home")
+
+    if request.method == "POST":
+
+        tipo = request.POST.get(
+            "tipo",
+            "",
+        ).strip()
+
+        descripcion = request.POST.get(
+            "descripcion",
+            "",
+        ).strip()
+
+        latitud_texto = request.POST.get(
+            "latitud",
+            "",
+        ).strip()
+
+        longitud_texto = request.POST.get(
+            "longitud",
+            "",
+        ).strip()
+
+        tipos_validos = {
+            valor
+            for valor, _ in
+            AlertaEmergencia.TiposAlerta.choices
+        }
+
+        errores = []
+
+        if tipo not in tipos_validos:
+            errores.append(
+                "Selecciona un tipo de emergencia válido."
+            )
+
+        if not descripcion:
+            errores.append(
+                "Describe brevemente lo que está ocurriendo."
+            )
+
+        if len(descripcion) > 1000:
+            errores.append(
+                "La descripción no puede superar los 1000 caracteres."
+            )
+
+        latitud = None
+        longitud = None
+
+        if latitud_texto or longitud_texto:
+
+            if not latitud_texto or not longitud_texto:
+                errores.append(
+                    "La ubicación está incompleta."
+                )
+
+            else:
+
+                try:
+                    latitud = Decimal(latitud_texto)
+                    longitud = Decimal(longitud_texto)
+
+                except InvalidOperation:
+                    errores.append(
+                        "Las coordenadas de ubicación no son válidas."
+                    )
+
+        if errores:
+
+            for error in errores:
+                messages.error(
+                    request,
+                    error,
+                )
+
+            return render(
+                request,
+                "alertas/crear_alerta.html",
+                {
+                    "viaje": viaje,
+                    "tipos_alerta": (
+                        AlertaEmergencia
+                        .TiposAlerta
+                        .choices
+                    ),
+                    "datos": {
+                        "tipo": tipo,
+                        "descripcion": descripcion,
+                        "latitud": latitud_texto,
+                        "longitud": longitud_texto,
+                    },
+                },
+            )
+
+        alerta = AlertaEmergencia(
+            viaje=viaje,
+            usuario=request.user,
+            tipo=tipo,
+            descripcion=descripcion,
+            latitud=latitud,
+            longitud=longitud,
+            estado=(
+                AlertaEmergencia
+                .EstadosAlerta
+                .ACTIVA
+            ),
+        )
+
+        try:
+            alerta.full_clean()
+            alerta.save()
+
+        except ValidationError as error:
+
+            if hasattr(error, "message_dict"):
+
+                for mensajes_campo in (
+                    error.message_dict.values()
+                ):
+                    for mensaje in mensajes_campo:
+                        messages.error(
+                            request,
+                            mensaje,
+                        )
+
+            else:
+
+                for mensaje in error.messages:
+                    messages.error(
+                        request,
+                        mensaje,
+                    )
+
+            return render(
+                request,
+                "alertas/crear_alerta.html",
+                {
+                    "viaje": viaje,
+                    "tipos_alerta": (
+                        AlertaEmergencia
+                        .TiposAlerta
+                        .choices
+                    ),
+                    "datos": {
+                        "tipo": tipo,
+                        "descripcion": descripcion,
+                        "latitud": latitud_texto,
+                        "longitud": longitud_texto,
+                    },
+                },
+            )
+
+        messages.success(
+            request,
+            "La alerta de emergencia fue enviada correctamente.",
+        )
+
+        return redirect(
+            "ride_en_progreso",
+            viaje_id=viaje.id,
+        )
+
+    return render(
+        request,
+        "alertas/crear_alerta.html",
+        {
+            "viaje": viaje,
+            "tipos_alerta": (
+                AlertaEmergencia
+                .TiposAlerta
+                .choices
+            ),
+        },
+    )
 
 # =========================================================
 # BÚSQUEDA DE VIAJES PARA PASAJEROS (AJAX / API)

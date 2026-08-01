@@ -9,20 +9,19 @@
 
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+        content="width=device-width, initial-scale=1.0">
 
-    <title>Mis viajes | Cuervo-Ride</title>
-
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-    >
+    <title>
+        Mis viajes | Cuervo-Ride
+    </title>
 
     <link
         rel="stylesheet"
-        href="{% static 'css/mis_viajes_conductor.css' %}"
-    >
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/mis_viajes_conductor.css' %}">
 
 </head>
 
@@ -30,7 +29,9 @@
 
     {% include "components/sidebar.html" %}
 
+
     <main class="mis-viajes-main">
+
 
         <!-- =========================================
                         ENCABEZADO
@@ -40,7 +41,9 @@
 
             <div class="header-texto">
 
-                <h1>Mis viajes</h1>
+                <h1>
+                    Mis viajes
+                </h1>
 
                 <p>
                     Administra los recorridos que has publicado
@@ -49,16 +52,21 @@
 
             </div>
 
+
             <a
                 href="{% url 'publicar_viaje' %}"
-                class="btn-nuevo-viaje"
-            >
+                class="btn-nuevo-viaje">
+
                 <i class="fa-solid fa-plus"></i>
 
-                <span>Publicar nuevo viaje</span>
+                <span>
+                    Publicar nuevo viaje
+                </span>
+
             </a>
 
         </header>
+
 
         <!-- =========================================
                     MENSAJES DE DJANGO
@@ -73,16 +81,26 @@
                     <div class="mensaje {{ message.tags }}">
 
                         {% if message.tags == "success" %}
+
                             <i class="fa-solid fa-circle-check"></i>
 
                         {% elif message.tags == "warning" %}
+
                             <i class="fa-solid fa-triangle-exclamation"></i>
 
+                        {% elif message.tags == "error" %}
+
+                            <i class="fa-solid fa-circle-exclamation"></i>
+
                         {% else %}
+
                             <i class="fa-solid fa-circle-info"></i>
+
                         {% endif %}
 
-                        <span>{{ message }}</span>
+                        <span>
+                            {{ message }}
+                        </span>
 
                     </div>
 
@@ -92,65 +110,107 @@
 
         {% endif %}
 
+
         <!-- =========================================
                       ESTADÍSTICAS
         ========================================== -->
 
         <section class="estadisticas-viajes">
 
+
             <article class="estadistica-card">
 
                 <span class="estadistica-icono total">
+
                     <i class="fa-solid fa-route"></i>
+
                 </span>
 
                 <div>
-                    <span>Total de viajes</span>
-                    <strong>{{ estadisticas.total }}</strong>
+
+                    <span>
+                        Total de viajes
+                    </span>
+
+                    <strong>
+                        {{ estadisticas.total }}
+                    </strong>
+
                 </div>
 
             </article>
+
 
             <article class="estadistica-card">
 
                 <span class="estadistica-icono disponibles">
+
                     <i class="fa-solid fa-calendar-check"></i>
+
                 </span>
 
                 <div>
-                    <span>Disponibles</span>
-                    <strong>{{ estadisticas.disponibles }}</strong>
+
+                    <span>
+                        Disponibles
+                    </span>
+
+                    <strong>
+                        {{ estadisticas.disponibles }}
+                    </strong>
+
                 </div>
 
             </article>
+
 
             <article class="estadistica-card">
 
                 <span class="estadistica-icono curso">
+
                     <i class="fa-solid fa-car-side"></i>
+
                 </span>
 
                 <div>
-                    <span>En curso</span>
-                    <strong>{{ estadisticas.en_curso }}</strong>
+
+                    <span>
+                        En curso
+                    </span>
+
+                    <strong>
+                        {{ estadisticas.en_curso }}
+                    </strong>
+
                 </div>
 
             </article>
 
+
             <article class="estadistica-card">
 
                 <span class="estadistica-icono finalizados">
+
                     <i class="fa-solid fa-flag-checkered"></i>
+
                 </span>
 
                 <div>
-                    <span>Finalizados</span>
-                    <strong>{{ estadisticas.finalizados }}</strong>
+
+                    <span>
+                        Finalizados
+                    </span>
+
+                    <strong>
+                        {{ estadisticas.finalizados }}
+                    </strong>
+
                 </div>
 
             </article>
 
         </section>
+
 
         <!-- =========================================
                          FILTROS
@@ -160,54 +220,75 @@
 
             <nav class="filtros-viajes">
 
+
                 <a
                     href="{% url 'mis_viajes_conductor' %}?estado=todos"
-                    class="filtro-btn {% if filtro_actual == 'todos' %}active{% endif %}"
-                >
+                    class="filtro-btn {% if filtro_actual == 'todos' %}active{% endif %}">
+
                     Todos
 
-                    <span>{{ estadisticas.total }}</span>
+                    <span>
+                        {{ estadisticas.total }}
+                    </span>
+
                 </a>
+
 
                 <a
                     href="{% url 'mis_viajes_conductor' %}?estado=disponibles"
-                    class="filtro-btn {% if filtro_actual == 'disponibles' %}active{% endif %}"
-                >
+                    class="filtro-btn {% if filtro_actual == 'disponibles' %}active{% endif %}">
+
                     Disponibles
 
-                    <span>{{ estadisticas.disponibles }}</span>
+                    <span>
+                        {{ estadisticas.disponibles }}
+                    </span>
+
                 </a>
+
 
                 <a
                     href="{% url 'mis_viajes_conductor' %}?estado=en_curso"
-                    class="filtro-btn {% if filtro_actual == 'en_curso' %}active{% endif %}"
-                >
+                    class="filtro-btn {% if filtro_actual == 'en_curso' %}active{% endif %}">
+
                     En curso
 
-                    <span>{{ estadisticas.en_curso }}</span>
+                    <span>
+                        {{ estadisticas.en_curso }}
+                    </span>
+
                 </a>
+
 
                 <a
                     href="{% url 'mis_viajes_conductor' %}?estado=finalizados"
-                    class="filtro-btn {% if filtro_actual == 'finalizados' %}active{% endif %}"
-                >
+                    class="filtro-btn {% if filtro_actual == 'finalizados' %}active{% endif %}">
+
                     Finalizados
 
-                    <span>{{ estadisticas.finalizados }}</span>
+                    <span>
+                        {{ estadisticas.finalizados }}
+                    </span>
+
                 </a>
+
 
                 <a
                     href="{% url 'mis_viajes_conductor' %}?estado=cancelados"
-                    class="filtro-btn {% if filtro_actual == 'cancelados' %}active{% endif %}"
-                >
+                    class="filtro-btn {% if filtro_actual == 'cancelados' %}active{% endif %}">
+
                     Cancelados
 
-                    <span>{{ estadisticas.cancelados }}</span>
+                    <span>
+                        {{ estadisticas.cancelados }}
+                    </span>
+
                 </a>
 
             </nav>
 
         </section>
+
 
         <!-- =========================================
                       LISTA DE VIAJES
@@ -220,20 +301,25 @@
                 <article
                     class="viaje-card"
                     data-viaje-id="{{ viaje.id }}"
-                    data-estado="{{ viaje.estado }}"
-                >
+                    data-estado="{{ viaje.estado }}">
 
-                    <!-- Parte superior -->
+
+                    <!-- =================================
+                        PARTE SUPERIOR
+                    ================================== -->
 
                     <header class="viaje-card-header">
 
                         <div class="viaje-fecha">
 
                             <span class="fecha-icono">
+
                                 <i class="fa-regular fa-calendar"></i>
+
                             </span>
 
                             <div>
+
                                 <strong>
                                     {{ viaje.fecha_hora_salida|date:"d M Y" }}
                                 </strong>
@@ -241,35 +327,42 @@
                                 <span>
                                     {{ viaje.fecha_hora_salida|date:"H:i" }} h
                                 </span>
+
                             </div>
 
                         </div>
+
 
                         <span class="estado-viaje estado-{{ viaje.estado }}">
 
                             {% if viaje.estado == "disponible" %}
 
                                 <i class="fa-solid fa-circle"></i>
+
                                 Disponible
 
                             {% elif viaje.estado == "completo" %}
 
                                 <i class="fa-solid fa-users"></i>
+
                                 Completo
 
                             {% elif viaje.estado == "en_curso" %}
 
                                 <i class="fa-solid fa-location-arrow"></i>
+
                                 En curso
 
                             {% elif viaje.estado == "finalizado" %}
 
                                 <i class="fa-solid fa-circle-check"></i>
+
                                 Finalizado
 
                             {% elif viaje.estado == "cancelado" %}
 
                                 <i class="fa-solid fa-circle-xmark"></i>
+
                                 Cancelado
 
                             {% else %}
@@ -282,7 +375,10 @@
 
                     </header>
 
-                    <!-- Ruta -->
+
+                    <!-- =================================
+                        RUTA
+                    ================================== -->
 
                     <div class="viaje-ruta">
 
@@ -296,11 +392,14 @@
 
                         </div>
 
+
                         <div class="ruta-direcciones">
 
                             <div>
 
-                                <span>Origen</span>
+                                <span>
+                                    Origen
+                                </span>
 
                                 <strong>
                                     {{ viaje.origen }}
@@ -308,9 +407,12 @@
 
                             </div>
 
+
                             <div>
 
-                                <span>Destino</span>
+                                <span>
+                                    Destino
+                                </span>
 
                                 <strong>
                                     {{ viaje.destino }}
@@ -322,168 +424,269 @@
 
                     </div>
 
-                    <!-- Información -->
+
+                    <!-- =================================
+                        INFORMACIÓN
+                    ================================== -->
 
                     <div class="viaje-informacion">
+
 
                         <div class="info-viaje">
 
                             <i class="fa-solid fa-car-side"></i>
 
                             <div>
-                                <span>Vehículo</span>
+
+                                <span>
+                                    Vehículo
+                                </span>
 
                                 <strong>
                                     {{ viaje.vehiculo.marca }}
                                     {{ viaje.vehiculo.modelo }}
                                 </strong>
+
                             </div>
 
                         </div>
+
 
                         <div class="info-viaje">
 
                             <i class="fa-solid fa-users"></i>
 
                             <div>
-                                <span>Asientos disponibles</span>
+
+                                <span>
+                                    Asientos disponibles
+                                </span>
 
                                 <strong>
                                     {{ viaje.asientos_disponibles }}
                                     de
                                     {{ viaje.asientos_totales }}
                                 </strong>
+
                             </div>
 
                         </div>
+
 
                         <div class="info-viaje">
 
                             <i class="fa-solid fa-coins"></i>
 
                             <div>
-                                <span>Costo por pasajero</span>
+
+                                <span>
+                                    Costo por pasajero
+                                </span>
 
                                 <strong>
                                     ${{ viaje.costo_por_pasajero|floatformat:2 }}
                                     MXN
                                 </strong>
+
                             </div>
 
                         </div>
+
 
                         <div class="info-viaje">
 
                             <i class="fa-regular fa-clock"></i>
 
                             <div>
-                                <span>Llegada estimada</span>
+
+                                <span>
+                                    Llegada estimada
+                                </span>
 
                                 <strong>
+
                                     {% if viaje.fecha_hora_llegada_estimada %}
+
                                         {{ viaje.fecha_hora_llegada_estimada|date:"H:i" }} h
+
                                     {% else %}
+
                                         Sin definir
+
                                     {% endif %}
+
                                 </strong>
+
                             </div>
 
                         </div>
 
                     </div>
 
-                    <!-- Preferencias -->
 
-                    <div class="preferencias-card">
+                    <!-- =================================
+                        PREFERENCIAS
+                    ================================== -->
 
-                        {% if viaje.permite_mascota %}
+                    {% if viaje.permite_mascota or viaje.acepta_silla_ruedas %}
 
-                            <span>
-                                <i class="fa-solid fa-paw"></i>
-                                Mascotas
-                            </span>
+                        <div class="preferencias-card">
 
-                        {% endif %}
+                            {% if viaje.permite_mascota %}
 
-                        {% if viaje.acepta_silla_ruedas %}
+                                <span>
 
-                            <span>
-                                <i class="fa-solid fa-wheelchair"></i>
-                                Silla de ruedas
-                            </span>
+                                    <i class="fa-solid fa-paw"></i>
 
-                        {% endif %}
+                                    Mascotas
 
-                    </div>
+                                </span>
 
-                    <!-- Acciones -->
+                            {% endif %}
+
+
+                            {% if viaje.acepta_silla_ruedas %}
+
+                                <span>
+
+                                    <i class="fa-solid fa-wheelchair"></i>
+
+                                    Silla de ruedas
+
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- =================================
+                        ACCIONES
+                    ================================== -->
 
                     <footer class="viaje-card-footer">
+
+
+                        <!-- VER DETALLES -->
 
                         <button
                             type="button"
                             class="btn-viaje btn-detalles"
                             data-accion="detalles"
-                            data-viaje-id="{{ viaje.id }}"
-                        >
+                            data-viaje-id="{{ viaje.id }}">
+
                             <i class="fa-regular fa-eye"></i>
+
                             Ver detalles
+
                         </button>
 
+
+                        <!-- CHAT DEL VIAJE -->
+
+                        <a
+                            href="{% url 'chat_viaje' viaje.id %}"
+                            class="btn-viaje btn-chat"
+                            aria-label="Abrir chat del viaje">
+
+                            <i class="fa-solid fa-comments"></i>
+
+                            {% if viaje.estado == "finalizado" or viaje.estado == "cancelado" %}
+
+                                Ver chat
+
+                            {% else %}
+
+                                Abrir chat
+
+                            {% endif %}
+
+                        </a>
+
+
                         {% if viaje.estado == "disponible" or viaje.estado == "completo" %}
+
+
+                            <!-- EDITAR -->
 
                             <button
                                 type="button"
                                 class="btn-viaje btn-secundario"
                                 data-accion="editar"
-                                data-viaje-id="{{ viaje.id }}"
-                            >
+                                data-viaje-id="{{ viaje.id }}">
+
                                 <i class="fa-solid fa-pen"></i>
+
                                 Editar
+
                             </button>
+
+
+                            <!-- CANCELAR -->
 
                             <button
                                 type="button"
                                 class="btn-viaje btn-peligro"
                                 data-accion="cancelar"
-                                data-viaje-id="{{ viaje.id }}"
-                            >
+                                data-viaje-id="{{ viaje.id }}">
+
                                 <i class="fa-solid fa-ban"></i>
+
                                 Cancelar
+
                             </button>
+
+
+                            <!-- INICIAR -->
 
                             <button
                                 type="button"
                                 class="btn-viaje btn-iniciar"
                                 data-accion="iniciar"
-                                data-viaje-id="{{ viaje.id }}"
-                            >
+                                data-viaje-id="{{ viaje.id }}">
+
                                 <i class="fa-solid fa-play"></i>
+
                                 Iniciar
+
                             </button>
 
+
                         {% elif viaje.estado == "en_curso" %}
+
+
+                            <!-- CONTINUAR -->
 
                             <button
                                 type="button"
                                 class="btn-viaje btn-iniciar"
                                 data-accion="continuar"
-                                data-viaje-id="{{ viaje.id }}"
-                            >
+                                data-viaje-id="{{ viaje.id }}">
+
                                 <i class="fa-solid fa-location-arrow"></i>
+
                                 Continuar viaje
+
                             </button>
 
+
                         {% elif viaje.estado == "finalizado" or viaje.estado == "cancelado" %}
+
+
+                            <!-- DUPLICAR -->
 
                             <button
                                 type="button"
                                 class="btn-viaje btn-secundario"
                                 data-accion="duplicar"
-                                data-viaje-id="{{ viaje.id }}"
-                            >
+                                data-viaje-id="{{ viaje.id }}">
+
                                 <i class="fa-regular fa-copy"></i>
+
                                 Duplicar viaje
+
                             </button>
 
                         {% endif %}
@@ -492,15 +695,21 @@
 
                 </article>
 
+
             {% empty %}
 
                 <div class="viajes-vacio">
 
                     <span class="vacio-icono">
+
                         <i class="fa-solid fa-route"></i>
+
                     </span>
 
-                    <h2>No hay viajes para mostrar</h2>
+                    <h2>
+                        No hay viajes para mostrar
+                    </h2>
+
 
                     {% if filtro_actual == "todos" %}
 
@@ -511,11 +720,14 @@
 
                         <a
                             href="{% url 'publicar_viaje' %}"
-                            class="btn-vacio"
-                        >
+                            class="btn-vacio">
+
                             <i class="fa-solid fa-plus"></i>
+
                             Publicar mi primer viaje
+
                         </a>
+
 
                     {% else %}
 
@@ -525,9 +737,10 @@
 
                         <a
                             href="{% url 'mis_viajes_conductor' %}"
-                            class="btn-vacio"
-                        >
+                            class="btn-vacio">
+
                             Mostrar todos los viajes
+
                         </a>
 
                     {% endif %}
@@ -540,9 +753,10 @@
 
     </main>
 
+
     <script
-        src="{% static 'js/mis_viajes_conductor.js' %}"
-    ></script>
+        src="{% static 'js/mis_viajes_conductor.js' %}">
+    </script>
 
 </body>
 

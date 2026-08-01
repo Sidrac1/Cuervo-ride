@@ -1824,3 +1824,37 @@ este selector mueve correctamente el contenido.
     }
 
 }
+
+/*==================================================
+    BOTÓN CHAT
+==================================================*/
+
+.btn-chat {
+
+    border: 1px solid
+        rgba(76, 166, 255, 0.34);
+
+    background:
+        rgba(76, 166, 255, 0.11);
+
+    color: #6bb7ff;
+
+}
+
+.btn-chat:hover {
+
+    border-color:
+        rgba(76, 166, 255, 0.58);
+
+    background:
+        rgba(76, 166, 255, 0.18);
+
+    color: #8bc7ff;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 9px 20px
+        rgba(76, 166, 255, 0.12);
+
+}
