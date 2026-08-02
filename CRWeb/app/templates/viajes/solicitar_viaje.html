@@ -1,0 +1,655 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Solicitar lugar | Cuervo-Ride
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/sidebar.css' %}">
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/solicitar_viaje.css' %}">
+
+</head>
+
+<body>
+
+    {% include 'components/sidebar.html' %}
+
+
+    <main class="solicitud-main">
+
+        <section class="solicitud-contenedor">
+
+
+            <!-- =========================================
+                ENCABEZADO
+            ========================================== -->
+
+            <header class="solicitud-header">
+
+                <div class="solicitud-header-icono">
+
+                    <i class="fa-solid fa-ticket"></i>
+
+                </div>
+
+                <div>
+
+                    <span class="solicitud-etiqueta">
+
+                        Solicitud de viaje
+
+                    </span>
+
+                    <h1>
+                        Apartar un lugar
+                    </h1>
+
+                    <p>
+                        Confirma la información de tu recorrido
+                        y envía la solicitud al conductor.
+                    </p>
+
+                </div>
+
+            </header>
+
+
+            <!-- =========================================
+                MENSAJES DE DJANGO
+            ========================================== -->
+
+            {% if messages %}
+
+                <section class="mensajes-solicitud">
+
+                    {% for message in messages %}
+
+                        <div class="mensaje {{ message.tags }}">
+
+                            {% if message.tags == "success" %}
+
+                                <i class="fa-solid fa-circle-check"></i>
+
+                            {% elif message.tags == "warning" %}
+
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+
+                            {% elif message.tags == "error" %}
+
+                                <i class="fa-solid fa-circle-exclamation"></i>
+
+                            {% else %}
+
+                                <i class="fa-solid fa-circle-info"></i>
+
+                            {% endif %}
+
+                            <span>
+                                {{ message }}
+                            </span>
+
+                        </div>
+
+                    {% endfor %}
+
+                </section>
+
+            {% endif %}
+
+
+            <section class="solicitud-layout">
+
+
+                <!-- =====================================
+                    RESUMEN DEL VIAJE
+                ====================================== -->
+
+                <aside class="resumen-viaje">
+
+
+                    <div class="resumen-viaje-header">
+
+                        <span>
+
+                            <i class="fa-solid fa-route"></i>
+
+                            Información del viaje
+
+                        </span>
+
+                        <strong>
+                            Viaje #{{ viaje.id }}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- RUTA -->
+
+                    <div class="resumen-ruta">
+
+                        <div class="ruta-punto">
+
+                            <span class="punto origen"></span>
+
+                            <div>
+
+                                <small>
+                                    Origen
+                                </small>
+
+                                <strong>
+                                    {{ viaje.origen }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="ruta-linea"></div>
+
+
+                        <div class="ruta-punto">
+
+                            <span class="punto destino"></span>
+
+                            <div>
+
+                                <small>
+                                    Destino
+                                </small>
+
+                                <strong>
+                                    {{ viaje.destino }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- CONDUCTOR -->
+
+                    <div class="resumen-conductor">
+
+                        <div class="conductor-foto">
+
+                            {% if viaje.conductor.usuario.foto %}
+
+                                <img
+                                    src="{{ viaje.conductor.usuario.foto.url }}"
+                                    alt="Foto de {{ viaje.conductor.usuario.nombre_completo }}">
+
+                            {% else %}
+
+                                <img
+                                    src="{% static 'img/profileIcon.png' %}"
+                                    alt="Foto predeterminada">
+
+                            {% endif %}
+
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Conductor
+                            </span>
+
+                            <strong>
+                                {{ viaje.conductor.usuario.nombre_completo }}
+                            </strong>
+
+                            <small>
+                                {{ viaje.conductor.get_estado_verificacion_display }}
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- INFORMACIÓN -->
+
+                    <div class="resumen-datos">
+
+
+                        <div class="resumen-dato">
+
+                            <i class="fa-regular fa-calendar"></i>
+
+                            <div>
+
+                                <span>
+                                    Fecha
+                                </span>
+
+                                <strong>
+                                    {{ viaje.fecha_hora_salida|date:"d/m/Y" }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="resumen-dato">
+
+                            <i class="fa-regular fa-clock"></i>
+
+                            <div>
+
+                                <span>
+                                    Hora
+                                </span>
+
+                                <strong>
+                                    {{ viaje.fecha_hora_salida|date:"H:i" }} h
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="resumen-dato">
+
+                            <i class="fa-solid fa-user-group"></i>
+
+                            <div>
+
+                                <span>
+                                    Disponibles
+                                </span>
+
+                                <strong>
+                                    {{ viaje.asientos_disponibles }}
+                                    lugar{{ viaje.asientos_disponibles|pluralize:"es" }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="resumen-dato">
+
+                            <i class="fa-solid fa-coins"></i>
+
+                            <div>
+
+                                <span>
+                                    Costo por pasajero
+                                </span>
+
+                                <strong>
+                                    ${{ viaje.costo_por_pasajero|floatformat:2 }}
+                                    MXN
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="resumen-dato">
+
+                            <i class="fa-solid fa-car-side"></i>
+
+                            <div>
+
+                                <span>
+                                    Vehículo
+                                </span>
+
+                                <strong>
+                                    {{ viaje.vehiculo.marca }}
+                                    {{ viaje.vehiculo.modelo }}
+                                </strong>
+
+                                <small>
+                                    {{ viaje.vehiculo.color }}
+                                    ·
+                                    {{ viaje.vehiculo.placas }}
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    {% if viaje.indicaciones %}
+
+                        <div class="indicaciones-conductor">
+
+                            <span>
+
+                                <i class="fa-solid fa-circle-info"></i>
+
+                                Indicaciones
+
+                            </span>
+
+                            <p>
+                                {{ viaje.indicaciones }}
+                            </p>
+
+                        </div>
+
+                    {% endif %}
+
+                </aside>
+
+
+                <!-- =====================================
+                    FORMULARIO
+                ====================================== -->
+
+                <section class="formulario-solicitud-contenedor">
+
+                    <div class="formulario-header">
+
+                        <h2>
+                            Datos de tu solicitud
+                        </h2>
+
+                        <p>
+                            El conductor revisará esta información
+                            antes de aceptar o rechazar la solicitud.
+                        </p>
+
+                    </div>
+
+
+                    <form
+                        method="POST"
+                        class="formulario-solicitud"
+                        id="formSolicitudViaje"
+                        novalidate>
+
+                        {% csrf_token %}
+
+
+                        <!-- ERRORES GENERALES -->
+
+                        {% if formulario.non_field_errors %}
+
+                            <div class="errores-generales">
+
+                                {% for error in formulario.non_field_errors %}
+
+                                    <div class="error-formulario">
+
+                                        <i class="fa-solid fa-circle-exclamation"></i>
+
+                                        <span>
+                                            {{ error }}
+                                        </span>
+
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        {% endif %}
+
+
+                        <!-- ASIENTOS -->
+
+                        <div class="campo-formulario">
+
+                            <label for="{{ formulario.asientos_solicitados.id_for_label }}">
+
+                                <i class="fa-solid fa-user-group"></i>
+
+                                {{ formulario.asientos_solicitados.label }}
+
+                            </label>
+
+                            {{ formulario.asientos_solicitados }}
+
+                            {% if formulario.asientos_solicitados.help_text %}
+
+                                <small class="ayuda-campo">
+
+                                    {{ formulario.asientos_solicitados.help_text }}
+
+                                </small>
+
+                            {% endif %}
+
+                            {% for error in formulario.asientos_solicitados.errors %}
+
+                                <span class="error-campo">
+                                    {{ error }}
+                                </span>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- PUNTO DE RECOGIDA -->
+
+                        <div class="campo-formulario">
+
+                            <label for="{{ formulario.punto_recogida.id_for_label }}">
+
+                                <i class="fa-solid fa-location-crosshairs"></i>
+
+                                {{ formulario.punto_recogida.label }}
+
+                            </label>
+
+                            {{ formulario.punto_recogida }}
+
+                            {% for error in formulario.punto_recogida.errors %}
+
+                                <span class="error-campo">
+                                    {{ error }}
+                                </span>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- PUNTO DE DESCENSO -->
+
+                        <div class="campo-formulario">
+
+                            <label for="{{ formulario.punto_descenso.id_for_label }}">
+
+                                <i class="fa-solid fa-location-dot"></i>
+
+                                {{ formulario.punto_descenso.label }}
+
+                            </label>
+
+                            {{ formulario.punto_descenso }}
+
+                            {% for error in formulario.punto_descenso.errors %}
+
+                                <span class="error-campo">
+                                    {{ error }}
+                                </span>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- COMENTARIO -->
+
+                        <div class="campo-formulario campo-completo">
+
+                            <label for="{{ formulario.comentario.id_for_label }}">
+
+                                <i class="fa-solid fa-comment"></i>
+
+                                {{ formulario.comentario.label }}
+
+                            </label>
+
+                            {{ formulario.comentario }}
+
+                            <div class="contador-comentario">
+
+                                <span id="contadorComentario">
+                                    0
+                                </span>
+
+                                / 500
+
+                            </div>
+
+                            {% for error in formulario.comentario.errors %}
+
+                                <span class="error-campo">
+                                    {{ error }}
+                                </span>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- ASISTENCIA -->
+
+                        <div class="campo-asistencia campo-completo">
+
+                            <label
+                                for="{{ formulario.requiere_asistencia.id_for_label }}"
+                                class="asistencia-label">
+
+                                {{ formulario.requiere_asistencia }}
+
+                                <span class="asistencia-control"></span>
+
+                                <span class="asistencia-contenido">
+
+                                    <strong>
+
+                                        <i class="fa-solid fa-hand-holding-medical"></i>
+
+                                        Requiero asistencia especial
+
+                                    </strong>
+
+                                    <small>
+                                        Activa esta opción si necesitas apoyo
+                                        adicional durante el viaje.
+                                    </small>
+
+                                </span>
+
+                            </label>
+
+                            {% for error in formulario.requiere_asistencia.errors %}
+
+                                <span class="error-campo">
+                                    {{ error }}
+                                </span>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- AVISO -->
+
+                        <div class="aviso-solicitud campo-completo">
+
+                            <i class="fa-solid fa-circle-info"></i>
+
+                            <p>
+                                Enviar la solicitud no descuenta lugares
+                                todavía. Los asientos se reservarán cuando
+                                el conductor la acepte.
+                            </p>
+
+                        </div>
+
+
+                        <!-- ACCIONES -->
+
+                        <div class="acciones-solicitud campo-completo">
+
+                            <a
+                                href="{% url 'agendarviaje' %}"
+                                class="btn-cancelar-solicitud">
+
+                                <i class="fa-solid fa-arrow-left"></i>
+
+                                Volver
+
+                            </a>
+
+                            <button
+                                type="submit"
+                                class="btn-enviar-solicitud"
+                                id="btnEnviarSolicitud">
+
+                                <i class="fa-solid fa-paper-plane"></i>
+
+                                {% if solicitud_existente %}
+
+                                    Volver a enviar solicitud
+
+                                {% else %}
+
+                                    Enviar solicitud
+
+                                {% endif %}
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </section>
+
+            </section>
+
+        </section>
+
+    </main>
+
+
+    <script
+        src="{% static 'js/sidebarP.js' %}">
+    </script>
+
+    <script
+        src="{% static 'js/solicitar_viaje.js' %}">
+    </script>
+
+</body>
+
+</html>

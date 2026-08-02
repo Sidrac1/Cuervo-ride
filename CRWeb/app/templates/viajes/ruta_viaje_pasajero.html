@@ -1,0 +1,364 @@
+{% load static %}
+{% load l10n %}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Ruta del viaje | Cuervo-Ride
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/sidebar.css' %}">
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/ruta_viaje_pasajero.css' %}">
+
+</head>
+
+<body>
+
+    {% include 'components/sidebar.html' %}
+
+
+    <main
+        class="ruta-main"
+        id="rutaMain"
+        data-origen="{{ viaje.origen|escape }}"
+        data-destino="{{ viaje.destino|escape }}"
+        data-origen-latitud="{{ viaje.origen_latitud|unlocalize }}"
+        data-origen-longitud="{{ viaje.origen_longitud|unlocalize }}"
+        data-destino-latitud="{{ viaje.destino_latitud|unlocalize }}"
+        data-destino-longitud="{{ viaje.destino_longitud|unlocalize }}">
+
+
+        <header class="ruta-header">
+
+            <div>
+
+                <span class="ruta-etiqueta">
+
+                    <i class="fa-solid fa-map-location-dot"></i>
+
+                    Ruta del viaje
+
+                </span>
+
+                <h1>
+                    {{ viaje.origen }} → {{ viaje.destino }}
+                </h1>
+
+                <p>
+                    Consulta el recorrido publicado por el conductor
+                    y los datos principales del viaje.
+                </p>
+
+            </div>
+
+
+            <a
+                href="{% url 'mis_viajes_pasajero' %}"
+                class="btn-volver">
+
+                <i class="fa-solid fa-arrow-left"></i>
+
+                Mis viajes
+
+            </a>
+
+        </header>
+
+
+        <section class="ruta-layout">
+
+
+            <section class="mapa-contenedor">
+
+                <div
+                    id="mapaRuta"
+                    class="mapa-ruta">
+                </div>
+
+                <div
+                    class="mensaje-mapa"
+                    id="mensajeMapa"
+                    hidden>
+
+                    <i class="fa-solid fa-circle-exclamation"></i>
+
+                    <span></span>
+
+                </div>
+
+            </section>
+
+
+            <aside class="ruta-informacion">
+
+
+                <div class="conductor-card">
+
+                    <div class="conductor-foto">
+
+                        {% if viaje.conductor.usuario.foto %}
+
+                            <img
+                                src="{{ viaje.conductor.usuario.foto.url }}"
+                                alt="{{ viaje.conductor.usuario.nombre_completo }}">
+
+                        {% else %}
+
+                            <img
+                                src="{% static 'img/profileIcon.png' %}"
+                                alt="Foto predeterminada">
+
+                        {% endif %}
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Conductor
+                        </span>
+
+                        <strong>
+                            {{ viaje.conductor.usuario.nombre_completo }}
+                        </strong>
+
+                        <small>
+                            {{ viaje.conductor.get_estado_verificacion_display }}
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="trayecto-card">
+
+                    <div class="trayecto-punto">
+
+                        <span class="punto origen"></span>
+
+                        <div>
+
+                            <small>
+                                Origen
+                            </small>
+
+                            <strong>
+                                {{ viaje.origen }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                    <div class="trayecto-linea"></div>
+
+                    <div class="trayecto-punto">
+
+                        <span class="punto destino"></span>
+
+                        <div>
+
+                            <small>
+                                Destino
+                            </small>
+
+                            <strong>
+                                {{ viaje.destino }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="datos-ruta">
+
+
+                    <div class="dato-ruta">
+
+                        <i class="fa-regular fa-calendar"></i>
+
+                        <div>
+
+                            <span>
+                                Fecha
+                            </span>
+
+                            <strong>
+                                {{ viaje.fecha_hora_salida|date:"d/m/Y" }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="dato-ruta">
+
+                        <i class="fa-regular fa-clock"></i>
+
+                        <div>
+
+                            <span>
+                                Salida
+                            </span>
+
+                            <strong>
+                                {{ viaje.fecha_hora_salida|date:"H:i" }} h
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="dato-ruta">
+
+                        <i class="fa-solid fa-flag-checkered"></i>
+
+                        <div>
+
+                            <span>
+                                Llegada estimada
+                            </span>
+
+                            <strong>
+
+                                {% if viaje.fecha_hora_llegada_estimada %}
+
+                                    {{ viaje.fecha_hora_llegada_estimada|date:"H:i" }} h
+
+                                {% else %}
+
+                                    Por confirmar
+
+                                {% endif %}
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="dato-ruta">
+
+                        <i class="fa-solid fa-user-group"></i>
+
+                        <div>
+
+                            <span>
+                                Tus lugares
+                            </span>
+
+                            <strong>
+                                {{ solicitud.asientos_solicitados }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="dato-ruta">
+
+                        <i class="fa-solid fa-car-side"></i>
+
+                        <div>
+
+                            <span>
+                                Vehículo
+                            </span>
+
+                            <strong>
+                                {{ viaje.vehiculo.marca }}
+                                {{ viaje.vehiculo.modelo }}
+                            </strong>
+
+                            <small>
+                                {{ viaje.vehiculo.color }}
+                                ·
+                                {{ viaje.vehiculo.placas }}
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                {% if solicitud.punto_recogida %}
+
+                    <div class="punto-pasajero">
+
+                        <span>
+
+                            <i class="fa-solid fa-location-crosshairs"></i>
+
+                            Tu punto de recogida
+
+                        </span>
+
+                        <p>
+                            {{ solicitud.punto_recogida }}
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+
+                <a
+                    href="{% url 'chat_viaje' viaje.id %}"
+                    class="btn-chat-ruta">
+
+                    <i class="fa-solid fa-comments"></i>
+
+                    Abrir chat del viaje
+
+                </a>
+
+            </aside>
+
+        </section>
+
+    </main>
+
+
+    <script
+        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+    </script>
+
+    <script
+        src="{% static 'js/ruta_viaje_pasajero.js' %}">
+    </script>
+
+</body>
+
+</html>

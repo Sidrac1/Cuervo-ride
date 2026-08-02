@@ -1089,17 +1089,15 @@
 
                                 {% elif solicitud.viaje.estado != "cancelado" %}
 
-                                    <button
-                                        type="button"
-                                        class="btn-viaje btn-principal"
-                                        data-action="ruta"
-                                        data-solicitud="{{ solicitud.id }}">
+                                    <a
+                                    href="{% url 'ver_ruta_viaje_pasajero' solicitud.viaje.id %}"
+                                    class="btn-viaje btn-principal">
 
-                                        <i class="fa-solid fa-map-location-dot"></i>
+                                    <i class="fa-solid fa-map-location-dot"></i>
 
                                         Ver ruta
 
-                                    </button>
+                                    </a>
 
                                 {% endif %}
 

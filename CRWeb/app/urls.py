@@ -16,11 +16,11 @@ urlpatterns = [
     path("viajes/mis-viajes/pasajero/",views.mis_viajes_pasajero,name="mis_viajes_pasajero"),
     path("viajes/<int:viaje_id>/alerta/",views.crear_alerta_viaje,name="crear_alerta_viaje",),
     path("viajes/<int:viaje_id>/chat/",views.chat_viaje,name="chat_viaje",),
-    # TODO: placeholder mientras se construye la vista real de "mis viajes"
-    # para pasajeros (historial de solicitudes). Por ahora apunta a la
-    # pantalla de búsqueda para que el link del sidebar no truene con
-    # NoReverseMatch cuando un pasajero la visita.
-    path("filtro-viajes/", views.filtroviajes, name="mis_viajes_pasajero"),
+    path("viajes/<int:viaje_id>/solicitar/",views.solicitar_viaje,name="solicitar_viaje",),
+    path("conductor/solicitudes/",views.solicitudes_conductor,name="solicitudes_conductor",),
+    path("solicitudes/<int:solicitud_id>/aceptar/",views.aceptar_solicitud_viaje,name="aceptar_solicitud_viaje",),
+    path("solicitudes/<int:solicitud_id>/rechazar/",views.rechazar_solicitud_viaje,name="rechazar_solicitud_viaje",),
+    path("viajes/<int:viaje_id>/ruta/",views.ver_ruta_viaje_pasajero,name="ver_ruta_viaje_pasajero",),
 
     # ---------------------------------------------------------
     # Autenticación y Registro

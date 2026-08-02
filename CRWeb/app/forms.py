@@ -9,7 +9,7 @@ from .constants import (
     UTT_LONGITUD,
     UTT_NOMBRE,
 )
-from .models import Viaje, Vehiculo
+from .models import Viaje, Vehiculo, SolicitudViaje
 
 
 class PublicarViajeForm(forms.ModelForm):
@@ -316,3 +316,148 @@ class PublicarViajeForm(forms.ModelForm):
         # validación si se quiere exigir un punto exacto en el mapa.
 
         return cleaned_data
+
+
+# =========================================================
+# SOLICITAR LUGAR EN UN VIAJE
+# =========================================================
+
+class SolicitudViajeForm(forms.ModelForm):
+
+    class Meta:
+
+        model = SolicitudViaje
+
+        fields = [
+            "asientos_solicitados",
+            "punto_recogida",
+            "punto_descenso",
+            "comentario",
+            "requiere_asistencia",
+        ]
+
+        widgets = {
+
+            "asientos_solicitados": forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                    "id": "id_asientos_solicitados",
+                    "min": "1",
+                    "max": "10",
+                    "inputmode": "numeric",
+                }
+            ),
+
+            "punto_recogida": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "id": "id_punto_recogida",
+                    "placeholder": (
+                        "Ejemplo: Entrada principal de la UTT"
+                    ),
+                    "maxlength": "255",
+                    "autocomplete": "off",
+                }
+            ),
+
+            "punto_descenso": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "id": "id_punto_descenso",
+                    "placeholder": (
+                        "Ejemplo: Plaza Río, entrada principal"
+                    ),
+                    "maxlength": "255",
+                    "autocomplete": "off",
+                }
+            ),
+
+            "comentario": forms.Textarea(
+                attrs={
+                    "class": "form-control",
+                    "id": "id_comentario",
+                    "placeholder": (
+                        "Agrega alguna indicación para el conductor"
+                    ),
+                    "maxlength": "500",
+                    "rows": "4",
+                }
+            ),
+
+            "requiere_asistencia": forms.CheckboxInput(
+                attrs={
+                    "class": "form-check-input",
+                    "id": "id_requiere_asistencia",
+                }
+            ),
+        }
+
+        labels = {
+            "asientos_solicitados": "Cantidad de lugares",
+            "punto_recogida": "Punto de recogida",
+            "punto_descenso": "Punto de descenso",
+            "comentario": "Comentario para el conductor",
+            "requiere_asistencia": (
+                "Requiero asistencia especial"
+            ),
+        }
+
+    def __init__(
+        self,
+        *args,
+        viaje=None,
+        **kwargs
+    ):
+
+        super().__init__(
+            *args,
+            **kwargs
+        )
+
+        self.viaje = viaje
+
+        self.fields[
+            "asientos_solicitados"
+        ].initial = 1
+
+        if viaje is not None:
+
+            limite = min(
+                viaje.asientos_disponibles,
+                10,
+            )
+
+            self.fields[
+                "asientos_solicitados"
+            ].widget.attrs["max"] = str(
+                limite
+            )
+
+            self.fields[
+                "asientos_solicitados"
+            ].help_text = (
+                f"Actualmente hay "
+                f"{viaje.asientos_disponibles} "
+                f"lugar(es) disponible(s)."
+            )
+
+    def clean_asientos_solicitados(self):
+
+        asientos = self.cleaned_data.get(
+            "asientos_solicitados"
+        )
+
+        if asientos is None:
+            return asientos
+
+        if self.viaje is None:
+            return asientos
+
+        if asientos > self.viaje.asientos_disponibles:
+
+            raise ValidationError(
+                "No puedes solicitar más lugares "
+                "de los que están disponibles."
+            )
+
+        return asientos

@@ -1,147 +1,925 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nosotros</title>
 
-    <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="{% static 'css/agendarviaje.css' %}">
+    <title>
+        Agendar viaje | Cuervo-Ride
+    </title>
+
+
+    <!-- Font Awesome -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+
+    <!-- Leaflet -->
+
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+
+    <!-- CSS -->
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/agendarviaje.css' %}">
+
 </head>
 
 <body>
 
 
-    <!-- SIDEBAR -->
+    <!-- =========================================
+        SIDEBAR
+    ========================================== -->
+
     {% include 'components/sidebar.html' %}
 
-    <!-- CONTENIDO -->
+
+    <!-- =========================================
+        CONTENIDO PRINCIPAL
+    ========================================== -->
 
     <main class="content">
 
 
-        <header>
+        <!-- =====================================
+            ENCABEZADO
+        ====================================== -->
 
-            <h1 class="logo-text">
+        <header class="pagina-header">
+
+            <div class="pagina-titulo">
+
+                <span class="pagina-etiqueta">
+
+                    <i class="fa-solid fa-route"></i>
+
+                    Viajes disponibles
+
+                </span>
+
+
+                <h1>
+                    Encuentra tu próximo viaje
+                </h1>
+
+
+                <p>
+                    Consulta los recorridos publicados por los
+                    conductores y selecciona el que mejor se adapte
+                    a tu destino.
+                </p>
+
+            </div>
+
+
+            <h2 class="logo-text">
+
                 Cuervo-<span>Ride</span>
-            </h1>
+
+            </h2>
 
         </header>
 
-        <section class="agendar">
 
-        <!-- PANEL IZQUIERDO -->
-        <aside class="panel-izquierdo">
+        <!-- =====================================
+            MENSAJES DE DJANGO
+        ====================================== -->
 
-            <div class="busqueda">
+        {% if messages %}
 
-                <input
-                    type="text"
-                    placeholder="Buscar conductor">
+            <section class="mensajes-django">
 
-                <button class="btn-buscar">
+                {% for message in messages %}
+
+                    <div class="mensaje {{ message.tags }}">
+
+                        {% if message.tags == "success" %}
+
+                            <i class="fa-solid fa-circle-check"></i>
+
+                        {% elif message.tags == "warning" %}
+
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+
+                        {% elif message.tags == "error" %}
+
+                            <i class="fa-solid fa-circle-exclamation"></i>
+
+                        {% else %}
+
+                            <i class="fa-solid fa-circle-info"></i>
+
+                        {% endif %}
+
+
+                        <span>
+                            {{ message }}
+                        </span>
+
+                    </div>
+
+                {% endfor %}
+
+            </section>
+
+        {% endif %}
+
+
+        <!-- =====================================
+            BÚSQUEDA
+        ====================================== -->
+
+        <section class="busqueda-container">
+
+            <form
+                method="GET"
+                action="{% url 'agendarviaje' %}"
+                class="busqueda"
+                id="formBusquedaViajes">
+
+
+                <div class="campo-busqueda">
+
                     <i class="fa-solid fa-magnifying-glass"></i>
+
+
+                    <input
+                        type="search"
+                        id="buscarViaje"
+                        name="q"
+                        value="{{ busqueda|default:'' }}"
+                        placeholder="Buscar por conductor, origen o destino"
+                        autocomplete="off">
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn-buscar"
+                    aria-label="Buscar viajes">
+
+                    <i class="fa-solid fa-magnifying-glass"></i>
+
                 </button>
 
-                <a href="{% url 'filtroviajes' %}" class="btn-filtro">
+
+                <a
+                    href="{% url 'filtroviajes' %}"
+                    class="btn-filtro"
+                    aria-label="Abrir filtros avanzados">
+
                     <i class="fa-solid fa-sliders"></i>
+
                 </a>
 
-            </div>
+            </form>
 
-        <div class="lista-conductores">
+        </section>
 
-            <div class="card-conductor">
 
-                <img src="https://i.imgur.com/2DhmtJ4.png">
+        <!-- =====================================
+            CONTENIDO DE VIAJES
+        ====================================== -->
 
-                <div>
+        <section class="agendar">
 
-                    <h3>Nombre Conductor</h3>
 
-                    <p>Destino disponible</p>
+            <!-- =================================
+                PANEL IZQUIERDO
+            ================================== -->
+
+            <aside class="panel-izquierdo">
+
+
+                <div class="panel-lista-header">
+
+                    <div>
+
+                        <h2>
+                            Viajes encontrados
+                        </h2>
+
+                        <p>
+                            Selecciona una opción para consultar
+                            su información y visualizar la ruta.
+                        </p>
+
+                    </div>
+
+
+                    <span class="cantidad-viajes">
+
+                        {{ viajes|length }}
+
+                    </span>
 
                 </div>
 
-            </div>
 
-            <div class="card-conductor">
+                <div
+                    class="lista-conductores"
+                    id="listaViajes">
 
-                <img src="https://i.imgur.com/2DhmtJ4.png">
 
-                <div>
+                    {% for viaje in viajes %}
 
-                    <h3>Nombre Conductor</h3>
+                        <article
+                            class="
+                                card-conductor
+                                card-viaje
+                                {% if forloop.first %}
+                                    active
+                                {% endif %}
+                            "
+                            tabindex="0"
+                            role="button"
+                            aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
+                            aria-label="Seleccionar viaje hacia {{ viaje.destino }}"
 
-                    <p>Destino disponible</p>
+                            data-viaje-id="{{ viaje.id }}"
+
+                            data-solicitar-url="{% url 'solicitar_viaje' viaje.id %}"
+
+                            data-origen="{{ viaje.origen|escape }}"
+
+                            data-destino="{{ viaje.destino|escape }}"
+
+                            data-origen-latitud="{{ viaje.origen_latitud|default:'' }}"
+
+                            data-origen-longitud="{{ viaje.origen_longitud|default:'' }}"
+
+                            data-destino-latitud="{{ viaje.destino_latitud|default:'' }}"
+
+                            data-destino-longitud="{{ viaje.destino_longitud|default:'' }}"
+
+                            data-fecha="{{ viaje.fecha_hora_salida|date:'d/m/Y' }}"
+
+                            data-hora="{{ viaje.fecha_hora_salida|date:'H:i' }}"
+
+                            data-llegada="
+                                {% if viaje.fecha_hora_llegada_estimada %}
+                                    {{ viaje.fecha_hora_llegada_estimada|date:'H:i' }}
+                                {% else %}
+                                    Por confirmar
+                                {% endif %}
+                            "
+
+                            data-asientos="{{ viaje.asientos_disponibles }}"
+
+                            data-asientos-totales="{{ viaje.asientos_totales }}"
+
+                            data-costo="{{ viaje.costo_por_pasajero|floatformat:2 }}"
+
+                            data-conductor="{{ viaje.conductor.usuario.nombre_completo|escape }}"
+
+                            data-vehiculo="{{ viaje.vehiculo.marca|escape }} {{ viaje.vehiculo.modelo|escape }}"
+
+                            data-color="{{ viaje.vehiculo.color|escape }}"
+
+                            data-placas="{{ viaje.vehiculo.placas|escape }}"
+
+                            data-indicaciones="{{ viaje.indicaciones|default:''|escape }}"
+
+                            data-permite-mascota="{{ viaje.permite_mascota|yesno:'true,false' }}"
+
+                            data-acepta-silla-ruedas="{{ viaje.acepta_silla_ruedas|yesno:'true,false' }}">
+
+
+                            <!-- FOTO DEL CONDUCTOR -->
+
+                            <div class="card-conductor-foto">
+
+                                {% if viaje.conductor.usuario.foto %}
+
+                                    <img
+                                        src="{{ viaje.conductor.usuario.foto.url }}"
+                                        alt="Foto de {{ viaje.conductor.usuario.nombre_completo }}">
+
+                                {% else %}
+
+                                    <img
+                                        src="{% static 'img/profileIcon.png' %}"
+                                        alt="Foto de perfil predeterminada">
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- INFORMACIÓN -->
+
+                            <div class="card-conductor-contenido">
+
+
+                                <div class="card-conductor-superior">
+
+                                    <h3>
+
+                                        {{ viaje.conductor.usuario.nombre_completo }}
+
+                                    </h3>
+
+
+                                    <span class="precio-viaje">
+
+                                        ${{ viaje.costo_por_pasajero|floatformat:2 }}
+
+                                    </span>
+
+                                </div>
+
+
+                                <p class="destino-viaje">
+
+                                    <i class="fa-solid fa-location-dot"></i>
+
+                                    {{ viaje.destino }}
+
+                                </p>
+
+
+                                <div class="card-viaje-meta">
+
+                                    <span>
+
+                                        <i class="fa-regular fa-calendar"></i>
+
+                                        {{ viaje.fecha_hora_salida|date:"d/m/Y" }}
+
+                                    </span>
+
+
+                                    <span>
+
+                                        <i class="fa-regular fa-clock"></i>
+
+                                        {{ viaje.fecha_hora_salida|date:"H:i" }} h
+
+                                    </span>
+
+
+                                    <span>
+
+                                        <i class="fa-solid fa-user-group"></i>
+
+                                        {{ viaje.asientos_disponibles }}
+
+                                        lugar{{ viaje.asientos_disponibles|pluralize:"es" }}
+
+                                    </span>
+
+                                </div>
+
+
+                                <div class="card-vehiculo">
+
+                                    <i class="fa-solid fa-car-side"></i>
+
+                                    <span>
+
+                                        {{ viaje.vehiculo.marca }}
+                                        {{ viaje.vehiculo.modelo }}
+
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </article>
+
+
+                    {% empty %}
+
+                        <div class="estado-vacio">
+
+                            <i class="fa-solid fa-route"></i>
+
+                            <h3>
+                                No encontramos viajes disponibles
+                            </h3>
+
+                            <p>
+                                Actualmente no existen viajes futuros
+                                con lugares disponibles que coincidan
+                                con tu búsqueda.
+                            </p>
+
+
+                            {% if busqueda %}
+
+                                <a
+                                    href="{% url 'agendarviaje' %}"
+                                    class="btn-limpiar-busqueda">
+
+                                    Mostrar todos los viajes
+
+                                </a>
+
+                            {% endif %}
+
+                        </div>
+
+                    {% endfor %}
 
                 </div>
 
-            </div>
+            </aside>
 
-            <div class="card-conductor">
 
-                <img src="https://i.imgur.com/2DhmtJ4.png">
-
-                <div>
-
-                    <h3>Nombre Conductor</h3>
-
-                    <p>Destino disponible</p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </aside>
-
-            <!-- PANEL DERECHO -->
+            <!-- =================================
+                PANEL DERECHO
+            ================================== -->
 
             <section class="panel-derecho">
 
-                <h1>Agendar raite</h1>
 
-                <h2>Mapa de rutas</h2>
+                <div class="detalle-viaje-header">
 
-                <div class="mapa">
+                    <div>
 
-                    <p>Aquí se mostrará el mapa de Google Maps</p>
+                        <span class="detalle-etiqueta">
+
+                            <i class="fa-solid fa-map-location-dot"></i>
+
+                            Ruta seleccionada
+
+                        </span>
+
+
+                        <h2 id="tituloDestino">
+
+                            {% if viajes %}
+
+                                {{ viajes.0.destino }}
+
+                            {% else %}
+
+                                Selecciona un viaje
+
+                            {% endif %}
+
+                        </h2>
+
+
+                        <p id="subtituloRuta">
+
+                            {% if viajes %}
+
+                                Desde {{ viajes.0.origen }}
+
+                            {% else %}
+
+                                La información aparecerá aquí.
+
+                            {% endif %}
+
+                        </p>
+
+                    </div>
+
+
+                    <span
+                        class="estado-disponibilidad"
+                        id="estadoDisponibilidad">
+
+                        {% if viajes %}
+
+                            <i class="fa-solid fa-circle"></i>
+
+                            Disponible
+
+                        {% else %}
+
+                            Sin selección
+
+                        {% endif %}
+
+                    </span>
 
                 </div>
 
-                <div class="ruta-info">
 
-                <div>
+                <!-- =================================
+                    MAPA
+                ================================== -->
 
-                    <strong>Horario</strong>
+                <div
+                    class="mapa"
+                    id="mapa">
 
-                    <p>--:--</p>
+                    {% if not viajes %}
+
+                        <div class="mapa-vacio">
+
+                            <i class="fa-solid fa-map"></i>
+
+                            <p>
+                                No hay una ruta disponible para mostrar.
+                            </p>
+
+                        </div>
+
+                    {% endif %}
 
                 </div>
 
-                <div>
 
-                    <strong>Lugares disponibles</strong>
+                <!-- =================================
+                    INFORMACIÓN DEL VIAJE
+                ================================== -->
 
-                    <p>0</p>
+                <section
+                    class="detalle-viaje"
+                    id="detalleViaje">
 
-                </div>
 
-                    <button>
+                    <!-- CONDUCTOR -->
 
-                        Apartar lugar
+                    <div class="detalle-conductor">
 
-                    </button>
+                        <div class="detalle-conductor-foto">
 
-                </div>
+                            {% if viajes.0.conductor.usuario.foto %}
+
+                                <img
+                                    id="fotoConductorSeleccionado"
+                                    src="{{ viajes.0.conductor.usuario.foto.url }}"
+                                    alt="Foto del conductor">
+
+                            {% else %}
+
+                                <img
+                                    id="fotoConductorSeleccionado"
+                                    src="{% static 'img/profileIcon.png' %}"
+                                    alt="Foto predeterminada">
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Conductor
+                            </span>
+
+                            <strong id="nombreConductor">
+
+                                {% if viajes %}
+
+                                    {{ viajes.0.conductor.usuario.nombre_completo }}
+
+                                {% else %}
+
+                                    Sin seleccionar
+
+                                {% endif %}
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- DATOS -->
+
+                    <div class="detalle-datos-grid">
+
+
+                        <div class="detalle-dato">
+
+                            <i class="fa-regular fa-calendar"></i>
+
+                            <div>
+
+                                <span>
+                                    Fecha de salida
+                                </span>
+
+                                <strong id="fechaSalida">
+
+                                    {% if viajes %}
+
+                                        {{ viajes.0.fecha_hora_salida|date:"d/m/Y" }}
+
+                                    {% else %}
+
+                                        --/--/----
+
+                                    {% endif %}
+
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="detalle-dato">
+
+                            <i class="fa-regular fa-clock"></i>
+
+                            <div>
+
+                                <span>
+                                    Hora de salida
+                                </span>
+
+                                <strong id="horaSalida">
+
+                                    {% if viajes %}
+
+                                        {{ viajes.0.fecha_hora_salida|date:"H:i" }} h
+
+                                    {% else %}
+
+                                        --:--
+
+                                    {% endif %}
+
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="detalle-dato">
+
+                            <i class="fa-solid fa-flag-checkered"></i>
+
+                            <div>
+
+                                <span>
+                                    Llegada estimada
+                                </span>
+
+                                <strong id="horaLlegada">
+
+                                    {% if viajes.0.fecha_hora_llegada_estimada %}
+
+                                        {{ viajes.0.fecha_hora_llegada_estimada|date:"H:i" }} h
+
+                                    {% else %}
+
+                                        Por confirmar
+
+                                    {% endif %}
+
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="detalle-dato">
+
+                            <i class="fa-solid fa-user-group"></i>
+
+                            <div>
+
+                                <span>
+                                    Lugares disponibles
+                                </span>
+
+                                <strong id="lugaresDisponibles">
+
+                                    {% if viajes %}
+
+                                        {{ viajes.0.asientos_disponibles }}
+                                        de
+                                        {{ viajes.0.asientos_totales }}
+
+                                    {% else %}
+
+                                        0
+
+                                    {% endif %}
+
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="detalle-dato">
+
+                            <i class="fa-solid fa-car-side"></i>
+
+                            <div>
+
+                                <span>
+                                    Vehículo
+                                </span>
+
+                                <strong id="vehiculoSeleccionado">
+
+                                    {% if viajes %}
+
+                                        {{ viajes.0.vehiculo.marca }}
+                                        {{ viajes.0.vehiculo.modelo }}
+
+                                    {% else %}
+
+                                        Sin seleccionar
+
+                                    {% endif %}
+
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="detalle-dato">
+
+                            <i class="fa-solid fa-coins"></i>
+
+                            <div>
+
+                                <span>
+                                    Costo por pasajero
+                                </span>
+
+                                <strong id="costoViaje">
+
+                                    {% if viajes %}
+
+                                        ${{ viajes.0.costo_por_pasajero|floatformat:2 }}
+                                        MXN
+
+                                    {% else %}
+
+                                        $0.00 MXN
+
+                                    {% endif %}
+
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PREFERENCIAS -->
+
+                    <div
+                        class="preferencias-viaje"
+                        id="preferenciasViaje">
+
+                        {% if viajes.0.permite_mascota %}
+
+                            <span>
+
+                                <i class="fa-solid fa-paw"></i>
+
+                                Mascotas permitidas
+
+                            </span>
+
+                        {% endif %}
+
+
+                        {% if viajes.0.acepta_silla_ruedas %}
+
+                            <span>
+
+                                <i class="fa-solid fa-wheelchair"></i>
+
+                                Accesible
+
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- INDICACIONES -->
+
+                    <div
+                        class="indicaciones-viaje"
+                        id="contenedorIndicaciones"
+                        {% if not viajes.0.indicaciones %}
+                            hidden
+                        {% endif %}>
+
+                        <span>
+
+                            <i class="fa-solid fa-circle-info"></i>
+
+                            Indicaciones del conductor
+
+                        </span>
+
+
+                        <p id="indicacionesViaje">
+
+                            {{ viajes.0.indicaciones|default:'' }}
+
+                        </p>
+
+                    </div>
+
+
+                    <!-- ACCIONES -->
+
+                    <div class="acciones-viaje">
+
+
+                        <input
+                            type="hidden"
+                            id="viajeSeleccionadoId"
+                            value="{% if viajes %}{{ viajes.0.id }}{% endif %}">
+
+
+                        <input
+                            type="hidden"
+                            id="urlSolicitudSeleccionada"
+                            value="
+                                {% if viajes %}
+                                    {% url 'solicitar_viaje' viajes.0.id %}
+                                {% endif %}
+                            ">
+
+
+                        <a
+                            href="{% url 'filtroviajes' %}"
+                            class="btn-ver-filtros">
+
+                            <i class="fa-solid fa-sliders"></i>
+
+                            Más filtros
+
+                        </a>
+
+
+                        <button
+                            type="button"
+                            class="btn-apartar"
+                            id="btnApartarLugar"
+                            {% if not viajes %}
+                                disabled
+                            {% endif %}>
+
+                            <i class="fa-solid fa-ticket"></i>
+
+                            Apartar lugar
+
+                        </button>
+
+                    </div>
+
+                </section>
 
             </section>
+
+        </section>
+
     </main>
 
+
+    <!-- =========================================
+        JAVASCRIPT
+    ========================================== -->
+
+    <script
+        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+    </script>
+
+
+    <script
+        src="{% static 'js/sidebarP.js' %}">
+    </script>
+
+
+    <script
+        src="{% static 'js/agendarviaje.js' %}">
+    </script>
+
 </body>
+
 </html>

@@ -23,6 +23,9 @@ from django.views.decorators.http import require_POST, require_http_methods
 import json
 
 from .models import (
+    Notificacion,
+    SolicitudViaje,
+    Usuario,
     InformacionMedica,
     PerfilConductor,
     Vehiculo,
@@ -33,6 +36,7 @@ from .models import (
     AlertaEmergencia,
     SolicitudViaje,
 )
+from .forms import SolicitudViajeForm
 from .forms import PublicarViajeForm
 from .validators import validar_imagen_jpeg
 
@@ -113,13 +117,886 @@ def sobrenosotros(request):
     return render(request, "nosotros.html")
 
 
-def agendarviaje(request):
-    return render(request, "agendarviaje.html")
-
-
 def filtroviajes(request):
     return render(request, "filtroviajes.html")
 
+#==========================================================
+# Agendar viaje 
+#==========================================================
+
+@login_required(login_url="login")
+def agendarviaje(request):
+
+    if obtener_rol(request.user) != Usuario.Roles.PASAJERO:
+
+        messages.error(
+            request,
+            "Esta sección está disponible únicamente para pasajeros."
+        )
+
+        return redirect("home")
+
+    busqueda = request.GET.get(
+        "q",
+        ""
+    ).strip()
+
+    viajes = (
+        Viaje.objects
+        .filter(
+            estado=Viaje.EstadosViaje.DISPONIBLE,
+            fecha_hora_salida__gt=timezone.now(),
+            asientos_disponibles__gt=0,
+        )
+        .select_related(
+            "conductor__usuario",
+            "vehiculo",
+        )
+    )
+
+    if busqueda:
+
+        viajes = viajes.filter(
+
+            Q(destino__icontains=busqueda)
+
+            | Q(origen__icontains=busqueda)
+
+            | Q(
+                conductor__usuario__nombre__icontains=busqueda
+            )
+
+            | Q(
+                conductor__usuario__first_name__icontains=busqueda
+            )
+
+            | Q(
+                conductor__usuario__last_name__icontains=busqueda
+            )
+
+            | Q(
+                vehiculo__marca__icontains=busqueda
+            )
+
+            | Q(
+                vehiculo__modelo__icontains=busqueda
+            )
+        )
+
+    viajes = viajes.order_by(
+        "fecha_hora_salida"
+    )
+
+    contexto = {
+        "viajes": viajes,
+        "busqueda": busqueda,
+    }
+
+    return render(
+        request,
+        "agendarviaje.html",
+        contexto,
+    )
+
+# =========================================================
+# SOLICITAR LUGAR EN UN VIAJE
+# =========================================================
+
+@login_required(login_url="login")
+def solicitar_viaje(request, viaje_id):
+
+    # -----------------------------------------------------
+    # VALIDAR ROL
+    # -----------------------------------------------------
+
+    if request.user.rol != Usuario.Roles.PASAJERO:
+
+        messages.error(
+            request,
+            "Solo los usuarios con rol de pasajero "
+            "pueden solicitar lugares."
+        )
+
+        return redirect("home")
+
+    # -----------------------------------------------------
+    # OBTENER EL VIAJE
+    # -----------------------------------------------------
+
+    viaje = get_object_or_404(
+        Viaje.objects.select_related(
+            "conductor__usuario",
+            "vehiculo",
+        ),
+        pk=viaje_id,
+    )
+
+    # -----------------------------------------------------
+    # VALIDACIONES DEL VIAJE
+    # -----------------------------------------------------
+
+    if (
+        viaje.conductor.usuario_id
+        == request.user.id
+    ):
+
+        messages.error(
+            request,
+            "No puedes solicitar un lugar "
+            "en tu propio viaje."
+        )
+
+        return redirect("agendarviaje")
+
+    if viaje.estado not in {
+        Viaje.EstadosViaje.DISPONIBLE,
+        Viaje.EstadosViaje.COMPLETO,
+    }:
+
+        messages.error(
+            request,
+            "Este viaje ya no admite solicitudes."
+        )
+
+        return redirect("agendarviaje")
+
+    if (
+        viaje.fecha_hora_salida
+        <= timezone.now()
+    ):
+
+        messages.error(
+            request,
+            "No puedes solicitar un lugar "
+            "en un viaje que ya comenzó."
+        )
+
+        return redirect("agendarviaje")
+
+    if viaje.asientos_disponibles <= 0:
+
+        messages.error(
+            request,
+            "Este viaje ya no tiene lugares disponibles."
+        )
+
+        return redirect("agendarviaje")
+
+    # -----------------------------------------------------
+    # BUSCAR SOLICITUD EXISTENTE
+    # -----------------------------------------------------
+
+    solicitud_existente = (
+        SolicitudViaje.objects
+        .filter(
+            viaje=viaje,
+            pasajero=request.user,
+        )
+        .first()
+    )
+
+    if solicitud_existente:
+
+        if solicitud_existente.estado == (
+            SolicitudViaje
+            .EstadosSolicitud
+            .PENDIENTE
+        ):
+
+            messages.warning(
+                request,
+                "Ya tienes una solicitud pendiente "
+                "para este viaje."
+            )
+
+            return redirect(
+                "mis_viajes_pasajero"
+            )
+
+        if solicitud_existente.estado == (
+            SolicitudViaje
+            .EstadosSolicitud
+            .ACEPTADA
+        ):
+
+            messages.info(
+                request,
+                "Ya tienes un lugar aceptado "
+                "en este viaje."
+            )
+
+            return redirect(
+                "mis_viajes_pasajero"
+            )
+
+        if solicitud_existente.estado in {
+            SolicitudViaje
+            .EstadosSolicitud
+            .COMPLETADA,
+
+            SolicitudViaje
+            .EstadosSolicitud
+            .NO_PRESENTADO,
+        }:
+
+            messages.error(
+                request,
+                "No es posible volver a solicitar "
+                "este viaje."
+            )
+
+            return redirect(
+                "mis_viajes_pasajero"
+            )
+
+    # -----------------------------------------------------
+    # FORMULARIO
+    # -----------------------------------------------------
+
+    if request.method == "POST":
+
+        formulario = SolicitudViajeForm(
+            request.POST,
+            viaje=viaje,
+            instance=solicitud_existente,
+        )
+
+        if formulario.is_valid():
+
+            try:
+
+                with transaction.atomic():
+
+                    # Volvemos a bloquear y consultar el viaje
+                    # para evitar solicitudes simultáneas que
+                    # superen los lugares disponibles.
+
+                    viaje_bloqueado = (
+                        Viaje.objects
+                        .select_for_update()
+                        .select_related(
+                            "conductor__usuario",
+                            "vehiculo",
+                        )
+                        .get(pk=viaje.id)
+                    )
+
+                    asientos = (
+                        formulario.cleaned_data[
+                            "asientos_solicitados"
+                        ]
+                    )
+
+                    if (
+                        viaje_bloqueado.estado
+                        != Viaje.EstadosViaje.DISPONIBLE
+                    ):
+
+                        messages.error(
+                            request,
+                            "El viaje dejó de estar disponible."
+                        )
+
+                        return redirect(
+                            "agendarviaje"
+                        )
+
+                    if (
+                        asientos
+                        > viaje_bloqueado
+                        .asientos_disponibles
+                    ):
+
+                        formulario.add_error(
+                            "asientos_solicitados",
+                            (
+                                "Ya no hay suficientes lugares "
+                                "disponibles."
+                            ),
+                        )
+
+                    else:
+
+                        solicitud = formulario.save(
+                            commit=False
+                        )
+
+                        solicitud.viaje = (
+                            viaje_bloqueado
+                        )
+
+                        solicitud.pasajero = (
+                            request.user
+                        )
+
+                        solicitud.estado = (
+                            SolicitudViaje
+                            .EstadosSolicitud
+                            .PENDIENTE
+                        )
+
+                        solicitud.respondida_por = None
+                        solicitud.fecha_respuesta = None
+
+                        solicitud.full_clean()
+                        solicitud.save()
+
+                        # Crear aviso para el conductor.
+
+                        Notificacion.objects.create(
+                            usuario=(
+                                viaje_bloqueado
+                                .conductor
+                                .usuario
+                            ),
+                            actor=request.user,
+                            viaje=viaje_bloqueado,
+                            solicitud=solicitud,
+                            tipo=(
+                                Notificacion
+                                .TiposNotificacion
+                                .SOLICITUD
+                            ),
+                            titulo=(
+                                "Nueva solicitud de viaje"
+                            ),
+                            descripcion=(
+                                f"{request.user.nombre_completo} "
+                                f"solicitó {asientos} "
+                                f"lugar"
+                                f"{'es' if asientos != 1 else ''} "
+                                f"para el viaje hacia "
+                                f"{viaje_bloqueado.destino}."
+                            ),
+                            url_destino=(
+                                reverse(
+                                    "mis_viajes_conductor"
+                                )
+                            ),
+                        )
+
+                        messages.success(
+                            request,
+                            "Tu solicitud fue enviada "
+                            "al conductor correctamente."
+                        )
+
+                        return redirect(
+                            "mis_viajes_pasajero"
+                        )
+
+            except ValidationError as error:
+
+                if hasattr(
+                    error,
+                    "message_dict"
+                ):
+
+                    for campo, errores in (
+                        error.message_dict.items()
+                    ):
+
+                        for mensaje in errores:
+
+                            if campo in formulario.fields:
+
+                                formulario.add_error(
+                                    campo,
+                                    mensaje,
+                                )
+
+                            else:
+
+                                formulario.add_error(
+                                    None,
+                                    mensaje,
+                                )
+
+                else:
+
+                    for mensaje in error.messages:
+
+                        formulario.add_error(
+                            None,
+                            mensaje,
+                        )
+
+            except IntegrityError:
+
+                formulario.add_error(
+                    None,
+                    (
+                        "Ya existe una solicitud tuya "
+                        "para este viaje."
+                    ),
+                )
+
+    else:
+
+        formulario = SolicitudViajeForm(
+            viaje=viaje,
+            instance=solicitud_existente,
+        )
+
+    contexto = {
+        "viaje": viaje,
+        "formulario": formulario,
+        "solicitud_existente": (
+            solicitud_existente
+        ),
+    }
+
+    return render(
+        request,
+        "viajes/solicitar_viaje.html",
+        contexto,
+    )
+
+# =========================================================
+# SOLICITUDES RECIBIDAS POR EL CONDUCTOR
+# =========================================================
+
+@login_required(login_url="login")
+def solicitudes_conductor(request):
+
+    if request.user.rol != Usuario.Roles.CONDUCTOR:
+
+        messages.error(
+            request,
+            "Solo los conductores pueden consultar solicitudes."
+        )
+
+        return redirect("home")
+
+    try:
+
+        perfil_conductor = request.user.perfil_conductor
+
+    except PerfilConductor.DoesNotExist:
+
+        messages.error(
+            request,
+            "No tienes un perfil de conductor registrado."
+        )
+
+        return redirect("perfil")
+
+    estado = request.GET.get(
+        "estado",
+        "pendientes"
+    ).strip()
+
+    solicitudes = (
+        SolicitudViaje.objects
+        .filter(
+            viaje__conductor=perfil_conductor
+        )
+        .select_related(
+            "pasajero",
+            "viaje",
+            "viaje__vehiculo",
+        )
+        .order_by("-fecha_solicitud")
+    )
+
+    if estado == "pendientes":
+
+        solicitudes = solicitudes.filter(
+            estado=SolicitudViaje.EstadosSolicitud.PENDIENTE
+        )
+
+    elif estado == "aceptadas":
+
+        solicitudes = solicitudes.filter(
+            estado=SolicitudViaje.EstadosSolicitud.ACEPTADA
+        )
+
+    elif estado == "rechazadas":
+
+        solicitudes = solicitudes.filter(
+            estado=SolicitudViaje.EstadosSolicitud.RECHAZADA
+        )
+
+    elif estado == "canceladas":
+
+        solicitudes = solicitudes.filter(
+            estado=SolicitudViaje.EstadosSolicitud.CANCELADA
+        )
+
+    elif estado != "todas":
+
+        estado = "pendientes"
+
+        solicitudes = solicitudes.filter(
+            estado=SolicitudViaje.EstadosSolicitud.PENDIENTE
+        )
+
+    estadisticas = {
+
+        "total": SolicitudViaje.objects.filter(
+            viaje__conductor=perfil_conductor
+        ).count(),
+
+        "pendientes": SolicitudViaje.objects.filter(
+            viaje__conductor=perfil_conductor,
+            estado=SolicitudViaje.EstadosSolicitud.PENDIENTE,
+        ).count(),
+
+        "aceptadas": SolicitudViaje.objects.filter(
+            viaje__conductor=perfil_conductor,
+            estado=SolicitudViaje.EstadosSolicitud.ACEPTADA,
+        ).count(),
+
+        "rechazadas": SolicitudViaje.objects.filter(
+            viaje__conductor=perfil_conductor,
+            estado=SolicitudViaje.EstadosSolicitud.RECHAZADA,
+        ).count(),
+    }
+
+    return render(
+        request,
+        "viajes/solicitudes_conductor.html",
+        {
+            "solicitudes": solicitudes,
+            "filtro_actual": estado,
+            "estadisticas": estadisticas,
+        },
+    )
+
+#==========================================================
+# Aceptar el pasajero - conductor
+#==========================================================
+
+@login_required(login_url="login")
+@require_POST
+def aceptar_solicitud_viaje(request, solicitud_id):
+
+    if request.user.rol != Usuario.Roles.CONDUCTOR:
+
+        return JsonResponse(
+            {
+                "ok": False,
+                "error": "No tienes permiso para realizar esta acción.",
+            },
+            status=403,
+        )
+
+    try:
+
+        with transaction.atomic():
+
+            solicitud = (
+                SolicitudViaje.objects
+                .select_for_update()
+                .select_related(
+                    "viaje",
+                    "viaje__conductor__usuario",
+                    "pasajero",
+                )
+                .get(pk=solicitud_id)
+            )
+
+            viaje = (
+                Viaje.objects
+                .select_for_update()
+                .get(pk=solicitud.viaje_id)
+            )
+
+            if (
+                viaje.conductor.usuario_id
+                != request.user.id
+            ):
+
+                return JsonResponse(
+                    {
+                        "ok": False,
+                        "error": (
+                            "Esta solicitud no pertenece "
+                            "a uno de tus viajes."
+                        ),
+                    },
+                    status=403,
+                )
+
+            if (
+                solicitud.estado
+                != SolicitudViaje.EstadosSolicitud.PENDIENTE
+            ):
+
+                return JsonResponse(
+                    {
+                        "ok": False,
+                        "error": (
+                            "La solicitud ya fue respondida."
+                        ),
+                    },
+                    status=400,
+                )
+
+            if (
+                viaje.estado
+                != Viaje.EstadosViaje.DISPONIBLE
+            ):
+
+                return JsonResponse(
+                    {
+                        "ok": False,
+                        "error": (
+                            "El viaje ya no está disponible."
+                        ),
+                    },
+                    status=400,
+                )
+
+            if (
+                solicitud.asientos_solicitados
+                > viaje.asientos_disponibles
+            ):
+
+                return JsonResponse(
+                    {
+                        "ok": False,
+                        "error": (
+                            "Ya no hay suficientes lugares disponibles."
+                        ),
+                    },
+                    status=400,
+                )
+
+            solicitud.estado = (
+                SolicitudViaje.EstadosSolicitud.ACEPTADA
+            )
+
+            solicitud.respondida_por = request.user
+            solicitud.fecha_respuesta = timezone.now()
+
+            solicitud.save(
+                update_fields=[
+                    "estado",
+                    "respondida_por",
+                    "fecha_respuesta",
+                ]
+            )
+
+            viaje.asientos_disponibles -= (
+                solicitud.asientos_solicitados
+            )
+
+            if viaje.asientos_disponibles == 0:
+
+                viaje.estado = (
+                    Viaje.EstadosViaje.COMPLETO
+                )
+
+                viaje.save(
+                    update_fields=[
+                        "asientos_disponibles",
+                        "estado",
+                        "fecha_actualizacion",
+                    ]
+                )
+
+            else:
+
+                viaje.save(
+                    update_fields=[
+                        "asientos_disponibles",
+                        "fecha_actualizacion",
+                    ]
+                )
+
+            Notificacion.objects.create(
+                usuario=solicitud.pasajero,
+                actor=request.user,
+                viaje=viaje,
+                solicitud=solicitud,
+                tipo=(
+                    Notificacion
+                    .TiposNotificacion
+                    .SOLICITUD_ACEPTADA
+                ),
+                titulo="Solicitud aceptada",
+                descripcion=(
+                    f"Tu solicitud para el viaje hacia "
+                    f"{viaje.destino} fue aceptada."
+                ),
+                url_destino=reverse(
+                    "mis_viajes_pasajero"
+                ),
+            )
+
+    except SolicitudViaje.DoesNotExist:
+
+        return JsonResponse(
+            {
+                "ok": False,
+                "error": "La solicitud no existe.",
+            },
+            status=404,
+        )
+
+    return JsonResponse(
+        {
+            "ok": True,
+            "mensaje": "Solicitud aceptada correctamente.",
+            "estado": "aceptada",
+            "asientos_disponibles": viaje.asientos_disponibles,
+        }
+    )
+
+#==========================================================
+# Rechazar pasajero - conductor
+#==========================================================
+
+@login_required(login_url="login")
+@require_POST
+def rechazar_solicitud_viaje(request, solicitud_id):
+
+    if request.user.rol != Usuario.Roles.CONDUCTOR:
+
+        return JsonResponse(
+            {
+                "ok": False,
+                "error": "No tienes permiso para realizar esta acción.",
+            },
+            status=403,
+        )
+
+    solicitud = get_object_or_404(
+        SolicitudViaje.objects.select_related(
+            "viaje__conductor__usuario",
+            "pasajero",
+        ),
+        pk=solicitud_id,
+    )
+
+    if (
+        solicitud.viaje.conductor.usuario_id
+        != request.user.id
+    ):
+
+        return JsonResponse(
+            {
+                "ok": False,
+                "error": (
+                    "Esta solicitud no pertenece "
+                    "a uno de tus viajes."
+                ),
+            },
+            status=403,
+        )
+
+    if (
+        solicitud.estado
+        != SolicitudViaje.EstadosSolicitud.PENDIENTE
+    ):
+
+        return JsonResponse(
+            {
+                "ok": False,
+                "error": "La solicitud ya fue respondida.",
+            },
+            status=400,
+        )
+
+    solicitud.estado = (
+        SolicitudViaje.EstadosSolicitud.RECHAZADA
+    )
+
+    solicitud.respondida_por = request.user
+    solicitud.fecha_respuesta = timezone.now()
+
+    solicitud.save(
+        update_fields=[
+            "estado",
+            "respondida_por",
+            "fecha_respuesta",
+        ]
+    )
+
+    Notificacion.objects.create(
+        usuario=solicitud.pasajero,
+        actor=request.user,
+        viaje=solicitud.viaje,
+        solicitud=solicitud,
+        tipo=(
+            Notificacion
+            .TiposNotificacion
+            .SOLICITUD_RECHAZADA
+        ),
+        titulo="Solicitud rechazada",
+        descripcion=(
+            f"Tu solicitud para el viaje hacia "
+            f"{solicitud.viaje.destino} fue rechazada."
+        ),
+        url_destino=reverse(
+            "mis_viajes_pasajero"
+        ),
+    )
+
+    return JsonResponse(
+        {
+            "ok": True,
+            "mensaje": "Solicitud rechazada correctamente.",
+            "estado": "rechazada",
+        }
+    )
+
+# =========================================================
+# VER RUTA DEL VIAJE - PASAJERO
+# =========================================================
+
+@login_required(login_url="login")
+def ver_ruta_viaje_pasajero(request, viaje_id):
+
+    if request.user.rol != Usuario.Roles.PASAJERO:
+
+        messages.error(
+            request,
+            "Esta sección está disponible únicamente para pasajeros."
+        )
+
+        return redirect("home")
+
+    solicitud = get_object_or_404(
+        SolicitudViaje.objects.select_related(
+            "viaje",
+            "viaje__conductor",
+            "viaje__conductor__usuario",
+            "viaje__vehiculo",
+            "pasajero",
+        ),
+        viaje_id=viaje_id,
+        pasajero=request.user,
+        estado=SolicitudViaje.EstadosSolicitud.ACEPTADA,
+    )
+
+    viaje = solicitud.viaje
+
+    if (
+        viaje.origen_latitud is None
+        or viaje.origen_longitud is None
+        or viaje.destino_latitud is None
+        or viaje.destino_longitud is None
+    ):
+
+        messages.warning(
+            request,
+            "Este viaje todavía no tiene coordenadas completas para mostrar la ruta."
+        )
+
+        return redirect("mis_viajes_pasajero")
+
+    contexto = {
+        "solicitud": solicitud,
+        "viaje": viaje,
+    }
+
+    return render(
+        request,
+        "viajes/ruta_viaje_pasajero.html",
+        contexto,
+    )
 
 # =========================================================
 # LOGIN
