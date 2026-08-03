@@ -2175,34 +2175,135 @@ def index(request):
     return render(request, "dashAd/index.html")
 
 
-@user_passes_test(es_administrador, login_url="login")
+@user_passes_test(
+    es_administrador,
+    login_url="login"
+)
 def cargar_vista(request, vista):
+
     plantilla = VISTAS_ADMIN.get(vista)
+
     if plantilla is None:
-        raise Http404("Vista administrativa no encontrada.")
+
+        raise Http404(
+            "Vista administrativa no encontrada."
+        )
 
     contexto = {}
 
+
+    # =====================================================
+    # INICIO
+    # =====================================================
+
     if vista == "inicio":
-        contexto["total_usuarios"] = Usuario.objects.count()
-        contexto["total_alertas_activas"] = AlertaEmergencia.objects.filter(
-            estado=AlertaEmergencia.EstadosAlerta.ACTIVA
-        ).count()
+
+        contexto["total_usuarios"] = (
+            Usuario.objects.count()
+        )
+
+        contexto["total_alertas_activas"] = (
+            AlertaEmergencia.objects
+            .filter(
+                estado=(
+                    AlertaEmergencia
+                    .EstadosAlerta
+                    .ACTIVA
+                )
+            )
+            .count()
+        )
+
+
+    # =====================================================
+    # USUARIOS
+    # =====================================================
 
     elif vista == "usuarios":
-        contexto["usuarios"] = Usuario.objects.all().order_by("-id")
+
+        contexto["usuarios"] = (
+            Usuario.objects
+            .all()
+            .order_by("-id")
+        )
+
+
+    # =====================================================
+    # RIDES / VIAJES
+    # =====================================================
 
     elif vista == "rides":
-        contexto["rides"] = Viaje.objects.select_related(
-            "conductor__usuario", "vehiculo"
-        ).order_by("-fecha_hora_salida")
+
+        viajes = (
+            Viaje.objects
+            .select_related(
+                "conductor",
+                "conductor__usuario",
+                "vehiculo",
+            )
+            .order_by(
+                "-fecha_hora_salida"
+            )
+        )
+
+        contexto.update({
+
+            # Debe llamarse "viajes" porque así
+            # lo utiliza partials/rides.html.
+            "viajes": viajes,
+
+            "total_viajes": viajes.count(),
+
+            "viajes_borrador": viajes.filter(
+                estado=Viaje.EstadosViaje.BORRADOR
+            ).count(),
+
+            "viajes_disponibles": viajes.filter(
+                estado=Viaje.EstadosViaje.DISPONIBLE
+            ).count(),
+
+            "viajes_completos": viajes.filter(
+                estado=Viaje.EstadosViaje.COMPLETO
+            ).count(),
+
+            "viajes_en_curso": viajes.filter(
+                estado=Viaje.EstadosViaje.EN_CURSO
+            ).count(),
+
+            "viajes_finalizados": viajes.filter(
+                estado=Viaje.EstadosViaje.FINALIZADO
+            ).count(),
+
+            "viajes_cancelados": viajes.filter(
+                estado=Viaje.EstadosViaje.CANCELADO
+            ).count(),
+
+        })
+
+
+    # =====================================================
+    # ALERTAS
+    # =====================================================
 
     elif vista == "alertas":
-        contexto["alertas"] = AlertaEmergencia.objects.select_related(
-            "usuario", "viaje"
-        ).order_by("-fecha_activacion")
 
-    return render(request, plantilla, contexto)
+        contexto["alertas"] = (
+            AlertaEmergencia.objects
+            .select_related(
+                "usuario",
+                "viaje",
+            )
+            .order_by(
+                "-fecha_activacion"
+            )
+        )
+
+
+    return render(
+        request,
+        plantilla,
+        contexto,
+    )
 
 
 @user_passes_test(es_administrador, login_url="login")

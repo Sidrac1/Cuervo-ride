@@ -11,45 +11,63 @@
             <input
                 type="text"
                 id="buscarRide"
-                placeholder="Buscar ride...">
+                placeholder="Buscar por conductor, origen o destino..."
+                autocomplete="off">
 
         </div>
+
 
         <input
             type="text"
             id="filtroFecha"
-            placeholder="Seleccione Fecha">
+            placeholder="Seleccione fecha"
+            autocomplete="off">
+
 
         <select id="filtroEstado">
 
-            <option value="Todos">Estado: Todos</option>
-
-            <option value="Programado">
-                Programado
+            <option value="todos">
+                Estado: Todos
             </option>
 
-            <option value="En progreso">
-                En progreso
+            <option value="borrador">
+                Borrador
             </option>
 
-            <option value="Completado">
-                Completado
+            <option value="disponible">
+                Disponible
             </option>
 
-            <option value="Cancelado">
+            <option value="completo">
+                Sin lugares
+            </option>
+
+            <option value="en_curso">
+                En curso
+            </option>
+
+            <option value="finalizado">
+                Finalizado
+            </option>
+
+            <option value="cancelado">
                 Cancelado
             </option>
 
         </select>
 
-        <button id="btnFiltrar">
+
+        <button
+            type="button"
+            id="btnFiltrar">
+
+            <i class="fa-solid fa-filter"></i>
 
             Filtrar
 
         </button>
 
     </section>
-
 
 
     <!--================ TABLA =================-->
@@ -70,9 +88,11 @@
 
                     <th>Hora de salida</th>
 
-                    <th>Pasajeros</th>
+                    <th>Lugares</th>
 
                     <th>Fecha</th>
+
+                    <th>Vehículo</th>
 
                     <th>Estado</th>
 
@@ -80,54 +100,224 @@
 
             </thead>
 
+
             <tbody id="tablaRides">
-                {% for ride in rides %}
-                <tr>
 
-                    <td>{{ ride.id }}</td>
+                {% for viaje in viajes %}
 
-                    <td>{{ ride.conductor.get_full_name|default:ride.conductor.nombre }}</td>
+                    <tr
+                        data-ride-id="{{ viaje.id }}"
+                        data-conductor="{{ viaje.conductor.usuario.nombre_completo|lower }}"
+                        data-origen="{{ viaje.origen|lower }}"
+                        data-destino="{{ viaje.destino|lower }}"
+                        data-fecha="{{ viaje.fecha_hora_salida|date:'Y-m-d' }}"
+                        data-estado="{{ viaje.estado }}">
 
-                    <td>{{ ride.origen }} → {{ ride.destino }}</td>
+                        <td>
 
-                    <td>{{ ride.hora_salida }}</td>
+                            #{{ viaje.id }}
 
-                    <td>{{ ride.pasajeros }} / {{ ride.capacidad }}</td>
+                        </td>
 
-                    <td>{{ ride.fecha }}</td>
 
-                    <td>
+                        <td>
 
-                        <span class="estado programado">
+                            <div class="conductor-tabla">
 
-                            Programado
+                                {% if viaje.conductor.usuario.foto %}
 
-                        </span>
+                                    <img
+                                        src="{{ viaje.conductor.usuario.foto.url }}"
+                                        alt="Foto de {{ viaje.conductor.usuario.nombre_completo }}">
 
-                    </td>
+                                {% endif %}
 
-                </tr>
-                {%endfor%}
+                                <div>
+
+                                    <strong>
+
+                                        {{ viaje.conductor.usuario.nombre_completo }}
+
+                                    </strong>
+
+                                    {% if viaje.conductor.usuario.matricula %}
+
+                                        <small>
+
+                                            {{ viaje.conductor.usuario.matricula }}
+
+                                        </small>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="ruta-tabla">
+
+                                <span>
+
+                                    <i class="fa-solid fa-location-dot"></i>
+
+                                    {{ viaje.origen }}
+
+                                </span>
+
+                                <span>
+
+                                    <i class="fa-solid fa-arrow-right"></i>
+
+                                    {{ viaje.destino }}
+
+                                </span>
+
+                            </div>
+
+                        </td>
+
+
+                        <td>
+
+                            {{ viaje.fecha_hora_salida|date:"H:i" }} h
+
+                        </td>
+
+
+                        <td>
+
+                            <span class="lugares-tabla">
+
+                                {{ viaje.asientos_disponibles }}
+                                /
+                                {{ viaje.asientos_totales }}
+
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            {{ viaje.fecha_hora_salida|date:"d/m/Y" }}
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="vehiculo-tabla">
+
+                                <strong>
+
+                                    {{ viaje.vehiculo.marca }}
+                                    {{ viaje.vehiculo.modelo }}
+
+                                </strong>
+
+                                <small>
+
+                                    {{ viaje.vehiculo.placas }}
+
+                                </small>
+
+                            </div>
+
+                        </td>
+
+
+                        <td>
+
+                            <span class="estado estado-{{ viaje.estado }}">
+
+                                {% if viaje.estado == "borrador" %}
+
+                                    <i class="fa-solid fa-file-pen"></i>
+
+                                {% elif viaje.estado == "disponible" %}
+
+                                    <i class="fa-solid fa-circle-check"></i>
+
+                                {% elif viaje.estado == "completo" %}
+
+                                    <i class="fa-solid fa-users-slash"></i>
+
+                                {% elif viaje.estado == "en_curso" %}
+
+                                    <i class="fa-solid fa-car-side"></i>
+
+                                {% elif viaje.estado == "finalizado" %}
+
+                                    <i class="fa-solid fa-flag-checkered"></i>
+
+                                {% elif viaje.estado == "cancelado" %}
+
+                                    <i class="fa-solid fa-ban"></i>
+
+                                {% endif %}
+
+                                {{ viaje.get_estado_display }}
+
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr class="fila-vacia">
+
+                        <td colspan="8">
+
+                            <div class="estado-vacio-rides">
+
+                                <i class="fa-solid fa-route"></i>
+
+                                <strong>
+                                    No hay viajes registrados
+                                </strong>
+
+                                <span>
+                                    Cuando los conductores publiquen viajes,
+                                    aparecerán en esta tabla.
+                                </span>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
 
             </tbody>
 
         </table>
 
 
-
         <!--================ FOOTER TABLA =================-->
 
         <div class="footer-tabla">
 
-            <p>
+            <p id="textoResultados">
 
-                Mostrando 1 - 5 de 5 rides
+                Mostrando {{ viajes|length }}
+                viaje{{ viajes|length|pluralize }}
 
             </p>
 
+
             <div class="paginacion">
 
-                <button class="pagina activa">
+                <button
+                    type="button"
+                    class="pagina activa">
 
                     1
 

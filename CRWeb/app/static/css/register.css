@@ -17,18 +17,7 @@ body {
     min-height: 100vh;
     padding: 105px 24px 50px;
 
-    background:
-        radial-gradient(
-            circle at top left,
-            rgba(76, 95, 132, 0.24),
-            transparent 34%
-        ),
-        radial-gradient(
-            circle at bottom right,
-            rgba(152, 236, 99, 0.10),
-            transparent 28%
-        ),
-        #0c0f1c;
+    background:#0c0f1c;
 
     color: #ffffff;
 }

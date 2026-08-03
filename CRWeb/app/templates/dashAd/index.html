@@ -1,98 +1,807 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cuervo-Ride | Panel Administrador</title>
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Cuervo-Ride | Panel Administrador
+    </title>
+
+
+    <!-- Favicon -->
+
+    <link
+        rel="icon"
+        type="image/png"
+        href="{% static 'img/logo.png' %}">
+
 
     <!-- Estilos generales -->
-    <link rel="stylesheet" href="{% static 'css/adminCSS/admin.css' %}">
-    
-    <!-- Flatpickr CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
-    <!-- CSS dinámico cargado mediante JS -->
-    <link rel="stylesheet" id="vista-css">
+    <link
+        rel="stylesheet"
+        href="{% static 'css/adminCSS/admin.css' %}">
+
+
+    <!-- Flatpickr -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+
+    <!-- CSS de la vista parcial cargada -->
+
+    <link
+        rel="stylesheet"
+        id="vista-css">
+
 
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
 </head>
+
 
 <body>
 
-    <!-- ==========================================
-                    HEADER
-    =========================================== -->
-    <header class="admin-header">
-        <div class="logo" id="btnInicio">
-            <img src="{% static 'img/logo.png' %}" alt="Logo Cuervo-Ride">
-            <h1>
-                <span class="logo-cuervo">Cuervo</span><span class="logo-ride">-Ride</span>
-            </h1>
-        </div>
 
-        <nav class="menu-admin">
-            <button class="menu-btn" data-view="usuarios">
-                <span>Usuarios</span>
-                <span>Registrados</span>
+    <!-- ==================================================
+        HEADER DEL PANEL
+    =================================================== -->
+
+    <header
+        class="admin-header"
+        id="adminHeader">
+
+
+        <!-- ==============================================
+            MARCA
+        =============================================== -->
+
+        <button
+            type="button"
+            class="admin-brand"
+            id="btnInicio"
+            aria-label="Ir al inicio del panel">
+
+            <span class="admin-brand-logo">
+
+                <img
+                    src="{% static 'img/logo.png' %}"
+                    alt="Logo de Cuervo-Ride">
+
+            </span>
+
+
+            <span class="admin-brand-texto">
+
+                <strong>
+
+                    <span class="logo-cuervo">
+                        Cuervo
+                    </span>
+
+                    <span class="logo-ride">
+                        -Ride
+                    </span>
+
+                </strong>
+
+                <small>
+                    Panel administrativo
+                </small>
+
+            </span>
+
+        </button>
+
+
+        <!-- ==============================================
+            BOTÓN MENÚ MÓVIL
+        =============================================== -->
+
+        <button
+            type="button"
+            class="admin-menu-toggle"
+            id="adminMenuToggle"
+            aria-label="Abrir o cerrar menú"
+            aria-expanded="false"
+            aria-controls="menuAdmin">
+
+            <i class="fa-solid fa-bars"></i>
+
+        </button>
+
+
+        <!-- ==============================================
+            NAVEGACIÓN
+        =============================================== -->
+
+        <nav
+            class="menu-admin"
+            id="menuAdmin"
+            aria-label="Navegación administrativa">
+
+
+            <button
+                type="button"
+                class="menu-btn"
+                data-view="usuarios">
+
+                <span class="menu-btn-icono">
+
+                    <i class="fa-solid fa-users"></i>
+
+                </span>
+
+                <span class="menu-btn-texto">
+
+                    <strong>
+                        Usuarios
+                    </strong>
+
+                    <small>
+                        Registrados
+                    </small>
+
+                </span>
+
             </button>
 
-            <button class="menu-btn" data-view="rides">
-                <span>Rides</span>
-                <span>Activos</span>
+
+            <button
+                type="button"
+                class="menu-btn"
+                data-view="rides">
+
+                <span class="menu-btn-icono">
+
+                    <i class="fa-solid fa-route"></i>
+
+                </span>
+
+                <span class="menu-btn-texto">
+
+                    <strong>
+                        Rides
+                    </strong>
+
+                    <small>
+                        Registrados
+                    </small>
+
+                </span>
+
             </button>
 
-            <button class="menu-btn" data-view="alertas">
-                <span>Alertas</span>
-                <span>Activas</span>
+
+            <button
+                type="button"
+                class="menu-btn"
+                data-view="alertas">
+
+                <span class="menu-btn-icono">
+
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+
+                </span>
+
+                <span class="menu-btn-texto">
+
+                    <strong>
+                        Alertas
+                    </strong>
+
+                    <small>
+                        Emergencias
+                    </small>
+
+                </span>
+
             </button>
 
-            <button class="menu-btn" data-view="puntuacion">
-                <span>Puntuación</span>
-                <span>Promedio</span>
+
+            <button
+                type="button"
+                class="menu-btn"
+                data-view="puntuacion">
+
+                <span class="menu-btn-icono">
+
+                    <i class="fa-solid fa-star"></i>
+
+                </span>
+
+                <span class="menu-btn-texto">
+
+                    <strong>
+                        Puntuación
+                    </strong>
+
+                    <small>
+                        Valoraciones
+                    </small>
+
+                </span>
+
             </button>
+
         </nav>
 
-        <div class="perfil">
-            <img src="{% static 'img/admin.png' %}" alt="Administrador">
+
+        <!-- ==============================================
+            ACCIONES DERECHAS
+        =============================================== -->
+
+        <div class="admin-header-actions">
+
+
+            <!-- NOTIFICACIONES -->
+
+            <div class="admin-notificaciones">
+
+                <button
+                    type="button"
+                    class="notificaciones-btn"
+                    id="notificacionesBtn"
+                    aria-label="Abrir notificaciones"
+                    aria-expanded="false"
+                    aria-controls="notificacionesDropdown">
+
+                    <i class="fa-regular fa-bell"></i>
+
+
+                    {% if notificaciones_no_leidas %}
+
+                        <span
+                            class="notificaciones-contador"
+                            id="notificacionesContador">
+
+                            {{ notificaciones_no_leidas }}
+
+                        </span>
+
+                    {% endif %}
+
+                </button>
+
+
+                <section
+                    class="notificaciones-dropdown"
+                    id="notificacionesDropdown"
+                    aria-hidden="true">
+
+
+                    <header class="dropdown-header">
+
+                        <div>
+
+                            <h2>
+                                Notificaciones
+                            </h2>
+
+                            <p>
+                                Actividad reciente del sistema
+                            </p>
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            class="dropdown-cerrar"
+                            id="cerrarNotificaciones"
+                            aria-label="Cerrar notificaciones">
+
+                            <i class="fa-solid fa-xmark"></i>
+
+                        </button>
+
+                    </header>
+
+
+                    <div class="notificaciones-lista">
+
+
+                        {% if notificaciones_admin %}
+
+                            {% for notificacion in notificaciones_admin %}
+
+                                <a
+                                    href="{{ notificacion.url_destino|default:'#' }}"
+                                    class="
+                                        notificacion-item
+                                        {% if not notificacion.leida %}
+                                            no-leida
+                                        {% endif %}
+                                    ">
+
+                                    <span class="notificacion-icono">
+
+                                        {% if notificacion.tipo == "alerta" %}
+
+                                            <i class="fa-solid fa-triangle-exclamation"></i>
+
+                                        {% elif notificacion.tipo == "solicitud" %}
+
+                                            <i class="fa-solid fa-user-check"></i>
+
+                                        {% else %}
+
+                                            <i class="fa-solid fa-bell"></i>
+
+                                        {% endif %}
+
+                                    </span>
+
+
+                                    <span class="notificacion-contenido">
+
+                                        <strong>
+                                            {{ notificacion.titulo }}
+                                        </strong>
+
+                                        <small>
+                                            {{ notificacion.descripcion }}
+                                        </small>
+
+                                        <time>
+
+                                            {{ notificacion.fecha_creacion|timesince }}
+
+                                            atrás
+
+                                        </time>
+
+                                    </span>
+
+                                </a>
+
+                            {% endfor %}
+
+
+                        {% else %}
+
+                            <div class="notificaciones-vacio">
+
+                                <span>
+
+                                    <i class="fa-regular fa-bell-slash"></i>
+
+                                </span>
+
+                                <strong>
+                                    Sin notificaciones
+                                </strong>
+
+                                <p>
+                                    No existe actividad nueva que requiera
+                                    tu atención.
+                                </p>
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <footer class="notificaciones-footer">
+
+                        <button
+                            type="button"
+                            class="ver-alertas-btn"
+                            data-view-target="alertas">
+
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+
+                            Ver panel de alertas
+
+                        </button>
+
+                    </footer>
+
+                </section>
+
+            </div>
+
+
+            <!-- PERFIL DEL ADMINISTRADOR -->
+
+            <div class="admin-perfil">
+
+
+                <button
+                    type="button"
+                    class="perfil-btn"
+                    id="perfilAdminBtn"
+                    aria-label="Abrir menú del administrador"
+                    aria-expanded="false"
+                    aria-controls="perfilAdminDropdown">
+
+
+                    <span class="perfil-avatar">
+
+                        {% if request.user.foto %}
+
+                            <img
+                                src="{{ request.user.foto.url }}"
+                                alt="Foto de {{ request.user.nombre_completo }}">
+
+                        {% else %}
+
+                            <img
+                                src="{% static 'img/admin.png' %}"
+                                alt="Administrador">
+
+                        {% endif %}
+
+                    </span>
+
+
+                    <span class="perfil-informacion">
+
+                        <strong>
+
+                            {% if request.user.nombre_completo %}
+
+                                {{ request.user.nombre_completo }}
+
+                            {% elif request.user.get_full_name %}
+
+                                {{ request.user.get_full_name }}
+
+                            {% else %}
+
+                                Administrador
+
+                            {% endif %}
+
+                        </strong>
+
+                        <small>
+                            Administrador
+                        </small>
+
+                    </span>
+
+
+                    <i
+                        class="fa-solid fa-chevron-down perfil-flecha">
+                    </i>
+
+                </button>
+
+
+                <!-- MENÚ DESPLEGABLE DEL PERFIL -->
+
+                <section
+                    class="perfil-dropdown"
+                    id="perfilAdminDropdown"
+                    aria-hidden="true">
+
+
+                    <header class="perfil-dropdown-header">
+
+                        <span class="perfil-dropdown-avatar">
+
+                            {% if request.user.foto %}
+
+                                <img
+                                    src="{{ request.user.foto.url }}"
+                                    alt="Foto de {{ request.user.nombre_completo }}">
+
+                            {% else %}
+
+                                <img
+                                    src="{% static 'img/admin.png' %}"
+                                    alt="Administrador">
+
+                            {% endif %}
+
+                        </span>
+
+
+                        <div>
+
+                            <strong>
+
+                                {% if request.user.nombre_completo %}
+
+                                    {{ request.user.nombre_completo }}
+
+                                {% elif request.user.get_full_name %}
+
+                                    {{ request.user.get_full_name }}
+
+                                {% else %}
+
+                                    Administrador
+
+                                {% endif %}
+
+                            </strong>
+
+                            <small>
+                                {{ request.user.email }}
+                            </small>
+
+                        </div>
+
+                    </header>
+
+
+                    <div class="perfil-dropdown-menu">
+
+
+                        <a
+                            href="{% url 'perfil' %}"
+                            class="perfil-dropdown-item">
+
+                            <span>
+
+                                <i class="fa-regular fa-user"></i>
+
+                            </span>
+
+                            <div>
+
+                                <strong>
+                                    Mi perfil
+                                </strong>
+
+                                <small>
+                                    Consultar información de cuenta
+                                </small>
+
+                            </div>
+
+                        </a>
+
+
+                        <button
+                            type="button"
+                            class="perfil-dropdown-item"
+                            id="btnConfiguracionAdmin">
+
+                            <span>
+
+                                <i class="fa-solid fa-gear"></i>
+
+                            </span>
+
+                            <div>
+
+                                <strong>
+                                    Configuración
+                                </strong>
+
+                                <small>
+                                    Preferencias del panel
+                                </small>
+
+                            </div>
+
+                        </button>
+
+                    </div>
+
+
+                    <footer class="perfil-dropdown-footer">
+
+                        <button
+                            type="button"
+                            class="perfil-logout-btn"
+                            id="abrirLogoutAdmin">
+
+                            <i class="fa-solid fa-right-from-bracket"></i>
+
+                            Cerrar sesión
+
+                        </button>
+
+                    </footer>
+
+                </section>
+
+            </div>
+
         </div>
+
     </header>
+
+
+    <!-- LÍNEA DEL HEADER -->
 
     <div class="header-line"></div>
 
-    <!-- ==========================================
-                CONTENIDO DINÁMICO
-    =========================================== -->
-    <main id="contenido">
-        <!-- Aquí se cargan las vistas HTML vía AJAX -->
+
+    <!-- ==================================================
+        CONTENIDO DINÁMICO
+    =================================================== -->
+
+    <main
+        id="contenido"
+        class="admin-contenido"
+        aria-live="polite">
+
+        <!-- Las vistas parciales se cargan mediante AJAX -->
+
     </main>
 
-    <!-- Configuración para consumo de Django en JS -->
+
+    <!-- ==================================================
+        MODAL DE CIERRE DE SESIÓN
+    =================================================== -->
+
+    <div
+        class="admin-modal-overlay"
+        id="logoutAdminModal"
+        aria-hidden="true">
+
+
+        <section
+            class="admin-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="logoutAdminTitulo">
+
+
+            <div class="admin-modal-icono">
+
+                <i class="fa-solid fa-right-from-bracket"></i>
+
+            </div>
+
+
+            <h2 id="logoutAdminTitulo">
+                ¿Cerrar sesión?
+            </h2>
+
+
+            <p>
+                Estás a punto de salir del panel administrativo.
+                Tendrás que iniciar sesión nuevamente para regresar.
+            </p>
+
+
+            <div class="admin-modal-acciones">
+
+
+                <button
+                    type="button"
+                    class="admin-modal-cancelar"
+                    id="cancelarLogoutAdmin">
+
+                    Cancelar
+
+                </button>
+
+
+                <form
+                    method="POST"
+                    action="{% url 'logout' %}"
+                    class="admin-logout-form">
+
+                    {% csrf_token %}
+
+                    <button
+                        type="submit"
+                        class="admin-modal-confirmar">
+
+                        <i class="fa-solid fa-right-from-bracket"></i>
+
+                        Cerrar sesión
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <!-- ==================================================
+        CONFIGURACIÓN PARA JAVASCRIPT
+    =================================================== -->
+
     <script>
+
         window.APP_CONFIG = {
-            STATIC_URL: "{% static '' %}",
-            PANEL_URL: "{% url 'cargar_vista' vista='PLACEHOLDER' %}".replace('PLACEHOLDER/', '')
+
+            STATIC_URL:
+                "{% static '' %}",
+
+            PANEL_URL:
+                "{% url 'cargar_vista' vista='PLACEHOLDER' %}"
+                    .replace(
+                        "PLACEHOLDER/",
+                        ""
+                    )
+
         };
+
     </script>
 
-    <!-- Librerías de terceros -->
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- Scripts por vista del panel admin -->
-    <script src="{% static 'js/inicio.js' %}"></script>
-    <script src="{% static 'js/usuarios.js' %}"></script>
-    <script src="{% static 'js/usuario-info.js' %}"></script>
-    <script src="{% static 'js/expediente.js' %}"></script>
-    <script src="{% static 'js/rides.js' %}"></script>
-    <script src="{% static 'js/alertas.js' %}"></script>
-    <script src="{% static 'js/puntuacion.js' %}"></script>
+    <!-- ==================================================
+        LIBRERÍAS
+    =================================================== -->
 
-    <!-- JavaScript Principal -->
-    <script src="{% static 'js/admin.js' %}"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/flatpickr">
+    </script>
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js">
+    </script>
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/chart.js">
+    </script>
+
+
+    <!-- ==================================================
+        SCRIPTS DE LAS VISTAS
+    =================================================== -->
+
+    <script
+        src="{% static 'js/inicio.js' %}">
+    </script>
+
+    <script
+        src="{% static 'js/usuarios.js' %}">
+    </script>
+
+    <script
+        src="{% static 'js/usuario-info.js' %}">
+    </script>
+
+    <script
+        src="{% static 'js/expediente.js' %}">
+    </script>
+
+    <script
+        src="{% static 'js/rides.js' %}">
+    </script>
+
+    <script
+        src="{% static 'js/alertas.js' %}">
+    </script>
+
+    <script
+        src="{% static 'js/puntuacion.js' %}">
+    </script>
+
+
+    <!-- JavaScript del header -->
+
+    <script
+        src="{% static 'js/admin_header.js' %}">
+    </script>
+
+
+    <!-- JavaScript principal -->
+
+    <script
+        src="{% static 'js/admin.js' %}">
+    </script>
+
 </body>
 
 </html>
