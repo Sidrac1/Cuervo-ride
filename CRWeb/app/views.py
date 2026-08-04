@@ -13,7 +13,11 @@ from django.contrib.auth.decorators import (
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
-from django.db.models import Q
+from django.db.models import (
+    Avg,
+    Count,
+    Q,
+)
 from django.http import Http404, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
@@ -35,9 +39,11 @@ from .models import (
     LecturaMensaje,
     AlertaEmergencia,
     SolicitudViaje,
+    Calificacion,
 )
 from .forms import SolicitudViajeForm
 from .forms import PublicarViajeForm
+from .forms import CalificarConductorForm
 from .validators import validar_imagen_jpeg
 
 Usuario = get_user_model()
@@ -101,7 +107,8 @@ def usuario_pertenece_al_viaje(usuario, viaje):
     return SolicitudViaje.objects.filter(
         viaje=viaje,
         pasajero=usuario,
-        estado=SolicitudViaje.EstadosSolicitud.ACEPTADA,
+        estado__in=[SolicitudViaje.EstadosSolicitud.ACEPTADA,
+        SolicitudViaje.EstadosSolicitud.COMPLETADA],
     ).exists()
 
 
@@ -995,6 +1002,207 @@ def ver_ruta_viaje_pasajero(request, viaje_id):
     return render(
         request,
         "viajes/ruta_viaje_pasajero.html",
+        contexto,
+    )
+
+# =========================================================
+# Calificar conductor
+#==========================================================
+
+@login_required(login_url="login")
+def calificar_conductor(request, solicitud_id):
+
+    solicitud = get_object_or_404(
+        SolicitudViaje.objects.select_related(
+            "viaje",
+            "viaje__conductor",
+            "viaje__conductor__usuario",
+            "viaje__vehiculo",
+            "pasajero",
+        ),
+        id=solicitud_id,
+        pasajero=request.user,
+    )
+
+    viaje = solicitud.viaje
+    conductor_usuario = viaje.conductor.usuario
+
+    # =====================================================
+    # VALIDAR ROL
+    # =====================================================
+
+    if request.user.rol != Usuario.Roles.PASAJERO:
+
+        messages.error(
+            request,
+            "Solo los pasajeros pueden calificar al conductor."
+        )
+
+        return redirect(
+            "mis_viajes_pasajero"
+        )
+
+    # =====================================================
+    # VALIDAR VIAJE FINALIZADO
+    # =====================================================
+
+    if viaje.estado != Viaje.EstadosViaje.FINALIZADO:
+
+        messages.warning(
+            request,
+            "Solo puedes calificar al conductor "
+            "cuando el viaje haya finalizado."
+        )
+
+        return redirect(
+            "mis_viajes_pasajero"
+        )
+
+    # =====================================================
+    # VALIDAR SOLICITUD COMPLETADA
+    # =====================================================
+
+    if (
+        solicitud.estado
+        != SolicitudViaje.EstadosSolicitud.COMPLETADA
+    ):
+
+        messages.warning(
+            request,
+            "Tu participación en el viaje todavía "
+            "no está marcada como completada."
+        )
+
+        return redirect(
+            "mis_viajes_pasajero"
+        )
+
+    # =====================================================
+    # IMPEDIR CALIFICACIÓN DUPLICADA
+    # =====================================================
+
+    calificacion_existente = (
+        Calificacion.objects
+        .filter(
+            viaje=viaje,
+            autor=request.user,
+            destinatario=conductor_usuario,
+            tipo=(
+                Calificacion
+                .TiposCalificacion
+                .CONDUCTOR
+            ),
+        )
+        .first()
+    )
+
+    if calificacion_existente:
+
+        messages.info(
+            request,
+            "Ya calificaste al conductor de este viaje."
+        )
+
+        return redirect(
+            "mis_viajes_pasajero"
+        )
+
+    # =====================================================
+    # FORMULARIO
+    # =====================================================
+
+    if request.method == "POST":
+
+        form = CalificarConductorForm(
+            request.POST
+        )
+
+        if form.is_valid():
+
+            calificacion = form.save(
+                commit=False
+            )
+
+            calificacion.viaje = viaje
+            calificacion.autor = request.user
+            calificacion.destinatario = conductor_usuario
+
+            calificacion.tipo = (
+                Calificacion
+                .TiposCalificacion
+                .CONDUCTOR
+            )
+
+            calificacion.estado = (
+                Calificacion
+                .EstadosCalificacion
+                .VISIBLE
+            )
+
+            try:
+
+                calificacion.full_clean()
+                calificacion.save()
+
+            except ValidationError as error:
+
+                if hasattr(
+                    error,
+                    "message_dict"
+                ):
+
+                    for campo, errores in (
+                        error.message_dict.items()
+                    ):
+
+                        for mensaje in errores:
+
+                            if campo in form.fields:
+
+                                form.add_error(
+                                    campo,
+                                    mensaje,
+                                )
+
+                            else:
+
+                                form.add_error(
+                                    None,
+                                    mensaje,
+                                )
+
+                else:
+
+                    form.add_error(
+                        None,
+                        error.message,
+                    )
+
+            else:
+
+                messages.success(
+                    request,
+                    "Tu calificación fue registrada correctamente."
+                )
+
+                return redirect(
+                    "mis_viajes_pasajero"
+                )
+
+    else:
+
+        form = CalificarConductorForm()
+
+    contexto = {
+        "form": form,
+        "solicitud": solicitud,
+        "viaje": viaje,
+        "conductor": conductor_usuario,
+    }
+
+    return render(
+        request,
+        "viajes/calificar_conductor.html",
         contexto,
     )
 
@@ -2080,69 +2288,221 @@ def mis_viajes_conductor(request):
 @login_required(login_url="login")
 def mis_viajes_pasajero(request):
 
+    # -----------------------------------------------------
+    # VALIDAR ROL
+    # -----------------------------------------------------
+
     if obtener_rol(request.user) != Usuario.Roles.PASAJERO:
-        return render(request, "403.html", status=403)
 
-    filtro = request.GET.get("estado", "todos")
+        return render(
+            request,
+            "403.html",
+            status=403,
+        )
 
-    solicitudes = SolicitudViaje.objects.filter(
-        pasajero=request.user
-    ).select_related(
-        "viaje",
-        "viaje__conductor__usuario",
-        "viaje__vehiculo"
+    # -----------------------------------------------------
+    # FILTRO ACTUAL
+    # -----------------------------------------------------
+
+    filtro = (
+        request.GET
+        .get("estado", "todos")
+        .strip()
+        .lower()
+    )
+
+    filtros_validos = {
+        "todos",
+        "pendientes",
+        "aceptadas",
+        "rechazadas",
+        "canceladas",
+        "completadas",
+    }
+
+    if filtro not in filtros_validos:
+        filtro = "todos"
+
+    # -----------------------------------------------------
+    # CONSULTA BASE DEL PASAJERO
+    # -----------------------------------------------------
+
+    solicitudes_base = (
+        SolicitudViaje.objects
+        .filter(
+            pasajero=request.user
+        )
+    )
+
+    # -----------------------------------------------------
+    # SOLICITUDES A MOSTRAR
+    # -----------------------------------------------------
+
+    solicitudes = (
+        solicitudes_base
+        .select_related(
+            "viaje",
+            "viaje__conductor",
+            "viaje__conductor__usuario",
+            "viaje__vehiculo",
+        )
+        .order_by(
+            "-fecha_solicitud"
+        )
     )
 
     if filtro == "pendientes":
+
         solicitudes = solicitudes.filter(
-            estado=SolicitudViaje.EstadosSolicitud.PENDIENTE
+            estado=(
+                SolicitudViaje
+                .EstadosSolicitud
+                .PENDIENTE
+            )
         )
 
     elif filtro == "aceptadas":
+
         solicitudes = solicitudes.filter(
-            estado=SolicitudViaje.EstadosSolicitud.ACEPTADA
+            estado=(
+                SolicitudViaje
+                .EstadosSolicitud
+                .ACEPTADA
+            )
         )
 
     elif filtro == "rechazadas":
+
         solicitudes = solicitudes.filter(
-            estado=SolicitudViaje.EstadosSolicitud.RECHAZADA
+            estado=(
+                SolicitudViaje
+                .EstadosSolicitud
+                .RECHAZADA
+            )
         )
 
     elif filtro == "canceladas":
+
         solicitudes = solicitudes.filter(
-            estado=SolicitudViaje.EstadosSolicitud.CANCELADA
+            estado=(
+                SolicitudViaje
+                .EstadosSolicitud
+                .CANCELADA
+            )
         )
 
     elif filtro == "completadas":
+
         solicitudes = solicitudes.filter(
-            estado=SolicitudViaje.EstadosSolicitud.COMPLETADA
+            estado=(
+                SolicitudViaje
+                .EstadosSolicitud
+                .COMPLETADA
+            )
         )
 
+    # Convertimos a lista porque agregaremos una propiedad
+    # temporal a cada solicitud para usarla en el template.
+    solicitudes = list(
+        solicitudes
+    )
+
+    # -----------------------------------------------------
+    # CALIFICACIONES YA REALIZADAS
+    # -----------------------------------------------------
+
+    ids_viajes = [
+        solicitud.viaje_id
+        for solicitud in solicitudes
+    ]
+
+    calificaciones_realizadas = set(
+        Calificacion.objects
+        .filter(
+            viaje_id__in=ids_viajes,
+            autor=request.user,
+            tipo=(
+                Calificacion
+                .TiposCalificacion
+                .CONDUCTOR
+            ),
+        )
+        .values_list(
+            "viaje_id",
+            flat=True,
+        )
+    )
+
+    for solicitud in solicitudes:
+
+        solicitud.calificacion_conductor_realizada = (
+            solicitud.viaje_id
+            in calificaciones_realizadas
+        )
+
+    # -----------------------------------------------------
+    # ESTADÍSTICAS
+    # -----------------------------------------------------
+
     estadisticas = {
-        "total": SolicitudViaje.objects.filter(
-            pasajero=request.user
-        ).count(),
 
-        "pendientes": SolicitudViaje.objects.filter(
-            pasajero=request.user,
-            estado=SolicitudViaje.EstadosSolicitud.PENDIENTE
-        ).count(),
+        "total": (
+            solicitudes_base.count()
+        ),
 
-        "aceptadas": SolicitudViaje.objects.filter(
-            pasajero=request.user,
-            estado=SolicitudViaje.EstadosSolicitud.ACEPTADA
-        ).count(),
+        "pendientes": (
+            solicitudes_base
+            .filter(
+                estado=(
+                    SolicitudViaje
+                    .EstadosSolicitud
+                    .PENDIENTE
+                )
+            )
+            .count()
+        ),
 
-        "completadas": SolicitudViaje.objects.filter(
-            pasajero=request.user,
-            estado=SolicitudViaje.EstadosSolicitud.COMPLETADA
-        ).count(),
+        "aceptadas": (
+            solicitudes_base
+            .filter(
+                estado=(
+                    SolicitudViaje
+                    .EstadosSolicitud
+                    .ACEPTADA
+                )
+            )
+            .count()
+        ),
 
-        "canceladas": SolicitudViaje.objects.filter(
-            pasajero=request.user,
-            estado=SolicitudViaje.EstadosSolicitud.CANCELADA
-        ).count(),
+        "completadas": (
+            solicitudes_base
+            .filter(
+                estado=(
+                    SolicitudViaje
+                    .EstadosSolicitud
+                    .COMPLETADA
+                )
+            )
+            .count()
+        ),
+
+        "canceladas": (
+            solicitudes_base
+            .filter(
+                estado=(
+                    SolicitudViaje
+                    .EstadosSolicitud
+                    .CANCELADA
+                )
+            )
+            .count()
+        ),
+
     }
+
+    # -----------------------------------------------------
+    # RENDER
+    # -----------------------------------------------------
 
     return render(
         request,
@@ -2152,6 +2512,533 @@ def mis_viajes_pasajero(request):
             "estadisticas": estadisticas,
             "filtro_actual": filtro,
         },
+    )
+
+# =========================================================
+# INICIAR VIAJE - CONDUCTOR
+# =========================================================
+
+@login_required(login_url="login")
+@require_POST
+def iniciar_viaje(request, viaje_id):
+
+    # -----------------------------------------------------
+    # VALIDAR ROL
+    # -----------------------------------------------------
+
+    if obtener_rol(request.user) != Usuario.Roles.CONDUCTOR:
+
+        messages.error(
+            request,
+            "Solo los conductores pueden iniciar un viaje.",
+        )
+
+        return redirect("home")
+
+    # -----------------------------------------------------
+    # OBTENER PERFIL DEL CONDUCTOR
+    # -----------------------------------------------------
+
+    try:
+
+        perfil_conductor = (
+            request.user.perfil_conductor
+        )
+
+    except PerfilConductor.DoesNotExist:
+
+        messages.error(
+            request,
+            "No tienes un perfil de conductor registrado.",
+        )
+
+        return redirect("perfil")
+
+    # -----------------------------------------------------
+    # CAMBIAR EL ESTADO DEL VIAJE
+    # -----------------------------------------------------
+
+    try:
+
+        with transaction.atomic():
+
+            viaje = (
+                Viaje.objects
+                .select_for_update()
+                .select_related(
+                    "conductor",
+                    "conductor__usuario",
+                    "vehiculo",
+                )
+                .get(
+                    pk=viaje_id,
+                    conductor=perfil_conductor,
+                )
+            )
+
+            # El viaje solo puede iniciarse si todavía
+            # está disponible o ya está completo.
+            if viaje.estado not in {
+                Viaje.EstadosViaje.DISPONIBLE,
+                Viaje.EstadosViaje.COMPLETO,
+            }:
+
+                messages.warning(
+                    request,
+                    (
+                        "Este viaje no puede iniciarse "
+                        "en su estado actual."
+                    ),
+                )
+
+                return redirect(
+                    "mis_viajes_conductor"
+                )
+
+            # Impedir que el mismo conductor tenga
+            # dos viajes activos simultáneamente.
+            existe_otro_viaje_en_curso = (
+                Viaje.objects
+                .filter(
+                    conductor=perfil_conductor,
+                    estado=Viaje.EstadosViaje.EN_CURSO,
+                )
+                .exclude(
+                    pk=viaje.pk
+                )
+                .exists()
+            )
+
+            if existe_otro_viaje_en_curso:
+
+                messages.warning(
+                    request,
+                    (
+                        "Ya tienes otro viaje en curso. "
+                        "Debes finalizarlo antes de iniciar este."
+                    ),
+                )
+
+                return redirect(
+                    "mis_viajes_conductor"
+                )
+
+            viaje.estado = (
+                Viaje.EstadosViaje.EN_CURSO
+            )
+
+            viaje.save(
+                update_fields=[
+                    "estado",
+                    "fecha_actualizacion",
+                ]
+            )
+
+            # Crear o reactivar la sala de chat.
+            sala_chat, creada = (
+                SalaChat.objects.get_or_create(
+                    viaje=viaje,
+                    defaults={
+                        "activa": True,
+                    },
+                )
+            )
+
+            if not creada and not sala_chat.activa:
+
+                sala_chat.activa = True
+
+                sala_chat.save(
+                    update_fields=[
+                        "activa",
+                    ]
+                )
+
+            # Notificar a los pasajeros aceptados.
+            solicitudes_aceptadas = (
+                SolicitudViaje.objects
+                .filter(
+                    viaje=viaje,
+                    estado=(
+                        SolicitudViaje
+                        .EstadosSolicitud
+                        .ACEPTADA
+                    ),
+                )
+                .select_related(
+                    "pasajero"
+                )
+            )
+
+            notificaciones = []
+
+            for solicitud in solicitudes_aceptadas:
+
+                notificaciones.append(
+                    Notificacion(
+                        usuario=solicitud.pasajero,
+                        actor=request.user,
+                        viaje=viaje,
+                        solicitud=solicitud,
+                        tipo=(
+                            Notificacion
+                            .TiposNotificacion
+                            .VIAJE
+                        ),
+                        titulo="El viaje ha comenzado",
+                        descripcion=(
+                            f"El viaje desde {viaje.origen} "
+                            f"hacia {viaje.destino} ya está en curso."
+                        ),
+                        url_destino=reverse(
+                            "ride_en_progreso",
+                            kwargs={
+                                "viaje_id": viaje.id,
+                            },
+                        ),
+                    )
+                )
+
+            if notificaciones:
+
+                Notificacion.objects.bulk_create(
+                    notificaciones
+                )
+
+    except Viaje.DoesNotExist:
+
+        messages.error(
+            request,
+            (
+                "El viaje no existe o no pertenece "
+                "a tu cuenta de conductor."
+            ),
+        )
+
+        return redirect(
+            "mis_viajes_conductor"
+        )
+
+    messages.success(
+        request,
+        "El viaje fue iniciado correctamente.",
+    )
+
+    return redirect(
+        "ride_en_progreso",
+        viaje_id=viaje.id,
+    )
+
+# =========================================================
+# RIDE EN PROGRESO
+# =========================================================
+
+@login_required(login_url="login")
+def ride_en_progreso(request, viaje_id):
+
+    viaje = get_object_or_404(
+        Viaje.objects.select_related(
+            "conductor",
+            "conductor__usuario",
+            "vehiculo",
+        ),
+        pk=viaje_id,
+    )
+
+    es_conductor = (
+        viaje.conductor.usuario_id
+        == request.user.id
+    )
+
+    solicitud_pasajero = None
+
+    # -----------------------------------------------------
+    # VALIDAR ACCESO
+    # -----------------------------------------------------
+
+    if not es_conductor:
+
+        solicitud_pasajero = (
+            SolicitudViaje.objects
+            .filter(
+                viaje=viaje,
+                pasajero=request.user,
+                estado=(
+                    SolicitudViaje
+                    .EstadosSolicitud
+                    .ACEPTADA
+                ),
+            )
+            .select_related(
+                "pasajero",
+            )
+            .first()
+        )
+
+        if solicitud_pasajero is None:
+
+            messages.error(
+                request,
+                "No tienes permiso para consultar este viaje.",
+            )
+
+            return redirect("home")
+
+    # -----------------------------------------------------
+    # VALIDAR ESTADO
+    # -----------------------------------------------------
+
+    if viaje.estado == Viaje.EstadosViaje.FINALIZADO:
+
+        messages.info(
+            request,
+            "Este viaje ya fue finalizado.",
+        )
+
+        if es_conductor:
+
+            return redirect(
+                "mis_viajes_conductor"
+            )
+
+        return redirect(
+            "mis_viajes_pasajero"
+        )
+
+    if viaje.estado == Viaje.EstadosViaje.CANCELADO:
+
+        messages.warning(
+            request,
+            "Este viaje fue cancelado.",
+        )
+
+        if es_conductor:
+
+            return redirect(
+                "mis_viajes_conductor"
+            )
+
+        return redirect(
+            "mis_viajes_pasajero"
+        )
+
+    if viaje.estado != Viaje.EstadosViaje.EN_CURSO:
+
+        messages.warning(
+            request,
+            "El viaje todavía no ha sido iniciado.",
+        )
+
+        if es_conductor:
+
+            return redirect(
+                "mis_viajes_conductor"
+            )
+
+        return redirect(
+            "mis_viajes_pasajero"
+        )
+
+    # -----------------------------------------------------
+    # PASAJEROS ACEPTADOS
+    # -----------------------------------------------------
+
+    solicitudes_aceptadas = (
+        SolicitudViaje.objects
+        .filter(
+            viaje=viaje,
+            estado=(
+                SolicitudViaje
+                .EstadosSolicitud
+                .ACEPTADA
+            ),
+        )
+        .select_related(
+            "pasajero",
+        )
+        .order_by(
+            "fecha_solicitud"
+        )
+    )
+
+    total_pasajeros = sum(
+        solicitud.asientos_solicitados
+        for solicitud in solicitudes_aceptadas
+    )
+
+    # -----------------------------------------------------
+    # CHAT
+    # -----------------------------------------------------
+
+    sala_chat, _ = (
+        SalaChat.objects
+        .get_or_create(
+            viaje=viaje,
+            defaults={
+                "activa": True,
+            },
+        )
+    )
+
+    if not sala_chat.activa:
+
+        sala_chat.activa = True
+
+        sala_chat.save(
+            update_fields=[
+                "activa",
+            ]
+        )
+
+    # -----------------------------------------------------
+    # ALERTAS ACTIVAS
+    # -----------------------------------------------------
+
+    alertas_activas = (
+        AlertaEmergencia.objects
+        .filter(
+            viaje=viaje,
+            estado=(
+                AlertaEmergencia
+                .EstadosAlerta
+                .ACTIVA
+            ),
+        )
+        .select_related(
+            "usuario",
+        )
+        .order_by(
+            "-fecha_activacion"
+        )
+    )
+
+    contexto = {
+        "viaje": viaje,
+        "vehiculo": viaje.vehiculo,
+        "conductor": viaje.conductor,
+        "solicitudes_aceptadas": solicitudes_aceptadas,
+        "total_pasajeros": total_pasajeros,
+        "sala_chat": sala_chat,
+        "alertas_activas": alertas_activas,
+        "total_alertas_activas": alertas_activas.count(),
+        "es_conductor": es_conductor,
+        "solicitud_pasajero": solicitud_pasajero,
+    }
+
+    return render(
+        request,
+        "viajes/ride_en_progreso.html",
+        contexto,
+    )
+
+# =========================================================
+# FINALIZAR VIAJE
+# =========================================================
+
+@login_required(login_url="login")
+@require_POST
+def finalizar_viaje(request, viaje_id):
+
+    if obtener_rol(request.user) != Usuario.Roles.CONDUCTOR:
+
+        messages.error(
+            request,
+            "Solo el conductor puede finalizar el viaje.",
+        )
+
+        return redirect("home")
+
+    try:
+
+        perfil_conductor = (
+            request.user.perfil_conductor
+        )
+
+    except PerfilConductor.DoesNotExist:
+
+        messages.error(
+            request,
+            "No tienes un perfil de conductor registrado.",
+        )
+
+        return redirect("perfil")
+
+    try:
+
+        with transaction.atomic():
+
+            viaje = (
+                Viaje.objects
+                .select_for_update()
+                .get(
+                    pk=viaje_id,
+                    conductor=perfil_conductor,
+                )
+            )
+
+            if viaje.estado != Viaje.EstadosViaje.EN_CURSO:
+
+                messages.warning(
+                    request,
+                    "Solo puedes finalizar un viaje que esté en curso.",
+                )
+
+                return redirect(
+                    "mis_viajes_conductor"
+                )
+
+            viaje.estado = (
+                Viaje.EstadosViaje.FINALIZADO
+            )
+
+            viaje.save(
+                update_fields=[
+                    "estado",
+                    "fecha_actualizacion",
+                ]
+            )
+
+            # Marcar como completadas las solicitudes aceptadas.
+            SolicitudViaje.objects.filter(
+                viaje=viaje,
+                estado=(
+                    SolicitudViaje
+                    .EstadosSolicitud
+                    .ACEPTADA
+                ),
+            ).update(
+                estado=(
+                    SolicitudViaje
+                    .EstadosSolicitud
+                    .COMPLETADA
+                ),
+            )
+
+            # Cerrar la sala del chat.
+            SalaChat.objects.filter(
+                viaje=viaje,
+            ).update(
+                activa=False,
+            )
+
+    except Viaje.DoesNotExist:
+
+        messages.error(
+            request,
+            "El viaje no existe o no te pertenece.",
+        )
+
+        return redirect(
+            "mis_viajes_conductor"
+        )
+
+    messages.success(
+        request,
+        "El viaje fue finalizado correctamente.",
+    )
+
+    return redirect(
+        "mis_viajes_conductor"
     )
 
 
@@ -2298,6 +3185,377 @@ def cargar_vista(request, vista):
             )
         )
 
+    # =====================================================
+    # PUNTOCACIONES
+    # =====================================================
+
+    elif vista == "puntuacion":
+
+        # -------------------------------------------------
+        # Todas las calificaciones para la tabla del admin
+        # -------------------------------------------------
+
+        calificaciones = (
+            Calificacion.objects
+            .select_related(
+                "autor",
+                "destinatario",
+                "viaje",
+                "viaje__conductor",
+                "viaje__conductor__usuario",
+                "revisada_por",
+            )
+            .order_by("-fecha")
+        )
+
+
+        # -------------------------------------------------
+        # Calificaciones que cuentan para estadísticas
+        # -------------------------------------------------
+
+        calificaciones_metricas = (
+            calificaciones
+            .filter(
+                estado__in=[
+                    Calificacion
+                    .EstadosCalificacion
+                    .VISIBLE,
+
+                    Calificacion
+                    .EstadosCalificacion
+                    .EN_REVISION,
+                ]
+            )
+        )
+
+
+        # -------------------------------------------------
+        # RESUMEN GENERAL
+        # -------------------------------------------------
+
+        resumen_general = (
+            calificaciones_metricas
+            .aggregate(
+                promedio=Avg("puntuacion"),
+                total=Count("id"),
+            )
+        )
+
+        promedio_general = (
+            resumen_general.get("promedio")
+            or 0
+        )
+
+        total_calificaciones = (
+            resumen_general.get("total")
+            or 0
+        )
+
+
+        # -------------------------------------------------
+        # ÍNDICE DE SATISFACCIÓN
+        # 4 o 5 estrellas
+        # -------------------------------------------------
+
+        total_positivas = (
+            calificaciones_metricas
+            .filter(
+                puntuacion__gte=4
+            )
+            .count()
+        )
+
+        indice_satisfaccion = 0
+
+        if total_calificaciones > 0:
+
+            indice_satisfaccion = round(
+                (
+                    total_positivas
+                    / total_calificaciones
+                )
+                * 100,
+                1,
+            )
+
+
+        # -------------------------------------------------
+        # PROMEDIO DE CONDUCTORES
+        # -------------------------------------------------
+
+        promedio_conductores = (
+            calificaciones_metricas
+            .filter(
+                tipo=(
+                    Calificacion
+                    .TiposCalificacion
+                    .CONDUCTOR
+                )
+            )
+            .aggregate(
+                promedio=Avg("puntuacion")
+            )
+            .get("promedio")
+            or 0
+        )
+
+
+        # -------------------------------------------------
+        # PROMEDIO DE PASAJEROS
+        # -------------------------------------------------
+
+        promedio_pasajeros = (
+            calificaciones_metricas
+            .filter(
+                tipo=(
+                    Calificacion
+                    .TiposCalificacion
+                    .PASAJERO
+                )
+            )
+            .aggregate(
+                promedio=Avg("puntuacion")
+            )
+            .get("promedio")
+            or 0
+        )
+
+
+        # -------------------------------------------------
+        # PROMEDIO DE EXPERIENCIA DE VIAJE
+        # -------------------------------------------------
+
+        promedio_viajes = (
+            calificaciones_metricas
+            .filter(
+                tipo=(
+                    Calificacion
+                    .TiposCalificacion
+                    .VIAJE
+                )
+            )
+            .aggregate(
+                promedio=Avg("puntuacion")
+            )
+            .get("promedio")
+            or 0
+        )
+
+
+        # -------------------------------------------------
+        # CONVERTIR PROMEDIOS EN PORCENTAJES DE BARRA
+        # -------------------------------------------------
+
+        def calcular_porcentaje_promedio(valor):
+
+            valor_numerico = float(
+                valor or 0
+            )
+
+            valor_numerico = max(
+                0,
+                min(valor_numerico, 5),
+            )
+
+            return round(
+                (
+                    valor_numerico
+                    / 5
+                )
+                * 100,
+                1,
+            )
+
+
+        porcentaje_conductores = (
+            calcular_porcentaje_promedio(
+                promedio_conductores
+            )
+        )
+
+        porcentaje_pasajeros = (
+            calcular_porcentaje_promedio(
+                promedio_pasajeros
+            )
+        )
+
+        porcentaje_viajes = (
+            calcular_porcentaje_promedio(
+                promedio_viajes
+            )
+        )
+
+
+        # -------------------------------------------------
+        # DISTRIBUCIÓN DE ESTRELLAS
+        # -------------------------------------------------
+
+        distribucion = {}
+
+        for numero in range(1, 6):
+
+            distribucion[numero] = (
+                calificaciones_metricas
+                .filter(
+                    puntuacion=numero
+                )
+                .count()
+            )
+
+
+        # -------------------------------------------------
+        # VIAJES FINALIZADOS SIN EVALUACIÓN
+        # -------------------------------------------------
+
+        viajes_finalizados = (
+            Viaje.objects
+            .filter(
+                estado=(
+                    Viaje
+                    .EstadosViaje
+                    .FINALIZADO
+                )
+            )
+        )
+
+        total_viajes_finalizados = (
+            viajes_finalizados.count()
+        )
+
+        viajes_evaluados = (
+            viajes_finalizados
+            .filter(
+                calificaciones__isnull=False
+            )
+            .distinct()
+            .count()
+        )
+
+        viajes_sin_evaluar = max(
+            total_viajes_finalizados
+            - viajes_evaluados,
+            0,
+        )
+
+
+        # -------------------------------------------------
+        # CANTIDADES DE MODERACIÓN
+        # -------------------------------------------------
+
+        total_reportadas = (
+            calificaciones
+            .filter(
+                estado=(
+                    Calificacion
+                    .EstadosCalificacion
+                    .REPORTADA
+                )
+            )
+            .count()
+        )
+
+        total_en_revision = (
+            calificaciones
+            .filter(
+                estado=(
+                    Calificacion
+                    .EstadosCalificacion
+                    .EN_REVISION
+                )
+            )
+            .count()
+        )
+
+        total_ocultas = (
+            calificaciones
+            .filter(
+                estado=(
+                    Calificacion
+                    .EstadosCalificacion
+                    .OCULTA
+                )
+            )
+            .count()
+        )
+
+
+        # -------------------------------------------------
+        # CONTEXTO DEL TEMPLATE
+        # -------------------------------------------------
+
+        contexto.update({
+
+            "calificaciones":
+                calificaciones,
+
+            "promedio_general":
+                round(
+                    float(promedio_general),
+                    1,
+                ),
+
+            "total_calificaciones":
+                total_calificaciones,
+
+            "indice_satisfaccion":
+                indice_satisfaccion,
+
+            "promedio_conductores":
+                round(
+                    float(promedio_conductores),
+                    1,
+                ),
+
+            "promedio_pasajeros":
+                round(
+                    float(promedio_pasajeros),
+                    1,
+                ),
+
+            "promedio_viajes":
+                round(
+                    float(promedio_viajes),
+                    1,
+                ),
+
+            "porcentaje_conductores":
+                porcentaje_conductores,
+
+            "porcentaje_pasajeros":
+                porcentaje_pasajeros,
+
+            "porcentaje_viajes":
+                porcentaje_viajes,
+
+            "viajes_sin_evaluar":
+                viajes_sin_evaluar,
+
+            "total_reportadas":
+                total_reportadas,
+
+            "total_en_revision":
+                total_en_revision,
+
+            "total_ocultas":
+                total_ocultas,
+
+            "distribucion_labels": [
+                "1 estrella",
+                "2 estrellas",
+                "3 estrellas",
+                "4 estrellas",
+                "5 estrellas",
+            ],
+
+            "distribucion_valores": [
+                distribucion[1],
+                distribucion[2],
+                distribucion[3],
+                distribucion[4],
+                distribucion[5],
+            ],
+
+        })
 
     return render(
         request,

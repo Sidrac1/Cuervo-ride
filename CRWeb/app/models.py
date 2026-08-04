@@ -1167,57 +1167,203 @@ class SolicitudViaje(models.Model):
 
 class Calificacion(models.Model):
 
+    # -----------------------------------------------------
+    # TIPOS DE CALIFICACIÓN
+    # -----------------------------------------------------
+
     class TiposCalificacion(models.TextChoices):
-        CONDUCTOR = "conductor", "Calificación al conductor"
-        PASAJERO = "pasajero", "Calificación al pasajero"
-        VIAJE = "viaje", "Calificación del viaje"
+
+        CONDUCTOR = (
+            "conductor",
+            "Calificación al conductor"
+        )
+
+        PASAJERO = (
+            "pasajero",
+            "Calificación al pasajero"
+        )
+
+        VIAJE = (
+            "viaje",
+            "Calificación del viaje"
+        )
+
+
+    # -----------------------------------------------------
+    # ESTADOS DE MODERACIÓN
+    # -----------------------------------------------------
+
+    class EstadosCalificacion(models.TextChoices):
+
+        VISIBLE = (
+            "visible",
+            "Visible"
+        )
+
+        REPORTADA = (
+            "reportada",
+            "Reportada"
+        )
+
+        EN_REVISION = (
+            "en_revision",
+            "En revisión"
+        )
+
+        OCULTA = (
+            "oculta",
+            "Oculta"
+        )
+
+
+    # -----------------------------------------------------
+    # RELACIONES PRINCIPALES
+    # -----------------------------------------------------
 
     viaje = models.ForeignKey(
         Viaje,
         on_delete=models.CASCADE,
-        related_name="calificaciones"
+        related_name="calificaciones",
+        verbose_name="Viaje"
     )
 
     autor = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="calificaciones_realizadas"
+        related_name="calificaciones_realizadas",
+        verbose_name="Autor"
     )
 
     destinatario = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="calificaciones_recibidas"
+        related_name="calificaciones_recibidas",
+        verbose_name="Destinatario"
     )
+
+
+    # -----------------------------------------------------
+    # CONTENIDO DE LA CALIFICACIÓN
+    # -----------------------------------------------------
 
     tipo = models.CharField(
         max_length=20,
-        choices=TiposCalificacion.choices
+        choices=TiposCalificacion.choices,
+        verbose_name="Tipo de calificación"
     )
 
     puntuacion = models.PositiveSmallIntegerField(
         validators=[
             MinValueValidator(1),
             MaxValueValidator(5),
-        ]
+        ],
+        verbose_name="Puntuación"
     )
 
     comentario = models.TextField(
         max_length=500,
-        blank=True
+        blank=True,
+        verbose_name="Comentario"
+    )
+
+
+    # -----------------------------------------------------
+    # MODERACIÓN
+    # -----------------------------------------------------
+
+    estado = models.CharField(
+        max_length=20,
+        choices=EstadosCalificacion.choices,
+        default=EstadosCalificacion.VISIBLE,
+        verbose_name="Estado de moderación"
+    )
+
+    motivo_moderacion = models.TextField(
+        max_length=500,
+        blank=True,
+        verbose_name="Motivo de moderación"
+    )
+
+    revisada_por = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        related_name="calificaciones_revisadas",
+        blank=True,
+        null=True,
+        verbose_name="Revisada por"
+    )
+
+    fecha_revision = models.DateTimeField(
+        blank=True,
+        null=True,
+        verbose_name="Fecha de revisión"
+    )
+
+
+    # -----------------------------------------------------
+    # CONTROL DE EDICIÓN
+    # -----------------------------------------------------
+
+    editada = models.BooleanField(
+        default=False,
+        verbose_name="Fue editada"
     )
 
     fecha = models.DateTimeField(
-        auto_now_add=True
+        auto_now_add=True,
+        verbose_name="Fecha de creación"
     )
 
+    fecha_actualizacion = models.DateTimeField(
+        auto_now=True,
+        verbose_name="Última actualización"
+    )
+
+
+    # -----------------------------------------------------
+    # META
+    # -----------------------------------------------------
+
     class Meta:
+
         verbose_name = "Calificación"
+
         verbose_name_plural = "Calificaciones"
+
         ordering = [
             "-fecha"
         ]
+
+        indexes = [
+
+            models.Index(
+                fields=[
+                    "tipo",
+                    "puntuacion",
+                ],
+                name="idx_calificacion_tipo_punt"
+            ),
+
+            models.Index(
+                fields=[
+                    "estado",
+                    "fecha",
+                ],
+                name="idx_calificacion_estado_fecha"
+            ),
+
+            models.Index(
+                fields=[
+                    "destinatario",
+                    "fecha",
+                ],
+                name="idx_calificacion_dest_fecha"
+            ),
+
+        ]
+
         constraints = [
+
             models.UniqueConstraint(
                 fields=[
                     "viaje",
@@ -1227,18 +1373,387 @@ class Calificacion(models.Model):
                 ],
                 name="calificacion_unica_por_viaje"
             ),
+
             models.CheckConstraint(
                 condition=~Q(
                     autor=F("destinatario")
                 ),
                 name="calificacion_no_autocalificacion"
             ),
+
+            models.CheckConstraint(
+                condition=Q(
+                    puntuacion__gte=1,
+                    puntuacion__lte=5,
+                ),
+                name="calificacion_puntuacion_valida"
+            ),
+
         ]
 
-    def __str__(self):
+
+    # -----------------------------------------------------
+    # VALIDACIONES
+    # -----------------------------------------------------
+
+    def clean(self):
+
+        super().clean()
+
+        errores = {}
+
+
+        # -------------------------------------------------
+        # VALIDACIONES BÁSICAS
+        # -------------------------------------------------
+
+        if (
+            self.autor_id
+            and self.destinatario_id
+            and self.autor_id == self.destinatario_id
+        ):
+
+            errores["destinatario"] = (
+                "Un usuario no puede calificarse "
+                "a sí mismo."
+            )
+
+
+        if (
+            self.viaje_id
+            and self.viaje.estado
+            != Viaje.EstadosViaje.FINALIZADO
+        ):
+
+            errores["viaje"] = (
+                "Solo es posible calificar un viaje "
+                "cuando ha sido finalizado."
+            )
+
+
+        # -------------------------------------------------
+        # PARTICIPACIÓN DEL AUTOR
+        # -------------------------------------------------
+
+        if (
+            self.viaje_id
+            and self.autor_id
+        ):
+
+            autor_es_conductor = (
+                self.viaje.conductor.usuario_id
+                == self.autor_id
+            )
+
+            autor_es_pasajero = (
+                SolicitudViaje.objects
+                .filter(
+                    viaje=self.viaje,
+                    pasajero_id=self.autor_id,
+                    estado=(
+                        SolicitudViaje
+                        .EstadosSolicitud
+                        .COMPLETADA
+                    ),
+                )
+                .exists()
+            )
+
+
+            if not (
+                autor_es_conductor
+                or autor_es_pasajero
+            ):
+
+                errores["autor"] = (
+                    "El autor no participó en este viaje "
+                    "o no lo tiene marcado como completado."
+                )
+
+
+        # -------------------------------------------------
+        # PARTICIPACIÓN DEL DESTINATARIO
+        # -------------------------------------------------
+
+        if (
+            self.viaje_id
+            and self.destinatario_id
+        ):
+
+            destinatario_es_conductor = (
+                self.viaje.conductor.usuario_id
+                == self.destinatario_id
+            )
+
+            destinatario_es_pasajero = (
+                SolicitudViaje.objects
+                .filter(
+                    viaje=self.viaje,
+                    pasajero_id=self.destinatario_id,
+                    estado=(
+                        SolicitudViaje
+                        .EstadosSolicitud
+                        .COMPLETADA
+                    ),
+                )
+                .exists()
+            )
+
+
+            if not (
+                destinatario_es_conductor
+                or destinatario_es_pasajero
+            ):
+
+                errores["destinatario"] = (
+                    "El destinatario no participó "
+                    "en este viaje."
+                )
+
+
+        # -------------------------------------------------
+        # VALIDACIÓN SEGÚN EL TIPO
+        # -------------------------------------------------
+
+        if (
+            self.tipo
+            == self.TiposCalificacion.CONDUCTOR
+            and self.viaje_id
+            and self.destinatario_id
+        ):
+
+            if (
+                self.viaje.conductor.usuario_id
+                != self.destinatario_id
+            ):
+
+                errores["destinatario"] = (
+                    "La calificación al conductor debe "
+                    "estar dirigida al conductor del viaje."
+                )
+
+
+            if (
+                self.autor_id
+                and self.viaje.conductor.usuario_id
+                == self.autor_id
+            ):
+
+                errores["autor"] = (
+                    "El conductor no puede calificarse "
+                    "a sí mismo como conductor."
+                )
+
+
+        elif (
+            self.tipo
+            == self.TiposCalificacion.PASAJERO
+            and self.viaje_id
+            and self.destinatario_id
+        ):
+
+            pasajero_valido = (
+                SolicitudViaje.objects
+                .filter(
+                    viaje=self.viaje,
+                    pasajero_id=self.destinatario_id,
+                    estado=(
+                        SolicitudViaje
+                        .EstadosSolicitud
+                        .COMPLETADA
+                    ),
+                )
+                .exists()
+            )
+
+
+            if not pasajero_valido:
+
+                errores["destinatario"] = (
+                    "La calificación al pasajero debe "
+                    "estar dirigida a un pasajero que "
+                    "completó el viaje."
+                )
+
+
+            if (
+                self.autor_id
+                and self.viaje.conductor.usuario_id
+                != self.autor_id
+            ):
+
+                errores["autor"] = (
+                    "Solo el conductor puede calificar "
+                    "a los pasajeros del viaje."
+                )
+
+
+        elif (
+            self.tipo
+            == self.TiposCalificacion.VIAJE
+            and self.viaje_id
+            and self.autor_id
+            and self.destinatario_id
+        ):
+
+            # La evaluación de la experiencia del viaje
+            # será realizada por un pasajero y se asociará
+            # al conductor como responsable del viaje.
+
+            if (
+                self.viaje.conductor.usuario_id
+                != self.destinatario_id
+            ):
+
+                errores["destinatario"] = (
+                    "La calificación del viaje debe "
+                    "asociarse al conductor responsable."
+                )
+
+
+            if (
+                self.viaje.conductor.usuario_id
+                == self.autor_id
+            ):
+
+                errores["autor"] = (
+                    "El conductor no puede calificar "
+                    "su propio viaje."
+                )
+
+
+        # -------------------------------------------------
+        # MODERACIÓN
+        # -------------------------------------------------
+
+        if (
+            self.estado
+            in {
+                self.EstadosCalificacion.EN_REVISION,
+                self.EstadosCalificacion.OCULTA,
+            }
+            and not self.motivo_moderacion.strip()
+        ):
+
+            errores["motivo_moderacion"] = (
+                "Debes indicar el motivo de moderación."
+            )
+
+
+        if (
+            self.revisada_por_id
+            and not (
+                self.revisada_por.is_staff
+                or self.revisada_por.is_superuser
+                or self.revisada_por.rol
+                == Usuario.Roles.ADMINISTRADOR
+            )
+        ):
+
+            errores["revisada_por"] = (
+                "La calificación solo puede ser revisada "
+                "por un administrador."
+            )
+
+
+        if errores:
+
+            raise ValidationError(
+                errores
+            )
+
+
+    # -----------------------------------------------------
+    # GUARDADO
+    # -----------------------------------------------------
+
+    def save(
+        self,
+        *args,
+        **kwargs
+    ):
+
+        if self.pk:
+
+            anterior = (
+                Calificacion.objects
+                .filter(pk=self.pk)
+                .values(
+                    "puntuacion",
+                    "comentario",
+                )
+                .first()
+            )
+
+
+            if anterior:
+
+                if (
+                    anterior["puntuacion"]
+                    != self.puntuacion
+                    or anterior["comentario"]
+                    != self.comentario
+                ):
+
+                    self.editada = True
+
+
+        if (
+            self.estado
+            in {
+                self.EstadosCalificacion.EN_REVISION,
+                self.EstadosCalificacion.OCULTA,
+            }
+            and self.revisada_por_id
+            and self.fecha_revision is None
+        ):
+
+            self.fecha_revision = (
+                timezone.now()
+            )
+
+
+        super().save(
+            *args,
+            **kwargs
+        )
+
+
+    # -----------------------------------------------------
+    # PROPIEDADES
+    # -----------------------------------------------------
+
+    @property
+    def es_positiva(self):
+
+        return self.puntuacion >= 4
+
+
+    @property
+    def es_negativa(self):
+
+        return self.puntuacion <= 2
+
+
+    @property
+    def comentario_visible(self):
+
         return (
-            f"{self.autor.nombre} calificó a "
-            f"{self.destinatario.nombre}: {self.puntuacion}"
+            self.estado
+            == self.EstadosCalificacion.VISIBLE
+        )
+
+
+    # -----------------------------------------------------
+    # REPRESENTACIÓN
+    # -----------------------------------------------------
+
+    def __str__(self):
+
+        return (
+            f"{self.autor.nombre_completo} calificó a "
+            f"{self.destinatario.nombre_completo}: "
+            f"{self.puntuacion}/5"
         )
 
 

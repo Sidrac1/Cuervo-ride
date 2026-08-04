@@ -9,7 +9,7 @@ from .constants import (
     UTT_LONGITUD,
     UTT_NOMBRE,
 )
-from .models import Viaje, Vehiculo, SolicitudViaje
+from .models import Calificacion,Viaje, Vehiculo, SolicitudViaje
 
 
 class PublicarViajeForm(forms.ModelForm):
@@ -461,3 +461,62 @@ class SolicitudViajeForm(forms.ModelForm):
             )
 
         return asientos
+
+class CalificarConductorForm(forms.ModelForm):
+
+    class Meta:
+
+        model = Calificacion
+
+        fields = [
+            "puntuacion",
+            "comentario",
+        ]
+
+        widgets = {
+
+            "puntuacion": forms.HiddenInput(
+                attrs={
+                    "id": "id_puntuacion",
+                }
+            ),
+
+            "comentario": forms.Textarea(
+                attrs={
+                    "id": "id_comentario",
+                    "class": "calificacion-comentario",
+                    "rows": 5,
+                    "maxlength": 500,
+                    "placeholder": (
+                        "Cuéntanos cómo fue tu experiencia "
+                        "con el conductor (opcional)."
+                    ),
+                }
+            ),
+
+        }
+
+        labels = {
+            "puntuacion": "Puntuación",
+            "comentario": "Comentario opcional",
+        }
+
+    def clean_puntuacion(self):
+
+        puntuacion = self.cleaned_data.get(
+            "puntuacion"
+        )
+
+        if puntuacion is None:
+
+            raise ValidationError(
+                "Selecciona una puntuación de 1 a 5 estrellas."
+            )
+
+        if puntuacion < 1 or puntuacion > 5:
+
+            raise ValidationError(
+                "La puntuación debe estar entre 1 y 5 estrellas."
+            )
+
+        return puntuacion

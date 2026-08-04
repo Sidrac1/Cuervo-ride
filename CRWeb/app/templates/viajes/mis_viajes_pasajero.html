@@ -1035,7 +1035,7 @@
                             {% elif solicitud.estado == "aceptada" %}
 
 
-                                <!-- CHAT: SIEMPRE DISPONIBLE PARA ACEPTADOS -->
+                                <!-- CHAT: DISPONIBLE PARA SOLICITUDES ACEPTADAS -->
 
                                 <a
                                     href="{% url 'chat_viaje' solicitud.viaje.id %}"
@@ -1072,28 +1072,13 @@
                                     </button>
 
 
-                                {% elif solicitud.viaje.estado == "finalizado" %}
-
-                                    <button
-                                        type="button"
-                                        class="btn-viaje btn-principal"
-                                        data-action="calificar"
-                                        data-solicitud="{{ solicitud.id }}">
-
-                                        <i class="fa-solid fa-star"></i>
-
-                                        Calificar conductor
-
-                                    </button>
-
-
-                                {% elif solicitud.viaje.estado != "cancelado" %}
+                                {% elif solicitud.viaje.estado != "finalizado" and solicitud.viaje.estado != "cancelado" %}
 
                                     <a
-                                    href="{% url 'ver_ruta_viaje_pasajero' solicitud.viaje.id %}"
-                                    class="btn-viaje btn-principal">
+                                        href="{% url 'ver_ruta_viaje_pasajero' solicitud.viaje.id %}"
+                                        class="btn-viaje btn-principal">
 
-                                    <i class="fa-solid fa-map-location-dot"></i>
+                                        <i class="fa-solid fa-map-location-dot"></i>
 
                                         Ver ruta
 
@@ -1118,17 +1103,30 @@
 
                                 </button>
 
-                                <button
-                                    type="button"
-                                    class="btn-viaje btn-principal"
-                                    data-action="calificar"
-                                    data-solicitud="{{ solicitud.id }}">
 
-                                    <i class="fa-solid fa-star"></i>
+                                {% if solicitud.calificacion_conductor_realizada %}
 
-                                    Calificar
+                                    <span class="calificacion-realizada">
 
-                                </button>
+                                        <i class="fa-solid fa-circle-check"></i>
+
+                                        Conductor calificado
+
+                                    </span>
+
+                                {% elif solicitud.viaje.estado == "finalizado" %}
+
+                                    <a
+                                        href="{% url 'calificar_conductor' solicitud.id %}"
+                                        class="btn-viaje btn-principal btn-calificar">
+
+                                        <i class="fa-solid fa-star"></i>
+
+                                        Calificar conductor
+
+                                    </a>
+
+                                {% endif %}
 
 
                             <!-- RECHAZADA -->

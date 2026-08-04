@@ -1858,3 +1858,9 @@ este selector mueve correctamente el contenido.
         rgba(76, 166, 255, 0.12);
 
 }
+
+.accion-viaje-form {
+    margin: 0;
+    padding: 0;
+    display: inline-flex;
+}

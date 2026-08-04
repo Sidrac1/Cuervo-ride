@@ -1,117 +1,869 @@
-<section class="contenedor">
+{% load l10n %}
 
-    <!--================ TARJETAS =================-->
+<section class="contenedor puntuaciones-panel">
+
+    <!--==================================================
+        ENCABEZADO
+    ===================================================-->
+
+    <header class="puntuaciones-header">
+
+        <div>
+
+            <span class="puntuaciones-etiqueta">
+
+                <i class="fa-solid fa-star"></i>
+
+                Sistema de reputación
+
+            </span>
+
+            <h1>
+                Puntuaciones y comentarios
+            </h1>
+
+            <p>
+                Consulta la reputación de conductores, pasajeros
+                y la experiencia general de los viajes.
+            </p>
+
+        </div>
+
+
+        <div class="puntuaciones-total">
+
+            <span>
+                Total registrado
+            </span>
+
+            <strong>
+                {{ total_calificaciones }}
+            </strong>
+
+            <small>
+
+                calificación{% if total_calificaciones != 1 %}es{% endif %}
+
+            </small>
+
+        </div>
+
+    </header>
+
+
+    <!--==================================================
+        ESTADÍSTICAS GENERALES
+    ===================================================-->
 
     <section class="estadisticas">
 
-        <!-- Calificación -->
 
-        <div class="card-estadistica">
+        <article class="card-estadistica">
 
-            <div class="icono">
+            <div class="card-estadistica-icono amarillo">
 
                 <i class="fa-solid fa-star"></i>
 
             </div>
 
-            <div class="info">
+            <div class="card-estadistica-info">
 
-                <h3>
-
-                    Calificación Promedio
-
-                </h3>
-
-                <span class="valor amarillo">
-
-                    4.7
-
+                <span>
+                    Promedio general
                 </span>
 
+                <strong class="valor amarillo">
+
+                    {{ promedio_general|floatformat:1 }}
+
+                    <small>
+                        / 5
+                    </small>
+
+                </strong>
+
+                <p>
+                    Todas las evaluaciones válidas
+                </p>
+
             </div>
+
+        </article>
+
+
+        <article class="card-estadistica">
+
+            <div class="card-estadistica-icono azul">
+
+                <i class="fa-solid fa-comments"></i>
+
+            </div>
+
+            <div class="card-estadistica-info">
+
+                <span>
+                    Calificaciones
+                </span>
+
+                <strong class="valor azul">
+
+                    {{ total_calificaciones }}
+
+                </strong>
+
+                <p>
+                    Evaluaciones registradas
+                </p>
+
+            </div>
+
+        </article>
+
+
+        <article class="card-estadistica">
+
+            <div class="card-estadistica-icono verde">
+
+                <i class="fa-solid fa-face-smile"></i>
+
+            </div>
+
+            <div class="card-estadistica-info">
+
+                <span>
+                    Índice de satisfacción
+                </span>
+
+                <strong class="valor verde">
+
+                    {{ indice_satisfaccion|floatformat:1 }}%
+
+                </strong>
+
+                <p>
+                    Calificaciones de 4 o 5 estrellas
+                </p>
+
+            </div>
+
+        </article>
+
+
+        <article class="card-estadistica">
+
+            <div class="card-estadistica-icono morado">
+
+                <i class="fa-solid fa-route"></i>
+
+            </div>
+
+            <div class="card-estadistica-info">
+
+                <span>
+                    Viajes sin evaluar
+                </span>
+
+                <strong class="valor morado">
+
+                    {{ viajes_sin_evaluar }}
+
+                </strong>
+
+                <p>
+                    Viajes finalizados sin calificación
+                </p>
+
+            </div>
+
+        </article>
+
+    </section>
+
+
+    <!--==================================================
+        PROMEDIOS Y GRÁFICA
+    ===================================================-->
+
+    <section class="puntuaciones-resumen-grid">
+
+
+        <article class="promedios-card">
+
+            <header class="seccion-header">
+
+                <div>
+
+                    <span>
+                        Promedios
+                    </span>
+
+                    <h2>
+                        Calificación por categoría
+                    </h2>
+
+                </div>
+
+                <i class="fa-solid fa-chart-simple"></i>
+
+            </header>
+
+
+            <div class="promedios-lista">
+
+
+                <!-- CONDUCTORES -->
+
+                <div class="promedio-item">
+
+                    <div class="promedio-icono conductor">
+
+                        <i class="fa-solid fa-car-side"></i>
+
+                    </div>
+
+                    <div class="promedio-contenido">
+
+                        <div class="promedio-titulo">
+
+                            <span>
+                                Conductores
+                            </span>
+
+                            <strong>
+
+                                {{ promedio_conductores|floatformat:1 }}
+
+                            </strong>
+
+                        </div>
+
+                        <div class="promedio-barra">
+
+                            <span
+                                style="width: {{ porcentaje_conductores|unlocalize }}%;">
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PASAJEROS -->
+
+                <div class="promedio-item">
+
+                    <div class="promedio-icono pasajero">
+
+                        <i class="fa-solid fa-user-group"></i>
+
+                    </div>
+
+                    <div class="promedio-contenido">
+
+                        <div class="promedio-titulo">
+
+                            <span>
+                                Pasajeros
+                            </span>
+
+                            <strong>
+
+                                {{ promedio_pasajeros|floatformat:1 }}
+
+                            </strong>
+
+                        </div>
+
+                        <div class="promedio-barra">
+
+                            <span
+                                style="width: {{ porcentaje_pasajeros|unlocalize }}%;">
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- EXPERIENCIA DEL VIAJE -->
+
+                <div class="promedio-item">
+
+                    <div class="promedio-icono viaje">
+
+                        <i class="fa-solid fa-route"></i>
+
+                    </div>
+
+                    <div class="promedio-contenido">
+
+                        <div class="promedio-titulo">
+
+                            <span>
+                                Experiencia del viaje
+                            </span>
+
+                            <strong>
+
+                                {{ promedio_viajes|floatformat:1 }}
+
+                            </strong>
+
+                        </div>
+
+                        <div class="promedio-barra">
+
+                            <span
+                                style="width: {{ porcentaje_viajes|unlocalize }}%;">
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </article>
+
+
+        <!-- GRÁFICA -->
+
+        <article class="grafica-card">
+
+            <header class="seccion-header">
+
+                <div>
+
+                    <span>
+                        Distribución
+                    </span>
+
+                    <h2>
+                        Calificaciones por estrellas
+                    </h2>
+
+                </div>
+
+                <i class="fa-solid fa-chart-column"></i>
+
+            </header>
+
+
+            <div class="grafica">
+
+                <canvas id="graficaCalificaciones"></canvas>
+
+            </div>
+
+        </article>
+
+    </section>
+
+
+    <!--==================================================
+        FILTROS
+    ===================================================-->
+
+    <section class="filtros-calificaciones">
+
+        <div class="buscar-calificacion">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <input
+                type="text"
+                id="buscarCalificacion"
+                placeholder="Buscar autor, destinatario, viaje o comentario..."
+                autocomplete="off">
 
         </div>
 
 
+        <select id="filtroTipoCalificacion">
 
-        <!-- Viajes completados -->
+            <option value="todos">
+                Todos los tipos
+            </option>
 
-        <div class="card-estadistica">
+            <option value="conductor">
+                Conductores
+            </option>
 
-            <div class="icono">
+            <option value="pasajero">
+                Pasajeros
+            </option>
 
-                <i class="fa-solid fa-percent"></i>
+            <option value="viaje">
+                Experiencia de viaje
+            </option>
 
-            </div>
+        </select>
 
-            <div class="info">
 
-                <h3>
+        <select id="filtroPuntuacion">
 
-                    Porcentaje de viajes completados
+            <option value="todos">
+                Todas las puntuaciones
+            </option>
 
-                </h3>
+            <option value="5">
+                5 estrellas
+            </option>
 
-                <span class="valor verde">
+            <option value="4">
+                4 estrellas
+            </option>
 
-                    97%
+            <option value="3">
+                3 estrellas
+            </option>
 
+            <option value="2">
+                2 estrellas
+            </option>
+
+            <option value="1">
+                1 estrella
+            </option>
+
+        </select>
+
+
+        <select id="filtroEstadoCalificacion">
+
+            <option value="todos">
+                Todos los estados
+            </option>
+
+            <option value="visible">
+                Visible
+            </option>
+
+            <option value="reportada">
+                Reportada
+            </option>
+
+            <option value="en_revision">
+                En revisión
+            </option>
+
+            <option value="oculta">
+                Oculta
+            </option>
+
+        </select>
+
+
+        <button
+            type="button"
+            id="limpiarFiltrosCalificaciones">
+
+            <i class="fa-solid fa-filter-circle-xmark"></i>
+
+            Limpiar
+
+        </button>
+
+    </section>
+
+
+    <!--==================================================
+        HISTORIAL
+    ===================================================-->
+
+    <section class="historial-card">
+
+        <header class="seccion-header historial-header">
+
+            <div>
+
+                <span>
+                    Historial
                 </span>
 
-            </div>
-
-        </div>
-
-
-
-        <!-- Aceptación -->
-
-        <div class="card-estadistica">
-
-            <div class="icono">
-
-                <i class="fa-solid fa-chart-line"></i>
+                <h2>
+                    Evaluaciones registradas
+                </h2>
 
             </div>
 
-            <div class="info">
+            <p id="contadorCalificaciones">
 
-                <h3>
+                Mostrando {{ total_calificaciones }}
+                calificación{% if total_calificaciones != 1 %}es{% endif %}
 
-                    Aceptación del público
+            </p>
 
-                </h3>
+        </header>
 
-                <span class="valor verde">
 
-                    99%
+        <div class="tabla-calificaciones-wrapper">
 
-                </span>
+            <table class="tabla-calificaciones">
 
-            </div>
+                <thead>
+
+                    <tr>
+
+                        <th>Autor</th>
+
+                        <th>Destinatario</th>
+
+                        <th>Tipo</th>
+
+                        <th>Puntuación</th>
+
+                        <th>Comentario</th>
+
+                        <th>Viaje</th>
+
+                        <th>Fecha</th>
+
+                        <th>Estado</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="tablaCalificaciones">
+
+                    {% for calificacion in calificaciones %}
+
+                        <tr
+                            class="fila-calificacion"
+                            data-calificacion-id="{{ calificacion.id }}"
+                            data-autor="{{ calificacion.autor.nombre_completo|lower|escape }}"
+                            data-destinatario="{{ calificacion.destinatario.nombre_completo|lower|escape }}"
+                            data-tipo="{{ calificacion.tipo }}"
+                            data-puntuacion="{{ calificacion.puntuacion }}"
+                            data-estado="{{ calificacion.estado }}"
+                            data-viaje="{{ calificacion.viaje.origen|lower|escape }} {{ calificacion.viaje.destino|lower|escape }}"
+                            data-comentario="{{ calificacion.comentario|default:''|lower|escape }}">
+
+
+                            <!-- AUTOR -->
+
+                            <td>
+
+                                <div class="usuario-calificacion">
+
+                                    <span class="usuario-calificacion-avatar">
+
+                                        {% if calificacion.autor.foto %}
+
+                                            <img
+                                                src="{{ calificacion.autor.foto.url }}"
+                                                alt="{{ calificacion.autor.nombre_completo }}">
+
+                                        {% else %}
+
+                                            <i class="fa-regular fa-user"></i>
+
+                                        {% endif %}
+
+                                    </span>
+
+                                    <div>
+
+                                        <strong>
+                                            {{ calificacion.autor.nombre_completo }}
+                                        </strong>
+
+                                        <small>
+                                            {{ calificacion.autor.get_rol_display }}
+                                        </small>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+
+                            <!-- DESTINATARIO -->
+
+                            <td>
+
+                                <div class="usuario-calificacion">
+
+                                    <span class="usuario-calificacion-avatar">
+
+                                        {% if calificacion.destinatario.foto %}
+
+                                            <img
+                                                src="{{ calificacion.destinatario.foto.url }}"
+                                                alt="{{ calificacion.destinatario.nombre_completo }}">
+
+                                        {% else %}
+
+                                            <i class="fa-regular fa-user"></i>
+
+                                        {% endif %}
+
+                                    </span>
+
+                                    <div>
+
+                                        <strong>
+                                            {{ calificacion.destinatario.nombre_completo }}
+                                        </strong>
+
+                                        <small>
+                                            {{ calificacion.destinatario.get_rol_display }}
+                                        </small>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+
+                            <!-- TIPO -->
+
+                            <td>
+
+                                <span class="tipo-calificacion tipo-{{ calificacion.tipo }}">
+
+                                    {% if calificacion.tipo == "conductor" %}
+
+                                        <i class="fa-solid fa-car-side"></i>
+
+                                    {% elif calificacion.tipo == "pasajero" %}
+
+                                        <i class="fa-solid fa-user"></i>
+
+                                    {% else %}
+
+                                        <i class="fa-solid fa-route"></i>
+
+                                    {% endif %}
+
+                                    {{ calificacion.get_tipo_display }}
+
+                                </span>
+
+                            </td>
+
+
+                            <!-- PUNTUACIÓN -->
+
+                            <td>
+
+                                <div class="estrellas-calificacion">
+
+                                    {% for numero in "12345" %}
+
+                                        {% if forloop.counter <= calificacion.puntuacion %}
+
+                                            <i class="fa-solid fa-star"></i>
+
+                                        {% else %}
+
+                                            <i class="fa-regular fa-star"></i>
+
+                                        {% endif %}
+
+                                    {% endfor %}
+
+                                    <strong>
+
+                                        {{ calificacion.puntuacion }}.0
+
+                                    </strong>
+
+                                </div>
+
+                            </td>
+
+
+                            <!-- COMENTARIO -->
+
+                            <td>
+
+                                <div class="comentario-calificacion">
+
+                                    {% if calificacion.comentario %}
+
+                                        <p title="{{ calificacion.comentario }}">
+
+                                            {{ calificacion.comentario|truncatechars:90 }}
+
+                                        </p>
+
+                                    {% else %}
+
+                                        <span class="sin-comentario">
+
+                                            <i class="fa-regular fa-comment-dots"></i>
+
+                                            Sin comentario
+
+                                        </span>
+
+                                    {% endif %}
+
+
+                                    {% if calificacion.editada %}
+
+                                        <small class="comentario-editado">
+
+                                            Editada
+
+                                        </small>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </td>
+
+
+                            <!-- VIAJE -->
+
+                            <td>
+
+                                <div class="viaje-calificacion">
+
+                                    <strong>
+
+                                        #{{ calificacion.viaje.id }}
+
+                                    </strong>
+
+                                    <span>
+
+                                        {{ calificacion.viaje.origen|truncatechars:28 }}
+
+                                    </span>
+
+                                    <small>
+
+                                        <i class="fa-solid fa-arrow-right"></i>
+
+                                        {{ calificacion.viaje.destino|truncatechars:28 }}
+
+                                    </small>
+
+                                </div>
+
+                            </td>
+
+
+                            <!-- FECHA -->
+
+                            <td>
+
+                                <time class="fecha-calificacion">
+
+                                    <strong>
+
+                                        {{ calificacion.fecha|date:"d/m/Y" }}
+
+                                    </strong>
+
+                                    <small>
+
+                                        {{ calificacion.fecha|date:"H:i" }} h
+
+                                    </small>
+
+                                </time>
+
+                            </td>
+
+
+                            <!-- ESTADO -->
+
+                            <td>
+
+                                <span class="estado-calificacion estado-{{ calificacion.estado }}">
+
+                                    {% if calificacion.estado == "visible" %}
+
+                                        <i class="fa-solid fa-eye"></i>
+
+                                    {% elif calificacion.estado == "reportada" %}
+
+                                        <i class="fa-solid fa-flag"></i>
+
+                                    {% elif calificacion.estado == "en_revision" %}
+
+                                        <i class="fa-solid fa-magnifying-glass"></i>
+
+                                    {% else %}
+
+                                        <i class="fa-solid fa-eye-slash"></i>
+
+                                    {% endif %}
+
+                                    {{ calificacion.get_estado_display }}
+
+                                </span>
+
+                            </td>
+
+                        </tr>
+
+
+                    {% empty %}
+
+                        <tr class="fila-sin-calificaciones">
+
+                            <td colspan="8">
+
+                                <div class="estado-vacio-calificaciones">
+
+                                    <span>
+
+                                        <i class="fa-regular fa-star"></i>
+
+                                    </span>
+
+                                    <strong>
+
+                                        Aún no hay calificaciones
+
+                                    </strong>
+
+                                    <p>
+
+                                        Las evaluaciones aparecerán cuando
+                                        los usuarios finalicen y califiquen
+                                        sus viajes.
+
+                                    </p>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
 
         </div>
 
     </section>
 
 
+    <!--==================================================
+        DATOS DE LA GRÁFICA
+    ===================================================-->
 
-    <!--================ GRAFICA =================-->
+    {{ distribucion_labels|json_script:"distribucion-calificaciones-labels" }}
 
-    <section class="grafica-card">
-
-        <h2>
-
-            Distribución semanal de calificaciones (100 viajes)
-
-        </h2>
-
-        <div class="grafica">
-
-            <canvas id="graficaCalificaciones"></canvas>
-
-        </div>
-
-    </section>
+    {{ distribucion_valores|json_script:"distribucion-calificaciones-valores" }}
 
 </section>

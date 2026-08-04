@@ -639,37 +639,42 @@
                             </button>
 
 
-                            <!-- INICIAR -->
+                            <!-- INICIAR VIAJE -->
 
-                            <button
-                                type="button"
-                                class="btn-viaje btn-iniciar"
-                                data-accion="iniciar"
-                                data-viaje-id="{{ viaje.id }}">
+                            <form
+                                method="POST"
+                                action="{% url 'iniciar_viaje' viaje.id %}"
+                                class="accion-viaje-form">
 
-                                <i class="fa-solid fa-play"></i>
+                                {% csrf_token %}
 
-                                Iniciar
+                                <button
+                                    type="submit"
+                                    class="btn-viaje btn-iniciar">
 
-                            </button>
+                                    <i class="fa-solid fa-play"></i>
+
+                                    Iniciar viaje
+
+                                </button>
+
+                            </form>
 
 
                         {% elif viaje.estado == "en_curso" %}
 
 
-                            <!-- CONTINUAR -->
+                            <!-- ENTRAR AL RIDE EN PROGRESO -->
 
-                            <button
-                                type="button"
-                                class="btn-viaje btn-iniciar"
-                                data-accion="continuar"
-                                data-viaje-id="{{ viaje.id }}">
+                            <a
+                                href="{% url 'ride_en_progreso' viaje.id %}"
+                                class="btn-viaje btn-iniciar">
 
                                 <i class="fa-solid fa-location-arrow"></i>
 
                                 Continuar viaje
 
-                            </button>
+                            </a>
 
 
                         {% elif viaje.estado == "finalizado" or viaje.estado == "cancelado" %}

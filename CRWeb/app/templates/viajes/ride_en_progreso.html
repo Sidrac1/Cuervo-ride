@@ -1,0 +1,1028 @@
+{% load static %}
+{% load l10n %}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Ride en progreso | Cuervo-Ride
+    </title>
+
+
+    <!-- Favicon -->
+
+    <link
+        rel="icon"
+        type="image/png"
+        href="{% static 'img/logo.png' %}">
+
+
+    <!-- Font Awesome -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+
+    <!-- Leaflet -->
+
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+
+    <!-- Sidebar -->
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/sidebar.css' %}">
+
+
+    <!-- Estilos de la pantalla -->
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/ride_en_progreso.css' %}">
+
+</head>
+
+
+<body>
+
+
+    {% include "components/sidebar.html" %}
+
+
+    <main
+        class="ride-main"
+        id="rideMain"
+
+        data-viaje-id="{{ viaje.id }}"
+
+        data-origen="{{ viaje.origen|escape }}"
+        data-destino="{{ viaje.destino|escape }}"
+
+        data-origen-latitud="{% if viaje.origen_latitud is not None %}{{ viaje.origen_latitud|unlocalize }}{% endif %}"
+        data-origen-longitud="{% if viaje.origen_longitud is not None %}{{ viaje.origen_longitud|unlocalize }}{% endif %}"
+
+        data-destino-latitud="{% if viaje.destino_latitud is not None %}{{ viaje.destino_latitud|unlocalize }}{% endif %}"
+        data-destino-longitud="{% if viaje.destino_longitud is not None %}{{ viaje.destino_longitud|unlocalize }}{% endif %}"
+
+        data-es-conductor="{% if es_conductor %}true{% else %}false{% endif %}">
+
+
+        <!-- ==================================================
+            MENSAJES DE DJANGO
+        =================================================== -->
+
+        {% if messages %}
+
+            <section class="ride-mensajes">
+
+                {% for message in messages %}
+
+                    <article class="ride-mensaje {{ message.tags }}">
+
+                        {% if message.tags == "success" %}
+
+                            <i class="fa-solid fa-circle-check"></i>
+
+                        {% elif message.tags == "warning" %}
+
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+
+                        {% elif message.tags == "error" %}
+
+                            <i class="fa-solid fa-circle-exclamation"></i>
+
+                        {% else %}
+
+                            <i class="fa-solid fa-circle-info"></i>
+
+                        {% endif %}
+
+                        <span>
+                            {{ message }}
+                        </span>
+
+                    </article>
+
+                {% endfor %}
+
+            </section>
+
+        {% endif %}
+
+
+        <!-- ==================================================
+            ENCABEZADO
+        =================================================== -->
+
+        <header class="ride-header">
+
+
+            <div class="ride-header-info">
+
+                <div class="ride-estado">
+
+                    <span class="ride-estado-punto"></span>
+
+                    <span>
+                        Ride en progreso
+                    </span>
+
+                </div>
+
+
+                <h1>
+
+                    {{ viaje.origen }}
+
+                    <span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </span>
+
+                    {{ viaje.destino }}
+
+                </h1>
+
+
+                <p>
+
+                    {% if es_conductor %}
+
+                        Administra el recorrido, consulta a los pasajeros
+                        y finaliza el viaje cuando llegues al destino.
+
+                    {% else %}
+
+                        Consulta la ruta, comunícate con el conductor
+                        y utiliza la alerta en caso de emergencia.
+
+                    {% endif %}
+
+                </p>
+
+            </div>
+
+
+            <div class="ride-header-acciones">
+
+
+                {% if es_conductor %}
+
+                    <a
+                        href="{% url 'mis_viajes_conductor' %}"
+                        class="btn-regresar">
+
+                        <i class="fa-solid fa-arrow-left"></i>
+
+                        Mis viajes
+
+                    </a>
+
+                {% else %}
+
+                    <a
+                        href="{% url 'mis_viajes_pasajero' %}"
+                        class="btn-regresar">
+
+                        <i class="fa-solid fa-arrow-left"></i>
+
+                        Mis viajes
+
+                    </a>
+
+                {% endif %}
+
+
+                <span class="ride-identificador">
+
+                    Ride #{{ viaje.id }}
+
+                </span>
+
+            </div>
+
+        </header>
+
+
+        <!-- ==================================================
+            INDICADORES PRINCIPALES
+        =================================================== -->
+
+        <section class="ride-indicadores">
+
+
+            <article class="indicador-card">
+
+                <span class="indicador-icono verde">
+
+                    <i class="fa-solid fa-location-arrow"></i>
+
+                </span>
+
+                <div>
+
+                    <span>
+                        Estado
+                    </span>
+
+                    <strong>
+                        En curso
+                    </strong>
+
+                </div>
+
+            </article>
+
+
+            <article class="indicador-card">
+
+                <span class="indicador-icono azul">
+
+                    <i class="fa-regular fa-clock"></i>
+
+                </span>
+
+                <div>
+
+                    <span>
+                        Hora programada
+                    </span>
+
+                    <strong>
+                        {{ viaje.fecha_hora_salida|date:"H:i" }} h
+                    </strong>
+
+                </div>
+
+            </article>
+
+
+            <article class="indicador-card">
+
+                <span class="indicador-icono morado">
+
+                    <i class="fa-solid fa-user-group"></i>
+
+                </span>
+
+                <div>
+
+                    <span>
+                        Pasajeros
+                    </span>
+
+                    <strong>
+                        {{ total_pasajeros }}
+                    </strong>
+
+                </div>
+
+            </article>
+
+
+            <article class="indicador-card">
+
+                <span class="indicador-icono rojo">
+
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+
+                </span>
+
+                <div>
+
+                    <span>
+                        Alertas activas
+                    </span>
+
+                    <strong>
+                        {{ total_alertas_activas }}
+                    </strong>
+
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- ==================================================
+            CONTENIDO PRINCIPAL
+        =================================================== -->
+
+        <section class="ride-layout">
+
+
+            <!-- ==================================================
+                COLUMNA DEL MAPA
+            =================================================== -->
+
+            <section class="ride-mapa-card">
+
+
+                <header class="seccion-header">
+
+                    <div>
+
+                        <span>
+                            Ruta activa
+                        </span>
+
+                        <h2>
+                            Recorrido del viaje
+                        </h2>
+
+                    </div>
+
+                    <i class="fa-solid fa-map-location-dot"></i>
+
+                </header>
+
+
+                <div class="mapa-wrapper">
+
+                    <div
+                        id="mapaRide"
+                        class="mapa-ride">
+                    </div>
+
+
+                    <div
+                        class="mapa-cargando"
+                        id="mapaCargando">
+
+                        <i class="fa-solid fa-spinner fa-spin"></i>
+
+                        <span>
+                            Preparando la ruta...
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        class="mapa-error"
+                        id="mapaError"
+                        hidden>
+
+                        <i class="fa-solid fa-map"></i>
+
+                        <strong>
+                            No fue posible mostrar la ruta
+                        </strong>
+
+                        <p></p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- RUTA TEXTUAL -->
+
+                <section class="trayecto-resumen">
+
+
+                    <article class="trayecto-punto">
+
+                        <span class="trayecto-marcador origen"></span>
+
+                        <div>
+
+                            <small>
+                                Origen
+                            </small>
+
+                            <strong>
+                                {{ viaje.origen }}
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <span class="trayecto-linea"></span>
+
+
+                    <article class="trayecto-punto">
+
+                        <span class="trayecto-marcador destino"></span>
+
+                        <div>
+
+                            <small>
+                                Destino
+                            </small>
+
+                            <strong>
+                                {{ viaje.destino }}
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+                </section>
+
+
+                <!-- ACCIONES PRINCIPALES -->
+
+                <footer class="mapa-acciones">
+
+
+                    <button
+                        type="button"
+                        class="btn-ubicacion"
+                        id="btnMiUbicacion">
+
+                        <i class="fa-solid fa-location-crosshairs"></i>
+
+                        Mi ubicación
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="btn-ruta-completa"
+                        id="btnVerRutaCompleta">
+
+                        <i class="fa-solid fa-expand"></i>
+
+                        Ver ruta completa
+
+                    </button>
+
+                </footer>
+
+            </section>
+
+
+            <!-- ==================================================
+                COLUMNA LATERAL
+            =================================================== -->
+
+            <aside class="ride-sidebar-info">
+
+
+                <!-- CONDUCTOR Y VEHÍCULO -->
+
+                <section class="ride-info-card">
+
+
+                    <header class="seccion-header compacto">
+
+                        <div>
+
+                            <span>
+                                Información
+                            </span>
+
+                            <h2>
+                                Conductor y vehículo
+                            </h2>
+
+                        </div>
+
+                        <i class="fa-solid fa-car-side"></i>
+
+                    </header>
+
+
+                    <div class="conductor-resumen">
+
+
+                        <div class="conductor-foto">
+
+                            {% if viaje.conductor.usuario.foto %}
+
+                                <img
+                                    src="{{ viaje.conductor.usuario.foto.url }}"
+                                    alt="{{ viaje.conductor.usuario.nombre_completo }}">
+
+                            {% else %}
+
+                                <img
+                                    src="{% static 'img/profileIcon.png' %}"
+                                    alt="Foto predeterminada">
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="conductor-datos">
+
+                            <span>
+                                Conductor
+                            </span>
+
+                            <strong>
+                                {{ viaje.conductor.usuario.nombre_completo }}
+                            </strong>
+
+                            <small>
+
+                                <i class="fa-solid fa-shield-halved"></i>
+
+                                {{ viaje.conductor.get_estado_verificacion_display }}
+
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="vehiculo-resumen">
+
+
+                        <article>
+
+                            <i class="fa-solid fa-car"></i>
+
+                            <div>
+
+                                <span>
+                                    Vehículo
+                                </span>
+
+                                <strong>
+
+                                    {{ viaje.vehiculo.marca }}
+                                    {{ viaje.vehiculo.modelo }}
+
+                                </strong>
+
+                            </div>
+
+                        </article>
+
+
+                        <article>
+
+                            <i class="fa-solid fa-palette"></i>
+
+                            <div>
+
+                                <span>
+                                    Color
+                                </span>
+
+                                <strong>
+                                    {{ viaje.vehiculo.color }}
+                                </strong>
+
+                            </div>
+
+                        </article>
+
+
+                        <article>
+
+                            <i class="fa-solid fa-id-card"></i>
+
+                            <div>
+
+                                <span>
+                                    Placas
+                                </span>
+
+                                <strong>
+                                    {{ viaje.vehiculo.placas }}
+                                </strong>
+
+                            </div>
+
+                        </article>
+
+                    </div>
+
+                </section>
+
+
+                <!-- PASAJEROS -->
+
+                <section class="ride-info-card pasajeros-card">
+
+
+                    <header class="seccion-header compacto">
+
+                        <div>
+
+                            <span>
+                                Participantes
+                            </span>
+
+                            <h2>
+                                Pasajeros del ride
+                            </h2>
+
+                        </div>
+
+                        <span class="contador-pasajeros">
+
+                            {{ solicitudes_aceptadas|length }}
+
+                        </span>
+
+                    </header>
+
+
+                    <div class="lista-pasajeros">
+
+
+                        {% for solicitud in solicitudes_aceptadas %}
+
+                            <article class="pasajero-item">
+
+
+                                <div class="pasajero-avatar">
+
+                                    {% if solicitud.pasajero.foto %}
+
+                                        <img
+                                            src="{{ solicitud.pasajero.foto.url }}"
+                                            alt="{{ solicitud.pasajero.nombre_completo }}">
+
+                                    {% else %}
+
+                                        <i class="fa-regular fa-user"></i>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <div class="pasajero-datos">
+
+                                    <strong>
+                                        {{ solicitud.pasajero.nombre_completo }}
+                                    </strong>
+
+                                    <span>
+
+                                        {{ solicitud.asientos_solicitados }}
+
+                                        lugar{% if solicitud.asientos_solicitados != 1 %}es{% endif %}
+
+                                    </span>
+
+
+                                    {% if solicitud.punto_recogida %}
+
+                                        <small title="{{ solicitud.punto_recogida }}">
+
+                                            <i class="fa-solid fa-location-dot"></i>
+
+                                            {{ solicitud.punto_recogida|truncatechars:38 }}
+
+                                        </small>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <span class="pasajero-estado">
+
+                                    <i class="fa-solid fa-circle-check"></i>
+
+                                </span>
+
+                            </article>
+
+
+                        {% empty %}
+
+                            <div class="pasajeros-vacio">
+
+                                <i class="fa-solid fa-user-group"></i>
+
+                                <strong>
+                                    Sin pasajeros
+                                </strong>
+
+                                <p>
+                                    Este ride comenzó sin solicitudes aceptadas.
+                                </p>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </section>
+
+
+                <!-- ALERTAS ACTIVAS -->
+
+                {% if alertas_activas %}
+
+                    <section class="ride-info-card alertas-card">
+
+
+                        <header class="seccion-header compacto">
+
+                            <div>
+
+                                <span>
+                                    Atención
+                                </span>
+
+                                <h2>
+                                    Alertas activas
+                                </h2>
+
+                            </div>
+
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+
+                        </header>
+
+
+                        <div class="lista-alertas">
+
+                            {% for alerta in alertas_activas %}
+
+                                <article class="alerta-item">
+
+                                    <span class="alerta-icono">
+
+                                        <i class="fa-solid fa-triangle-exclamation"></i>
+
+                                    </span>
+
+                                    <div>
+
+                                        <strong>
+                                            {{ alerta.get_tipo_display }}
+                                        </strong>
+
+                                        <p>
+                                            {{ alerta.descripcion|truncatechars:100 }}
+                                        </p>
+
+                                        <small>
+
+                                            {{ alerta.usuario.nombre_completo }}
+
+                                            ·
+
+                                            {{ alerta.fecha_activacion|date:"H:i" }} h
+
+                                        </small>
+
+                                    </div>
+
+                                </article>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </section>
+
+                {% endif %}
+
+            </aside>
+
+        </section>
+
+
+        <!-- ==================================================
+            BARRA DE ACCIONES
+        =================================================== -->
+
+        <section class="ride-acciones-card">
+
+
+            <div class="acciones-principales">
+
+
+                <a
+                    href="{% url 'chat_viaje' viaje.id %}"
+                    class="ride-accion chat">
+
+                    <span>
+
+                        <i class="fa-solid fa-comments"></i>
+
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Chat del viaje
+                        </strong>
+
+                        <small>
+                            Habla con los participantes
+                        </small>
+
+                    </div>
+
+                </a>
+
+
+                <a
+                    href="{% url 'crear_alerta_viaje' viaje.id %}"
+                    class="ride-accion emergencia">
+
+                    <span>
+
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Crear alerta
+                        </strong>
+
+                        <small>
+                            Reportar una emergencia
+                        </small>
+
+                    </div>
+
+                </a>
+
+
+                {% if not es_conductor and solicitud_pasajero %}
+
+                    <div class="ride-accion reserva">
+
+                        <span>
+
+                            <i class="fa-solid fa-ticket"></i>
+
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                Tu reservación
+                            </strong>
+
+                            <small>
+
+                                {{ solicitud_pasajero.asientos_solicitados }}
+
+                                lugar{% if solicitud_pasajero.asientos_solicitados != 1 %}es{% endif %}
+
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+            {% if es_conductor %}
+
+                <button
+                    type="button"
+                    class="btn-finalizar-ride"
+                    id="btnAbrirFinalizar">
+
+                    <i class="fa-solid fa-flag-checkered"></i>
+
+                    Finalizar viaje
+
+                </button>
+
+            {% endif %}
+
+        </section>
+
+    </main>
+
+
+    <!-- ==================================================
+        MODAL PARA FINALIZAR
+    =================================================== -->
+
+    {% if es_conductor %}
+
+        <div
+            class="modal-finalizar-overlay"
+            id="modalFinalizarRide"
+            aria-hidden="true">
+
+            <section
+                class="modal-finalizar"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="tituloFinalizarRide">
+
+
+                <span class="modal-finalizar-icono">
+
+                    <i class="fa-solid fa-flag-checkered"></i>
+
+                </span>
+
+
+                <h2 id="tituloFinalizarRide">
+                    ¿Finalizar este ride?
+                </h2>
+
+
+                <p>
+                    Las solicitudes aceptadas se marcarán como completadas
+                    y los participantes podrán comenzar a calificarse.
+                </p>
+
+
+                <div class="modal-finalizar-aviso">
+
+                    <i class="fa-solid fa-circle-info"></i>
+
+                    <span>
+                        Una vez finalizado, no podrás volver a poner
+                        este viaje en curso.
+                    </span>
+
+                </div>
+
+
+                <div class="modal-finalizar-acciones">
+
+
+                    <button
+                        type="button"
+                        class="btn-cancelar-finalizar"
+                        id="btnCancelarFinalizar">
+
+                        Cancelar
+
+                    </button>
+
+
+                    <form
+                        method="POST"
+                        action="{% url 'finalizar_viaje' viaje.id %}"
+                        id="formFinalizarRide">
+
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="btn-confirmar-finalizar"
+                            id="btnConfirmarFinalizar">
+
+                            <i class="fa-solid fa-flag-checkered"></i>
+
+                            Sí, finalizar viaje
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- ==================================================
+        LIBRERÍAS
+    =================================================== -->
+
+    <script
+        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+    </script>
+
+
+    <script
+        src="{% static 'js/sidebarP.js' %}">
+    </script>
+
+
+    <script
+        src="{% static 'js/ride_en_progreso.js' %}">
+    </script>
+
+</body>
+
+</html>
