@@ -520,3 +520,56 @@ class CalificarConductorForm(forms.ModelForm):
             )
 
         return puntuacion
+
+class CalificarPasajeroForm(forms.ModelForm):
+
+    class Meta:
+
+        model = Calificacion
+
+        fields = [
+            "puntuacion",
+            "comentario",
+        ]
+
+        widgets = {
+
+            "puntuacion": forms.HiddenInput(
+                attrs={
+                    "id": "id_puntuacion",
+                }
+            ),
+
+            "comentario": forms.Textarea(
+                attrs={
+                    "id": "id_comentario",
+                    "class": "calificacion-comentario",
+                    "rows": 5,
+                    "maxlength": 500,
+                    "placeholder": (
+                        "Describe tu experiencia con este pasajero "
+                        "(opcional)."
+                    ),
+                }
+            ),
+        }
+
+    def clean_puntuacion(self):
+
+        puntuacion = self.cleaned_data.get(
+            "puntuacion"
+        )
+
+        if puntuacion is None:
+
+            raise ValidationError(
+                "Selecciona una puntuación de 1 a 5 estrellas."
+            )
+
+        if puntuacion < 1 or puntuacion > 5:
+
+            raise ValidationError(
+                "La puntuación debe estar entre 1 y 5 estrellas."
+            )
+
+        return puntuacion

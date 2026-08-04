@@ -1,0 +1,609 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Calificar pasajeros | Cuervo-Ride
+    </title>
+
+
+    <!-- Favicon -->
+
+    <link
+        rel="icon"
+        type="image/png"
+        href="{% static 'img/logo.png' %}">
+
+
+    <!-- Font Awesome -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+
+    <!-- Sidebar -->
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/sidebar.css' %}">
+
+
+    <!-- Estilos de la página -->
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/listar_pasajeros_calificar.css' %}">
+
+</head>
+
+
+<body>
+
+    {% include 'components/sidebar.html' %}
+
+
+    <main class="calificar-pasajeros-main">
+
+
+        <!--==================================================
+            MENSAJES DE DJANGO
+        ===================================================-->
+
+        {% if messages %}
+
+            <section class="mensajes-calificacion">
+
+                {% for message in messages %}
+
+                    <article class="mensaje-calificacion {{ message.tags }}">
+
+                        {% if message.tags == "success" %}
+
+                            <i class="fa-solid fa-circle-check"></i>
+
+                        {% elif message.tags == "warning" %}
+
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+
+                        {% elif message.tags == "error" %}
+
+                            <i class="fa-solid fa-circle-exclamation"></i>
+
+                        {% else %}
+
+                            <i class="fa-solid fa-circle-info"></i>
+
+                        {% endif %}
+
+                        <span>
+                            {{ message }}
+                        </span>
+
+                    </article>
+
+                {% endfor %}
+
+            </section>
+
+        {% endif %}
+
+
+        <!--==================================================
+            ENCABEZADO
+        ===================================================-->
+
+        <header class="calificar-pasajeros-header">
+
+            <div class="header-contenido">
+
+                <span class="header-etiqueta">
+
+                    <i class="fa-solid fa-star"></i>
+
+                    Evaluación de pasajeros
+
+                </span>
+
+                <h1>
+                    Califica a los pasajeros
+                </h1>
+
+                <p>
+                    Evalúa individualmente a los pasajeros que
+                    participaron en este viaje. El comentario es
+                    opcional y puedes omitir cualquier evaluación.
+                </p>
+
+            </div>
+
+
+            <div class="header-acciones">
+
+                <a
+                    href="{% url 'mis_viajes_conductor' %}"
+                    class="btn-volver-viajes">
+
+                    <i class="fa-solid fa-arrow-left"></i>
+
+                    Mis viajes
+
+                </a>
+
+                <span class="ride-identificador">
+
+                    Ride #{{ viaje.id }}
+
+                </span>
+
+            </div>
+
+        </header>
+
+
+        <!--==================================================
+            RESUMEN DEL VIAJE
+        ===================================================-->
+
+        <section class="resumen-viaje-card">
+
+
+            <div class="ruta-viaje">
+
+
+                <div class="ruta-punto">
+
+                    <span class="ruta-marcador origen"></span>
+
+                    <div>
+
+                        <small>
+                            Origen
+                        </small>
+
+                        <strong>
+                            {{ viaje.origen }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <span class="ruta-linea"></span>
+
+
+                <div class="ruta-punto">
+
+                    <span class="ruta-marcador destino"></span>
+
+                    <div>
+
+                        <small>
+                            Destino
+                        </small>
+
+                        <strong>
+                            {{ viaje.destino }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="datos-viaje">
+
+
+                <article class="dato-viaje">
+
+                    <span class="dato-icono">
+
+                        <i class="fa-regular fa-calendar"></i>
+
+                    </span>
+
+                    <div>
+
+                        <small>
+                            Fecha
+                        </small>
+
+                        <strong>
+                            {{ viaje.fecha_hora_salida|date:"d/m/Y" }}
+                        </strong>
+
+                    </div>
+
+                </article>
+
+
+                <article class="dato-viaje">
+
+                    <span class="dato-icono">
+
+                        <i class="fa-regular fa-clock"></i>
+
+                    </span>
+
+                    <div>
+
+                        <small>
+                            Hora de salida
+                        </small>
+
+                        <strong>
+                            {{ viaje.fecha_hora_salida|date:"H:i" }} h
+                        </strong>
+
+                    </div>
+
+                </article>
+
+
+                <article class="dato-viaje">
+
+                    <span class="dato-icono">
+
+                        <i class="fa-solid fa-car-side"></i>
+
+                    </span>
+
+                    <div>
+
+                        <small>
+                            Vehículo
+                        </small>
+
+                        <strong>
+
+                            {{ viaje.vehiculo.marca }}
+                            {{ viaje.vehiculo.modelo }}
+
+                        </strong>
+
+                    </div>
+
+                </article>
+
+
+                <article class="dato-viaje">
+
+                    <span class="dato-icono">
+
+                        <i class="fa-solid fa-user-group"></i>
+
+                    </span>
+
+                    <div>
+
+                        <small>
+                            Pasajeros
+                        </small>
+
+                        <strong>
+                            {{ solicitudes|length }}
+                        </strong>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <!--==================================================
+            LISTA DE PASAJEROS
+        ===================================================-->
+
+        <section class="pasajeros-seccion">
+
+
+            <header class="seccion-header">
+
+                <div>
+
+                    <span>
+                        Participantes
+                    </span>
+
+                    <h2>
+                        Pasajeros que completaron el viaje
+                    </h2>
+
+                    <p>
+                        Cada pasajero puede recibir una sola evaluación
+                        por este ride.
+                    </p>
+
+                </div>
+
+
+                <span class="contador-pasajeros">
+
+                    {{ solicitudes|length }}
+
+                </span>
+
+            </header>
+
+
+            <div class="lista-pasajeros-calificar">
+
+
+                {% for solicitud in solicitudes %}
+
+                    <article
+                        class="pasajero-calificar-card {% if solicitud.pasajero_calificado %}calificado{% endif %}">
+
+
+                        <!-- FOTO -->
+
+                        <div class="pasajero-foto">
+
+                            {% if solicitud.pasajero.foto %}
+
+                                <img
+                                    src="{{ solicitud.pasajero.foto.url }}"
+                                    alt="Foto de {{ solicitud.pasajero.nombre_completo }}">
+
+                            {% else %}
+
+                                <img
+                                    src="{% static 'img/profileIcon.png' %}"
+                                    alt="Foto de perfil predeterminada">
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- DATOS DEL PASAJERO -->
+
+                        <div class="pasajero-informacion">
+
+                            <span class="pasajero-etiqueta">
+
+                                <i class="fa-solid fa-user"></i>
+
+                                Pasajero
+
+                            </span>
+
+                            <h3>
+                                {{ solicitud.pasajero.nombre_completo }}
+                            </h3>
+
+                            <div class="pasajero-detalles">
+
+
+                                {% if solicitud.pasajero.matricula %}
+
+                                    <span>
+
+                                        <i class="fa-solid fa-id-card"></i>
+
+                                        {{ solicitud.pasajero.matricula }}
+
+                                    </span>
+
+                                {% endif %}
+
+
+                                <span>
+
+                                    <i class="fa-solid fa-ticket"></i>
+
+                                    {{ solicitud.asientos_solicitados }}
+
+                                    lugar{% if solicitud.asientos_solicitados != 1 %}es{% endif %}
+
+                                </span>
+
+
+                                {% if solicitud.punto_recogida %}
+
+                                    <span title="{{ solicitud.punto_recogida }}">
+
+                                        <i class="fa-solid fa-location-dot"></i>
+
+                                        {{ solicitud.punto_recogida|truncatechars:45 }}
+
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ESTADO Y ACCIÓN -->
+
+                        <div class="pasajero-accion">
+
+
+                            {% if solicitud.pasajero_calificado %}
+
+                                <span class="estado-calificado">
+
+                                    <i class="fa-solid fa-circle-check"></i>
+
+                                    Pasajero calificado
+
+                                </span>
+
+                                <small>
+                                    La evaluación ya fue registrada.
+                                </small>
+
+
+                            {% else %}
+
+                                <a
+                                    href="{% url 'calificar_pasajero' solicitud.id %}"
+                                    class="btn-calificar-pasajero">
+
+                                    <i class="fa-solid fa-star"></i>
+
+                                    Calificar pasajero
+
+                                </a>
+
+                                <small>
+                                    Estrellas y comentario opcional.
+                                </small>
+
+                            {% endif %}
+
+                        </div>
+
+                    </article>
+
+
+                {% empty %}
+
+                    <div class="estado-vacio-pasajeros">
+
+                        <span>
+
+                            <i class="fa-solid fa-user-group"></i>
+
+                        </span>
+
+                        <h3>
+                            No hay pasajeros para calificar
+                        </h3>
+
+                        <p>
+                            Este viaje no tiene solicitudes completadas.
+                            Solo pueden calificarse pasajeros que hayan
+                            participado en el ride.
+                        </p>
+
+                        <a
+                            href="{% url 'mis_viajes_conductor' %}"
+                            class="btn-regresar-vacio">
+
+                            <i class="fa-solid fa-arrow-left"></i>
+
+                            Regresar a mis viajes
+
+                        </a>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+
+        <!--==================================================
+            INFORMACIÓN
+        ===================================================-->
+
+        {% if solicitudes %}
+
+            <section class="aviso-calificaciones">
+
+                <span>
+
+                    <i class="fa-solid fa-circle-info"></i>
+
+                </span>
+
+                <div>
+
+                    <strong>
+                        Puedes omitir las evaluaciones
+                    </strong>
+
+                    <p>
+                        No es obligatorio calificar a todos los pasajeros.
+                        Puedes regresar a tus viajes y realizar las
+                        evaluaciones más adelante.
+                    </p>
+
+                </div>
+
+                <a
+                    href="{% url 'mis_viajes_conductor' %}">
+
+                    Terminar por ahora
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </a>
+
+            </section>
+
+        {% endif %}
+
+    </main>
+
+
+    <script
+        src="{% static 'js/sidebarP.js' %}">
+    </script>
+
+
+    <script>
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+
+                const mensajes =
+                    document.querySelectorAll(
+                        ".mensaje-calificacion"
+                    );
+
+                mensajes.forEach(
+                    function (mensaje) {
+
+                        window.setTimeout(
+                            function () {
+
+                                mensaje.classList.add(
+                                    "ocultando"
+                                );
+
+                                window.setTimeout(
+                                    function () {
+
+                                        mensaje.remove();
+
+                                    },
+                                    400
+                                );
+
+                            },
+                            5000
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+    </script>
+
+</body>
+
+</html>

@@ -37,29 +37,116 @@
 
             <!-- PERFIL SUPERIOR -->
 
-            <div class="perfil-top">
+        <div class="perfil-top">
 
-                <div class="foto">
+            <div class="foto">
 
-                    <img src="https://i.imgur.com/2DhmtJ4.png"
-                         alt="Usuario">
+                {% if request.user.foto %}
+
+                    <img
+                        src="{{ request.user.foto.url }}"
+                        alt="Foto de {{ request.user.nombre_completo }}">
+
+                {% else %}
+
+                    <img
+                        src="{% static 'img/profileIcon.png' %}"
+                        alt="Foto de perfil predeterminada">
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="info">
+
+                <span class="perfil-bienvenida">
+                    Bienvenido
+                </span>
+
+                <h1>
+                    {{ request.user.nombre_completo }}
+                </h1>
+
+
+                <div class="perfil-rol">
+
+                    {% if rol_usuario == "conductor" %}
+
+                        <i class="fa-solid fa-car-side"></i>
+
+                    {% elif rol_usuario == "pasajero" %}
+
+                        <i class="fa-solid fa-user"></i>
+
+                    {% else %}
+
+                        <i class="fa-solid fa-user-shield"></i>
+
+                    {% endif %}
+
+                    <span>
+                        {{ request.user.get_rol_display }}
+                    </span>
 
                 </div>
 
-                <div class="info">
 
-                    <h1>BIENVENIDO</h1>
+                <div class="perfil-puntuacion">
 
-                    <h3>USER</h3>
+                    <div
+                        class="estrellas-perfil"
+                        aria-label="{{ puntuacion_promedio }} de 5 estrellas">
 
-                    <p>
-                        Pasajero:
-                        ★★★★☆
-                    </p>
+                        {% for numero in "12345" %}
+
+                            {% if forloop.counter <= puntuacion_promedio %}
+
+                                <i class="fa-solid fa-star"></i>
+
+                            {% else %}
+
+                                <i class="fa-regular fa-star"></i>
+
+                            {% endif %}
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <strong>
+                        {{ puntuacion_promedio|floatformat:1 }}
+                    </strong>
+
+                    <span>
+                        / 5
+                    </span>
+
+
+                    <small>
+
+                        {% if total_calificaciones == 0 %}
+
+                            Sin calificaciones
+
+                        {% elif total_calificaciones == 1 %}
+
+                            1 calificación
+
+                        {% else %}
+
+                            {{ total_calificaciones }} calificaciones
+
+                        {% endif %}
+
+                    </small>
 
                 </div>
 
             </div>
+
+        </div>
 
             <!-- CONTENIDO -->
 

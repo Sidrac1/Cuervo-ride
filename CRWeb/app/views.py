@@ -44,6 +44,7 @@ from .models import (
 from .forms import SolicitudViajeForm
 from .forms import PublicarViajeForm
 from .forms import CalificarConductorForm
+from .forms import CalificarPasajeroForm
 from .validators import validar_imagen_jpeg
 
 Usuario = get_user_model()
@@ -1006,6 +1007,305 @@ def ver_ruta_viaje_pasajero(request, viaje_id):
     )
 
 # =========================================================
+# CALIFICAR PASAJERO - CONDUCTOR
+# =========================================================
+
+@login_required(login_url="login")
+def calificar_pasajero(request, solicitud_id):
+
+    if obtener_rol(request.user) != Usuario.Roles.CONDUCTOR:
+
+        messages.error(
+            request,
+            "Solo los conductores pueden calificar pasajeros.",
+        )
+
+        return redirect("home")
+
+    try:
+
+        perfil_conductor = request.user.perfil_conductor
+
+    except PerfilConductor.DoesNotExist:
+
+        messages.error(
+            request,
+            "No tienes un perfil de conductor registrado.",
+        )
+
+        return redirect("perfil")
+
+    solicitud = get_object_or_404(
+        SolicitudViaje.objects.select_related(
+            "viaje",
+            "viaje__conductor",
+            "viaje__conductor__usuario",
+            "viaje__vehiculo",
+            "pasajero",
+        ),
+        pk=solicitud_id,
+        viaje__conductor=perfil_conductor,
+    )
+
+    viaje = solicitud.viaje
+    pasajero = solicitud.pasajero
+
+    if viaje.estado != Viaje.EstadosViaje.FINALIZADO:
+
+        messages.warning(
+            request,
+            "Solo puedes calificar al pasajero cuando el viaje haya finalizado.",
+        )
+
+        return redirect(
+            "mis_viajes_conductor"
+        )
+
+    if (
+        solicitud.estado
+        != SolicitudViaje.EstadosSolicitud.COMPLETADA
+    ):
+
+        messages.warning(
+            request,
+            "Este pasajero no tiene una participación completada.",
+        )
+
+        return redirect(
+            "listar_pasajeros_calificar",
+            viaje_id=viaje.id,
+        )
+
+    calificacion_existente = (
+        Calificacion.objects
+        .filter(
+            viaje=viaje,
+            autor=request.user,
+            destinatario=pasajero,
+            tipo=(
+                Calificacion
+                .TiposCalificacion
+                .PASAJERO
+            ),
+        )
+        .exists()
+    )
+
+    if calificacion_existente:
+
+        messages.info(
+            request,
+            "Ya calificaste a este pasajero.",
+        )
+
+        return redirect(
+            "listar_pasajeros_calificar",
+            viaje_id=viaje.id,
+        )
+
+    if request.method == "POST":
+
+        form = CalificarPasajeroForm(
+            request.POST
+        )
+
+        if form.is_valid():
+
+            calificacion = form.save(
+                commit=False
+            )
+
+            calificacion.viaje = viaje
+            calificacion.autor = request.user
+            calificacion.destinatario = pasajero
+
+            calificacion.tipo = (
+                Calificacion
+                .TiposCalificacion
+                .PASAJERO
+            )
+
+            calificacion.estado = (
+                Calificacion
+                .EstadosCalificacion
+                .VISIBLE
+            )
+
+            try:
+
+                calificacion.full_clean()
+                calificacion.save()
+
+            except ValidationError as error:
+
+                if hasattr(
+                    error,
+                    "message_dict"
+                ):
+
+                    for campo, errores in (
+                        error.message_dict.items()
+                    ):
+
+                        for mensaje in errores:
+
+                            if campo in form.fields:
+
+                                form.add_error(
+                                    campo,
+                                    mensaje,
+                                )
+
+                            else:
+
+                                form.add_error(
+                                    None,
+                                    mensaje,
+                                )
+
+                else:
+
+                    form.add_error(
+                        None,
+                        str(error),
+                    )
+
+            else:
+
+                messages.success(
+                    request,
+                    f"Calificaste correctamente a "
+                    f"{pasajero.nombre_completo}.",
+                )
+
+                return redirect(
+                    "listar_pasajeros_calificar",
+                    viaje_id=viaje.id,
+                )
+
+    else:
+
+        form = CalificarPasajeroForm()
+
+    return render(
+        request,
+        "viajes/calificar_pasajero.html",
+        {
+            "form": form,
+            "solicitud": solicitud,
+            "viaje": viaje,
+            "pasajero": pasajero,
+        },
+    )
+
+# =========================================================
+# LISTAR PASAJEROS PARA CALIFICAR
+# =========================================================
+
+@login_required(login_url="login")
+def listar_pasajeros_calificar(request, viaje_id):
+
+    if obtener_rol(request.user) != Usuario.Roles.CONDUCTOR:
+
+        messages.error(
+            request,
+            "Solo los conductores pueden calificar pasajeros.",
+        )
+
+        return redirect("home")
+
+    try:
+
+        perfil_conductor = request.user.perfil_conductor
+
+    except PerfilConductor.DoesNotExist:
+
+        messages.error(
+            request,
+            "No tienes un perfil de conductor registrado.",
+        )
+
+        return redirect("perfil")
+
+    viaje = get_object_or_404(
+        Viaje.objects.select_related(
+            "conductor",
+            "conductor__usuario",
+            "vehiculo",
+        ),
+        pk=viaje_id,
+        conductor=perfil_conductor,
+    )
+
+    if viaje.estado != Viaje.EstadosViaje.FINALIZADO:
+
+        messages.warning(
+            request,
+            "Solo puedes calificar pasajeros cuando el viaje haya finalizado.",
+        )
+
+        return redirect(
+            "mis_viajes_conductor"
+        )
+
+    solicitudes = list(
+        SolicitudViaje.objects
+        .filter(
+            viaje=viaje,
+            estado=(
+                SolicitudViaje
+                .EstadosSolicitud
+                .COMPLETADA
+            ),
+        )
+        .select_related(
+            "pasajero",
+        )
+        .order_by(
+            "fecha_solicitud"
+        )
+    )
+
+    ids_pasajeros = [
+        solicitud.pasajero_id
+        for solicitud in solicitudes
+    ]
+
+    pasajeros_calificados = set(
+        Calificacion.objects
+        .filter(
+            viaje=viaje,
+            autor=request.user,
+            destinatario_id__in=ids_pasajeros,
+            tipo=(
+                Calificacion
+                .TiposCalificacion
+                .PASAJERO
+            ),
+        )
+        .values_list(
+            "destinatario_id",
+            flat=True,
+        )
+    )
+
+    for solicitud in solicitudes:
+
+        solicitud.pasajero_calificado = (
+            solicitud.pasajero_id
+            in pasajeros_calificados
+        )
+
+    return render(
+        request,
+        "viajes/listar_pasajeros_calificar.html",
+        {
+            "viaje": viaje,
+            "solicitudes": solicitudes,
+        },
+    )
+
+# =========================================================
 # Calificar conductor
 #==========================================================
 
@@ -1603,12 +1903,54 @@ def perfil(request):
             .first()
         )
 
+    # ----------------------------------------------------
+    # PUNTUACIÓN DEL USUARIO
+    # ----------------------------------------------------
+
+    calificaciones_recibidas = Calificacion.objects.filter(
+        destinatario=request.user,
+        estado=Calificacion.EstadosCalificacion.VISIBLE,
+    )
+
+    rol_usuario = obtener_rol(request.user)
+
+    if rol_usuario == Usuario.Roles.CONDUCTOR:
+
+        calificaciones_recibidas = calificaciones_recibidas.filter(
+            tipo=Calificacion.TiposCalificacion.CONDUCTOR
+        )
+
+    elif rol_usuario == Usuario.Roles.PASAJERO:
+
+        calificaciones_recibidas = calificaciones_recibidas.filter(
+            tipo=Calificacion.TiposCalificacion.PASAJERO
+        )
+
+
+    resumen_calificaciones = calificaciones_recibidas.aggregate(
+        promedio=Avg("puntuacion"),
+        total=Count("id"),
+    )
+
+    puntuacion_promedio = round(
+        float(
+            resumen_calificaciones["promedio"] or 0
+        ),
+        1,
+    )
+
+    total_calificaciones = (
+        resumen_calificaciones["total"] or 0
+    )
+
     contexto = {
         "rol_usuario": rol_usuario,
         "informacion_medica": informacion_medica,
         "historial_medico": informacion_medica,
         "perfil_conductor": perfil_conductor,
         "vehiculo": vehiculo,
+        "puntuacion_promedio": puntuacion_promedio,
+        "total_calificaciones": total_calificaciones,
     }
 
     return render(request, "perfil/perfil.html", contexto)

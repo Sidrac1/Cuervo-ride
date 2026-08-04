@@ -25,6 +25,8 @@ urlpatterns = [
     path("viajes/<int:viaje_id>/iniciar/",views.iniciar_viaje,name="iniciar_viaje",),
     path("viajes/<int:viaje_id>/en-progreso/",views.ride_en_progreso,name="ride_en_progreso",),
     path("viajes/<int:viaje_id>/finalizar/",views.finalizar_viaje,name="finalizar_viaje",),
+    path("viajes/<int:viaje_id>/calificar-pasajeros/",views.listar_pasajeros_calificar,name="listar_pasajeros_calificar",),
+    path("viajes/solicitudes/<int:solicitud_id>/calificar-pasajero/",views.calificar_pasajero,name="calificar_pasajero",),
 
     # ---------------------------------------------------------
     # Autenticación y Registro

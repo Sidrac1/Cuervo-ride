@@ -1,0 +1,609 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Calificar pasajero | Cuervo-Ride
+    </title>
+
+
+    <link
+        rel="icon"
+        type="image/png"
+        href="{% static 'img/logo.png' %}">
+
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/sidebar.css' %}">
+
+
+    <!-- Reutilizamos el estilo del formulario anterior -->
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/calificar_conductor.css' %}">
+
+</head>
+
+
+<body>
+
+    {% include 'components/sidebar.html' %}
+
+
+    <main class="calificacion-main">
+
+
+        <!--==================================================
+            ENCABEZADO
+        ===================================================-->
+
+        <header class="calificacion-pagina-header">
+
+            <div>
+
+                <span class="calificacion-etiqueta">
+
+                    <i class="fa-solid fa-star"></i>
+
+                    Experiencia del viaje
+
+                </span>
+
+                <h1>
+                    Califica al pasajero
+                </h1>
+
+                <p>
+                    Tu evaluación ayuda a mantener una comunidad
+                    segura, respetuosa y confiable.
+                </p>
+
+            </div>
+
+
+            <a
+                href="{% url 'listar_pasajeros_calificar' viaje.id %}"
+                class="btn-volver">
+
+                <i class="fa-solid fa-arrow-left"></i>
+
+                Pasajeros
+
+            </a>
+
+        </header>
+
+
+        <!--==================================================
+            CONTENIDO
+        ===================================================-->
+
+        <section class="calificacion-layout">
+
+
+            <!--==================================================
+                INFORMACIÓN DEL PASAJERO Y VIAJE
+            ===================================================-->
+
+            <aside class="viaje-resumen-card">
+
+
+                <!-- PASAJERO -->
+
+                <section class="conductor-resumen">
+
+                    <div class="conductor-foto">
+
+                        {% if pasajero.foto %}
+
+                            <img
+                                src="{{ pasajero.foto.url }}"
+                                alt="Foto de {{ pasajero.nombre_completo }}">
+
+                        {% else %}
+
+                            <img
+                                src="{% static 'img/profileIcon.png' %}"
+                                alt="Foto predeterminada">
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="conductor-datos">
+
+                        <span>
+                            Pasajero
+                        </span>
+
+                        <h2>
+                            {{ pasajero.nombre_completo }}
+                        </h2>
+
+
+                        {% if pasajero.matricula %}
+
+                            <small>
+
+                                <i class="fa-solid fa-id-card"></i>
+
+                                {{ pasajero.matricula }}
+
+                            </small>
+
+                        {% endif %}
+
+                    </div>
+
+                </section>
+
+
+                <!-- RUTA -->
+
+                <section class="ruta-resumen">
+
+
+                    <div class="ruta-punto">
+
+                        <span class="ruta-marcador origen"></span>
+
+                        <div>
+
+                            <small>
+                                Origen
+                            </small>
+
+                            <strong>
+                                {{ viaje.origen }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="ruta-linea"></div>
+
+
+                    <div class="ruta-punto">
+
+                        <span class="ruta-marcador destino"></span>
+
+                        <div>
+
+                            <small>
+                                Destino
+                            </small>
+
+                            <strong>
+                                {{ viaje.destino }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- DATOS DEL VIAJE -->
+
+                <section class="viaje-datos-grid">
+
+
+                    <article class="viaje-dato">
+
+                        <i class="fa-regular fa-calendar"></i>
+
+                        <div>
+
+                            <span>
+                                Fecha
+                            </span>
+
+                            <strong>
+                                {{ viaje.fecha_hora_salida|date:"d/m/Y" }}
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="viaje-dato">
+
+                        <i class="fa-regular fa-clock"></i>
+
+                        <div>
+
+                            <span>
+                                Salida
+                            </span>
+
+                            <strong>
+                                {{ viaje.fecha_hora_salida|date:"H:i" }} h
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="viaje-dato">
+
+                        <i class="fa-solid fa-ticket"></i>
+
+                        <div>
+
+                            <span>
+                                Lugares utilizados
+                            </span>
+
+                            <strong>
+                                {{ solicitud.asientos_solicitados }}
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="viaje-dato">
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                        <div>
+
+                            <span>
+                                Participación
+                            </span>
+
+                            <strong>
+                                Completada
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+                </section>
+
+
+                {% if solicitud.punto_recogida %}
+
+                    <div class="privacidad-aviso">
+
+                        <i class="fa-solid fa-location-dot"></i>
+
+                        <p>
+                            Punto de recogida:
+                            {{ solicitud.punto_recogida }}
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+
+                <div class="privacidad-aviso">
+
+                    <i class="fa-solid fa-lock"></i>
+
+                    <p>
+                        La calificación quedará registrada en el perfil
+                        del pasajero y podrá ser revisada por un
+                        administrador.
+                    </p>
+
+                </div>
+
+            </aside>
+
+
+            <!--==================================================
+                FORMULARIO
+            ===================================================-->
+
+            <section class="calificacion-form-card">
+
+
+                <header class="form-card-header">
+
+                    <div>
+
+                        <span>
+                            Evaluación
+                        </span>
+
+                        <h2>
+                            ¿Cómo fue su comportamiento?
+                        </h2>
+
+                        <p>
+                            Evalúa la puntualidad, comunicación,
+                            respeto y comportamiento durante el viaje.
+                        </p>
+
+                    </div>
+
+
+                    <i class="fa-solid fa-user-check"></i>
+
+                </header>
+
+
+                <form
+                    method="POST"
+                    class="calificacion-form"
+                    id="calificacionForm"
+                    novalidate>
+
+                    {% csrf_token %}
+
+
+                    <!-- ERRORES GENERALES -->
+
+                    {% if form.non_field_errors %}
+
+                        <div class="form-error-general">
+
+                            <i class="fa-solid fa-circle-exclamation"></i>
+
+                            <div>
+
+                                {% for error in form.non_field_errors %}
+
+                                    <p>
+                                        {{ error }}
+                                    </p>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- PUNTUACIÓN -->
+
+                    <section class="selector-puntuacion">
+
+
+                        <div class="selector-puntuacion-header">
+
+                            <div>
+
+                                <label>
+                                    Puntuación
+                                </label>
+
+                                <p>
+                                    Selecciona entre 1 y 5 estrellas.
+                                </p>
+
+                            </div>
+
+
+                            <strong id="valorPuntuacion">
+
+                                {% if form.puntuacion.value %}
+
+                                    {{ form.puntuacion.value }}/5
+
+                                {% else %}
+
+                                    0/5
+
+                                {% endif %}
+
+                            </strong>
+
+                        </div>
+
+
+                        <div
+                            class="estrellas-selector"
+                            id="estrellasSelector"
+                            role="radiogroup"
+                            aria-label="Puntuación del pasajero">
+
+                            {% for numero in "12345" %}
+
+                                <button
+                                    type="button"
+                                    class="estrella-btn"
+                                    data-value="{{ forloop.counter }}"
+                                    role="radio"
+                                    aria-checked="false"
+                                    aria-label="{{ forloop.counter }} estrella{% if forloop.counter != 1 %}s{% endif %}">
+
+                                    <i class="fa-regular fa-star"></i>
+
+                                </button>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <p
+                            class="texto-puntuacion"
+                            id="textoPuntuacion">
+
+                            Selecciona una puntuación
+
+                        </p>
+
+
+                        {{ form.puntuacion }}
+
+
+                        {% if form.puntuacion.errors %}
+
+                            <div class="campo-error">
+
+                                <i class="fa-solid fa-circle-exclamation"></i>
+
+                                <div>
+
+                                    {% for error in form.puntuacion.errors %}
+
+                                        <span>
+                                            {{ error }}
+                                        </span>
+
+                                    {% endfor %}
+
+                                </div>
+
+                            </div>
+
+                        {% endif %}
+
+                    </section>
+
+
+                    <!-- COMENTARIO -->
+
+                    <section class="campo-comentario">
+
+
+                        <div class="campo-comentario-header">
+
+                            <label for="{{ form.comentario.id_for_label }}">
+
+                                Comentario
+
+                                <small>
+                                    Opcional
+                                </small>
+
+                            </label>
+
+
+                            <span class="comentario-contador">
+
+                                <strong id="contadorComentario">
+                                    0
+                                </strong>
+
+                                / 500
+
+                            </span>
+
+                        </div>
+
+
+                        {{ form.comentario }}
+
+
+                        <div class="comentario-ayuda">
+
+                            <i class="fa-solid fa-circle-info"></i>
+
+                            <p>
+                                Describe la experiencia de forma respetuosa
+                                y evita compartir información personal.
+                            </p>
+
+                        </div>
+
+
+                        {% if form.comentario.errors %}
+
+                            <div class="campo-error">
+
+                                <i class="fa-solid fa-circle-exclamation"></i>
+
+                                <div>
+
+                                    {% for error in form.comentario.errors %}
+
+                                        <span>
+                                            {{ error }}
+                                        </span>
+
+                                    {% endfor %}
+
+                                </div>
+
+                            </div>
+
+                        {% endif %}
+
+                    </section>
+
+
+                    <!-- ACCIONES -->
+
+                    <footer class="calificacion-acciones">
+
+
+                        <a
+                            href="{% url 'listar_pasajeros_calificar' viaje.id %}"
+                            class="btn-omitir">
+
+                            <i class="fa-regular fa-clock"></i>
+
+                            Omitir por ahora
+
+                        </a>
+
+
+                        <button
+                            type="submit"
+                            class="btn-enviar-calificacion"
+                            id="btnEnviarCalificacion">
+
+                            <i class="fa-solid fa-paper-plane"></i>
+
+                            <span>
+                                Enviar calificación
+                            </span>
+
+                        </button>
+
+                    </footer>
+
+                </form>
+
+            </section>
+
+        </section>
+
+    </main>
+
+
+    <script
+        src="{% static 'js/sidebarP.js' %}">
+    </script>
+
+
+    <!-- Reutilizamos el mismo comportamiento de estrellas -->
+
+    <script
+        src="{% static 'js/calificar_conductor.js' %}">
+    </script>
+
+</body>
+
+</html>

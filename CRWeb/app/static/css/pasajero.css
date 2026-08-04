@@ -3329,3 +3329,141 @@ o introduzca estilos inesperados.
     }
 
 }
+
+/*==================================================
+    INFORMACIÓN DINÁMICA DEL PERFIL
+==================================================*/
+
+.perfil-top .info {
+
+    min-width: 0;
+
+}
+
+.perfil-bienvenida {
+
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #98ec63;
+
+    font-size: 12px;
+    font-weight: 800;
+
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+
+}
+
+.perfil-top .info h1 {
+
+    margin-bottom: 9px;
+
+    color: white;
+
+    font-size: 29px;
+    font-weight: 800;
+
+    line-height: 1.15;
+
+}
+
+.perfil-rol {
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 7px;
+
+    margin-bottom: 12px;
+    padding: 7px 12px;
+
+    border: 1px solid rgba(152, 236, 99, 0.35);
+    border-radius: 999px;
+
+    background: rgba(152, 236, 99, 0.1);
+    color: #98ec63;
+
+    font-size: 11px;
+    font-weight: 700;
+
+}
+
+.perfil-puntuacion {
+
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    gap: 6px;
+
+}
+
+.estrellas-perfil {
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 3px;
+
+    color: #f8c24e;
+
+}
+
+.estrellas-perfil i {
+
+    font-size: 15px;
+
+}
+
+.perfil-puntuacion strong {
+
+    margin-left: 4px;
+
+    color: white;
+
+    font-size: 15px;
+
+}
+
+.perfil-puntuacion > span {
+
+    color: #8ea2b6;
+
+    font-size: 11px;
+
+}
+
+.perfil-puntuacion small {
+
+    margin-left: 5px;
+
+    color: #8ea2b6;
+
+    font-size: 10px;
+
+}
+
+@media (max-width: 600px) {
+
+    .perfil-top .info h1 {
+
+        font-size: 23px;
+
+    }
+
+    .perfil-puntuacion {
+
+        align-items: flex-start;
+        flex-direction: column;
+
+    }
+
+    .perfil-puntuacion small {
+
+        margin-left: 0;
+
+    }
+
+}

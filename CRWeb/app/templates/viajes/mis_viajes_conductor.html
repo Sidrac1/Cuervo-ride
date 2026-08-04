@@ -677,24 +677,45 @@
                             </a>
 
 
-                        {% elif viaje.estado == "finalizado" or viaje.estado == "cancelado" %}
+                        {% elif viaje.estado == "finalizado" %}
 
+    <a
+        href="{% url 'listar_pasajeros_calificar' viaje.id %}"
+        class="btn-viaje btn-iniciar">
 
-                            <!-- DUPLICAR -->
+        <i class="fa-solid fa-star"></i>
 
-                            <button
-                                type="button"
-                                class="btn-viaje btn-secundario"
-                                data-accion="duplicar"
-                                data-viaje-id="{{ viaje.id }}">
+        Calificar pasajeros
 
-                                <i class="fa-regular fa-copy"></i>
+    </a>
 
-                                Duplicar viaje
+    <button
+        type="button"
+        class="btn-viaje btn-secundario"
+        data-accion="duplicar"
+        data-viaje-id="{{ viaje.id }}">
 
-                            </button>
+        <i class="fa-regular fa-copy"></i>
 
-                        {% endif %}
+        Duplicar viaje
+
+    </button>
+
+{% elif viaje.estado == "cancelado" %}
+
+    <button
+        type="button"
+        class="btn-viaje btn-secundario"
+        data-accion="duplicar"
+        data-viaje-id="{{ viaje.id }}">
+
+        <i class="fa-regular fa-copy"></i>
+
+        Duplicar viaje
+
+    </button>
+
+{% endif %}
 
                     </footer>
 
