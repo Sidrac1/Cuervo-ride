@@ -401,7 +401,6 @@ img {
 
     grid-template-columns:
         minmax(0, 1fr)
-        54px
         54px;
 
     align-items: center;
@@ -529,8 +528,7 @@ img {
     BOTONES DE BÚSQUEDA Y FILTRO
 ==================================================*/
 
-.btn-buscar,
-.btn-filtro {
+.btn-buscar{
 
     width: 54px;
     height: 52px;
@@ -580,34 +578,6 @@ img {
 
     transform:
         scale(0.96);
-
-}
-
-.btn-filtro {
-
-    border: 1px solid var(--borde-claro);
-
-    background:
-        rgba(255, 255, 255, 0.035);
-
-    color:
-        var(--texto-secundario);
-
-}
-
-.btn-filtro:hover {
-
-    border-color:
-        var(--verde-borde);
-
-    background:
-        var(--verde-suave);
-
-    color:
-        var(--verde);
-
-    transform:
-        translateY(-2px);
 
 }
 
