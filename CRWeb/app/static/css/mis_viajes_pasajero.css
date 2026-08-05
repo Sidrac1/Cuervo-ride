@@ -2218,3 +2218,1094 @@ img {
         rgba(76, 166, 255, 0.13);
 
 }
+
+/*==================================================
+            MODAL RESUMEN DEL VIAJE
+==================================================*/
+
+.modal-resumen-overlay{
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:9900;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    padding:40px;
+
+    background:
+        rgba(5,12,23,.82);
+
+    backdrop-filter:
+        blur(8px);
+
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+
+    transition:
+        opacity .28s ease,
+        visibility .28s ease;
+
+}
+
+.modal-resumen-overlay.activo{
+
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
+
+}
+
+body.modal-resumen-abierto{
+
+    overflow:hidden;
+
+}
+
+/*==================================================
+                VENTANA DEL MODAL
+==================================================*/
+
+.modal-resumen-viaje{
+
+    position:relative;
+
+    width:min(980px,100%);
+
+    max-height:92vh;
+
+    overflow:hidden;
+
+    display:flex;
+    flex-direction:column;
+
+    border-radius:22px;
+
+    border:1px solid
+        rgba(152,236,99,.18);
+
+    background:
+
+        linear-gradient(
+            180deg,
+            #13324f,
+            #0d2238
+        );
+
+    box-shadow:
+
+        0 35px 90px
+        rgba(0,0,0,.55);
+
+    transform:
+        translateY(20px)
+        scale(.97);
+
+    transition:
+        transform .28s ease;
+
+}
+
+.modal-resumen-overlay.activo
+.modal-resumen-viaje{
+
+    transform:
+        translateY(0)
+        scale(1);
+
+}
+
+/*==================================================
+                BOTON CERRAR
+==================================================*/
+
+.modal-resumen-cerrar{
+
+    position:absolute;
+
+    top:18px;
+    right:18px;
+
+    width:44px;
+    height:44px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:
+        rgba(255,255,255,.06);
+
+    color:#d5dde7;
+
+    cursor:pointer;
+
+    transition:
+        background .2s,
+        transform .2s,
+        color .2s;
+
+    z-index:50;
+
+}
+
+.modal-resumen-cerrar:hover{
+
+    background:
+
+        rgba(255,98,107,.18);
+
+    color:#ff7b88;
+
+    transform:rotate(90deg);
+
+}
+
+/*==================================================
+            SCROLL INTERNO
+==================================================*/
+
+.modal-resumen-contenido{
+
+    flex:1;
+
+    overflow-y:auto;
+
+    padding:38px;
+
+}
+
+.modal-resumen-contenido::-webkit-scrollbar{
+
+    width:10px;
+
+}
+
+.modal-resumen-contenido::-webkit-scrollbar-track{
+
+    background:transparent;
+
+}
+
+.modal-resumen-contenido::-webkit-scrollbar-thumb{
+
+    border-radius:20px;
+
+    background:
+        rgba(255,255,255,.12);
+
+}
+
+.modal-resumen-contenido::-webkit-scrollbar-thumb:hover{
+
+    background:
+        rgba(255,255,255,.22);
+
+}
+
+/*==================================================
+                TICKET
+==================================================*/
+
+.ticket-viaje{
+
+    display:flex;
+    flex-direction:column;
+
+    gap:26px;
+
+    color:var(--texto-principal);
+
+}
+
+/*==================================================
+                ENCABEZADO
+==================================================*/
+
+.ticket-header{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+
+    gap:25px;
+
+}
+
+.ticket-marca{
+
+    flex:1;
+
+}
+
+.ticket-etiqueta{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    padding:6px 12px;
+
+    margin-bottom:12px;
+
+    border-radius:999px;
+
+    background:
+        rgba(152,236,99,.12);
+
+    color:var(--azul);
+
+    font-size:11px;
+
+    font-weight:800;
+
+    letter-spacing:.08em;
+
+    text-transform:uppercase;
+
+}
+
+.ticket-header h2{
+
+    margin:0 0 8px;
+
+    font-size:32px;
+
+    font-weight:800;
+
+    letter-spacing:-1px;
+
+}
+
+.ticket-header p{
+
+    color:var(--texto-secundario);
+
+    font-size:14px;
+
+}
+
+.ticket-header p strong{
+
+    color:white;
+
+}
+
+.ticket-estado{
+
+    flex-shrink:0;
+
+    display:flex;
+    align-items:center;
+    gap:8px;
+
+    padding:10px 18px;
+
+    border-radius:999px;
+
+    font-size:12px;
+
+    font-weight:700;
+
+}
+
+.ticket-estado-completada{
+
+    background:
+        rgba(33,199,122,.12);
+
+    color:#67df9e;
+
+}
+
+.ticket-estado-aceptada{
+
+    background:
+        rgba(152,236,99,.12);
+
+    color:var(--azul);
+
+}
+
+.ticket-estado-pendiente{
+
+    background:
+        rgba(255,189,74,.14);
+
+    color:#ffd46f;
+
+}
+
+.ticket-estado-cancelada{
+
+    background:
+        rgba(255,98,107,.12);
+
+    color:#ff8b96;
+
+}
+
+.ticket-separador{
+
+    height:1px;
+
+    background:
+
+        linear-gradient(
+            90deg,
+
+            transparent,
+
+            rgba(255,255,255,.18),
+
+            transparent
+        );
+
+}
+
+/*==================================================
+            SECCIONES
+==================================================*/
+
+.ticket-seccion{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+
+}
+
+.ticket-seccion h3{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    margin:0;
+
+    color:white;
+
+    font-size:17px;
+
+}
+
+.ticket-seccion h3 i{
+
+    color:var(--azul);
+
+}
+
+/*==================================================
+            GRID
+==================================================*/
+
+.ticket-grid{
+
+    display:grid;
+
+    grid-template-columns:
+
+        repeat(2,minmax(0,1fr));
+
+    gap:16px;
+
+}
+
+.ticket-grid-dos{
+
+    grid-template-columns:
+
+        repeat(2,minmax(0,1fr));
+
+}
+
+.ticket-item{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:5px;
+
+    padding:18px;
+
+    border-radius:16px;
+
+    border:1px solid rgba(255,255,255,.07);
+
+    background:
+
+        rgba(255,255,255,.025);
+
+}
+
+.ticket-item span{
+
+    color:var(--texto-suave);
+
+    font-size:12px;
+
+    text-transform:uppercase;
+
+    letter-spacing:.06em;
+
+}
+
+.ticket-item strong{
+
+    color:white;
+
+    font-size:18px;
+
+    line-height:1.4;
+
+}
+
+.ticket-item small{
+
+    color:var(--texto-secundario);
+
+    font-size:13px;
+
+}
+
+/*==================================================
+            SECCIONES
+==================================================*/
+
+.ticket-seccion{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+
+}
+
+.ticket-seccion h3{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    margin:0;
+
+    color:white;
+
+    font-size:17px;
+
+}
+
+.ticket-seccion h3 i{
+
+    color:var(--azul);
+
+}
+
+/*==================================================
+            GRID
+==================================================*/
+
+.ticket-grid{
+
+    display:grid;
+
+    grid-template-columns:
+
+        repeat(2,minmax(0,1fr));
+
+    gap:16px;
+
+}
+
+.ticket-grid-dos{
+
+    grid-template-columns:
+
+        repeat(2,minmax(0,1fr));
+
+}
+
+.ticket-item{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:5px;
+
+    padding:18px;
+
+    border-radius:16px;
+
+    border:1px solid rgba(255,255,255,.07);
+
+    background:
+
+        rgba(255,255,255,.025);
+
+}
+
+.ticket-item span{
+
+    color:var(--texto-suave);
+
+    font-size:12px;
+
+    text-transform:uppercase;
+
+    letter-spacing:.06em;
+
+}
+
+.ticket-item strong{
+
+    color:white;
+
+    font-size:18px;
+
+    line-height:1.4;
+
+}
+
+.ticket-item small{
+
+    color:var(--texto-secundario);
+
+    font-size:13px;
+
+}
+
+/*==================================================
+            DESGLOSE DEL COSTO
+==================================================*/
+
+.ticket-desglose{
+
+    display:flex;
+    flex-direction:column;
+
+    overflow:hidden;
+
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:18px;
+
+    background:rgba(255,255,255,.025);
+
+}
+
+.ticket-desglose > div{
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    gap:20px;
+
+    padding:16px 20px;
+
+    border-bottom:1px solid rgba(255,255,255,.06);
+
+}
+
+.ticket-desglose > div:last-child{
+
+    border-bottom:0;
+
+}
+
+.ticket-desglose span{
+
+    color:var(--texto-secundario);
+
+    font-size:14px;
+
+}
+
+.ticket-desglose strong{
+
+    color:var(--texto-principal);
+
+    font-size:15px;
+
+}
+
+.ticket-desglose .ticket-total{
+
+    padding:20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(152,236,99,.12),
+            rgba(63,174,69,.08)
+        );
+
+}
+
+.ticket-desglose .ticket-total span{
+
+    color:#dfffd1;
+
+    font-weight:700;
+
+}
+
+.ticket-desglose .ticket-total strong{
+
+    color:var(--azul);
+
+    font-size:24px;
+    font-weight:900;
+
+}
+
+
+/*==================================================
+            PREFERENCIAS
+==================================================*/
+
+.ticket-preferencias{
+
+    display:flex;
+    flex-wrap:wrap;
+
+    gap:11px;
+
+}
+
+.ticket-preferencia{
+
+    display:inline-flex;
+    align-items:center;
+
+    gap:8px;
+
+    padding:10px 14px;
+
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:999px;
+
+    background:rgba(255,255,255,.025);
+
+    color:var(--texto-secundario);
+
+    font-size:12px;
+    font-weight:700;
+
+}
+
+.ticket-preferencia i{
+
+    color:var(--texto-suave);
+
+}
+
+.ticket-preferencia.activa{
+
+    border-color:rgba(152,236,99,.28);
+
+    background:rgba(152,236,99,.10);
+
+    color:var(--azul);
+
+}
+
+.ticket-preferencia.activa i{
+
+    color:var(--azul);
+
+}
+
+
+/*==================================================
+        COMENTARIOS E INDICACIONES
+==================================================*/
+
+.ticket-textos{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(2,minmax(0,1fr));
+
+    gap:16px;
+
+}
+
+.ticket-textos article{
+
+    min-width:0;
+
+    padding:18px;
+
+    border:1px solid rgba(255,255,255,.07);
+    border-radius:16px;
+
+    background:rgba(255,255,255,.025);
+
+}
+
+.ticket-textos article > span{
+
+    display:flex;
+    align-items:center;
+
+    gap:8px;
+
+    margin-bottom:11px;
+
+    color:var(--azul);
+
+    font-size:12px;
+    font-weight:800;
+
+}
+
+.ticket-textos article p{
+
+    margin:0;
+
+    color:var(--texto-secundario);
+
+    font-size:14px;
+    line-height:1.7;
+
+    overflow-wrap:anywhere;
+
+}
+
+
+/*==================================================
+        ESTADO DE CALIFICACIÓN
+==================================================*/
+
+.ticket-calificacion{
+
+    padding:18px;
+
+    border:1px solid rgba(255,189,74,.18);
+    border-radius:17px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,189,74,.10),
+            rgba(255,255,255,.02)
+        );
+
+}
+
+.ticket-calificacion > div{
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    gap:20px;
+
+}
+
+.ticket-calificacion span{
+
+    display:flex;
+    align-items:center;
+
+    gap:9px;
+
+    color:#ffd984;
+
+    font-size:13px;
+    font-weight:800;
+
+}
+
+.ticket-calificacion strong{
+
+    color:var(--texto-principal);
+
+    font-size:14px;
+
+}
+
+
+/*==================================================
+            PIE DEL COMPROBANTE
+==================================================*/
+
+.ticket-footer{
+
+    display:flex;
+    align-items:center;
+
+    gap:16px;
+
+    padding:20px;
+
+    border:1px solid rgba(152,236,99,.16);
+    border-radius:18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(152,236,99,.08),
+            rgba(255,255,255,.02)
+        );
+
+}
+
+.ticket-footer > i{
+
+    flex-shrink:0;
+
+    width:48px;
+    height:48px;
+
+    display:grid;
+    place-items:center;
+
+    border-radius:14px;
+
+    background:rgba(152,236,99,.12);
+
+    color:var(--azul);
+
+    font-size:20px;
+
+}
+
+.ticket-footer div{
+
+    min-width:0;
+
+}
+
+.ticket-footer strong,
+.ticket-footer span{
+
+    display:block;
+
+}
+
+.ticket-footer strong{
+
+    margin-bottom:5px;
+
+    color:var(--texto-principal);
+
+    font-size:15px;
+
+}
+
+.ticket-footer span{
+
+    color:var(--texto-secundario);
+
+    font-size:12px;
+    line-height:1.6;
+
+}
+
+
+/*==================================================
+            BOTÓN RESUMEN
+==================================================*/
+
+.btn-resumen{
+
+    border-color:rgba(152,236,99,.22);
+
+    background:rgba(152,236,99,.08);
+
+    color:var(--azul);
+
+}
+
+.btn-resumen:hover{
+
+    border-color:rgba(152,236,99,.38);
+
+    background:rgba(152,236,99,.14);
+
+}
+
+
+/*==================================================
+            RESPONSIVE DEL RESUMEN
+==================================================*/
+
+@media(max-width:800px){
+
+    .modal-resumen-overlay{
+
+        padding:18px;
+
+    }
+
+    .modal-resumen-viaje{
+
+        max-height:calc(100vh - 36px);
+
+        border-radius:18px;
+
+    }
+
+    .modal-resumen-contenido{
+
+        padding:28px 22px;
+
+    }
+
+    .ticket-header{
+
+        flex-direction:column;
+
+        padding-right:50px;
+
+    }
+
+    .ticket-grid,
+    .ticket-grid-dos,
+    .ticket-textos{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .ticket-ruta{
+
+        grid-template-columns:1fr;
+
+        gap:16px;
+
+    }
+
+    .ticket-ruta-linea{
+
+        justify-content:flex-start;
+
+        padding-left:4px;
+
+    }
+
+    .ticket-ruta-linea i{
+
+        transform:rotate(90deg);
+
+    }
+
+}
+
+@media(max-width:520px){
+
+    .modal-resumen-overlay{
+
+        padding:8px;
+
+        align-items:stretch;
+
+    }
+
+    .modal-resumen-viaje{
+
+        width:100%;
+        max-height:calc(100vh - 16px);
+
+        border-radius:15px;
+
+    }
+
+    .modal-resumen-contenido{
+
+        padding:22px 16px;
+
+    }
+
+    .modal-resumen-cerrar{
+
+        top:12px;
+        right:12px;
+
+        width:38px;
+        height:38px;
+
+    }
+
+    .ticket-viaje{
+
+        gap:21px;
+
+    }
+
+    .ticket-header h2{
+
+        font-size:26px;
+
+    }
+
+    .ticket-item{
+
+        padding:15px;
+
+    }
+
+    .ticket-item strong,
+    .ticket-ruta-punto strong{
+
+        font-size:15px;
+
+    }
+
+    .ticket-desglose > div{
+
+        align-items:flex-start;
+        flex-direction:column;
+
+        gap:6px;
+
+    }
+
+    .ticket-desglose .ticket-total strong{
+
+        font-size:21px;
+
+    }
+
+    .ticket-calificacion > div{
+
+        align-items:flex-start;
+        flex-direction:column;
+
+        gap:8px;
+
+    }
+
+    .ticket-preferencia{
+
+        width:100%;
+
+    }
+
+    .ticket-footer{
+
+        align-items:flex-start;
+
+    }
+
+}

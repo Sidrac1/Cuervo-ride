@@ -2849,6 +2849,7 @@ def mis_viajes_pasajero(request):
     }
 
     if filtro not in filtros_validos:
+
         filtro = "todos"
 
     # -----------------------------------------------------
@@ -2929,8 +2930,9 @@ def mis_viajes_pasajero(request):
             )
         )
 
-    # Convertimos a lista porque agregaremos una propiedad
-    # temporal a cada solicitud para usarla en el template.
+    # Convertimos a lista porque agregaremos propiedades
+    # temporales a cada solicitud para usarlas en el template.
+
     solicitudes = list(
         solicitudes
     )
@@ -2961,11 +2963,190 @@ def mis_viajes_pasajero(request):
         )
     )
 
+    # -----------------------------------------------------
+    # PREPARAR DATOS ADICIONALES
+    # -----------------------------------------------------
+
     for solicitud in solicitudes:
+
+        # Indica si el pasajero ya calificó al conductor.
 
         solicitud.calificacion_conductor_realizada = (
             solicitud.viaje_id
             in calificaciones_realizadas
+        )
+
+        # -------------------------------------------------
+        # TOTAL DEL VIAJE
+        # -------------------------------------------------
+
+        solicitud.total_viaje = (
+            solicitud.viaje.costo_por_pasajero
+            * solicitud.asientos_solicitados
+        )
+
+        # -------------------------------------------------
+        # FOLIO DEL COMPROBANTE
+        # -------------------------------------------------
+
+        solicitud.folio_resumen = (
+            f"CR-"
+            f"{solicitud.viaje_id:06d}-"
+            f"{solicitud.id:06d}"
+        )
+
+        # -------------------------------------------------
+        # VALIDAR SI PUEDE VER EL RESUMEN
+        # -------------------------------------------------
+
+        solicitud.puede_ver_resumen = (
+            solicitud.estado
+            == SolicitudViaje
+            .EstadosSolicitud
+            .COMPLETADA
+        )
+
+        # -------------------------------------------------
+        # NOMBRE COMPLETO DEL VEHÍCULO
+        # -------------------------------------------------
+
+        marca = (
+            solicitud.viaje.vehiculo.marca
+            or ""
+        )
+
+        modelo = (
+            solicitud.viaje.vehiculo.modelo
+            or ""
+        )
+
+        solicitud.vehiculo_resumen = (
+            f"{marca} {modelo}"
+        ).strip()
+
+        if not solicitud.vehiculo_resumen:
+
+            solicitud.vehiculo_resumen = (
+                "Vehículo no especificado"
+            )
+
+        # -------------------------------------------------
+        # COLOR Y PLACAS DEL VEHÍCULO
+        # -------------------------------------------------
+
+        datos_vehiculo = []
+
+        color = getattr(
+            solicitud.viaje.vehiculo,
+            "color",
+            "",
+        )
+
+        placas = getattr(
+            solicitud.viaje.vehiculo,
+            "placas",
+            "",
+        )
+
+        if color:
+
+            datos_vehiculo.append(
+                str(color)
+            )
+
+        if placas:
+
+            datos_vehiculo.append(
+                str(placas)
+            )
+
+        solicitud.detalle_vehiculo_resumen = (
+            " · ".join(datos_vehiculo)
+            if datos_vehiculo
+            else "Sin información adicional"
+        )
+
+        # -------------------------------------------------
+        # NOMBRE DEL CONDUCTOR
+        # -------------------------------------------------
+
+        usuario_conductor = (
+            solicitud
+            .viaje
+            .conductor
+            .usuario
+        )
+
+        solicitud.nombre_conductor_resumen = (
+            getattr(
+                usuario_conductor,
+                "nombre_completo",
+                "",
+            )
+            or usuario_conductor.get_full_name()
+            or getattr(
+                usuario_conductor,
+                "nombre",
+                "",
+            )
+            or getattr(
+                usuario_conductor,
+                "username",
+                "",
+            )
+            or "Conductor no disponible"
+        )
+
+        # -------------------------------------------------
+        # FECHAS DE RESPUESTA
+        # -------------------------------------------------
+
+        solicitud.fecha_respuesta_resumen = (
+            solicitud.fecha_respuesta
+            if solicitud.fecha_respuesta
+            else None
+        )
+
+        # -------------------------------------------------
+        # PUNTOS DE RECOGIDA Y DESCENSO
+        # -------------------------------------------------
+
+        solicitud.punto_recogida_resumen = (
+            solicitud.punto_recogida
+            or "No especificado"
+        )
+
+        solicitud.punto_descenso_resumen = (
+            solicitud.punto_descenso
+            or "No especificado"
+        )
+
+        # -------------------------------------------------
+        # COMENTARIO DEL PASAJERO
+        # -------------------------------------------------
+
+        solicitud.comentario_resumen = (
+            solicitud.comentario
+            or "No se agregó ningún comentario"
+        )
+
+        # -------------------------------------------------
+        # INDICACIONES DEL CONDUCTOR
+        # -------------------------------------------------
+
+        solicitud.indicaciones_resumen = (
+            solicitud.viaje.indicaciones
+            or "El conductor no agregó indicaciones"
+        )
+
+        # -------------------------------------------------
+        # ESTADO DE CALIFICACIÓN
+        # -------------------------------------------------
+
+        solicitud.estado_calificacion_resumen = (
+            "Conductor calificado"
+            if solicitud.calificacion_conductor_realizada
+            else "Calificación pendiente"
         )
 
     # -----------------------------------------------------
@@ -3041,7 +3222,6 @@ def mis_viajes_pasajero(request):
             "filtro_actual": filtro,
         },
     )
-
 # =========================================================
 # CANCELAR VIAJE - CONDUCTOR
 # =========================================================

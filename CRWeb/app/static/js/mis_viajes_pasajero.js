@@ -201,12 +201,9 @@ function gestionarAccion(
 
         case "resumen":
 
-            navegarOInformar(
-                boton,
-                "El resumen del viaje todavía no está conectado."
-            );
+            abrirResumenViaje(boton);
 
-            break;
+        break;
 
 
         case "calificar":
@@ -952,3 +949,799 @@ function escaparHtml(valor) {
     return elemento.innerHTML;
 
 }
+
+/* =========================================================
+   MODAL RESUMEN DEL VIAJE
+========================================================= */
+
+function abrirResumenViaje(boton){
+
+    const tarjeta = boton.closest(".solicitud-card");
+
+    if(!tarjeta){
+
+        mostrarToast(
+            "No fue posible obtener la información del viaje.",
+            "error"
+        );
+
+        return;
+
+    }
+
+    const modal = document.getElementById(
+        "modalResumenViaje"
+    );
+
+    const contenido = document.getElementById(
+        "contenidoResumenViaje"
+    );
+
+    if(!modal || !contenido){
+
+        mostrarToast(
+            "No se encontró el modal del resumen.",
+            "error"
+        );
+
+        return;
+
+    }
+
+    contenido.innerHTML = construirResumenHTML(
+        tarjeta.dataset
+    );
+
+    modal.classList.add("activo");
+
+    document.body.classList.add(
+        "modal-resumen-abierto"
+    );
+
+}
+
+/* =========================================================
+   CERRAR MODAL RESUMEN
+========================================================= */
+
+function cerrarResumenViaje(){
+
+    const modal = document.getElementById(
+        "modalResumenViaje"
+    );
+
+    if(!modal){
+        return;
+    }
+
+    modal.classList.remove("activo");
+
+    document.body.classList.remove(
+        "modal-resumen-abierto"
+    );
+
+}
+
+/* =========================================================
+   CONSTRUIR HTML DEL RESUMEN
+========================================================= */
+
+function construirResumenHTML(data) {
+
+    const permiteMascotas =
+        data.resumenMascotas === "1";
+
+    const aceptaSilla =
+        data.resumenSilla === "1";
+
+    const requiereAsistencia =
+        data.resumenAsistencia === "1";
+
+
+    const preferencias = [];
+
+    if (permiteMascotas) {
+
+        preferencias.push(`
+            <span class="ticket-preferencia activa">
+
+                <i class="fa-solid fa-paw"></i>
+
+                Mascotas permitidas
+
+            </span>
+        `);
+
+    }
+
+    if (aceptaSilla) {
+
+        preferencias.push(`
+            <span class="ticket-preferencia activa">
+
+                <i class="fa-solid fa-wheelchair"></i>
+
+                Accesible
+
+            </span>
+        `);
+
+    }
+
+    if (requiereAsistencia) {
+
+        preferencias.push(`
+            <span class="ticket-preferencia activa">
+
+                <i class="fa-solid fa-hand-holding-medical"></i>
+
+                Asistencia solicitada
+
+            </span>
+        `);
+
+    }
+
+    if (!preferencias.length) {
+
+        preferencias.push(`
+            <span class="ticket-preferencia">
+
+                <i class="fa-solid fa-circle-minus"></i>
+
+                Sin preferencias adicionales
+
+            </span>
+        `);
+
+    }
+
+
+    return `
+
+        <article class="ticket-viaje">
+
+            <!-- =========================================
+                ENCABEZADO
+            ========================================== -->
+
+            <header class="ticket-header">
+
+                <div class="ticket-marca">
+
+                    <span class="ticket-etiqueta">
+
+                        Comprobante de viaje
+
+                    </span>
+
+                    <h2 id="tituloModalResumen">
+
+                        Cuervo-Ride
+
+                    </h2>
+
+                    <p>
+
+                        Folio:
+
+                        <strong>
+
+                            ${escaparHtml(
+                                data.resumenFolio
+                                || "Sin folio"
+                            )}
+
+                        </strong>
+
+                    </p>
+
+                </div>
+
+
+                <span
+                    class="ticket-estado
+                    ticket-estado-${escaparHtml(
+                        data.estado
+                        || "completada"
+                    )}">
+
+                    <i class="fa-solid fa-circle-check"></i>
+
+                    ${escaparHtml(
+                        data.estadoLabel
+                        || "Completada"
+                    )}
+
+                </span>
+
+            </header>
+
+
+            <div class="ticket-separador"></div>
+
+
+            <!-- =========================================
+                INFORMACIÓN GENERAL
+            ========================================== -->
+
+            <section class="ticket-seccion">
+
+                <h3>
+
+                    <i class="fa-solid fa-circle-info"></i>
+
+                    Información del viaje
+
+                </h3>
+
+
+                <div class="ticket-grid">
+
+                    <div class="ticket-item">
+
+                        <span>
+                            Conductor
+                        </span>
+
+                        <strong>
+
+                            ${escaparHtml(
+                                data.resumenConductor
+                                || "No disponible"
+                            )}
+
+                        </strong>
+
+                    </div>
+
+
+                    <div class="ticket-item">
+
+                        <span>
+                            Vehículo
+                        </span>
+
+                        <strong>
+
+                            ${escaparHtml(
+                                data.resumenVehiculo
+                                || "No especificado"
+                            )}
+
+                        </strong>
+
+                        <small>
+
+                            ${escaparHtml(
+                                data.resumenVehiculoDetalle
+                                || "Sin información adicional"
+                            )}
+
+                        </small>
+
+                    </div>
+
+
+                    <div class="ticket-item">
+
+                        <span>
+                            Fecha de salida
+                        </span>
+
+                        <strong>
+
+                            ${escaparHtml(
+                                data.resumenFecha
+                                || "Sin fecha"
+                            )}
+
+                        </strong>
+
+                        <small>
+
+                            ${escaparHtml(
+                                data.resumenHora
+                                || "Sin hora"
+                            )}
+
+                        </small>
+
+                    </div>
+
+
+                    <div class="ticket-item">
+
+                        <span>
+                            Llegada estimada
+                        </span>
+
+                        <strong>
+
+                            ${escaparHtml(
+                                data.resumenLlegada
+                                || "No especificada"
+                            )}
+
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================================
+                RUTA
+            ========================================== -->
+
+            <section class="ticket-seccion">
+
+                <h3>
+
+                    <i class="fa-solid fa-route"></i>
+
+                    Ruta del viaje
+
+                </h3>
+
+
+                <div class="ticket-ruta">
+
+                    <div class="ticket-ruta-punto origen">
+
+                        <span class="ticket-ruta-marcador"></span>
+
+                        <div>
+
+                            <small>
+                                Origen
+                            </small>
+
+                            <strong>
+
+                                ${escaparHtml(
+                                    data.resumenOrigen
+                                    || "No especificado"
+                                )}
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="ticket-ruta-linea">
+
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                    </div>
+
+
+                    <div class="ticket-ruta-punto destino">
+
+                        <span class="ticket-ruta-marcador"></span>
+
+                        <div>
+
+                            <small>
+                                Destino
+                            </small>
+
+                            <strong>
+
+                                ${escaparHtml(
+                                    data.resumenDestino
+                                    || "No especificado"
+                                )}
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================================
+                PUNTOS PERSONALIZADOS
+            ========================================== -->
+
+            <section class="ticket-seccion">
+
+                <h3>
+
+                    <i class="fa-solid fa-location-crosshairs"></i>
+
+                    Puntos acordados
+
+                </h3>
+
+
+                <div class="ticket-grid ticket-grid-dos">
+
+                    <div class="ticket-item">
+
+                        <span>
+                            Punto de recogida
+                        </span>
+
+                        <strong>
+
+                            ${escaparHtml(
+                                data.resumenRecogida
+                                || "No especificado"
+                            )}
+
+                        </strong>
+
+                    </div>
+
+
+                    <div class="ticket-item">
+
+                        <span>
+                            Punto de descenso
+                        </span>
+
+                        <strong>
+
+                            ${escaparHtml(
+                                data.resumenDescenso
+                                || "No especificado"
+                            )}
+
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================================
+                DESGLOSE DEL COSTO
+            ========================================== -->
+
+            <section class="ticket-seccion">
+
+                <h3>
+
+                    <i class="fa-solid fa-receipt"></i>
+
+                    Desglose
+
+                </h3>
+
+
+                <div class="ticket-desglose">
+
+                    <div>
+
+                        <span>
+                            Asientos reservados
+                        </span>
+
+                        <strong>
+
+                            ${escaparHtml(
+                                data.resumenAsientos
+                                || "0"
+                            )}
+
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Costo por pasajero
+                        </span>
+
+                        <strong>
+
+                            $${escaparHtml(
+                                data.resumenPrecio
+                                || "0.00"
+                            )}
+                            MXN
+
+                        </strong>
+
+                    </div>
+
+
+                    <div class="ticket-total">
+
+                        <span>
+                            Total del viaje
+                        </span>
+
+                        <strong>
+
+                            $${escaparHtml(
+                                data.resumenTotal
+                                || "0.00"
+                            )}
+                            MXN
+
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================================
+                PREFERENCIAS
+            ========================================== -->
+
+            <section class="ticket-seccion">
+
+                <h3>
+
+                    <i class="fa-solid fa-sliders"></i>
+
+                    Preferencias
+
+                </h3>
+
+
+                <div class="ticket-preferencias">
+
+                    ${preferencias.join("")}
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================================
+                COMENTARIOS E INDICACIONES
+            ========================================== -->
+
+            <section class="ticket-seccion">
+
+                <h3>
+
+                    <i class="fa-solid fa-message"></i>
+
+                    Información adicional
+
+                </h3>
+
+
+                <div class="ticket-textos">
+
+                    <article>
+
+                        <span>
+
+                            <i class="fa-solid fa-comment"></i>
+
+                            Comentario del pasajero
+
+                        </span>
+
+                        <p>
+
+                            ${escaparHtml(
+                                data.resumenComentario
+                                || "No se agregó ningún comentario"
+                            )}
+
+                        </p>
+
+                    </article>
+
+
+                    <article>
+
+                        <span>
+
+                            <i class="fa-solid fa-circle-info"></i>
+
+                            Indicaciones del conductor
+
+                        </span>
+
+                        <p>
+
+                            ${escaparHtml(
+                                data.resumenIndicaciones
+                                || "El conductor no agregó indicaciones"
+                            )}
+
+                        </p>
+
+                    </article>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================================
+                REGISTRO DE LA SOLICITUD
+            ========================================== -->
+
+            <section class="ticket-seccion">
+
+                <h3>
+
+                    <i class="fa-regular fa-calendar-check"></i>
+
+                    Registro de la solicitud
+
+                </h3>
+
+
+                <div class="ticket-grid ticket-grid-dos">
+
+                    <div class="ticket-item">
+
+                        <span>
+                            Solicitud enviada
+                        </span>
+
+                        <strong>
+
+                            ${escaparHtml(
+                                data.resumenSolicitudFecha
+                                || "Sin registro"
+                            )}
+
+                        </strong>
+
+                    </div>
+
+
+                    <div class="ticket-item">
+
+                        <span>
+                            Respuesta recibida
+                        </span>
+
+                        <strong>
+
+                            ${escaparHtml(
+                                data.resumenRespuestaFecha
+                                || "Sin respuesta registrada"
+                            )}
+
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================================
+                CALIFICACIÓN
+            ========================================== -->
+
+            <section class="ticket-calificacion">
+
+                <div>
+
+                    <span>
+
+                        <i class="fa-solid fa-star"></i>
+
+                        Estado de la calificación
+
+                    </span>
+
+                    <strong>
+
+                        ${escaparHtml(
+                            data.resumenCalificacion
+                            || "Calificación pendiente"
+                        )}
+
+                    </strong>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================================
+                PIE
+            ========================================== -->
+
+            <footer class="ticket-footer">
+
+                <i class="fa-solid fa-crow"></i>
+
+                <div>
+
+                    <strong>
+                        Gracias por viajar con Cuervo-Ride
+                    </strong>
+
+                    <span>
+                        Este documento es un comprobante interno
+                        del viaje y no representa una factura fiscal.
+                    </span>
+
+                </div>
+
+            </footer>
+
+        </article>
+
+    `;
+
+}
+
+/* =========================================================
+   EVENTOS DEL MODAL RESUMEN
+========================================================= */
+
+document.addEventListener("DOMContentLoaded",()=>{
+
+    const modal = document.getElementById(
+        "modalResumenViaje"
+    );
+
+    if(!modal){
+        return;
+    }
+
+    const cerrar = document.getElementById(
+        "btnCerrarResumen"
+    );
+
+    if(cerrar){
+
+        cerrar.addEventListener(
+            "click",
+            cerrarResumenViaje
+        );
+
+    }
+
+    modal.addEventListener(
+        "click",
+        (e)=>{
+
+            if(e.target===modal){
+
+                cerrarResumenViaje();
+
+            }
+
+        }
+    );
+
+    document.addEventListener(
+        "keydown",
+        (e)=>{
+
+            if(
+                e.key==="Escape" &&
+                modal.classList.contains("activo")
+            ){
+
+                cerrarResumenViaje();
+
+            }
+
+        }
+    );
+
+});
+

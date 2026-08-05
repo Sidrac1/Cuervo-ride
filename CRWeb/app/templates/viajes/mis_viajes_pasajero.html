@@ -404,9 +404,50 @@
 
                 <article
                     class="solicitud-card solicitud-{{ solicitud.estado }}"
+
                     data-solicitud-id="{{ solicitud.id }}"
                     data-viaje-id="{{ solicitud.viaje.id }}"
-                    data-estado="{{ solicitud.estado }}">
+
+                    data-estado="{{ solicitud.estado }}"
+                    data-estado-label="{{ solicitud.get_estado_display|escape }}"
+
+                    data-viaje-estado="{{ solicitud.viaje.estado }}"
+                    data-viaje-estado-label="{{ solicitud.viaje.get_estado_display|escape }}"
+
+                    data-resumen-folio="{{ solicitud.folio_resumen|escape }}"
+
+                    data-resumen-fecha="{{ solicitud.viaje.fecha_hora_salida|date:'d/m/Y' }}"
+                    data-resumen-hora="{{ solicitud.viaje.fecha_hora_salida|date:'H:i' }}"
+
+                    data-resumen-llegada="{% if solicitud.viaje.fecha_hora_llegada_estimada %}{{ solicitud.viaje.fecha_hora_llegada_estimada|date:'d/m/Y H:i' }}{% else %}No especificada{% endif %}"
+
+                    data-resumen-origen="{{ solicitud.viaje.origen|escape }}"
+                    data-resumen-destino="{{ solicitud.viaje.destino|escape }}"
+
+                    data-resumen-conductor="{{ solicitud.nombre_conductor_resumen|escape }}"
+
+                    data-resumen-vehiculo="{{ solicitud.vehiculo_resumen|escape }}"
+                    data-resumen-vehiculo-detalle="{{ solicitud.detalle_vehiculo_resumen|escape }}"
+
+                    data-resumen-asientos="{{ solicitud.asientos_solicitados }}"
+                    data-resumen-precio="{{ solicitud.viaje.costo_por_pasajero|floatformat:2 }}"
+                    data-resumen-total="{{ solicitud.total_viaje|floatformat:2 }}"
+
+                    data-resumen-recogida="{{ solicitud.punto_recogida_resumen|escape }}"
+                    data-resumen-descenso="{{ solicitud.punto_descenso_resumen|escape }}"
+
+                    data-resumen-comentario="{{ solicitud.comentario_resumen|escape }}"
+                    data-resumen-indicaciones="{{ solicitud.indicaciones_resumen|escape }}"
+
+                    data-resumen-solicitud-fecha="{{ solicitud.fecha_solicitud|date:'d/m/Y H:i' }}"
+
+                    data-resumen-respuesta-fecha="{% if solicitud.fecha_respuesta_resumen %}{{ solicitud.fecha_respuesta_resumen|date:'d/m/Y H:i' }}{% else %}Sin respuesta registrada{% endif %}"
+
+                    data-resumen-calificacion="{{ solicitud.estado_calificacion_resumen|escape }}"
+
+                    data-resumen-mascotas="{{ solicitud.viaje.permite_mascota|yesno:'1,0' }}"
+                    data-resumen-silla="{{ solicitud.viaje.acepta_silla_ruedas|yesno:'1,0' }}"
+                    data-resumen-asistencia="{{ solicitud.requiere_asistencia|yesno:'1,0' }}">
 
 
                     <!-- =====================================
@@ -1093,9 +1134,12 @@
 
                                 <button
                                     type="button"
-                                    class="btn-viaje btn-secundario"
+                                    class="btn-viaje btn-secundario btn-resumen"
                                     data-action="resumen"
-                                    data-solicitud="{{ solicitud.id }}">
+                                    data-solicitud="{{ solicitud.id }}"
+                                    aria-haspopup="dialog"
+                                    aria-controls="modalResumenViaje"
+                                    aria-expanded="false">
 
                                     <i class="fa-solid fa-receipt"></i>
 
@@ -1249,6 +1293,49 @@
             {% endfor %}
 
         </section>
+
+
+        <!-- =================================================
+            MODAL RESUMEN DEL VIAJE
+        ================================================== -->
+
+        <div
+            class="modal-resumen-overlay"
+            id="modalResumenViaje"
+            aria-hidden="true">
+
+            <section
+                class="modal-resumen-viaje"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="tituloModalResumen"
+                tabindex="-1">
+
+                <button
+                    type="button"
+                    class="modal-resumen-cerrar"
+                    id="btnCerrarResumen"
+                    aria-label="Cerrar resumen del viaje">
+
+                    <i class="fa-solid fa-xmark"></i>
+
+                </button>
+
+                <div
+                    class="modal-resumen-contenido"
+                    id="contenidoResumenViaje">
+
+                    <!--
+                        El JavaScript construirá aquí el comprobante
+                        usando los atributos data-resumen-* de la
+                        tarjeta seleccionada.
+                    -->
+
+                </div>
+
+            </section>
+
+        </div>
 
     </main>
 
