@@ -1,10 +1,10 @@
 "use strict";
 
-document.addEventListener("DOMContentLoaded", () => {
+/*==================================================
+    MIS VIAJES DEL CONDUCTOR
+==================================================*/
 
-    /*==================================================
-                    ELEMENTOS PRINCIPALES
-    ==================================================*/
+document.addEventListener("DOMContentLoaded", () => {
 
     const tarjetas = Array.from(
         document.querySelectorAll(".viaje-card")
@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /*==================================================
-                  ANIMACIÓN DE TARJETAS
+        ANIMACIÓN DE TARJETAS
     ==================================================*/
 
     function animarTarjetas() {
@@ -37,33 +37,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
-    animarTarjetas();
-
 
     /*==================================================
-                       TOASTS
+        TOASTS
     ==================================================*/
 
     function obtenerContenedorToast() {
 
-        let contenedor = document.querySelector(
-            ".contenedor-toast"
-        );
+        let contenedor =
+            document.querySelector(
+                ".contenedor-toast"
+            );
 
         if (contenedor) {
+
             return contenedor;
+
         }
 
-        contenedor = document.createElement("div");
+        contenedor =
+            document.createElement("div");
 
-        contenedor.className = "contenedor-toast";
+        contenedor.className =
+            "contenedor-toast";
 
         contenedor.setAttribute(
             "aria-live",
             "polite"
         );
 
-        document.body.appendChild(contenedor);
+        document.body.appendChild(
+            contenedor
+        );
 
         return contenedor;
 
@@ -82,9 +87,11 @@ document.addEventListener("DOMContentLoaded", () => {
             error: "fa-circle-exclamation",
         };
 
-        const toast = document.createElement("div");
+        const toast =
+            document.createElement("div");
 
-        toast.className = `toast-viaje ${tipo}`;
+        toast.className =
+            `toast-viaje ${tipo}`;
 
         toast.innerHTML = `
             <i class="fa-solid ${
@@ -94,21 +101,34 @@ document.addEventListener("DOMContentLoaded", () => {
             <span></span>
         `;
 
-        const texto = toast.querySelector("span");
+        const texto =
+            toast.querySelector("span");
 
-        texto.textContent = mensaje;
+        if (texto) {
 
-        obtenerContenedorToast().appendChild(toast);
+            texto.textContent =
+                mensaje;
 
-        requestAnimationFrame(() => {
+        }
 
-            toast.classList.add("visible");
+        obtenerContenedorToast()
+            .appendChild(toast);
 
-        });
+        window.requestAnimationFrame(
+            () => {
+
+                toast.classList.add(
+                    "visible"
+                );
+
+            }
+        );
 
         window.setTimeout(() => {
 
-            toast.classList.remove("visible");
+            toast.classList.remove(
+                "visible"
+            );
 
             window.setTimeout(() => {
 
@@ -120,156 +140,193 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
+/*==================================================
+    MODAL DETALLES DEL VIAJE
+==================================================*/
 
-    /*==================================================
-                 DETALLES DE LA TARJETA
-    ==================================================*/
+function iniciarModalDetallesViaje() {
 
-    function crearDetallesExpandibles(tarjeta) {
-
-        let detalles = tarjeta.querySelector(
-            ".detalles-expandibles"
+    const modal =
+        document.getElementById(
+            "modalDetallesViaje"
         );
 
-        if (detalles) {
-            return detalles;
-        }
-
-        detalles = document.createElement("div");
-
-        detalles.className = "detalles-expandibles";
-
-        const estado = tarjeta.dataset.estado || "";
-        const viajeId = tarjeta.dataset.viajeId || "";
-
-        detalles.innerHTML = `
-            <div class="detalles-expandibles-contenido">
-
-                <h3>
-                    Información adicional
-                </h3>
-
-                <p>
-                    Viaje #${escaparHtml(viajeId)}.
-                    Estado actual:
-                    ${escaparHtml(
-                        obtenerNombreEstado(estado)
-                    )}.
-                </p>
-
-                <p>
-                    Más adelante esta sección mostrará
-                    pasajeros, solicitudes, indicaciones
-                    y el resumen completo de la ruta.
-                </p>
-
-            </div>
-        `;
-
-        const footer = tarjeta.querySelector(
-            ".viaje-card-footer"
+    const ventana =
+        modal?.querySelector(
+            ".modal-detalles-viaje"
         );
 
-        if (footer) {
+    const contenido =
+        document.getElementById(
+            "contenidoModalDetalles"
+        );
 
-            tarjeta.insertBefore(
-                detalles,
-                footer
-            );
+    const cerrar =
+        document.getElementById(
+            "btnCerrarDetalles"
+        );
 
-        } else {
+    if (
+        !modal ||
+        !ventana ||
+        !contenido
+    ){
 
-            tarjeta.appendChild(detalles);
-
-        }
-
-        return detalles;
+        return;
 
     }
 
+    let botonActual = null;
 
-    function alternarDetalles(tarjeta, boton) {
+    document.querySelectorAll(
+        '[data-accion="detalles"]'
+    ).forEach((boton)=>{
 
-        const detalles = crearDetallesExpandibles(
-            tarjeta
+        boton.addEventListener(
+            "click",
+            (e)=>{
+
+                e.preventDefault();
+
+                const tarjeta =
+                    boton.closest(
+                        ".viaje-card"
+                    );
+
+                if(!tarjeta){
+
+                    return;
+
+                }
+
+                const detalles =
+                    tarjeta.querySelector(
+                        ".detalles-expandibles-contenido"
+                    );
+
+                if(!detalles){
+
+                    mostrarToast(
+                        "No se encontraron detalles.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+                botonActual = boton;
+
+                contenido.innerHTML =
+                    detalles.innerHTML;
+
+                modal.classList.add(
+                    "activo"
+                );
+
+                modal.setAttribute(
+                    "aria-hidden",
+                    "false"
+                );
+
+                document.body.classList.add(
+                    "modal-detalles-abierto"
+                );
+
+            }
         );
 
-        const estaAbierto = tarjeta.classList.contains(
-            "detalles-abiertos"
+    });
+
+
+    function cerrarModal(){
+
+        modal.classList.remove(
+            "activo"
         );
 
-        cerrarDetallesOtrasTarjetas(tarjeta);
-
-        tarjeta.classList.toggle(
-            "detalles-abiertos",
-            !estaAbierto
-        );
-
-        tarjeta.classList.toggle(
-            "seleccionada",
-            !estaAbierto
-        );
-
-        boton.innerHTML = !estaAbierto
-            ? `
-                <i class="fa-solid fa-chevron-up"></i>
-                Ocultar detalles
-            `
-            : `
-                <i class="fa-regular fa-eye"></i>
-                Ver detalles
-            `;
-
-        detalles.setAttribute(
+        modal.setAttribute(
             "aria-hidden",
-            String(estaAbierto)
+            "true"
         );
 
-    }
+        document.body.classList.remove(
+            "modal-detalles-abierto"
+        );
 
+        contenido.innerHTML = "";
 
-    function cerrarDetallesOtrasTarjetas(
-        tarjetaActual
-    ) {
+        if(botonActual){
 
-        tarjetas.forEach((tarjeta) => {
+            botonActual.focus();
 
-            if (tarjeta === tarjetaActual) {
-                return;
-            }
+            botonActual = null;
 
-            tarjeta.classList.remove(
-                "detalles-abiertos",
-                "seleccionada"
-            );
-
-            const botonDetalles = tarjeta.querySelector(
-                '[data-accion="detalles"]'
-            );
-
-            if (botonDetalles) {
-
-                botonDetalles.innerHTML = `
-                    <i class="fa-regular fa-eye"></i>
-                    Ver detalles
-                `;
-
-            }
-
-        });
+        }
 
     }
 
+    cerrar?.addEventListener(
+        "click",
+        cerrarModal
+    );
+
+    modal.addEventListener(
+        "click",
+        (e)=>{
+
+            if(e.target===modal){
+
+                cerrarModal();
+
+            }
+
+        }
+    );
+
+    document.addEventListener(
+        "keydown",
+        (e)=>{
+
+            if(
+                e.key==="Escape"
+                &&
+                modal.classList.contains(
+                    "activo"
+                )
+            ){
+
+                cerrarModal();
+
+            }
+
+        }
+    );
+
+}
 
     /*==================================================
-                 MODAL DE CONFIRMACIÓN GENERAL
+        MODAL GENERAL
     ==================================================*/
 
     function crearModalConfirmacion() {
 
-        const overlay = document.createElement("div");
+        const modalExistente =
+            document.querySelector(
+                ".modal-viaje-overlay"
+            );
 
-        overlay.className = "modal-viaje-overlay";
+        if (modalExistente) {
+
+            return modalExistente;
+
+        }
+
+        const overlay =
+            document.createElement("div");
+
+        overlay.className =
+            "modal-viaje-overlay";
 
         overlay.setAttribute(
             "aria-hidden",
@@ -281,25 +338,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 class="modal-viaje"
                 role="dialog"
                 aria-modal="true"
-                aria-labelledby="modalViajeTitulo"
-            >
+                aria-labelledby="modalViajeTitulo">
 
                 <span class="modal-icono">
-
                     <i class="fa-solid fa-triangle-exclamation"></i>
-
                 </span>
 
                 <h2 id="modalViajeTitulo">
-
                     Confirmar acción
-
                 </h2>
 
                 <p id="modalViajeMensaje">
-
                     ¿Deseas continuar?
-
                 </p>
 
                 <div class="modal-acciones">
@@ -307,8 +357,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <button
                         type="button"
                         class="modal-btn modal-btn-cancelar"
-                        data-modal-cancelar
-                    >
+                        data-modal-cancelar>
 
                         Regresar
 
@@ -317,8 +366,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <button
                         type="button"
                         class="modal-btn modal-btn-confirmar"
-                        data-modal-confirmar
-                    >
+                        data-modal-confirmar>
 
                         Confirmar
 
@@ -329,97 +377,138 @@ document.addEventListener("DOMContentLoaded", () => {
             </section>
         `;
 
-        document.body.appendChild(overlay);
+        document.body.appendChild(
+            overlay
+        );
 
         return overlay;
 
     }
 
 
-    const modal = crearModalConfirmacion();
+    const modalGeneral =
+        crearModalConfirmacion();
 
-    const modalTitulo = modal.querySelector(
-        "#modalViajeTitulo"
-    );
+    const modalTitulo =
+        modalGeneral.querySelector(
+            "#modalViajeTitulo"
+        );
 
-    const modalMensaje = modal.querySelector(
-        "#modalViajeMensaje"
-    );
+    const modalMensaje =
+        modalGeneral.querySelector(
+            "#modalViajeMensaje"
+        );
 
-    const modalConfirmar = modal.querySelector(
-        "[data-modal-confirmar]"
-    );
+    const modalConfirmar =
+        modalGeneral.querySelector(
+            "[data-modal-confirmar]"
+        );
 
-    const modalCancelar = modal.querySelector(
-        "[data-modal-cancelar]"
-    );
+    const modalCancelar =
+        modalGeneral.querySelector(
+            "[data-modal-cancelar]"
+        );
 
 
-    function abrirModal({
+    function abrirModalGeneral({
         titulo,
         mensaje,
         textoConfirmar = "Confirmar",
         accion,
     }) {
 
-        accionPendiente = accion;
+        accionPendiente =
+            accion;
 
-        modalTitulo.textContent = titulo;
-        modalMensaje.textContent = mensaje;
-        modalConfirmar.textContent = textoConfirmar;
+        if (modalTitulo) {
 
-        modal.classList.add("abierto");
+            modalTitulo.textContent =
+                titulo;
 
-        modal.setAttribute(
+        }
+
+        if (modalMensaje) {
+
+            modalMensaje.textContent =
+                mensaje;
+
+        }
+
+        if (modalConfirmar) {
+
+            modalConfirmar.disabled =
+                false;
+
+            modalConfirmar.textContent =
+                textoConfirmar;
+
+        }
+
+        modalGeneral.classList.add(
+            "abierto"
+        );
+
+        modalGeneral.setAttribute(
             "aria-hidden",
             "false"
         );
 
-        document.body.style.overflow = "hidden";
+        document.body.style.overflow =
+            "hidden";
 
         window.setTimeout(() => {
 
-            modalCancelar.focus();
+            modalCancelar?.focus();
 
         }, 100);
 
     }
 
 
-    function cerrarModal() {
+    function cerrarModalGeneral() {
 
-        modal.classList.remove("abierto");
+        modalGeneral.classList.remove(
+            "abierto"
+        );
 
-        modal.setAttribute(
+        modalGeneral.setAttribute(
             "aria-hidden",
             "true"
         );
 
-        document.body.style.overflow = "";
+        document.body.style.overflow =
+            "";
 
-        accionPendiente = null;
+        accionPendiente =
+            null;
 
     }
 
 
-    modalCancelar.addEventListener(
+    modalCancelar?.addEventListener(
         "click",
-        cerrarModal
+        cerrarModalGeneral
     );
 
 
-    modal.addEventListener("click", (evento) => {
+    modalGeneral.addEventListener(
+        "click",
+        (evento) => {
 
-        if (evento.target === modal) {
+            if (
+                evento.target
+                === modalGeneral
+            ) {
 
-            cerrarModal();
+                cerrarModalGeneral();
+
+            }
 
         }
+    );
 
-    });
 
-
-    modalConfirmar.addEventListener(
+    modalConfirmar?.addEventListener(
         "click",
         async () => {
 
@@ -428,26 +517,26 @@ document.addEventListener("DOMContentLoaded", () => {
                 !== "function"
             ) {
 
-                cerrarModal();
+                cerrarModalGeneral();
 
                 return;
 
             }
 
-            const accion = accionPendiente;
+            const accion =
+                accionPendiente;
 
-            modalConfirmar.disabled = true;
+            modalConfirmar.disabled =
+                true;
 
             modalConfirmar.innerHTML = `
                 <i class="fa-solid fa-spinner fa-spin"></i>
-                Procesando
+                Procesando...
             `;
 
             try {
 
                 await accion();
-
-                cerrarModal();
 
             } catch (error) {
 
@@ -458,43 +547,33 @@ document.addEventListener("DOMContentLoaded", () => {
                     "error"
                 );
 
-            } finally {
-
-                modalConfirmar.disabled = false;
+                modalConfirmar.disabled =
+                    false;
 
                 modalConfirmar.textContent =
                     "Confirmar";
 
-            }
-
-        }
-    );
-
-
-    document.addEventListener(
-        "keydown",
-        (evento) => {
-
-            if (
-                evento.key === "Escape"
-                && modal.classList.contains("abierto")
-            ) {
-
-                cerrarModal();
+                return;
 
             }
+
+            cerrarModalGeneral();
 
         }
     );
 
 
     /*==================================================
-                 UTILIDADES DE NAVEGACIÓN
+        NAVEGACIÓN
     ==================================================*/
 
     function obtenerUrlBoton(boton) {
 
-        return boton.dataset.url?.trim() || "";
+        return (
+            boton.dataset.url?.trim()
+            || boton.getAttribute("href")?.trim()
+            || ""
+        );
 
     }
 
@@ -512,7 +591,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         }
 
-        window.location.href = url;
+        window.location.href =
+            url;
 
     }
 
@@ -523,13 +603,27 @@ document.addEventListener("DOMContentLoaded", () => {
     ) {
 
         if (!boton) {
-            return;
-        }
 
-        boton.disabled = true;
+            return;
+
+        }
 
         boton.dataset.contenidoOriginal =
             boton.innerHTML;
+
+        if (
+            boton.tagName
+            === "BUTTON"
+        ) {
+
+            boton.disabled =
+                true;
+
+        }
+
+        boton.classList.add(
+            "cargando"
+        );
 
         boton.innerHTML = `
             <i class="fa-solid fa-spinner fa-spin"></i>
@@ -542,17 +636,36 @@ document.addEventListener("DOMContentLoaded", () => {
     function restaurarBoton(boton) {
 
         if (!boton) {
+
             return;
+
         }
 
-        boton.disabled = false;
+        if (
+            boton.tagName
+            === "BUTTON"
+        ) {
 
-        if (boton.dataset.contenidoOriginal) {
+            boton.disabled =
+                false;
+
+        }
+
+        boton.classList.remove(
+            "cargando"
+        );
+
+        if (
+            boton.dataset
+                .contenidoOriginal
+        ) {
 
             boton.innerHTML =
-                boton.dataset.contenidoOriginal;
+                boton.dataset
+                    .contenidoOriginal;
 
-            delete boton.dataset.contenidoOriginal;
+            delete boton.dataset
+                .contenidoOriginal;
 
         }
 
@@ -560,42 +673,51 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /*==================================================
-                    ACCIONES DEL VIAJE
+        ACCIONES DE VIAJE
     ==================================================*/
 
     function gestionarAccion(boton) {
 
-        const accion = boton.dataset.accion;
-        const viajeId = boton.dataset.viajeId;
-        const tarjeta = boton.closest(".viaje-card");
-        const url = obtenerUrlBoton(boton);
+        const accion =
+            boton.dataset.accion;
 
-        if (!accion || !tarjeta) {
+        const viajeId =
+            boton.dataset.viajeId;
+
+        const tarjeta =
+            boton.closest(
+                ".viaje-card"
+            );
+
+        const url =
+            obtenerUrlBoton(
+                boton
+            );
+
+        if (
+            !accion
+            || !tarjeta
+        ) {
+
             return;
+
         }
 
         switch (accion) {
 
-            case "detalles":
-
-                alternarDetalles(
-                    tarjeta,
-                    boton
-                );
-
-                break;
-
 
             case "editar":
 
-                navegarAUrl(url);
+                navegarAUrl(
+                    url
+                );
 
                 break;
 
 
             case "duplicar":
 
-                abrirModal({
+                abrirModalGeneral({
 
                     titulo:
                         "Duplicar viaje",
@@ -606,22 +728,25 @@ document.addEventListener("DOMContentLoaded", () => {
                     textoConfirmar:
                         "Duplicar",
 
-                    accion: async () => {
+                    accion:
+                        async () => {
 
-                        if (url) {
+                            if (url) {
 
-                            navegarAUrl(url);
+                                navegarAUrl(
+                                    url
+                                );
 
-                            return;
+                                return;
 
-                        }
+                            }
 
-                        mostrarToast(
-                            `La duplicación del viaje #${viajeId} se conectará posteriormente.`,
-                            "info"
-                        );
+                            mostrarToast(
+                                `La duplicación del viaje #${viajeId} todavía no está conectada.`,
+                                "info"
+                            );
 
-                    },
+                        },
 
                 });
 
@@ -630,33 +755,49 @@ document.addEventListener("DOMContentLoaded", () => {
 
             case "iniciar":
 
-                abrirModal({
+                abrirModalGeneral({
 
                     titulo:
                         "Iniciar viaje",
 
                     mensaje:
-                        "Al iniciar el recorrido, el viaje cambiará a En curso y los pasajeros podrán acceder al seguimiento y al chat.",
+                        "El viaje cambiará al estado En curso y los pasajeros podrán acceder al seguimiento y al chat.",
 
                     textoConfirmar:
                         "Iniciar viaje",
 
-                    accion: async () => {
+                    accion:
+                        async () => {
 
-                        if (url) {
+                            const formulario =
+                                boton.closest(
+                                    "form"
+                                );
 
-                            navegarAUrl(url);
+                            if (formulario) {
 
-                            return;
+                                formulario.submit();
 
-                        }
+                                return;
 
-                        mostrarToast(
-                            `El inicio del viaje #${viajeId} se conectará cuando creemos Ride en progreso.`,
-                            "info"
-                        );
+                            }
 
-                    },
+                            if (url) {
+
+                                navegarAUrl(
+                                    url
+                                );
+
+                                return;
+
+                            }
+
+                            mostrarToast(
+                                `No se encontró la acción para iniciar el viaje #${viajeId}.`,
+                                "error"
+                            );
+
+                        },
 
                 });
 
@@ -667,27 +808,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 bloquearBoton(
                     boton,
-                    "Abriendo"
+                    "Abriendo..."
                 );
 
                 if (url) {
 
-                    navegarAUrl(url);
+                    navegarAUrl(
+                        url
+                    );
 
-                } else {
-
-                    window.setTimeout(() => {
-
-                        restaurarBoton(boton);
-
-                        mostrarToast(
-                            "La página de viaje en progreso todavía no está conectada.",
-                            "info"
-                        );
-
-                    }, 550);
+                    return;
 
                 }
+
+                window.setTimeout(() => {
+
+                    restaurarBoton(
+                        boton
+                    );
+
+                    mostrarToast(
+                        "La página del viaje en progreso no tiene una ruta configurada.",
+                        "info"
+                    );
+
+                }, 550);
 
                 break;
 
@@ -704,55 +849,85 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    botonesAccion.forEach((boton) => {
+    botonesAccion.forEach((boton)=>{
 
-        boton.addEventListener(
-            "click",
-            () => gestionarAccion(boton)
-        );
+    if(
+        boton.dataset.accion==="detalles"
+    ){
 
-    });
-
-
-    /*==================================================
-                         UTILIDADES
-    ==================================================*/
-
-    function obtenerNombreEstado(estado) {
-
-        const nombres = {
-
-            borrador:
-                "Borrador",
-
-            disponible:
-                "Disponible",
-
-            completo:
-                "Completo",
-
-            en_curso:
-                "En curso",
-
-            finalizado:
-                "Finalizado",
-
-            cancelado:
-                "Cancelado",
-
-        };
-
-        return nombres[estado]
-            || estado
-            || "Desconocido";
+        return;
 
     }
 
+    boton.addEventListener(
+                "click",
+                (evento) => {
+
+                    const accion =
+                        boton.dataset.accion;
+
+                    if (
+                        accion === "iniciar"
+                        && boton.closest("form")
+                    ) {
+
+                        evento.preventDefault();
+
+                    }
+
+                    gestionarAccion(
+                        boton
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+    /*==================================================
+        TECLADO
+    ==================================================*/
+
+    document.addEventListener(
+        "keydown",
+        (evento) => {
+
+            if (
+                evento.key
+                !== "Escape"
+            ) {
+
+                return;
+
+            }
+
+            if (
+                modalGeneral.classList
+                    .contains("abierto")
+            ) {
+
+                cerrarModalGeneral();
+
+                return;
+
+            }
+
+        }
+    );
+
+
+    /*==================================================
+        UTILIDADES
+    ==================================================*/
 
     function escaparHtml(valor) {
 
         const elemento =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
         elemento.textContent =
             String(valor ?? "");
@@ -763,8 +938,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /*==================================================
-        INICIAR MODAL PERSONALIZADO DE CANCELACIÓN
+        INICIALIZACIÓN
     ==================================================*/
+
+    animarTarjetas();
+
+    iniciarModalDetallesViaje();
 
     iniciarModalCancelarViaje();
 
@@ -817,10 +996,35 @@ function iniciarModalCancelarViaje() {
             "modalCancelarDestino"
         );
 
+    let ultimoBotonActivo =
+        null;
 
-    if (!modal || !formulario) {
+
+    if (
+        !modal
+        || !formulario
+    ) {
 
         return;
+
+    }
+
+
+    function restablecerBotonConfirmar() {
+
+        if (!botonConfirmar) {
+
+            return;
+
+        }
+
+        botonConfirmar.disabled =
+            false;
+
+        botonConfirmar.innerHTML = `
+            <i class="fa-solid fa-ban"></i>
+            Sí, cancelar viaje
+        `;
 
     }
 
@@ -828,49 +1032,38 @@ function iniciarModalCancelarViaje() {
     function abrirModal(boton) {
 
         const url =
-            boton.dataset.cancelarUrl
+            boton.dataset
+                .cancelarUrl
                 ?.trim()
             || "";
 
         const origen =
-            boton.dataset.viajeOrigen
+            boton.dataset
+                .viajeOrigen
             || "Sin origen";
 
         const destino =
-            boton.dataset.viajeDestino
+            boton.dataset
+                .viajeDestino
             || "Sin destino";
-
 
         if (!url) {
 
             console.error(
-                "El botón de cancelación no tiene data-cancelar-url."
+                "El botón no tiene data-cancelar-url."
             );
 
             return;
 
         }
 
+        ultimoBotonActivo =
+            boton;
 
-        formulario.action =
-            url;
-
-
-        if (botonConfirmar) {
-
-            botonConfirmar.disabled =
-                false;
-
-            botonConfirmar.innerHTML = `
-
-                <i class="fa-solid fa-ban"></i>
-
-                Sí, cancelar viaje
-
-            `;
-
-        }
-
+        formulario.setAttribute(
+            "action",
+            url
+        );
 
         if (textoOrigen) {
 
@@ -879,7 +1072,6 @@ function iniciarModalCancelarViaje() {
 
         }
 
-
         if (textoDestino) {
 
             textoDestino.textContent =
@@ -887,6 +1079,7 @@ function iniciarModalCancelarViaje() {
 
         }
 
+        restablecerBotonConfirmar();
 
         modal.classList.add(
             "activo"
@@ -901,8 +1094,11 @@ function iniciarModalCancelarViaje() {
             "modal-cancelar-abierto"
         );
 
+        window.setTimeout(() => {
 
-        botonNoCancelar?.focus();
+            botonNoCancelar?.focus();
+
+        }, 100);
 
     }
 
@@ -922,36 +1118,26 @@ function iniciarModalCancelarViaje() {
             "modal-cancelar-abierto"
         );
 
-
         formulario.removeAttribute(
             "action"
         );
 
+        restablecerBotonConfirmar();
 
-        if (botonConfirmar) {
+        ultimoBotonActivo?.focus();
 
-            botonConfirmar.disabled =
-                false;
-
-            botonConfirmar.innerHTML = `
-
-                <i class="fa-solid fa-ban"></i>
-
-                Sí, cancelar viaje
-
-            `;
-
-        }
+        ultimoBotonActivo =
+            null;
 
     }
 
 
     botonesAbrir.forEach(
-        function (boton) {
+        (boton) => {
 
             boton.addEventListener(
                 "click",
-                function () {
+                () => {
 
                     abrirModal(
                         boton
@@ -978,10 +1164,11 @@ function iniciarModalCancelarViaje() {
 
     modal.addEventListener(
         "click",
-        function (evento) {
+        (evento) => {
 
             if (
-                evento.target === modal
+                evento.target
+                === modal
             ) {
 
                 cerrarModal();
@@ -994,13 +1181,12 @@ function iniciarModalCancelarViaje() {
 
     document.addEventListener(
         "keydown",
-        function (evento) {
+        (evento) => {
 
             if (
                 evento.key === "Escape"
-                && modal.classList.contains(
-                    "activo"
-                )
+                && modal.classList
+                    .contains("activo")
             ) {
 
                 cerrarModal();
@@ -1013,26 +1199,24 @@ function iniciarModalCancelarViaje() {
 
     formulario.addEventListener(
         "submit",
-        function (evento) {
+        (evento) => {
 
             const action =
                 formulario.getAttribute(
                     "action"
                 );
 
-
             if (!action) {
 
                 evento.preventDefault();
 
                 console.error(
-                    "El formulario de cancelación no tiene una URL válida."
+                    "El formulario no tiene una URL de cancelación válida."
                 );
 
                 return;
 
             }
-
 
             if (botonConfirmar) {
 
@@ -1040,11 +1224,8 @@ function iniciarModalCancelarViaje() {
                     true;
 
                 botonConfirmar.innerHTML = `
-
                     <i class="fa-solid fa-spinner fa-spin"></i>
-
                     Cancelando...
-
                 `;
 
             }

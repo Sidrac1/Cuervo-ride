@@ -2530,23 +2530,45 @@ def buscar_viajes_pasajero(request):
 @login_required(login_url="login")
 def mis_viajes_conductor(request):
 
+    # -----------------------------------------------------
+    # VALIDAR ROL
+    # -----------------------------------------------------
+
     if obtener_rol(request.user) != Usuario.Roles.CONDUCTOR:
-        messages.error(request, "Esta sección está disponible únicamente para conductores.")
+
+        messages.error(
+            request,
+            "Esta sección está disponible únicamente para conductores.",
+        )
+
         return redirect("home")
 
+    # -----------------------------------------------------
+    # OBTENER PERFIL DEL CONDUCTOR
+    # -----------------------------------------------------
+
     try:
+
         perfil_conductor = request.user.perfil_conductor
+
     except PerfilConductor.DoesNotExist:
-        messages.warning(request, "Primero debes completar tu perfil de conductor.")
+
+        messages.warning(
+            request,
+            "Primero debes completar tu perfil de conductor.",
+        )
+
         return redirect("perfil")
 
-    filtro = request.GET.get("estado", "todos").lower()
+    # -----------------------------------------------------
+    # FILTRO
+    # -----------------------------------------------------
 
-    viajes = (
-        Viaje.objects
-        .filter(conductor=perfil_conductor)
-        .select_related("vehiculo")
-        .order_by("-fecha_hora_salida")
+    filtro = (
+        request.GET
+        .get("estado", "todos")
+        .strip()
+        .lower()
     )
 
     filtros_permitidos = {
@@ -2558,9 +2580,73 @@ def mis_viajes_conductor(request):
     }
 
     if filtro not in filtros_permitidos:
+
         filtro = "todos"
 
+    # -----------------------------------------------------
+    # CONSULTA BASE
+    # -----------------------------------------------------
+
+    viajes = (
+        Viaje.objects
+        .filter(
+            conductor=perfil_conductor
+        )
+        .select_related(
+            "vehiculo",
+            "conductor",
+            "conductor__usuario",
+        )
+        .annotate(
+            total_solicitudes=Count(
+                "solicitudes",
+                distinct=True,
+            ),
+            solicitudes_pendientes=Count(
+                "solicitudes",
+                filter=Q(
+                    solicitudes__estado=(
+                        SolicitudViaje
+                        .EstadosSolicitud
+                        .PENDIENTE
+                    )
+                ),
+                distinct=True,
+            ),
+            solicitudes_aceptadas=Count(
+                "solicitudes",
+                filter=Q(
+                    solicitudes__estado=(
+                        SolicitudViaje
+                        .EstadosSolicitud
+                        .ACEPTADA
+                    )
+                ),
+                distinct=True,
+            ),
+            solicitudes_completadas=Count(
+                "solicitudes",
+                filter=Q(
+                    solicitudes__estado=(
+                        SolicitudViaje
+                        .EstadosSolicitud
+                        .COMPLETADA
+                    )
+                ),
+                distinct=True,
+            ),
+        )
+        .order_by(
+            "-fecha_hora_salida"
+        )
+    )
+
+    # -----------------------------------------------------
+    # APLICAR FILTRO
+    # -----------------------------------------------------
+
     if filtro == "disponibles":
+
         viajes = viajes.filter(
             estado__in=[
                 Viaje.EstadosViaje.DISPONIBLE,
@@ -2569,57 +2655,157 @@ def mis_viajes_conductor(request):
         )
 
     elif filtro == "en_curso":
+
         viajes = viajes.filter(
             estado=Viaje.EstadosViaje.EN_CURSO
         )
 
     elif filtro == "finalizados":
+
         viajes = viajes.filter(
             estado=Viaje.EstadosViaje.FINALIZADO
         )
 
     elif filtro == "cancelados":
+
         viajes = viajes.filter(
             estado=Viaje.EstadosViaje.CANCELADO
         )
 
-    todos_los_viajes = Viaje.objects.filter(
-        conductor=perfil_conductor
+    # -----------------------------------------------------
+    # PREPARAR DETALLES PARA EL TEMPLATE
+    # -----------------------------------------------------
+
+    viajes = list(viajes)
+
+    for viaje in viajes:
+
+        viaje.lugares_ocupados = max(
+            0,
+            int(viaje.asientos_totales)
+            - int(viaje.asientos_disponibles),
+        )
+
+        viaje.capacidad_vehiculo = (
+            getattr(
+                viaje.vehiculo,
+                "capacidad",
+                None,
+            )
+            or getattr(
+                viaje.vehiculo,
+                "asientos",
+                None,
+            )
+            or viaje.asientos_totales
+        )
+
+        viaje.puede_cancelarse = (
+            viaje.estado
+            in {
+                Viaje.EstadosViaje.DISPONIBLE,
+                Viaje.EstadosViaje.COMPLETO,
+            }
+        )
+
+        viaje.puede_iniciarse = (
+            viaje.estado
+            in {
+                Viaje.EstadosViaje.DISPONIBLE,
+                Viaje.EstadosViaje.COMPLETO,
+            }
+        )
+
+        viaje.esta_en_curso = (
+            viaje.estado
+            == Viaje.EstadosViaje.EN_CURSO
+        )
+
+        viaje.esta_finalizado = (
+            viaje.estado
+            == Viaje.EstadosViaje.FINALIZADO
+        )
+
+        viaje.esta_cancelado = (
+            viaje.estado
+            == Viaje.EstadosViaje.CANCELADO
+        )
+
+        viaje.tiene_coordenadas_completas = all(
+            valor is not None
+            for valor in (
+                viaje.origen_latitud,
+                viaje.origen_longitud,
+                viaje.destino_latitud,
+                viaje.destino_longitud,
+            )
+        )
+
+    # -----------------------------------------------------
+    # ESTADÍSTICAS
+    # -----------------------------------------------------
+
+    todos_los_viajes = (
+        Viaje.objects
+        .filter(
+            conductor=perfil_conductor
+        )
     )
 
     estadisticas = {
         "total": todos_los_viajes.count(),
 
-        "disponibles": todos_los_viajes.filter(
-            estado__in=[
-                Viaje.EstadosViaje.DISPONIBLE,
-                Viaje.EstadosViaje.COMPLETO,
-            ]
-        ).count(),
+        "disponibles": (
+            todos_los_viajes
+            .filter(
+                estado__in=[
+                    Viaje.EstadosViaje.DISPONIBLE,
+                    Viaje.EstadosViaje.COMPLETO,
+                ]
+            )
+            .count()
+        ),
 
-        "en_curso": todos_los_viajes.filter(
-            estado=Viaje.EstadosViaje.EN_CURSO
-        ).count(),
+        "en_curso": (
+            todos_los_viajes
+            .filter(
+                estado=Viaje.EstadosViaje.EN_CURSO
+            )
+            .count()
+        ),
 
-        "finalizados": todos_los_viajes.filter(
-            estado=Viaje.EstadosViaje.FINALIZADO
-        ).count(),
+        "finalizados": (
+            todos_los_viajes
+            .filter(
+                estado=Viaje.EstadosViaje.FINALIZADO
+            )
+            .count()
+        ),
 
-        "cancelados": todos_los_viajes.filter(
-            estado=Viaje.EstadosViaje.CANCELADO
-        ).count(),
+        "cancelados": (
+            todos_los_viajes
+            .filter(
+                estado=Viaje.EstadosViaje.CANCELADO
+            )
+            .count()
+        ),
     }
+
+    # -----------------------------------------------------
+    # CONTEXTO
+    # -----------------------------------------------------
 
     contexto = {
         "viajes": viajes,
         "filtro_actual": filtro,
         "estadisticas": estadisticas,
+        "perfil_conductor": perfil_conductor,
     }
 
     return render(
         request,
         "viajes/mis_viajes_conductor.html",
-        contexto
+        contexto,
     )
 
 

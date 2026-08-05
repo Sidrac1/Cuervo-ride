@@ -520,9 +520,7 @@ img {
 
     padding: 16px;
 
-    border:
-        1px solid var(--ride-borde);
-
+    border: 1px solid var(--ride-borde);
     border-radius: 15px;
 
     background:
@@ -535,9 +533,66 @@ img {
     box-shadow:
         0 14px 32px rgba(0, 0, 0, 0.18);
 
-    transition:
-        transform 0.2s ease,
-        border-color 0.2s ease;
+}
+
+.indicador-icono {
+
+    width: 44px;
+    height: 44px;
+
+    flex: 0 0 44px;
+
+    display: grid;
+    place-items: center;
+
+    margin: 0;
+
+    border: 1px solid transparent;
+    border-radius: 12px;
+
+    font-size: 15px;
+    line-height: 1;
+
+}
+
+.indicador-icono i {
+
+    display: block;
+    line-height: 1;
+
+}
+
+.indicador-card > div {
+
+    min-width: 0;
+
+}
+
+.indicador-card > div > span {
+
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: var(--ride-texto-suave);
+
+    font-size: 9px;
+
+}
+
+.indicador-card > div > strong {
+
+    display: block;
+
+    overflow: hidden;
+
+    color: var(--ride-texto);
+
+    font-size: 14px;
+    font-weight: 800;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
 
 }
 
@@ -601,36 +656,6 @@ img {
 
     background: var(--ride-rojo-suave);
     color: var(--ride-rojo);
-
-}
-
-.indicador-card span {
-
-    display: block;
-
-    margin-bottom: 4px;
-
-    color:
-        var(--ride-texto-suave);
-
-    font-size: 9px;
-
-}
-
-.indicador-card strong {
-
-    display: block;
-
-    overflow: hidden;
-
-    color:
-        var(--ride-texto);
-
-    font-size: 14px;
-    font-weight: 800;
-
-    text-overflow: ellipsis;
-    white-space: nowrap;
 
 }
 
@@ -886,6 +911,12 @@ img {
 
     font-size: 9px;
     line-height: 1.5;
+
+}
+
+.mapa-error[hidden] {
+
+    display: none !important;
 
 }
 

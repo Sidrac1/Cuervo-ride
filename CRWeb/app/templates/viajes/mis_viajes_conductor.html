@@ -561,6 +561,409 @@
 
                     {% endif %}
 
+                    <!-- =================================
+                        FUENTE OCULTA DE DETALLES
+                    ================================== -->
+
+                    <section
+                        class="detalles-expandibles"
+                        hidden>
+
+                        <div class="detalles-expandibles-contenido">
+
+        <header class="detalle-viaje-header">
+
+            <div>
+
+                <span>
+                    Información completa
+                </span>
+
+                <h3>
+                    Detalles del ride #{{ viaje.id }}
+                </h3>
+
+            </div>
+
+            <span class="detalle-estado estado-{{ viaje.estado }}">
+
+                {{ viaje.get_estado_display }}
+
+            </span>
+
+        </header>
+
+
+        <div class="detalle-viaje-grid">
+
+
+            <!-- FECHA DE SALIDA -->
+
+            <article class="detalle-item">
+
+                <i class="fa-regular fa-calendar"></i>
+
+                <div>
+
+                    <span>
+                        Fecha de salida
+                    </span>
+
+                    <strong>
+                        {{ viaje.fecha_hora_salida|date:"d/m/Y" }}
+                    </strong>
+
+                </div>
+
+            </article>
+
+
+            <!-- HORA DE SALIDA -->
+
+            <article class="detalle-item">
+
+                <i class="fa-regular fa-clock"></i>
+
+                <div>
+
+                    <span>
+                        Hora de salida
+                    </span>
+
+                    <strong>
+                        {{ viaje.fecha_hora_salida|date:"H:i" }} h
+                    </strong>
+
+                </div>
+
+            </article>
+
+
+            <!-- LLEGADA ESTIMADA -->
+
+            <article class="detalle-item">
+
+                <i class="fa-solid fa-flag-checkered"></i>
+
+                <div>
+
+                    <span>
+                        Llegada estimada
+                    </span>
+
+                    <strong>
+
+                        {% if viaje.fecha_hora_llegada_estimada %}
+
+                            {{ viaje.fecha_hora_llegada_estimada|date:"d/m/Y H:i" }} h
+
+                        {% else %}
+
+                            No especificada
+
+                        {% endif %}
+
+                    </strong>
+
+                </div>
+
+            </article>
+
+
+            <!-- ASIENTOS TOTALES -->
+
+            <article class="detalle-item">
+
+                <i class="fa-solid fa-users"></i>
+
+                <div>
+
+                    <span>
+                        Lugares ofrecidos
+                    </span>
+
+                    <strong>
+                        {{ viaje.asientos_totales }}
+                    </strong>
+
+                </div>
+
+            </article>
+
+
+            <!-- ASIENTOS DISPONIBLES -->
+
+            <article class="detalle-item">
+
+                <i class="fa-solid fa-chair"></i>
+
+                <div>
+
+                    <span>
+                        Lugares disponibles
+                    </span>
+
+                    <strong>
+                        {{ viaje.asientos_disponibles }}
+                    </strong>
+
+                </div>
+
+            </article>
+
+
+            <!-- LUGARES OCUPADOS -->
+
+            <article class="detalle-item">
+
+                <i class="fa-solid fa-user-check"></i>
+
+                <div>
+
+                    <span>
+                        Lugares ocupados
+                    </span>
+
+                    <strong>
+                        {{ viaje.lugares_ocupados|default:0 }}
+                    </strong>
+
+                </div>
+
+            </article>
+
+
+            <!-- VEHÍCULO -->
+
+            <article class="detalle-item detalle-item-ancho">
+
+                <i class="fa-solid fa-car-side"></i>
+
+                <div>
+
+                    <span>
+                        Vehículo asignado
+                    </span>
+
+                    <strong>
+
+                        {{ viaje.vehiculo.marca }}
+                        {{ viaje.vehiculo.modelo }}
+
+                    </strong>
+
+                    <small>
+
+                        {{ viaje.vehiculo.color }}
+
+                        {% if viaje.vehiculo.placas %}
+
+                            · {{ viaje.vehiculo.placas }}
+
+                        {% endif %}
+
+                    </small>
+
+                </div>
+
+            </article>
+
+
+            <!-- FECHA DE PUBLICACIÓN -->
+
+            <article class="detalle-item">
+
+                <i class="fa-solid fa-calendar-plus"></i>
+
+                <div>
+
+                    <span>
+                        Publicado
+                    </span>
+
+                    <strong>
+
+                        {% if viaje.fecha_creacion %}
+
+                            {{ viaje.fecha_creacion|date:"d/m/Y H:i" }}
+
+                        {% else %}
+
+                            Sin registro
+
+                        {% endif %}
+
+                    </strong>
+
+                </div>
+
+            </article>
+
+
+            <!-- ACTUALIZACIÓN -->
+
+            <article class="detalle-item">
+
+                <i class="fa-solid fa-rotate"></i>
+
+                <div>
+
+                    <span>
+                        Última actualización
+                    </span>
+
+                    <strong>
+
+                        {% if viaje.fecha_actualizacion %}
+
+                            {{ viaje.fecha_actualizacion|date:"d/m/Y H:i" }}
+
+                        {% else %}
+
+                            Sin registro
+
+                        {% endif %}
+
+                    </strong>
+
+                </div>
+
+            </article>
+
+        </div>
+
+
+        <!-- RUTA COMPLETA -->
+
+        <section class="detalle-ruta-completa">
+
+            <div class="detalle-ruta-punto">
+
+                <span class="detalle-marcador origen"></span>
+
+                <div>
+
+                    <small>
+                        Origen
+                    </small>
+
+                    <strong>
+                        {{ viaje.origen }}
+                    </strong>
+
+                    {% if viaje.origen_latitud and viaje.origen_longitud %}
+
+                        <span>
+
+                            {{ viaje.origen_latitud }},
+                            {{ viaje.origen_longitud }}
+
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <span class="detalle-ruta-linea"></span>
+
+
+            <div class="detalle-ruta-punto">
+
+                <span class="detalle-marcador destino"></span>
+
+                <div>
+
+                    <small>
+                        Destino
+                    </small>
+
+                    <strong>
+                        {{ viaje.destino }}
+                    </strong>
+
+                    {% if viaje.destino_latitud and viaje.destino_longitud %}
+
+                        <span>
+
+                            {{ viaje.destino_latitud }},
+                            {{ viaje.destino_longitud }}
+
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- PREFERENCIAS -->
+
+        <section class="detalle-preferencias">
+
+            <h4>
+                Preferencias del viaje
+            </h4>
+
+            <div>
+
+                <span class="{% if viaje.permite_mascota %}activo{% endif %}">
+
+                    <i class="fa-solid fa-paw"></i>
+
+                    Mascotas
+
+                </span>
+                <span class="{% if viaje.acepta_silla_ruedas %}activo{% endif %}">
+
+                    <i class="fa-solid fa-wheelchair"></i>
+
+                    Silla de ruedas
+
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- INDICACIONES -->
+
+        <section class="detalle-indicaciones">
+
+            <h4>
+
+                <i class="fa-solid fa-circle-info"></i>
+
+                Indicaciones del conductor
+
+            </h4>
+
+            <p>
+
+                {% if viaje.indicaciones %}
+
+                    {{ viaje.indicaciones }}
+
+                {% else %}
+
+                    Este viaje no tiene indicaciones adicionales.
+
+                {% endif %}
+
+            </p>
+
+        </section>
+
+                        </div>
+
+                    </section>
+
 
                     <!-- =================================
                         ACCIONES
@@ -575,7 +978,9 @@
                             type="button"
                             class="btn-viaje btn-detalles"
                             data-accion="detalles"
-                            data-viaje-id="{{ viaje.id }}">
+                            data-viaje-id="{{ viaje.id }}"
+                            aria-expanded="false"
+                            aria-controls="modalDetallesViaje">
 
                             <i class="fa-regular fa-eye"></i>
 
@@ -606,7 +1011,7 @@
                         </a>
 
 
-                        {% if viaje.estado == "disponible" or viaje.estado == "completo" %}
+                        {% if viaje.puede_iniciarse %}
 
 
                             <!-- EDITAR -->
@@ -652,7 +1057,9 @@
 
                                 <button
                                     type="submit"
-                                    class="btn-viaje btn-iniciar">
+                                    class="btn-viaje btn-iniciar"
+                                    data-accion="iniciar"
+                                    data-viaje-id="{{ viaje.id }}">
 
                                     <i class="fa-solid fa-play"></i>
 
@@ -670,7 +1077,10 @@
 
                             <a
                                 href="{% url 'ride_en_progreso' viaje.id %}"
-                                class="btn-viaje btn-iniciar">
+                                class="btn-viaje btn-iniciar"
+                                data-accion="continuar"
+                                data-viaje-id="{{ viaje.id }}"
+                                data-url="{% url 'ride_en_progreso' viaje.id %}">
 
                                 <i class="fa-solid fa-location-arrow"></i>
 
@@ -780,13 +1190,56 @@
         </section>
 
         <!--==================================================
+            MODAL DETALLES DEL VIAJE
+        ===================================================-->
+
+        <div
+            class="modal-detalles-overlay"
+            id="modalDetallesViaje"
+            aria-hidden="true">
+
+            <section
+                class="modal-detalles-viaje"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="tituloModalDetalles"
+                tabindex="-1">
+
+                <button
+                    type="button"
+                    class="modal-detalles-cerrar"
+                    id="btnCerrarDetalles"
+                    aria-label="Cerrar detalles del viaje">
+
+                    <i class="fa-solid fa-xmark"></i>
+
+                </button>
+
+                <div
+                    class="modal-detalles-contenido"
+                    id="contenidoModalDetalles">
+
+                    <!--
+                        El JavaScript copiará aquí el contenido de
+                        .detalles-expandibles-contenido de la tarjeta
+                        seleccionada.
+                    -->
+
+                </div>
+
+            </section>
+
+        </div>
+
+
+        <!--==================================================
     MODAL CANCELAR VIAJE
 ===================================================-->
 
-<div
-    class="modal-cancelar-overlay"
-    id="modalCancelarViaje"
-    aria-hidden="true">
+        <div
+            class="modal-cancelar-overlay"
+            id="modalCancelarViaje"
+            aria-hidden="true">
 
     <section
         class="modal-cancelar"
@@ -889,7 +1342,6 @@
 
             <form
                 method="POST"
-                action=""
                 id="formCancelarViaje">
 
                 {% csrf_token %}

@@ -717,7 +717,8 @@ este selector mueve correctamente el contenido.
 
     display:flex;
     align-items:center;
-    gap:11px;
+
+    gap:13px;
 
     min-width:0;
 
@@ -746,14 +747,14 @@ este selector mueve correctamente el contenido.
 
 }
 
-.viaje-fecha strong,
-.viaje-fecha span{
+.viaje-fecha > div strong,
+.viaje-fecha > div span{
 
     display:block;
 
 }
 
-.viaje-fecha strong{
+.viaje-fecha > div strong{
 
     margin-bottom:3px;
 
@@ -761,7 +762,7 @@ este selector mueve correctamente el contenido.
 
 }
 
-.viaje-fecha span{
+.viaje-fecha > div span{
 
     color:var(--texto-secundario);
 
@@ -1091,62 +1092,894 @@ este selector mueve correctamente el contenido.
 
 }
 
+
 /*==================================================
-               DETALLES EXPANDIBLES
+        MODAL DETALLES DEL VIAJE
 ==================================================*/
 
-.detalles-expandibles{
+.modal-detalles-overlay{
 
-    max-height:0;
-    overflow:hidden;
+    position:fixed;
+    inset:0;
+
+    z-index:9000;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    padding:24px;
+
+    background:rgba(2,8,18,.82);
+
+    backdrop-filter:blur(10px);
 
     opacity:0;
+    visibility:hidden;
+    pointer-events:none;
 
     transition:
-        max-height .35s ease,
         opacity .25s ease,
-        margin .35s ease;
+        visibility .25s ease;
 
 }
 
-.viaje-card.detalles-abiertos
-.detalles-expandibles{
-
-    max-height:400px;
-
-    margin-bottom:17px;
+.modal-detalles-overlay.activo{
 
     opacity:1;
+    visibility:visible;
+    pointer-events:auto;
 
 }
 
-.detalles-expandibles-contenido{
+.modal-detalles-viaje{
+
+    position:relative;
+
+    width:min(980px, 100%);
+    max-height:calc(100vh - 48px);
+
+    display:flex;
+    flex-direction:column;
+
+    overflow:hidden;
+
+    border:1px solid rgba(152,236,99,.18);
+    border-radius:20px;
+
+    background:
+        linear-gradient(
+            160deg,
+            #143252,
+            #0b2239
+        );
+
+    box-shadow:
+        0 40px 90px rgba(0,0,0,.60);
+
+    transform:
+        translateY(18px)
+        scale(.98);
+
+    transition:transform .25s ease;
+
+}
+
+.modal-detalles-overlay.activo
+.modal-detalles-viaje{
+
+    transform:
+        translateY(0)
+        scale(1);
+
+}
+
+/*==================================================
+        CONTENIDO INTERNO Y SCROLL
+==================================================*/
+
+.modal-detalles-contenido{
+
+    flex:1;
+    min-height:0;
+
+    overflow-x:hidden;
+    overflow-y:auto;
+
+    padding:28px;
+
+    scrollbar-width:thin;
+    scrollbar-color:#28577f transparent;
+
+}
+
+.modal-detalles-contenido::-webkit-scrollbar{
+
+    width:8px;
+
+}
+
+.modal-detalles-contenido::-webkit-scrollbar-thumb{
+
+    border-radius:20px;
+
+    background:#234d72;
+
+}
+
+.modal-detalles-contenido::-webkit-scrollbar-track{
+
+    background:transparent;
+
+}
+
+/*==================================================
+                BOTÓN CERRAR
+==================================================*/
+
+.modal-detalles-cerrar{
+
+    position:absolute;
+
+    top:16px;
+    right:16px;
+
+    z-index:20;
+
+    width:38px;
+    height:38px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:11px;
+
+    background:rgba(11,34,57,.92);
+    color:#9fb4c8;
+
+    font-size:15px;
+
+    cursor:pointer;
+
+    box-shadow:
+        0 8px 20px rgba(0,0,0,.18);
+
+    transition:
+        background .25s ease,
+        color .25s ease,
+        transform .25s ease;
+
+}
+
+.modal-detalles-cerrar:hover{
+
+    background:rgba(255,98,107,.14);
+    color:#ff6675;
+
+    transform:rotate(90deg);
+
+}
+
+body.modal-detalles-abierto{
+
+    overflow:hidden;
+
+}
+
+/*==================================================
+            ENCABEZADO DEL MODAL
+==================================================*/
+
+.detalle-viaje-header{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+
+    gap:18px;
+
+    margin-bottom:20px;
+    padding:
+        0
+        52px
+        18px
+        0;
+
+    border-bottom:1px solid rgba(255,255,255,.08);
+
+}
+
+.detalle-viaje-header > div{
+
+    flex:1;
+    min-width:0;
+
+}
+
+.detalle-viaje-header > div > span{
+
+    display:inline-flex;
+    align-items:center;
+
+    margin-bottom:8px;
+    padding:5px 10px;
+
+    border-radius:999px;
+
+    background:rgba(152,236,99,.10);
+    color:var(--azul);
+
+    font-size:9px;
+    font-weight:800;
+    letter-spacing:.07em;
+    text-transform:uppercase;
+
+}
+
+.detalle-viaje-header h3{
+
+    margin:0;
+
+    color:var(--texto-principal);
+
+    font-size:clamp(23px, 3vw, 28px);
+    font-weight:800;
+    line-height:1.2;
+
+}
+
+.detalle-estado{
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    flex-shrink:0;
+
+    min-width:110px;
+
+    padding:9px 14px;
+
+    border-radius:999px;
+
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+
+}
+
+.detalle-estado.estado-disponible{
+
+    background:rgba(33,199,122,.15);
+    color:#6fe0ac;
+
+}
+
+.detalle-estado.estado-finalizado{
+
+    background:rgba(167,124,255,.15);
+    color:#c8adff;
+
+}
+
+.detalle-estado.estado-en_curso{
+
+    background:rgba(22,135,255,.15);
+    color:#7dc1ff;
+
+}
+
+.detalle-estado.estado-cancelado{
+
+    background:rgba(255,98,107,.15);
+    color:#ff9da3;
+
+}
+
+.detalle-estado.estado-completo{
+
+    background:rgba(255,189,74,.15);
+    color:#ffd57e;
+
+}
+
+/*==================================================
+            GRID DE INFORMACIÓN
+==================================================*/
+
+.detalle-viaje-grid{
+
+    display:grid;
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap:12px;
+
+    margin-bottom:20px;
+
+}
+
+.detalle-item{
+
+    position:relative;
+
+    display:flex;
+    align-items:center;
+
+    gap:12px;
+
+    min-width:0;
+    min-height:82px;
 
     padding:14px;
 
-    border:1px solid var(--borde);
-    border-radius:13px;
+    overflow:hidden;
 
-    background:rgba(0,0,0,.11);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:14px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.05),
+            rgba(255,255,255,.02)
+        );
+
+    transition:
+        transform .25s ease,
+        border-color .25s ease,
+        box-shadow .25s ease;
 
 }
 
-.detalles-expandibles-contenido h3{
+.detalle-item:hover{
 
-    margin-bottom:10px;
+    transform:translateY(-2px);
 
-    font-size:12px;
+    border-color:rgba(152,236,99,.20);
+
+    box-shadow:
+        0 12px 28px rgba(0,0,0,.16);
 
 }
 
-.detalles-expandibles-contenido p{
+.detalle-item::after{
+
+    content:"";
+
+    position:absolute;
+
+    right:-30px;
+    bottom:-35px;
+
+    width:80px;
+    height:80px;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.03);
+
+}
+
+.detalle-item > i{
+
+    position:relative;
+    z-index:2;
+
+    flex-shrink:0;
+
+    width:42px;
+    height:42px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    border-radius:12px;
+
+    background:rgba(152,236,99,.12);
+    color:var(--azul);
+
+    font-size:17px;
+
+}
+
+.detalle-item > div{
+
+    position:relative;
+    z-index:2;
+
+    flex:1;
+    min-width:0;
+
+}
+
+.detalle-item span{
+
+    display:block;
+
+    margin-bottom:4px;
+
+    color:var(--texto-suave);
+
+    font-size:9px;
+    font-weight:700;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+
+}
+
+.detalle-item strong{
+
+    display:block;
+
+    color:var(--texto-principal);
+
+    font-size:13px;
+    font-weight:700;
+    line-height:1.4;
+
+    overflow-wrap:anywhere;
+
+}
+
+.detalle-item small{
+
+    display:block;
+
+    margin-top:4px;
 
     color:var(--texto-secundario);
 
     font-size:11px;
-    line-height:1.55;
+    line-height:1.45;
 
 }
+
+.detalle-item-ancho{
+
+    grid-column:span 3;
+
+}
+
+/*==================================================
+            RUTA DEL VIAJE
+==================================================*/
+
+.detalle-ruta-completa{
+
+    display:grid;
+    grid-template-columns:
+        minmax(0, 1fr)
+        55px
+        minmax(0, 1fr);
+
+    align-items:center;
+
+    gap:18px;
+
+    margin-bottom:21px;
+    padding:19px;
+
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:16px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.045),
+            rgba(255,255,255,.02)
+        );
+
+}
+
+.detalle-ruta-punto{
+
+    display:flex;
+    align-items:flex-start;
+
+    gap:12px;
+
+    min-width:0;
+
+}
+
+.detalle-marcador{
+
+    width:13px;
+    height:13px;
+
+    flex-shrink:0;
+
+    margin-top:6px;
+
+    border-radius:50%;
+
+    background:var(--verde);
+
+    box-shadow:
+        0 0 0 4px rgba(33,199,122,.18);
+
+}
+
+.detalle-marcador.destino{
+
+    background:var(--rojo);
+
+    box-shadow:
+        0 0 0 4px rgba(255,98,107,.18);
+
+}
+
+.detalle-ruta-punto div{
+
+    flex:1;
+    min-width:0;
+
+}
+
+.detalle-ruta-punto small{
+
+    display:block;
+
+    margin-bottom:5px;
+
+    color:var(--texto-suave);
+
+    font-size:9px;
+    font-weight:700;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+
+}
+
+.detalle-ruta-punto strong{
+
+    display:block;
+
+    color:var(--texto-principal);
+
+    font-size:13px;
+    line-height:1.45;
+
+    overflow-wrap:anywhere;
+
+}
+
+.detalle-ruta-punto span{
+
+    display:block;
+
+    margin-top:5px;
+
+    color:var(--texto-secundario);
+
+    font-size:10px;
+
+    overflow-wrap:anywhere;
+
+}
+
+.detalle-ruta-linea{
+
+    position:relative;
+
+    height:3px;
+
+    border-radius:999px;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--verde),
+            var(--azul),
+            var(--rojo)
+        );
+
+}
+
+.detalle-ruta-linea::before,
+.detalle-ruta-linea::after{
+
+    content:"";
+
+    position:absolute;
+    top:50%;
+
+    width:10px;
+    height:10px;
+
+    border-radius:50%;
+
+    transform:translateY(-50%);
+
+}
+
+.detalle-ruta-linea::before{
+
+    left:0;
+
+    background:var(--verde);
+
+}
+
+.detalle-ruta-linea::after{
+
+    right:0;
+
+    background:var(--rojo);
+
+}
+
+/*==================================================
+        PREFERENCIAS DEL VIAJE
+==================================================*/
+
+.detalle-preferencias{
+
+    margin-bottom:20px;
+
+}
+
+.detalle-preferencias h4,
+.detalle-indicaciones h4{
+
+    display:flex;
+    align-items:center;
+
+    gap:8px;
+
+    margin-bottom:12px;
+
+    color:var(--texto-principal);
+
+    font-size:14px;
+    font-weight:700;
+
+}
+
+.detalle-preferencias h4::before,
+.detalle-indicaciones h4::before{
+
+    content:"";
+
+    width:4px;
+    height:17px;
+
+    border-radius:999px;
+
+    background:var(--azul);
+
+}
+
+.detalle-preferencias > div{
+
+    display:flex;
+    flex-wrap:wrap;
+
+    gap:9px;
+
+}
+
+.detalle-preferencias span{
+
+    display:flex;
+    align-items:center;
+
+    gap:7px;
+
+    padding:8px 12px;
+
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:999px;
+
+    background:rgba(255,255,255,.03);
+    color:var(--texto-secundario);
+
+    font-size:11px;
+    font-weight:600;
+
+    transition:
+        transform .25s ease,
+        border-color .25s ease,
+        background .25s ease;
+
+}
+
+.detalle-preferencias span i{
+
+    font-size:13px;
+
+}
+
+.detalle-preferencias span.activo{
+
+    border-color:rgba(152,236,99,.25);
+
+    background:rgba(152,236,99,.12);
+    color:var(--azul);
+
+}
+
+.detalle-preferencias span:hover{
+
+    transform:translateY(-2px);
+
+}
+
+/*==================================================
+        INDICACIONES
+==================================================*/
+
+.detalle-indicaciones{
+
+    margin-top:10px;
+    padding:17px;
+
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:14px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.04),
+            rgba(255,255,255,.02)
+        );
+
+}
+
+.detalle-indicaciones p{
+
+    margin:0;
+
+    color:var(--texto-secundario);
+
+    font-size:12px;
+    line-height:1.65;
+
+}
+
+/*==================================================
+        RESPONSIVE DEL MODAL
+==================================================*/
+
+@media(max-width:900px){
+
+    .modal-detalles-overlay{
+
+        padding:18px;
+
+    }
+
+    .modal-detalles-contenido{
+
+        padding:23px;
+
+    }
+
+    .detalle-viaje-grid{
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+    }
+
+    .detalle-item-ancho{
+
+        grid-column:span 2;
+
+    }
+
+}
+
+@media(max-width:620px){
+
+    .modal-detalles-overlay{
+
+        align-items:flex-end;
+
+        padding:10px;
+
+    }
+
+    .modal-detalles-viaje{
+
+        width:100%;
+        max-height:calc(100vh - 20px);
+
+        border-radius:18px;
+
+    }
+
+    .modal-detalles-contenido{
+
+        padding:
+            20px
+            16px
+            22px;
+
+    }
+
+    .modal-detalles-cerrar{
+
+        top:12px;
+        right:12px;
+
+        width:35px;
+        height:35px;
+
+    }
+
+    .detalle-viaje-header{
+
+        flex-direction:column;
+
+        gap:12px;
+
+        padding:
+            0
+            42px
+            15px
+            0;
+
+    }
+
+    .detalle-viaje-header h3{
+
+        font-size:22px;
+
+    }
+
+    .detalle-estado{
+
+        min-width:0;
+
+        padding:8px 12px;
+
+        font-size:9px;
+
+    }
+
+    .detalle-viaje-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .detalle-item-ancho{
+
+        grid-column:auto;
+
+    }
+
+    .detalle-ruta-completa{
+
+        grid-template-columns:1fr;
+
+        gap:14px;
+
+    }
+
+    .detalle-ruta-linea{
+
+        width:2px;
+        height:22px;
+
+        margin-left:5px;
+
+        background:
+            linear-gradient(
+                var(--verde),
+                var(--rojo)
+            );
+
+    }
+
+}
+
 
 /*==================================================
                  ACCIONES DE TARJETA
@@ -1157,18 +1990,12 @@ este selector mueve correctamente el contenido.
     display:flex;
     align-items:center;
     flex-wrap:wrap;
-    gap:10px;
+    gap:8px;
 
     margin-top:auto;
-    padding-top:18px;
+    padding-top:17px;
 
     border-top:1px solid var(--borde);
-
-}
-
-.viaje-card-footer > *{
-
-    flex:0 0 auto;
 
 }
 
@@ -1271,28 +2098,9 @@ este selector mueve correctamente el contenido.
 
 }
 
-.btn-cancelar{
-
-    border-color:rgba(255,98,107,.18);
-
-    background:var(--rojo-suave);
-    color:#ff9da3;
-
-}
-
-.btn-cancelar:hover{
-
-    border-color:rgba(255,98,107,.34);
-
-    background:rgba(255,98,107,.19);
-    color:#ffc1c4;
-
-}
-
 .btn-iniciar{
 
     margin-left:auto;
-    flex-shrink:0;
 
     background:var(--azul);
     color:white;
@@ -1796,27 +2604,10 @@ este selector mueve correctamente el contenido.
     .viaje-card-footer{
 
         display:grid;
-
-        grid-template-columns:
-            repeat(2,minmax(0,1fr));
-
-        gap:10px;
+        grid-template-columns:1fr 1fr;
 
     }
 
-    .viaje-card-footer > *{
-
-        width:100%;
-
-    }
-
-    .accion-viaje-form{
-
-        width:100%;
-
-    }
-
-    .accion-viaje-form .btn-viaje,
     .btn-viaje{
 
         width:100%;
@@ -1843,29 +2634,13 @@ este selector mueve correctamente el contenido.
 
     .viaje-card-footer{
 
-        display:flex;
-        flex-direction:column;
-        align-items:stretch;
-
-    }
-
-    .viaje-card-footer > *,
-    .accion-viaje-form{
-
-        width:100%;
-
-    }
-
-    .btn-viaje{
-
-        width:100%;
+        grid-template-columns:1fr;
 
     }
 
     .btn-iniciar{
 
         grid-column:auto;
-        margin-left:0;
 
     }
 
@@ -1917,19 +2692,24 @@ este selector mueve correctamente el contenido.
 
 }
 
-.accion-viaje-form{
+.accion-viaje-form {
+    margin: 0;
+    padding: 0;
+    display: inline-flex;
+}
 
-    display:inline-flex;
-    flex:0 0 auto;
+.accion-viaje-form {
 
-    margin:0;
-    padding:0;
+    display: inline-flex;
+
+    margin: 0;
+    padding: 0;
 
 }
 
-.accion-viaje-form .btn-viaje{
+.accion-viaje-form .btn-viaje {
 
-    width:100%;
+    width: 100%;
 
 }
 
@@ -2345,6 +3125,142 @@ body.modal-cancelar-abierto {
     .btn-confirmar-cancelacion {
 
         width: 100%;
+
+    }
+
+}
+
+/*==================================================
+    RESPONSIVE DE DETALLES
+==================================================*/
+
+@media(max-width:1200px){
+
+    .viaje-card{
+
+        min-height:auto;
+
+        overflow:visible;
+
+    }
+
+    .detalles-expandibles{
+
+        position:relative;
+
+        top:auto;
+        right:auto;
+        bottom:auto;
+        left:auto;
+
+        width:100%;
+        max-height:0;
+
+        margin:0;
+
+        border-width:0;
+
+        opacity:0;
+        visibility:hidden;
+        pointer-events:none;
+
+        transform:none;
+
+        transition:
+            max-height .35s ease,
+            opacity .25s ease,
+            margin .35s ease,
+            visibility .25s ease;
+
+    }
+
+    .viaje-card.detalles-abiertos
+    .detalles-expandibles{
+
+        max-height:850px;
+
+        margin-bottom:17px;
+
+        border-width:1px;
+
+        opacity:1;
+        visibility:visible;
+        pointer-events:auto;
+
+    }
+
+    .detalles-expandibles-contenido{
+
+        height:auto;
+        max-height:760px;
+
+        padding:16px;
+
+    }
+
+    .detalle-viaje-header{
+
+        top:-16px;
+
+        margin:
+            -16px
+            -16px
+            0;
+
+        padding:
+            16px
+            16px
+            14px;
+
+    }
+
+}
+
+@media(max-width:620px){
+
+    .fecha-icono{
+
+        width:48px;
+        height:48px;
+
+    }
+
+    .fecha-icono i{
+
+        font-size:18px;
+
+    }
+
+    .detalle-viaje-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .detalle-item-ancho{
+
+        grid-column:auto;
+
+    }
+
+    .detalle-ruta-completa{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .detalle-ruta-linea{
+
+        width:2px;
+        height:25px;
+
+        margin-left:5px;
+
+        background:
+            linear-gradient(
+                var(--verde),
+                var(--rojo)
+            );
 
     }
 

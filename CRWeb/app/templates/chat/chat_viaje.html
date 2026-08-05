@@ -217,14 +217,29 @@
 
                     </div>
 
+                    {% if request.user.rol == "conductor" %}
+
                     <a
-                        href="{% url 'home' %}"
+                        href="{% url 'mis_viajes_conductor' %}"
                         class="btn-salir-chat"
                         aria-label="Salir del chat">
 
                         <i class="fa-solid fa-xmark"></i>
 
                     </a>
+
+                    {% else %}
+
+                    <a
+                        href="{% url 'mis_viajes_pasajero' %}"
+                        class="btn-salir-chat"
+                        aria-label="Salir del chat">
+
+                        <i class="fa-solid fa-xmark"></i>
+
+                    </a>
+
+                    {% endif %}
 
                 </header>
 
