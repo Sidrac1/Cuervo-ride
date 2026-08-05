@@ -18,6 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let accionPendiente = null;
 
+
     /*==================================================
                   ANIMACIÓN DE TARJETAS
     ==================================================*/
@@ -37,6 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     animarTarjetas();
+
 
     /*==================================================
                        TOASTS
@@ -66,6 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return contenedor;
 
     }
+
 
     function mostrarToast(
         mensaje,
@@ -116,6 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }, duracion);
 
     }
+
 
     /*==================================================
                  DETALLES DE LA TARJETA
@@ -183,6 +187,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
+
     function alternarDetalles(tarjeta, boton) {
 
         const detalles = crearDetallesExpandibles(
@@ -222,6 +227,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
+
     function cerrarDetallesOtrasTarjetas(
         tarjetaActual
     ) {
@@ -254,8 +260,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
+
     /*==================================================
-                 MODAL DE CONFIRMACIÓN
+                 MODAL DE CONFIRMACIÓN GENERAL
     ==================================================*/
 
     function crearModalConfirmacion() {
@@ -264,7 +271,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         overlay.className = "modal-viaje-overlay";
 
-        overlay.setAttribute("aria-hidden", "true");
+        overlay.setAttribute(
+            "aria-hidden",
+            "true"
+        );
 
         overlay.innerHTML = `
             <section
@@ -275,15 +285,21 @@ document.addEventListener("DOMContentLoaded", () => {
             >
 
                 <span class="modal-icono">
+
                     <i class="fa-solid fa-triangle-exclamation"></i>
+
                 </span>
 
                 <h2 id="modalViajeTitulo">
+
                     Confirmar acción
+
                 </h2>
 
                 <p id="modalViajeMensaje">
+
                     ¿Deseas continuar?
+
                 </p>
 
                 <div class="modal-acciones">
@@ -293,7 +309,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         class="modal-btn modal-btn-cancelar"
                         data-modal-cancelar
                     >
+
                         Regresar
+
                     </button>
 
                     <button
@@ -301,7 +319,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         class="modal-btn modal-btn-confirmar"
                         data-modal-confirmar
                     >
+
                         Confirmar
+
                     </button>
 
                 </div>
@@ -314,6 +334,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return overlay;
 
     }
+
 
     const modal = crearModalConfirmacion();
 
@@ -332,6 +353,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const modalCancelar = modal.querySelector(
         "[data-modal-cancelar]"
     );
+
 
     function abrirModal({
         titulo,
@@ -363,6 +385,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
+
     function cerrarModal() {
 
         modal.classList.remove("abierto");
@@ -378,10 +401,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
+
     modalCancelar.addEventListener(
         "click",
         cerrarModal
     );
+
 
     modal.addEventListener("click", (evento) => {
 
@@ -393,6 +418,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     });
 
+
     modalConfirmar.addEventListener(
         "click",
         async () => {
@@ -401,8 +427,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 typeof accionPendiente
                 !== "function"
             ) {
+
                 cerrarModal();
+
                 return;
+
             }
 
             const accion = accionPendiente;
@@ -441,6 +470,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     );
 
+
     document.addEventListener(
         "keydown",
         (evento) => {
@@ -457,6 +487,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     );
 
+
     /*==================================================
                  UTILIDADES DE NAVEGACIÓN
     ==================================================*/
@@ -466,6 +497,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return boton.dataset.url?.trim() || "";
 
     }
+
 
     function navegarAUrl(url) {
 
@@ -483,6 +515,7 @@ document.addEventListener("DOMContentLoaded", () => {
         window.location.href = url;
 
     }
+
 
     function bloquearBoton(
         boton,
@@ -505,6 +538,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
+
     function restaurarBoton(boton) {
 
         if (!boton) {
@@ -523,6 +557,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
     }
+
 
     /*==================================================
                     ACCIONES DEL VIAJE
@@ -550,15 +585,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 break;
 
+
             case "editar":
 
                 navegarAUrl(url);
 
                 break;
 
+
             case "duplicar":
 
                 abrirModal({
+
                     titulo:
                         "Duplicar viaje",
 
@@ -573,6 +611,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (url) {
 
                             navegarAUrl(url);
+
                             return;
 
                         }
@@ -583,48 +622,16 @@ document.addEventListener("DOMContentLoaded", () => {
                         );
 
                     },
+
                 });
 
                 break;
 
-            case "cancelar":
-
-                abrirModal({
-                    titulo:
-                        "Cancelar viaje",
-
-                    mensaje:
-                        "Esta acción marcará el viaje como cancelado. Los pasajeros deberán ser notificados y los lugares dejarán de estar disponibles.",
-
-                    textoConfirmar:
-                        "Cancelar viaje",
-
-                    accion: async () => {
-
-                        if (url) {
-
-                            /*
-                             * Cuando creemos la vista de cancelación,
-                             * aquí podremos hacer un POST con fetch.
-                             */
-                            navegarAUrl(url);
-                            return;
-
-                        }
-
-                        mostrarToast(
-                            `La cancelación del viaje #${viajeId} todavía no está conectada al backend.`,
-                            "info"
-                        );
-
-                    },
-                });
-
-                break;
 
             case "iniciar":
 
                 abrirModal({
+
                     titulo:
                         "Iniciar viaje",
 
@@ -639,6 +646,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (url) {
 
                             navegarAUrl(url);
+
                             return;
 
                         }
@@ -649,9 +657,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         );
 
                     },
+
                 });
 
                 break;
+
 
             case "continuar":
 
@@ -681,6 +691,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 break;
 
+
             default:
 
                 mostrarToast(
@@ -692,6 +703,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
+
     botonesAccion.forEach((boton) => {
 
         boton.addEventListener(
@@ -701,6 +713,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     });
 
+
     /*==================================================
                          UTILIDADES
     ==================================================*/
@@ -708,26 +721,335 @@ document.addEventListener("DOMContentLoaded", () => {
     function obtenerNombreEstado(estado) {
 
         const nombres = {
-            borrador: "Borrador",
-            disponible: "Disponible",
-            completo: "Completo",
-            en_curso: "En curso",
-            finalizado: "Finalizado",
-            cancelado: "Cancelado",
+
+            borrador:
+                "Borrador",
+
+            disponible:
+                "Disponible",
+
+            completo:
+                "Completo",
+
+            en_curso:
+                "En curso",
+
+            finalizado:
+                "Finalizado",
+
+            cancelado:
+                "Cancelado",
+
         };
 
-        return nombres[estado] || estado || "Desconocido";
+        return nombres[estado]
+            || estado
+            || "Desconocido";
 
     }
 
+
     function escaparHtml(valor) {
 
-        const elemento = document.createElement("div");
+        const elemento =
+            document.createElement("div");
 
-        elemento.textContent = String(valor ?? "");
+        elemento.textContent =
+            String(valor ?? "");
 
         return elemento.innerHTML;
 
     }
 
+
+    /*==================================================
+        INICIAR MODAL PERSONALIZADO DE CANCELACIÓN
+    ==================================================*/
+
+    iniciarModalCancelarViaje();
+
 });
+
+
+/*==================================================
+    MODAL PERSONALIZADO PARA CANCELAR VIAJE
+==================================================*/
+
+function iniciarModalCancelarViaje() {
+
+    const modal =
+        document.getElementById(
+            "modalCancelarViaje"
+        );
+
+    const botonesAbrir =
+        document.querySelectorAll(
+            ".btn-abrir-cancelacion"
+        );
+
+    const botonCerrar =
+        document.getElementById(
+            "btnCerrarCancelar"
+        );
+
+    const botonNoCancelar =
+        document.getElementById(
+            "btnNoCancelar"
+        );
+
+    const formulario =
+        document.getElementById(
+            "formCancelarViaje"
+        );
+
+    const botonConfirmar =
+        document.getElementById(
+            "btnConfirmarCancelacion"
+        );
+
+    const textoOrigen =
+        document.getElementById(
+            "modalCancelarOrigen"
+        );
+
+    const textoDestino =
+        document.getElementById(
+            "modalCancelarDestino"
+        );
+
+
+    if (!modal || !formulario) {
+
+        return;
+
+    }
+
+
+    function abrirModal(boton) {
+
+        const url =
+            boton.dataset.cancelarUrl
+                ?.trim()
+            || "";
+
+        const origen =
+            boton.dataset.viajeOrigen
+            || "Sin origen";
+
+        const destino =
+            boton.dataset.viajeDestino
+            || "Sin destino";
+
+
+        if (!url) {
+
+            console.error(
+                "El botón de cancelación no tiene data-cancelar-url."
+            );
+
+            return;
+
+        }
+
+
+        formulario.action =
+            url;
+
+
+        if (botonConfirmar) {
+
+            botonConfirmar.disabled =
+                false;
+
+            botonConfirmar.innerHTML = `
+
+                <i class="fa-solid fa-ban"></i>
+
+                Sí, cancelar viaje
+
+            `;
+
+        }
+
+
+        if (textoOrigen) {
+
+            textoOrigen.textContent =
+                origen;
+
+        }
+
+
+        if (textoDestino) {
+
+            textoDestino.textContent =
+                destino;
+
+        }
+
+
+        modal.classList.add(
+            "activo"
+        );
+
+        modal.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+        document.body.classList.add(
+            "modal-cancelar-abierto"
+        );
+
+
+        botonNoCancelar?.focus();
+
+    }
+
+
+    function cerrarModal() {
+
+        modal.classList.remove(
+            "activo"
+        );
+
+        modal.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+        document.body.classList.remove(
+            "modal-cancelar-abierto"
+        );
+
+
+        formulario.removeAttribute(
+            "action"
+        );
+
+
+        if (botonConfirmar) {
+
+            botonConfirmar.disabled =
+                false;
+
+            botonConfirmar.innerHTML = `
+
+                <i class="fa-solid fa-ban"></i>
+
+                Sí, cancelar viaje
+
+            `;
+
+        }
+
+    }
+
+
+    botonesAbrir.forEach(
+        function (boton) {
+
+            boton.addEventListener(
+                "click",
+                function () {
+
+                    abrirModal(
+                        boton
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+    botonCerrar?.addEventListener(
+        "click",
+        cerrarModal
+    );
+
+
+    botonNoCancelar?.addEventListener(
+        "click",
+        cerrarModal
+    );
+
+
+    modal.addEventListener(
+        "click",
+        function (evento) {
+
+            if (
+                evento.target === modal
+            ) {
+
+                cerrarModal();
+
+            }
+
+        }
+    );
+
+
+    document.addEventListener(
+        "keydown",
+        function (evento) {
+
+            if (
+                evento.key === "Escape"
+                && modal.classList.contains(
+                    "activo"
+                )
+            ) {
+
+                cerrarModal();
+
+            }
+
+        }
+    );
+
+
+    formulario.addEventListener(
+        "submit",
+        function (evento) {
+
+            const action =
+                formulario.getAttribute(
+                    "action"
+                );
+
+
+            if (!action) {
+
+                evento.preventDefault();
+
+                console.error(
+                    "El formulario de cancelación no tiene una URL válida."
+                );
+
+                return;
+
+            }
+
+
+            if (botonConfirmar) {
+
+                botonConfirmar.disabled =
+                    true;
+
+                botonConfirmar.innerHTML = `
+
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+
+                    Cancelando...
+
+                `;
+
+            }
+
+        }
+    );
+
+}

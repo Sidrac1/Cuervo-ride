@@ -2857,6 +2857,250 @@ def mis_viajes_pasajero(request):
     )
 
 # =========================================================
+# CANCELAR VIAJE - CONDUCTOR
+# =========================================================
+
+@login_required(login_url="login")
+@require_POST
+def cancelar_viaje(request, viaje_id):
+
+    # -----------------------------------------------------
+    # VALIDAR ROL
+    # -----------------------------------------------------
+
+    if obtener_rol(request.user) != Usuario.Roles.CONDUCTOR:
+
+        messages.error(
+            request,
+            "Solo el conductor puede cancelar un viaje.",
+        )
+
+        return redirect("home")
+
+    # -----------------------------------------------------
+    # OBTENER PERFIL DEL CONDUCTOR
+    # -----------------------------------------------------
+
+    try:
+
+        perfil_conductor = (
+            request.user.perfil_conductor
+        )
+
+    except PerfilConductor.DoesNotExist:
+
+        messages.error(
+            request,
+            "No tienes un perfil de conductor registrado.",
+        )
+
+        return redirect("perfil")
+
+    # -----------------------------------------------------
+    # PROCESAR CANCELACIÓN
+    # -----------------------------------------------------
+
+    try:
+
+        with transaction.atomic():
+
+            viaje = (
+                Viaje.objects
+                .select_for_update()
+                .select_related(
+                    "conductor",
+                    "conductor__usuario",
+                    "vehiculo",
+                )
+                .get(
+                    pk=viaje_id,
+                    conductor=perfil_conductor,
+                )
+            )
+
+            # ---------------------------------------------
+            # VALIDAR ESTADO
+            # ---------------------------------------------
+
+            estados_cancelables = {
+                Viaje.EstadosViaje.DISPONIBLE,
+                Viaje.EstadosViaje.COMPLETO,
+            }
+
+            if viaje.estado not in estados_cancelables:
+
+                if viaje.estado == Viaje.EstadosViaje.EN_CURSO:
+
+                    messages.warning(
+                        request,
+                        (
+                            "No puedes cancelar un viaje que ya está "
+                            "en curso. Debes finalizarlo desde la "
+                            "pantalla del ride."
+                        ),
+                    )
+
+                elif viaje.estado == Viaje.EstadosViaje.FINALIZADO:
+
+                    messages.warning(
+                        request,
+                        "Un viaje finalizado ya no puede cancelarse.",
+                    )
+
+                elif viaje.estado == Viaje.EstadosViaje.CANCELADO:
+
+                    messages.info(
+                        request,
+                        "Este viaje ya se encuentra cancelado.",
+                    )
+
+                else:
+
+                    messages.warning(
+                        request,
+                        (
+                            "El viaje no puede cancelarse "
+                            "en su estado actual."
+                        ),
+                    )
+
+                return redirect(
+                    "mis_viajes_conductor"
+                )
+
+            # ---------------------------------------------
+            # GUARDAR PASAJEROS PARA NOTIFICACIONES
+            # ---------------------------------------------
+
+            solicitudes_afectadas = list(
+                SolicitudViaje.objects
+                .filter(
+                    viaje=viaje,
+                    estado__in=[
+                        SolicitudViaje
+                        .EstadosSolicitud
+                        .PENDIENTE,
+
+                        SolicitudViaje
+                        .EstadosSolicitud
+                        .ACEPTADA,
+                    ],
+                )
+                .select_related(
+                    "pasajero",
+                )
+            )
+
+            # ---------------------------------------------
+            # CANCELAR VIAJE
+            # ---------------------------------------------
+
+            viaje.estado = (
+                Viaje.EstadosViaje.CANCELADO
+            )
+
+            viaje.save(
+                update_fields=[
+                    "estado",
+                    "fecha_actualizacion",
+                ]
+            )
+
+            # ---------------------------------------------
+            # CANCELAR SOLICITUDES RELACIONADAS
+            # ---------------------------------------------
+
+            SolicitudViaje.objects.filter(
+                id__in=[
+                    solicitud.id
+                    for solicitud in solicitudes_afectadas
+                ],
+            ).update(
+                estado=(
+                    SolicitudViaje
+                    .EstadosSolicitud
+                    .CANCELADA
+                ),
+                respondida_por=request.user,
+                fecha_respuesta=timezone.now(),
+            )
+
+            # ---------------------------------------------
+            # CERRAR CHAT
+            # ---------------------------------------------
+
+            SalaChat.objects.filter(
+                viaje=viaje,
+            ).update(
+                activa=False,
+            )
+
+            # ---------------------------------------------
+            # NOTIFICAR A PASAJEROS
+            # ---------------------------------------------
+            #
+            # Se usa SOLICITUD_RECHAZADA porque ya sabemos
+            # que ese tipo existe en tu modelo.
+            # Más adelante puedes crear un tipo específico
+            # llamado VIAJE_CANCELADO.
+            # ---------------------------------------------
+
+            notificaciones = []
+
+            for solicitud in solicitudes_afectadas:
+
+                notificaciones.append(
+                    Notificacion(
+                        usuario=solicitud.pasajero,
+                        actor=request.user,
+                        viaje=viaje,
+                        solicitud=solicitud,
+                        tipo=(
+                            Notificacion
+                            .TiposNotificacion
+                            .SOLICITUD_RECHAZADA
+                        ),
+                        titulo="Viaje cancelado",
+                        descripcion=(
+                            f"El conductor canceló el viaje desde "
+                            f"{viaje.origen} hacia {viaje.destino}."
+                        ),
+                        url_destino=reverse(
+                            "mis_viajes_pasajero"
+                        ),
+                    )
+                )
+
+            if notificaciones:
+
+                Notificacion.objects.bulk_create(
+                    notificaciones
+                )
+
+    except Viaje.DoesNotExist:
+
+        messages.error(
+            request,
+            (
+                "El viaje no existe o no pertenece "
+                "a tu cuenta de conductor."
+            ),
+        )
+
+        return redirect(
+            "mis_viajes_conductor"
+        )
+
+    messages.success(
+        request,
+        "El viaje fue cancelado correctamente.",
+    )
+
+    return redirect(
+        "mis_viajes_conductor"
+    )
+
+# =========================================================
 # INICIAR VIAJE - CONDUCTOR
 # =========================================================
 

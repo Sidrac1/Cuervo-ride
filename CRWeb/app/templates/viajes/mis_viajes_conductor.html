@@ -626,15 +626,17 @@
 
                             <!-- CANCELAR -->
 
-                            <button
+                           <button
                                 type="button"
-                                class="btn-viaje btn-peligro"
-                                data-accion="cancelar"
-                                data-viaje-id="{{ viaje.id }}">
+                                class="btn-viaje btn-cancelar btn-abrir-cancelacion"
+                                data-viaje-id="{{ viaje.id }}"
+                                data-viaje-origen="{{ viaje.origen|escape }}"
+                                data-viaje-destino="{{ viaje.destino|escape }}"
+                                data-cancelar-url="{% url 'cancelar_viaje' viaje.id %}">
 
                                 <i class="fa-solid fa-ban"></i>
 
-                                Cancelar
+                                Cancelar viaje
 
                             </button>
 
@@ -776,6 +778,140 @@
             {% endfor %}
 
         </section>
+
+        <!--==================================================
+    MODAL CANCELAR VIAJE
+===================================================-->
+
+<div
+    class="modal-cancelar-overlay"
+    id="modalCancelarViaje"
+    aria-hidden="true">
+
+    <section
+        class="modal-cancelar"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="tituloModalCancelar">
+
+
+        <button
+            type="button"
+            class="modal-cerrar"
+            id="btnCerrarCancelar"
+            aria-label="Cerrar modal">
+
+            <i class="fa-solid fa-xmark"></i>
+
+        </button>
+
+
+        <span class="modal-cancelar-icono">
+
+            <i class="fa-solid fa-ban"></i>
+
+        </span>
+
+
+        <span class="modal-etiqueta">
+            Acción irreversible
+        </span>
+
+
+        <h2 id="tituloModalCancelar">
+            ¿Cancelar este viaje?
+        </h2>
+
+
+        <p>
+            El viaje se marcará como cancelado y los pasajeros
+            con solicitudes pendientes o aceptadas serán notificados.
+        </p>
+
+
+        <div class="modal-ruta-cancelar">
+
+            <div>
+
+                <small>
+                    Origen
+                </small>
+
+                <strong id="modalCancelarOrigen">
+                    --
+                </strong>
+
+            </div>
+
+
+            <i class="fa-solid fa-arrow-right"></i>
+
+
+            <div>
+
+                <small>
+                    Destino
+                </small>
+
+                <strong id="modalCancelarDestino">
+                    --
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="modal-advertencia">
+
+            <i class="fa-solid fa-triangle-exclamation"></i>
+
+            <span>
+                Esta acción no puede deshacerse. El chat del viaje
+                dejará de estar disponible para enviar mensajes.
+            </span>
+
+        </div>
+
+
+        <div class="modal-cancelar-acciones">
+
+
+            <button
+                type="button"
+                class="btn-no-cancelar"
+                id="btnNoCancelar">
+
+                Mantener viaje
+
+            </button>
+
+
+            <form
+                method="POST"
+                action=""
+                id="formCancelarViaje">
+
+                {% csrf_token %}
+
+                <button
+                    type="submit"
+                    class="btn-confirmar-cancelacion"
+                    id="btnConfirmarCancelacion">
+
+                    <i class="fa-solid fa-ban"></i>
+
+                    Sí, cancelar viaje
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </section>
+
+</div>
 
     </main>
 
