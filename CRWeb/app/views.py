@@ -1599,6 +1599,17 @@ def register(request):
         if not password: errores.append("La contraseña es obligatoria.")
         if not confirmar_password: errores.append("Debes confirmar la contraseña.")
 
+        # =========================================================
+        # VALIDACIÓN DE DOMINIO DE CORREO INSTITUCIONAL
+        # =========================================================
+        DOMINIOS_PERMITIDOS = ("@ut-tijuana.edu.mx",)  # Puedes agregar más, ej: ("@ut-tijuana.edu.mx", "@utt.edu.mx")
+        
+        if correo:
+            if not correo.endswith(DOMINIOS_PERMITIDOS):
+                errores.append("El correo debe ser institucional (@ut-tijuana.edu.mx).")
+            elif Usuario.objects.filter(email__iexact=correo).exists():
+                errores.append("Ya existe una cuenta registrada con ese correo.")
+
         if password and confirmar_password and password != confirmar_password:
             errores.append("Las contraseñas no coinciden.")
 
@@ -1611,9 +1622,6 @@ def register(request):
         roles_validos = {Usuario.Roles.PASAJERO, Usuario.Roles.CONDUCTOR}
         if rol not in roles_validos:
             errores.append("El rol seleccionado no es válido.")
-
-        if correo and Usuario.objects.filter(email__iexact=correo).exists():
-            errores.append("Ya existe una cuenta registrada con ese correo.")
 
         if matricula and Usuario.objects.filter(matricula__iexact=matricula).exists():
             errores.append("Ya existe una cuenta registrada con esa matrícula.")
@@ -1656,8 +1664,6 @@ def register(request):
         return redirect("infoMedica")
 
     return render(request, "forms/register.html")
-
-
 # =========================================================
 # INFORMACIÓN MÉDICA Y PERFIL
 # =========================================================
