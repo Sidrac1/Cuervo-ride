@@ -10,7 +10,6 @@ urlpatterns = [
     path("home/", views.home, name="home"),
     path("nosotros/", views.sobrenosotros, name="sobrenosotros"),
     path("agendar-viaje/", views.agendarviaje, name="agendarviaje"),
-    path("filtro-viajes/", views.filtroviajes, name="filtroviajes"),
     path("viajes/publicar/",views.publicar_viaje,name="publicar_viaje",),
     path("viajes/mis-viajes/",views.mis_viajes_conductor,name="mis_viajes_conductor",),
     path("viajes/mis-viajes/pasajero/",views.mis_viajes_pasajero,name="mis_viajes_pasajero"),
