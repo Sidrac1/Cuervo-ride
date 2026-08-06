@@ -27,6 +27,7 @@ urlpatterns = [
     path("viajes/<int:viaje_id>/finalizar/",views.finalizar_viaje,name="finalizar_viaje",),
     path("viajes/<int:viaje_id>/calificar-pasajeros/",views.listar_pasajeros_calificar,name="listar_pasajeros_calificar",),
     path("viajes/solicitudes/<int:solicitud_id>/calificar-pasajero/",views.calificar_pasajero,name="calificar_pasajero",),
+    path("viajes/solicitud/<int:solicitud_id>/calificar-viaje/",views.calificar_viaje,name="calificar_viaje",),
 
     # ---------------------------------------------------------
     # Autenticación y Registro
@@ -48,6 +49,7 @@ urlpatterns = [
     path("admin-panel/cargar/<str:vista>/", views.cargar_vista, name="cargar_vista"),
     path("admin-panel/usuarios/", views.panel_admin, name="panel_admin"),
     path('admin-panel/alertas/', views.panel_alertas, name='panel_alertas'),
+    path("api/admin/alertas/<int:alerta_id>/actualizar/",views.actualizar_alerta_admin,name="actualizar_alerta_admin",),
     path('api/admin/usuarios/<int:usuario_id>/', views.api_obtener_usuario, name='api_obtener_usuario'),
     path('api/admin/usuarios/<int:usuario_id>/actualizar/', views.api_actualizar_usuario, name='api_actualizar_usuario'),
     path('api/admin/conductores/<int:usuario_id>/verificar/', views.api_verificar_conductor, name='api_verificar_conductor'),

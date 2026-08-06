@@ -1,79 +1,115 @@
-"use strict";
+/*==================================================
+                CREAR ALERTA
+    Usado por pasajero y conductor
+==================================================*/
+
+document.addEventListener(
+    "DOMContentLoaded",
+    iniciarCrearAlerta
+);
 
 
-document.addEventListener("DOMContentLoaded", function () {
+/*==================================================
+                CONFIGURACIÓN
+==================================================*/
 
-    const formulario =
-        document.getElementById("alertaForm");
-
-    const tipoAlerta =
-        document.getElementById("tipoAlerta");
-
-    const descripcion =
-        document.getElementById("descripcionAlerta");
-
-    const contador =
-        document.getElementById("contadorDescripcion");
-
-    const botonUbicacion =
-        document.getElementById("obtenerUbicacion");
-
-    const estadoUbicacion =
-        document.getElementById("estadoUbicacion");
-
-    const latitudInput =
-        document.getElementById("latitud");
-
-    const longitudInput =
-        document.getElementById("longitud");
-
-    const bloqueUbicacion =
-        document.querySelector(".ubicacion-alerta");
-
-    const botonEnviar =
-        document.getElementById("enviarAlerta");
+const LIMITE_DESCRIPCION = 500;
 
 
-    /* =====================================================
-       CONTADOR DE CARACTERES
-    ====================================================== */
+/*==================================================
+            INICIAR CREAR ALERTA
+==================================================*/
 
-    function actualizarContador() {
+function iniciarCrearAlerta() {
 
-        if (!descripcion || !contador) {
+    const formulario = document.getElementById(
+        "alertaForm"
+    );
+
+    const textareaDescripcion = document.getElementById(
+        "descripcionAlerta"
+    );
+
+    const contadorDescripcion = document.getElementById(
+        "contadorDescripcion"
+    );
+
+    const botonUbicacion = document.getElementById(
+        "obtenerUbicacion"
+    );
+
+    const estadoUbicacion = document.getElementById(
+        "estadoUbicacion"
+    );
+
+    const inputLatitud = document.getElementById(
+        "latitud"
+    );
+
+    const inputLongitud = document.getElementById(
+        "longitud"
+    );
+
+    const botonEnviar = document.getElementById(
+        "enviarAlerta"
+    );
+
+
+    /*==================================================
+            CONTADOR DE DESCRIPCIÓN
+    ==================================================*/
+
+    function actualizarContadorDescripcion() {
+
+        if (
+            !textareaDescripcion
+            || !contadorDescripcion
+        ) {
+
             return;
+
         }
 
-        const cantidad =
-            descripcion.value.length;
+        if (
+            textareaDescripcion.value.length
+            > LIMITE_DESCRIPCION
+        ) {
 
-        contador.textContent =
-            String(cantidad);
+            textareaDescripcion.value = (
+                textareaDescripcion.value.slice(
+                    0,
+                    LIMITE_DESCRIPCION
+                )
+            );
 
-        const contenedor =
-            contador.closest(
+        }
+
+        const cantidadCaracteres = (
+            textareaDescripcion.value.length
+        );
+
+        contadorDescripcion.textContent = (
+            cantidadCaracteres
+        );
+
+        const contenedorContador = (
+            contadorDescripcion.closest(
                 ".contador-caracteres"
-            );
-
-        if (!contenedor) {
-            return;
-        }
-
-        contenedor.classList.remove(
-            "limite-cercano",
-            "limite-alcanzado"
+            )
         );
 
-        if (cantidad >= 1000) {
+        if (contenedorContador) {
 
-            contenedor.classList.add(
-                "limite-alcanzado"
+            contenedorContador.classList.toggle(
+                "cerca-limite",
+                cantidadCaracteres >= 450
+                && cantidadCaracteres < LIMITE_DESCRIPCION
             );
 
-        } else if (cantidad >= 850) {
-
-            contenedor.classList.add(
-                "limite-cercano"
+            contenedorContador.classList.toggle(
+                "limite-alcanzado",
+                cantidadCaracteres
+                >= LIMITE_DESCRIPCION
             );
 
         }
@@ -81,222 +117,256 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    if (descripcion) {
+    if (textareaDescripcion) {
 
-        descripcion.addEventListener(
+        textareaDescripcion.setAttribute(
+            "maxlength",
+            String(LIMITE_DESCRIPCION)
+        );
+
+        textareaDescripcion.addEventListener(
             "input",
-            actualizarContador
+            actualizarContadorDescripcion
         );
 
-        actualizarContador();
+        actualizarContadorDescripcion();
 
     }
 
 
-    /* =====================================================
-       ESTADOS VISUALES DE UBICACIÓN
-    ====================================================== */
+    /*==================================================
+            ACTUALIZAR ESTADO DE UBICACIÓN
+    ==================================================*/
 
-    function limpiarEstadoUbicacion() {
+    function actualizarEstadoUbicacion(
+        mensaje,
+        estado = "normal"
+    ) {
 
-        if (!bloqueUbicacion) {
+        if (!estadoUbicacion) {
+
             return;
+
         }
 
-        bloqueUbicacion.classList.remove(
-            "ubicacion-obtenida",
+        estadoUbicacion.textContent = mensaje;
+
+        estadoUbicacion.classList.remove(
+            "ubicacion-cargando",
+            "ubicacion-correcta",
             "ubicacion-error"
         );
 
-    }
+        if (estado === "cargando") {
 
-
-    function marcarUbicacionObtenida(
-        latitud,
-        longitud
-    ) {
-
-        limpiarEstadoUbicacion();
-
-        if (bloqueUbicacion) {
-
-            bloqueUbicacion.classList.add(
-                "ubicacion-obtenida"
+            estadoUbicacion.classList.add(
+                "ubicacion-cargando"
             );
 
-        }
+        } else if (estado === "correcta") {
 
-        if (estadoUbicacion) {
+            estadoUbicacion.classList.add(
+                "ubicacion-correcta"
+            );
 
-            estadoUbicacion.textContent =
-                `Ubicación obtenida: ` +
-                `${latitud.toFixed(6)}, ` +
-                `${longitud.toFixed(6)}`;
+        } else if (estado === "error") {
 
-        }
-
-        if (botonUbicacion) {
-
-            botonUbicacion.disabled = false;
-
-            botonUbicacion.innerHTML = `
-                <i class="fa-solid fa-rotate"></i>
-                Actualizar ubicación
-            `;
-
-        }
-
-    }
-
-
-    function marcarErrorUbicacion(mensaje) {
-
-        limpiarEstadoUbicacion();
-
-        if (bloqueUbicacion) {
-
-            bloqueUbicacion.classList.add(
+            estadoUbicacion.classList.add(
                 "ubicacion-error"
             );
 
         }
 
-        if (estadoUbicacion) {
-
-            estadoUbicacion.textContent =
-                mensaje;
-
-        }
-
-        if (botonUbicacion) {
-
-            botonUbicacion.disabled = false;
-
-            botonUbicacion.innerHTML = `
-                <i class="fa-solid fa-location-dot"></i>
-                Intentar nuevamente
-            `;
-
-        }
-
     }
 
 
-    /* =====================================================
-       OBTENER UBICACIÓN
-    ====================================================== */
+    /*==================================================
+            ESTADO DEL BOTÓN DE UBICACIÓN
+    ==================================================*/
 
-    function obtenerUbicacionActual() {
+    function cambiarEstadoBotonUbicacion(
+        cargando
+    ) {
 
-        if (!navigator.geolocation) {
-
-            marcarErrorUbicacion(
-                "Tu navegador no permite obtener la ubicación."
-            );
+        if (!botonUbicacion) {
 
             return;
 
         }
 
-        limpiarEstadoUbicacion();
+        botonUbicacion.disabled = cargando;
 
-        if (estadoUbicacion) {
-
-            estadoUbicacion.textContent =
-                "Obteniendo tu ubicación actual...";
-
-        }
-
-        if (botonUbicacion) {
-
-            botonUbicacion.disabled = true;
+        if (cargando) {
 
             botonUbicacion.innerHTML = `
                 <i class="fa-solid fa-spinner fa-spin"></i>
                 Obteniendo ubicación...
             `;
 
+        } else {
+
+            botonUbicacion.innerHTML = `
+                <i class="fa-solid fa-location-dot"></i>
+                Compartir ubicación
+            `;
+
         }
 
+    }
+
+
+    /*==================================================
+            GUARDAR COORDENADAS
+    ==================================================*/
+
+    function guardarCoordenadas(
+        posicion
+    ) {
+
+        const latitud = (
+            posicion.coords.latitude
+        );
+
+        const longitud = (
+            posicion.coords.longitude
+        );
+
+        if (inputLatitud) {
+
+            inputLatitud.value = (
+                latitud.toFixed(7)
+            );
+
+        }
+
+        if (inputLongitud) {
+
+            inputLongitud.value = (
+                longitud.toFixed(7)
+            );
+
+        }
+
+        actualizarEstadoUbicacion(
+            "Ubicación compartida correctamente.",
+            "correcta"
+        );
+
+        cambiarEstadoBotonUbicacion(
+            false
+        );
+
+        if (botonUbicacion) {
+
+            botonUbicacion.innerHTML = `
+                <i class="fa-solid fa-circle-check"></i>
+                Ubicación compartida
+            `;
+
+            botonUbicacion.classList.add(
+                "ubicacion-obtenida"
+            );
+
+        }
+
+    }
+
+
+    /*==================================================
+            ERROR DE GEOLOCALIZACIÓN
+    ==================================================*/
+
+    function manejarErrorUbicacion(
+        error
+    ) {
+
+        let mensaje = (
+            "No fue posible obtener tu ubicación."
+        );
+
+        switch (error.code) {
+
+            case error.PERMISSION_DENIED:
+
+                mensaje = (
+                    "No autorizaste el acceso a tu ubicación."
+                );
+
+                break;
+
+            case error.POSITION_UNAVAILABLE:
+
+                mensaje = (
+                    "Tu ubicación no está disponible en este momento."
+                );
+
+                break;
+
+            case error.TIMEOUT:
+
+                mensaje = (
+                    "La solicitud de ubicación tardó demasiado."
+                );
+
+                break;
+
+            default:
+
+                mensaje = (
+                    "No fue posible obtener tu ubicación."
+                );
+
+        }
+
+        actualizarEstadoUbicacion(
+            mensaje,
+            "error"
+        );
+
+        cambiarEstadoBotonUbicacion(
+            false
+        );
+
+    }
+
+
+    /*==================================================
+            OBTENER UBICACIÓN
+    ==================================================*/
+
+    function obtenerUbicacionActual() {
+
+        if (!navigator.geolocation) {
+
+            actualizarEstadoUbicacion(
+                (
+                    "Tu navegador no permite "
+                    + "compartir la ubicación."
+                ),
+                "error"
+            );
+
+            return;
+
+        }
+
+        cambiarEstadoBotonUbicacion(
+            true
+        );
+
+        actualizarEstadoUbicacion(
+            "Obteniendo tu ubicación actual...",
+            "cargando"
+        );
 
         navigator.geolocation.getCurrentPosition(
-
-            function (posicion) {
-
-                const latitud =
-                    posicion.coords.latitude;
-
-                const longitud =
-                    posicion.coords.longitude;
-
-                if (latitudInput) {
-
-                    latitudInput.value =
-                        latitud.toFixed(7);
-
-                }
-
-                if (longitudInput) {
-
-                    longitudInput.value =
-                        longitud.toFixed(7);
-
-                }
-
-                marcarUbicacionObtenida(
-                    latitud,
-                    longitud
-                );
-
-            },
-
-            function (error) {
-
-                let mensaje =
-                    "No fue posible obtener la ubicación.";
-
-                switch (error.code) {
-
-                    case error.PERMISSION_DENIED:
-
-                        mensaje =
-                            "No autorizaste el acceso a tu ubicación.";
-
-                        break;
-
-                    case error.POSITION_UNAVAILABLE:
-
-                        mensaje =
-                            "Tu ubicación actual no está disponible.";
-
-                        break;
-
-                    case error.TIMEOUT:
-
-                        mensaje =
-                            "La solicitud de ubicación tardó demasiado.";
-
-                        break;
-
-                    default:
-
-                        mensaje =
-                            "Ocurrió un error al obtener tu ubicación.";
-
-                }
-
-                marcarErrorUbicacion(
-                    mensaje
-                );
-
-            },
-
+            guardarCoordenadas,
+            manejarErrorUbicacion,
             {
                 enableHighAccuracy: true,
                 timeout: 12000,
-                maximumAge: 30000
+                maximumAge: 0,
             }
-
         );
 
     }
@@ -312,31 +382,31 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    /* =====================================================
-       RESTAURAR UBICACIÓN EXISTENTE
-    ====================================================== */
+    /*==================================================
+            RESTAURAR UBICACIÓN PREVIA
+    ==================================================*/
 
     if (
-        latitudInput &&
-        longitudInput &&
-        latitudInput.value &&
-        longitudInput.value
+        inputLatitud
+        && inputLongitud
+        && inputLatitud.value
+        && inputLongitud.value
     ) {
 
-        const latitud =
-            Number(latitudInput.value);
+        actualizarEstadoUbicacion(
+            "La ubicación ya está preparada para enviarse.",
+            "correcta"
+        );
 
-        const longitud =
-            Number(longitudInput.value);
+        if (botonUbicacion) {
 
-        if (
-            Number.isFinite(latitud) &&
-            Number.isFinite(longitud)
-        ) {
+            botonUbicacion.innerHTML = `
+                <i class="fa-solid fa-circle-check"></i>
+                Ubicación compartida
+            `;
 
-            marcarUbicacionObtenida(
-                latitud,
-                longitud
+            botonUbicacion.classList.add(
+                "ubicacion-obtenida"
             );
 
         }
@@ -344,280 +414,181 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    /* =====================================================
-       VALIDACIÓN CLIENTE
-    ====================================================== */
+    /*==================================================
+            MOSTRAR ERROR DEL FORMULARIO
+    ==================================================*/
+
+    function mostrarErrorFormulario(
+        mensaje,
+        elemento
+    ) {
+
+        let error = document.getElementById(
+            "errorCrearAlerta"
+        );
+
+        if (!error) {
+
+            error = document.createElement(
+                "div"
+            );
+
+            error.id = "errorCrearAlerta";
+
+            error.className = (
+                "mensaje-alerta-formulario error"
+            );
+
+            if (formulario) {
+
+                formulario.prepend(
+                    error
+                );
+
+            }
+
+        }
+
+        error.innerHTML = `
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <span>${mensaje}</span>
+        `;
+
+        error.hidden = false;
+
+        if (elemento) {
+
+            elemento.focus();
+
+        }
+
+    }
+
+
+    /*==================================================
+            OCULTAR ERROR DEL FORMULARIO
+    ==================================================*/
+
+    function ocultarErrorFormulario() {
+
+        const error = document.getElementById(
+            "errorCrearAlerta"
+        );
+
+        if (error) {
+
+            error.hidden = true;
+
+        }
+
+    }
+
+
+    /*==================================================
+            VALIDAR FORMULARIO
+    ==================================================*/
 
     function validarFormulario() {
 
-        const errores = [];
+        const selectorTipo = document.getElementById(
+            "tipoAlerta"
+        );
 
-        if (
-            !tipoAlerta ||
-            !tipoAlerta.value
-        ) {
+        const tipo = selectorTipo
+            ? selectorTipo.value.trim()
+            : "";
 
-            errores.push(
-                "Selecciona el tipo de emergencia."
+        const descripcion = textareaDescripcion
+            ? textareaDescripcion.value.trim()
+            : "";
+
+        if (!tipo) {
+
+            mostrarErrorFormulario(
+                "Selecciona un tipo de emergencia.",
+                selectorTipo
             );
+
+            return false;
+
+        }
+
+        if (!descripcion) {
+
+            mostrarErrorFormulario(
+                (
+                    "Describe brevemente "
+                    + "lo que está ocurriendo."
+                ),
+                textareaDescripcion
+            );
+
+            return false;
 
         }
 
         if (
-            !descripcion ||
-            !descripcion.value.trim()
+            descripcion.length
+            > LIMITE_DESCRIPCION
         ) {
 
-            errores.push(
-                "Describe brevemente lo que está ocurriendo."
+            mostrarErrorFormulario(
+                (
+                    "La descripción no puede superar "
+                    + "los 500 caracteres."
+                ),
+                textareaDescripcion
             );
+
+            return false;
 
         }
 
-        if (
-            descripcion &&
-            descripcion.value.trim().length > 1000
-        ) {
+        ocultarErrorFormulario();
 
-            errores.push(
-                "La descripción no puede superar 1000 caracteres."
-            );
-
-        }
-
-        return errores;
+        return true;
 
     }
 
 
-    /* =====================================================
-       MODAL DE CONFIRMACIÓN
-    ====================================================== */
+    /*==================================================
+            ESTADO DE ENVÍO
+    ==================================================*/
 
-    function cerrarModal() {
+    function cambiarEstadoEnvio(
+        enviando
+    ) {
 
-        const overlay =
-            document.querySelector(
-                ".modal-alerta-overlay"
-            );
+        if (!botonEnviar) {
 
-        if (!overlay) {
             return;
+
         }
 
-        overlay.classList.remove(
-            "activo"
-        );
+        botonEnviar.disabled = enviando;
 
-        document.body.style.overflow = "";
-
-        window.setTimeout(
-            function () {
-
-                overlay.remove();
-
-            },
-            250
-        );
-
-    }
-
-
-    function abrirModalConfirmacion() {
-
-        cerrarModal();
-
-        const tipoTexto =
-            tipoAlerta
-                ? tipoAlerta.options[
-                    tipoAlerta.selectedIndex
-                ]?.text || "Sin seleccionar"
-                : "Sin seleccionar";
-
-        const tieneUbicacion =
-            Boolean(
-                latitudInput?.value &&
-                longitudInput?.value
-            );
-
-        const overlay =
-            document.createElement("div");
-
-        overlay.className =
-            "modal-alerta-overlay";
-
-        overlay.innerHTML = `
-
-            <div
-                class="modal-alerta"
-                role="dialog"
-                aria-modal="true"
-                aria-labelledby="modalAlertaTitulo"
-            >
-
-                <div class="modal-alerta-icono">
-
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-
-                </div>
-
-                <h2 id="modalAlertaTitulo">
-                    ¿Enviar alerta de emergencia?
-                </h2>
-
-                <p>
-                    La alerta será registrada y quedará visible
-                    para el equipo encargado de atender incidentes.
-                </p>
-
-                <div class="modal-alerta-resumen">
-
-                    <span>
-                        <strong>Tipo:</strong>
-                        ${escaparHtml(tipoTexto)}
-                    </span>
-
-                    <span>
-                        <strong>Ubicación:</strong>
-                        ${
-                            tieneUbicacion
-                                ? "Incluida"
-                                : "No incluida"
-                        }
-                    </span>
-
-                </div>
-
-                <div class="modal-alerta-acciones">
-
-                    <button
-                        type="button"
-                        class="modal-btn-cancelar"
-                        data-modal-action="cancelar"
-                    >
-                        Regresar
-                    </button>
-
-                    <button
-                        type="button"
-                        class="modal-btn-confirmar"
-                        data-modal-action="confirmar"
-                    >
-                        <i class="fa-solid fa-bell"></i>
-                        Enviar alerta
-                    </button>
-
-                </div>
-
-            </div>
-
-        `;
-
-        document.body.appendChild(
-            overlay
-        );
-
-        document.body.style.overflow =
-            "hidden";
-
-        const botonCancelar =
-            overlay.querySelector(
-                '[data-modal-action="cancelar"]'
-            );
-
-        const botonConfirmar =
-            overlay.querySelector(
-                '[data-modal-action="confirmar"]'
-            );
-
-
-        botonCancelar?.addEventListener(
-            "click",
-            cerrarModal
-        );
-
-
-        botonConfirmar?.addEventListener(
-            "click",
-            function () {
-
-                cerrarModal();
-
-                enviarFormulario();
-
-            }
-        );
-
-
-        overlay.addEventListener(
-            "click",
-            function (evento) {
-
-                if (evento.target === overlay) {
-
-                    cerrarModal();
-
-                }
-
-            }
-        );
-
-
-        requestAnimationFrame(
-            function () {
-
-                overlay.classList.add(
-                    "activo"
-                );
-
-                botonCancelar?.focus();
-
-            }
-        );
-
-    }
-
-
-    /* =====================================================
-       ENVIAR FORMULARIO
-    ====================================================== */
-
-    let enviandoFormulario = false;
-
-
-    function enviarFormulario() {
-
-        if (
-            !formulario ||
-            enviandoFormulario
-        ) {
-            return;
-        }
-
-        enviandoFormulario = true;
-
-        if (botonEnviar) {
-
-            botonEnviar.disabled = true;
+        if (enviando) {
 
             botonEnviar.innerHTML = `
                 <i class="fa-solid fa-spinner fa-spin"></i>
                 Enviando alerta...
             `;
 
+        } else {
+
+            botonEnviar.innerHTML = `
+                <i class="fa-solid fa-bell"></i>
+                Enviar alerta
+            `;
+
         }
-
-        /*
-         * requestSubmit permite conservar la validación
-         * nativa del formulario. En este punto ya se
-         * confirmó el envío, así que utilizamos submit()
-         * para evitar volver a disparar este listener.
-         */
-
-        formulario.submit();
 
     }
 
+
+    /*==================================================
+            ENVIAR FORMULARIO
+    ==================================================*/
 
     if (formulario) {
 
@@ -625,121 +596,21 @@ document.addEventListener("DOMContentLoaded", function () {
             "submit",
             function (evento) {
 
-                if (enviandoFormulario) {
-                    return;
-                }
+                if (!validarFormulario()) {
 
-                evento.preventDefault();
-
-                const errores =
-                    validarFormulario();
-
-                if (errores.length) {
-
-                    mostrarMensajeValidacion(
-                        errores[0]
-                    );
+                    evento.preventDefault();
 
                     return;
 
                 }
 
-                abrirModalConfirmacion();
+                cambiarEstadoEnvio(
+                    true
+                );
 
             }
         );
 
     }
 
-
-    /* =====================================================
-       MENSAJE DE VALIDACIÓN
-    ====================================================== */
-
-    function mostrarMensajeValidacion(mensaje) {
-
-        let contenedor =
-            document.querySelector(
-                ".mensaje-validacion-cliente"
-            );
-
-        if (!contenedor) {
-
-            contenedor =
-                document.createElement("div");
-
-            contenedor.className =
-                "mensaje mensaje-validacion-cliente error";
-
-            const formularioActual =
-                document.getElementById(
-                    "alertaForm"
-                );
-
-            formularioActual?.prepend(
-                contenedor
-            );
-
-        }
-
-        contenedor.innerHTML = `
-
-            <i class="fa-solid fa-circle-exclamation"></i>
-
-            <span>
-                ${escaparHtml(mensaje)}
-            </span>
-
-        `;
-
-        contenedor.scrollIntoView({
-            behavior: "smooth",
-            block: "center"
-        });
-
-    }
-
-
-    /* =====================================================
-       ESCAPAR TEXTO
-    ====================================================== */
-
-    function escaparHtml(valor) {
-
-        const elemento =
-            document.createElement("div");
-
-        elemento.textContent =
-            valor === null ||
-            valor === undefined
-                ? ""
-                : String(valor);
-
-        return elemento.innerHTML;
-
-    }
-
-
-    /* =====================================================
-       CERRAR MODAL CON ESCAPE
-    ====================================================== */
-
-    document.addEventListener(
-        "keydown",
-        function (evento) {
-
-            if (
-                evento.key === "Escape" &&
-                document.querySelector(
-                    ".modal-alerta-overlay.activo"
-                )
-            ) {
-
-                cerrarModal();
-
-            }
-
-        }
-    );
-
-});
+}

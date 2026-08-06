@@ -3309,3 +3309,927 @@ body.modal-resumen-abierto{
     }
 
 }
+
+/*==================================================
+        MODAL CALIFICAR VIAJE
+==================================================*/
+
+.modal-calificar-viaje-overlay{
+
+    position:fixed;
+    inset:0;
+    z-index:9800;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    padding:24px;
+
+    background:rgba(2,8,18,.84);
+    backdrop-filter:blur(9px);
+
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+
+    transition:
+        opacity .24s ease,
+        visibility .24s ease;
+
+}
+
+.modal-calificar-viaje-overlay.activo{
+
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
+
+}
+
+body.modal-calificar-viaje-abierto{
+
+    overflow:hidden;
+
+}
+
+
+/*==================================================
+        VENTANA PRINCIPAL
+==================================================*/
+
+.modal-calificar-viaje{
+
+    position:relative;
+
+    width:min(590px,100%);
+    max-height:calc(100vh - 48px);
+
+    overflow-y:auto;
+
+    padding:30px;
+
+    border:1px solid rgba(152,236,99,.22);
+    border-radius:24px;
+
+    background:
+        radial-gradient(
+            circle at top right,
+            rgba(152,236,99,.11),
+            transparent 240px
+        ),
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.04),
+            transparent 46%
+        ),
+        #0f2944;
+
+    box-shadow:
+        0 34px 85px rgba(0,0,0,.54);
+
+    transform:
+        translateY(18px)
+        scale(.97);
+
+    transition:transform .24s ease;
+
+}
+
+.modal-calificar-viaje-overlay.activo
+.modal-calificar-viaje{
+
+    transform:
+        translateY(0)
+        scale(1);
+
+}
+
+
+/*==================================================
+        BOTÓN CERRAR
+==================================================*/
+
+.modal-calificar-viaje-cerrar{
+
+    position:absolute;
+    top:16px;
+    right:16px;
+    z-index:5;
+
+    display:grid;
+    place-items:center;
+
+    width:40px;
+    height:40px;
+
+    border:1px solid rgba(255,255,255,.09);
+    border-radius:12px;
+
+    background:rgba(255,255,255,.045);
+    color:#aebdcd;
+
+    font-size:16px;
+    cursor:pointer;
+
+    transition:
+        transform .2s ease,
+        background .2s ease,
+        border-color .2s ease,
+        color .2s ease;
+
+}
+
+.modal-calificar-viaje-cerrar:hover{
+
+    transform:rotate(90deg);
+
+    border-color:rgba(255,98,107,.28);
+    background:rgba(255,98,107,.12);
+    color:#ff8891;
+
+}
+
+
+/*==================================================
+        ENCABEZADO
+==================================================*/
+
+.calificar-viaje-header{
+
+    display:flex;
+    align-items:flex-start;
+
+    gap:15px;
+
+    padding-right:48px;
+    margin-bottom:22px;
+
+}
+
+.calificar-viaje-icono{
+
+    flex:0 0 auto;
+
+    display:grid;
+    place-items:center;
+
+    width:54px;
+    height:54px;
+
+    border:1px solid rgba(152,236,99,.18);
+    border-radius:17px;
+
+    background:rgba(152,236,99,.11);
+    color:#98ec63;
+
+    font-size:21px;
+
+}
+
+.calificar-viaje-header > div:last-child{
+
+    min-width:0;
+
+}
+
+.calificar-viaje-etiqueta{
+
+    display:inline-flex;
+    align-items:center;
+
+    margin-bottom:7px;
+    padding:5px 9px;
+
+    border-radius:999px;
+
+    background:rgba(152,236,99,.10);
+    color:#98ec63;
+
+    font-size:9px;
+    font-weight:800;
+    letter-spacing:.07em;
+    text-transform:uppercase;
+
+}
+
+.calificar-viaje-header h2{
+
+    margin:0 0 7px;
+
+    color:#f5f8fc;
+
+    font-size:24px;
+    font-weight:850;
+    line-height:1.15;
+    letter-spacing:-.5px;
+
+}
+
+.calificar-viaje-header p{
+
+    margin:0;
+
+    color:#9eb4c8;
+
+    font-size:12px;
+    line-height:1.6;
+
+}
+
+
+/*==================================================
+        DATOS DEL VIAJE
+==================================================*/
+
+.calificar-viaje-datos{
+
+    display:flex;
+    flex-direction:column;
+
+    gap:11px;
+
+    margin-bottom:23px;
+
+}
+
+.calificar-viaje-conductor{
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    gap:18px;
+
+    padding:12px 14px;
+
+    border:1px solid rgba(255,255,255,.07);
+    border-radius:13px;
+
+    background:rgba(255,255,255,.025);
+
+}
+
+.calificar-viaje-conductor span{
+
+    display:flex;
+    align-items:center;
+
+    gap:7px;
+
+    color:#7f96ad;
+
+    font-size:10px;
+    font-weight:750;
+
+}
+
+.calificar-viaje-conductor span i{
+
+    color:#98ec63;
+
+}
+
+.calificar-viaje-conductor strong{
+
+    min-width:0;
+
+    overflow:hidden;
+
+    color:#f4f8fc;
+
+    font-size:11px;
+
+    text-overflow:ellipsis;
+    white-space:nowrap;
+
+}
+
+
+/*==================================================
+        RESUMEN DEL TRAYECTO
+==================================================*/
+
+.calificar-viaje-ruta{
+
+    display:grid;
+    grid-template-columns:
+        minmax(0,1fr)
+        44px
+        minmax(0,1fr);
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:14px;
+
+    border:1px solid rgba(255,255,255,.07);
+    border-radius:15px;
+
+    background:rgba(255,255,255,.025);
+
+}
+
+.calificar-viaje-ruta > div{
+
+    min-width:0;
+
+}
+
+.calificar-viaje-ruta small{
+
+    display:block;
+
+    margin-bottom:4px;
+
+    color:#6f8ba5;
+
+    font-size:8px;
+    font-weight:750;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+
+}
+
+.calificar-viaje-ruta strong{
+
+    display:block;
+
+    overflow:hidden;
+
+    color:#f4f8fc;
+
+    font-size:11px;
+    line-height:1.4;
+
+    text-overflow:ellipsis;
+    white-space:nowrap;
+
+}
+
+.calificar-viaje-ruta > i{
+
+    color:#98ec63;
+
+    font-size:14px;
+    text-align:center;
+
+}
+
+
+/*==================================================
+        FORMULARIO
+==================================================*/
+
+.form-calificar-viaje{
+
+    display:flex;
+    flex-direction:column;
+
+    gap:21px;
+
+}
+
+.campo-calificacion{
+
+    min-width:0;
+
+    display:flex;
+    flex-direction:column;
+
+    gap:10px;
+
+    margin:0;
+    padding:0;
+
+    border:0;
+
+}
+
+.campo-calificacion legend,
+.campo-calificacion > label{
+
+    color:#f4f8fc;
+
+    font-size:12px;
+    font-weight:800;
+
+}
+
+.campo-calificacion > label span{
+
+    margin-left:5px;
+
+    color:#6f8ba5;
+
+    font-size:9px;
+    font-weight:650;
+
+}
+
+
+/*==================================================
+        ESTRELLAS
+==================================================*/
+
+.estrellas-calificacion-viaje{
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    gap:10px;
+
+    padding:17px;
+
+    border:1px solid rgba(255,255,255,.07);
+    border-radius:16px;
+
+    background:rgba(255,255,255,.025);
+
+}
+
+.estrella-viaje{
+
+    display:grid;
+    place-items:center;
+
+    width:46px;
+    height:46px;
+
+    border:0;
+    border-radius:13px;
+
+    background:rgba(255,255,255,.045);
+    color:#66788c;
+
+    font-size:22px;
+    cursor:pointer;
+
+    transition:
+        transform .18s ease,
+        color .18s ease,
+        background .18s ease,
+        box-shadow .18s ease;
+
+}
+
+.estrella-viaje:hover,
+.estrella-viaje.hover,
+.estrella-viaje.seleccionada{
+
+    transform:
+        translateY(-3px)
+        scale(1.05);
+
+    background:rgba(255,189,74,.12);
+    color:#ffbd4a;
+
+    box-shadow:
+        0 8px 20px rgba(255,189,74,.12);
+
+}
+
+.estrella-viaje:focus-visible{
+
+    outline:2px solid #98ec63;
+    outline-offset:3px;
+
+}
+
+.texto-puntuacion-viaje{
+
+    min-height:18px;
+
+    margin:0;
+
+    color:#ffcf72;
+
+    font-size:11px;
+    font-weight:700;
+    text-align:center;
+
+}
+
+
+/*==================================================
+        COMENTARIO
+==================================================*/
+
+.campo-calificacion textarea{
+
+    width:100%;
+    min-height:130px;
+
+    resize:vertical;
+
+    padding:14px 15px;
+
+    border:1px solid rgba(255,255,255,.09);
+    border-radius:14px;
+
+    outline:none;
+
+    background:rgba(5,17,31,.55);
+    color:#f4f8fc;
+
+    font-size:12px;
+    line-height:1.6;
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease,
+        background .2s ease;
+
+}
+
+.campo-calificacion textarea::placeholder{
+
+    color:#6f8ba5;
+
+}
+
+.campo-calificacion textarea:focus{
+
+    border-color:rgba(152,236,99,.45);
+    background:rgba(5,17,31,.78);
+
+    box-shadow:
+        0 0 0 4px rgba(152,236,99,.08);
+
+}
+
+.comentario-meta{
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    gap:12px;
+
+    color:#6f8ba5;
+
+    font-size:9px;
+
+}
+
+.contador-comentario-viaje{
+
+    white-space:nowrap;
+
+}
+
+
+/*==================================================
+        ERRORES
+==================================================*/
+
+.error-calificar-viaje{
+
+    display:none;
+    align-items:flex-start;
+
+    gap:8px;
+
+    padding:10px 12px;
+
+    border:1px solid rgba(255,98,107,.24);
+    border-radius:11px;
+
+    background:rgba(255,98,107,.10);
+    color:#ffadb3;
+
+    font-size:10px;
+    line-height:1.5;
+
+}
+
+.error-calificar-viaje.visible{
+
+    display:flex;
+
+}
+
+.error-calificar-viaje i{
+
+    margin-top:2px;
+
+}
+
+
+/*==================================================
+        ACCIONES
+==================================================*/
+
+.calificar-viaje-acciones{
+
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+
+    gap:10px;
+
+    padding-top:19px;
+
+    border-top:1px solid rgba(255,255,255,.07);
+
+}
+
+.btn-omitir-calificacion,
+.btn-enviar-calificacion-viaje{
+
+    min-height:43px;
+
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+
+    gap:8px;
+
+    padding:10px 16px;
+
+    border-radius:11px;
+
+    font-size:10px;
+    font-weight:800;
+
+    cursor:pointer;
+
+    transition:
+        transform .18s ease,
+        background .18s ease,
+        border-color .18s ease,
+        box-shadow .18s ease,
+        opacity .18s ease;
+
+}
+
+.btn-omitir-calificacion{
+
+    border:1px solid rgba(255,255,255,.09);
+
+    background:rgba(255,255,255,.04);
+    color:#aebdcd;
+
+}
+
+.btn-omitir-calificacion:hover{
+
+    transform:translateY(-1px);
+
+    background:rgba(255,255,255,.075);
+    color:#fff;
+
+}
+
+.btn-enviar-calificacion-viaje{
+
+    border:1px solid rgba(152,236,99,.25);
+
+    background:
+        linear-gradient(
+            135deg,
+            #98ec63,
+            #3fae45
+        );
+
+    color:#0b1725;
+
+    box-shadow:
+        0 10px 24px rgba(63,174,69,.18);
+
+}
+
+.btn-enviar-calificacion-viaje:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 14px 30px rgba(63,174,69,.26);
+
+}
+
+.btn-enviar-calificacion-viaje:disabled{
+
+    cursor:not-allowed;
+
+    opacity:.55;
+
+    transform:none;
+    box-shadow:none;
+
+}
+
+
+/*==================================================
+        BOTÓN DE LA TARJETA
+==================================================*/
+
+.btn-calificar-viaje{
+
+    border:1px solid rgba(255,189,74,.24);
+
+    background:rgba(255,189,74,.10);
+    color:#ffd06f;
+
+}
+
+.btn-calificar-viaje:hover{
+
+    border-color:rgba(255,189,74,.42);
+
+    background:rgba(255,189,74,.16);
+    color:#ffe1a7;
+
+}
+
+.calificacion-viaje-realizada{
+
+    border:1px solid rgba(33,199,122,.22);
+
+    background:rgba(33,199,122,.10);
+    color:#72e2af;
+
+}
+
+
+/*==================================================
+        SCROLL
+==================================================*/
+
+.modal-calificar-viaje::-webkit-scrollbar{
+
+    width:8px;
+
+}
+
+.modal-calificar-viaje::-webkit-scrollbar-track{
+
+    background:transparent;
+
+}
+
+.modal-calificar-viaje::-webkit-scrollbar-thumb{
+
+    border-radius:999px;
+
+    background:rgba(255,255,255,.12);
+
+}
+
+.modal-calificar-viaje::-webkit-scrollbar-thumb:hover{
+
+    background:rgba(255,255,255,.22);
+
+}
+
+
+/*==================================================
+        RESPONSIVE
+==================================================*/
+
+@media(max-width:620px){
+
+    .modal-calificar-viaje-overlay{
+
+        padding:12px;
+
+    }
+
+    .modal-calificar-viaje{
+
+        width:100%;
+        max-height:calc(100vh - 24px);
+
+        padding:25px 18px 20px;
+
+        border-radius:18px;
+
+    }
+
+    .calificar-viaje-header{
+
+        padding-right:38px;
+
+    }
+
+    .calificar-viaje-icono{
+
+        width:47px;
+        height:47px;
+
+        border-radius:14px;
+
+        font-size:18px;
+
+    }
+
+    .calificar-viaje-header h2{
+
+        font-size:21px;
+
+    }
+
+    .calificar-viaje-conductor{
+
+        align-items:flex-start;
+        flex-direction:column;
+
+        gap:6px;
+
+    }
+
+    .calificar-viaje-conductor strong{
+
+        white-space:normal;
+
+    }
+
+    .calificar-viaje-ruta{
+
+        grid-template-columns:1fr;
+
+        gap:10px;
+
+        text-align:center;
+
+    }
+
+    .calificar-viaje-ruta > i{
+
+        transform:rotate(90deg);
+
+    }
+
+    .estrellas-calificacion-viaje{
+
+        gap:6px;
+
+        padding:14px 8px;
+
+    }
+
+    .estrella-viaje{
+
+        width:40px;
+        height:40px;
+
+        font-size:19px;
+
+    }
+
+    .calificar-viaje-acciones{
+
+        align-items:stretch;
+        flex-direction:column-reverse;
+
+    }
+
+    .btn-omitir-calificacion,
+    .btn-enviar-calificacion-viaje{
+
+        width:100%;
+
+    }
+
+}
+
+@media(max-width:390px){
+
+    .modal-calificar-viaje{
+
+        padding-left:14px;
+        padding-right:14px;
+
+    }
+
+    .calificar-viaje-header{
+
+        gap:10px;
+
+    }
+
+    .calificar-viaje-icono{
+
+        width:42px;
+        height:42px;
+
+    }
+
+    .estrellas-calificacion-viaje{
+
+        gap:4px;
+
+    }
+
+    .estrella-viaje{
+
+        width:37px;
+        height:37px;
+
+        font-size:18px;
+
+    }
+
+}

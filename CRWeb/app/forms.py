@@ -573,3 +573,66 @@ class CalificarPasajeroForm(forms.ModelForm):
             )
 
         return puntuacion
+
+# =========================================================
+# CALIFICAR EXPERIENCIA DEL VIAJE - PASAJERO
+# =========================================================
+
+class CalificarViajeForm(forms.ModelForm):
+
+    class Meta:
+
+        model = Calificacion
+
+        fields = [
+            "puntuacion",
+            "comentario",
+        ]
+
+        labels = {
+
+            "puntuacion":
+                "Calificación del viaje",
+
+            "comentario":
+                "Comentario sobre tu experiencia",
+
+        }
+
+        widgets = {
+
+            "puntuacion": forms.RadioSelect(
+                choices=[
+                    (1, "1 estrella"),
+                    (2, "2 estrellas"),
+                    (3, "3 estrellas"),
+                    (4, "4 estrellas"),
+                    (5, "5 estrellas"),
+                ]
+            ),
+
+            "comentario": forms.Textarea(
+                attrs={
+                    "rows": 5,
+                    "maxlength": 500,
+                    "placeholder": (
+                        "Cuéntanos cómo fue tu experiencia "
+                        "durante este ride..."
+                    ),
+                }
+            ),
+
+        }
+
+    def clean_comentario(self):
+
+        comentario = (
+            self.cleaned_data
+            .get(
+                "comentario",
+                "",
+            )
+            .strip()
+        )
+
+        return comentario

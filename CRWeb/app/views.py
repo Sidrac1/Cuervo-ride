@@ -1,4 +1,5 @@
 from urllib.parse import urlencode
+from decimal import Decimal, InvalidOperation
 from django.contrib import messages
 from django.contrib.auth import (
     authenticate,
@@ -43,6 +44,7 @@ from .models import (
 )
 from .forms import SolicitudViajeForm
 from .forms import PublicarViajeForm
+from .forms import CalificarViajeForm
 from .forms import CalificarConductorForm
 from .forms import CalificarPasajeroForm
 from .validators import validar_imagen_jpeg
@@ -558,6 +560,278 @@ def solicitar_viaje(request, viaje_id):
         request,
         "viajes/solicitar_viaje.html",
         contexto,
+    )
+
+# =========================================================
+# CALIFICAR EXPERIENCIA DEL VIAJE - PASAJERO
+# =========================================================
+
+@login_required(login_url="login")
+@require_POST
+def calificar_viaje(request, solicitud_id):
+
+    # -----------------------------------------------------
+    # VALIDAR ROL
+    # -----------------------------------------------------
+
+    if obtener_rol(request.user) != Usuario.Roles.PASAJERO:
+
+        messages.error(
+            request,
+            "Solo los pasajeros pueden calificar un viaje.",
+        )
+
+        return redirect(
+            "home"
+        )
+
+    # -----------------------------------------------------
+    # OBTENER SOLICITUD DEL PASAJERO
+    # -----------------------------------------------------
+
+    solicitud = get_object_or_404(
+        SolicitudViaje.objects
+        .select_related(
+            "viaje",
+            "viaje__conductor",
+            "viaje__conductor__usuario",
+            "viaje__vehiculo",
+            "pasajero",
+        ),
+        pk=solicitud_id,
+        pasajero=request.user,
+    )
+
+    viaje = solicitud.viaje
+
+    conductor_usuario = (
+        viaje
+        .conductor
+        .usuario
+    )
+
+    # -----------------------------------------------------
+    # VALIDAR VIAJE FINALIZADO
+    # -----------------------------------------------------
+
+    if viaje.estado != Viaje.EstadosViaje.FINALIZADO:
+
+        messages.warning(
+            request,
+            (
+                "Solo puedes calificar la experiencia "
+                "cuando el viaje haya finalizado."
+            ),
+        )
+
+        return redirect(
+            "mis_viajes_pasajero"
+        )
+
+    # -----------------------------------------------------
+    # VALIDAR PARTICIPACIÓN COMPLETADA
+    # -----------------------------------------------------
+
+    if (
+        solicitud.estado
+        != SolicitudViaje.EstadosSolicitud.COMPLETADA
+    ):
+
+        messages.warning(
+            request,
+            (
+                "Tu participación en este viaje todavía "
+                "no está marcada como completada."
+            ),
+        )
+
+        return redirect(
+            "mis_viajes_pasajero"
+        )
+
+    # -----------------------------------------------------
+    # IMPEDIR CALIFICACIÓN DUPLICADA
+    # -----------------------------------------------------
+
+    calificacion_existente = (
+        Calificacion.objects
+        .filter(
+            viaje=viaje,
+            autor=request.user,
+            destinatario=conductor_usuario,
+            tipo=(
+                Calificacion
+                .TiposCalificacion
+                .VIAJE
+            ),
+        )
+        .exists()
+    )
+
+    if calificacion_existente:
+
+        messages.info(
+            request,
+            "Ya calificaste la experiencia de este viaje.",
+        )
+
+        return redirect(
+            "mis_viajes_pasajero"
+        )
+
+    # -----------------------------------------------------
+    # VALIDAR FORMULARIO
+    # -----------------------------------------------------
+
+    form = CalificarViajeForm(
+        request.POST
+    )
+
+    if not form.is_valid():
+
+        errores = []
+
+        for campo_errores in form.errors.values():
+
+            for error in campo_errores:
+
+                errores.append(
+                    str(error)
+                )
+
+        mensaje_error = (
+            " ".join(errores)
+            if errores
+            else "Los datos enviados no son válidos."
+        )
+
+        messages.error(
+            request,
+            mensaje_error,
+        )
+
+        return redirect(
+            "mis_viajes_pasajero"
+        )
+
+    # -----------------------------------------------------
+    # PREPARAR CALIFICACIÓN
+    # -----------------------------------------------------
+
+    calificacion = form.save(
+        commit=False
+    )
+
+    calificacion.viaje = viaje
+
+    calificacion.autor = (
+        request.user
+    )
+
+    # El modelo actual exige un destinatario.
+    # Para tipo VIAJE debe asociarse al conductor responsable.
+
+    calificacion.destinatario = (
+        conductor_usuario
+    )
+
+    calificacion.tipo = (
+        Calificacion
+        .TiposCalificacion
+        .VIAJE
+    )
+
+    calificacion.estado = (
+        Calificacion
+        .EstadosCalificacion
+        .VISIBLE
+    )
+
+    # -----------------------------------------------------
+    # VALIDAR MODELO Y GUARDAR
+    # -----------------------------------------------------
+
+    try:
+
+        calificacion.full_clean()
+
+        calificacion.save()
+
+    except ValidationError as error:
+
+        mensajes_error = []
+
+        if hasattr(
+            error,
+            "message_dict",
+        ):
+
+            for errores_campo in (
+                error.message_dict.values()
+            ):
+
+                for mensaje in errores_campo:
+
+                    mensajes_error.append(
+                        str(mensaje)
+                    )
+
+        elif hasattr(
+            error,
+            "messages",
+        ):
+
+            mensajes_error.extend(
+                str(mensaje)
+                for mensaje in error.messages
+            )
+
+        else:
+
+            mensajes_error.append(
+                str(error)
+            )
+
+        messages.error(
+            request,
+            (
+                " ".join(mensajes_error)
+                or (
+                    "No fue posible registrar "
+                    "la calificación."
+                )
+            ),
+        )
+
+        return redirect(
+            "mis_viajes_pasajero"
+        )
+
+    except IntegrityError:
+
+        messages.info(
+            request,
+            "Ya existe una calificación para este viaje.",
+        )
+
+        return redirect(
+            "mis_viajes_pasajero"
+        )
+
+    # -----------------------------------------------------
+    # RESPUESTA EXITOSA
+    # -----------------------------------------------------
+
+    messages.success(
+        request,
+        (
+            "Tu calificación del viaje fue "
+            "registrada correctamente."
+        ),
+    )
+
+    return redirect(
+        "mis_viajes_pasajero"
     )
 
 # =========================================================
@@ -2258,41 +2532,35 @@ def enviar_mensaje_chat(request, viaje_id):
         status=201,
     )
 
-#==========================================================
-# Crear Alertas
-#==========================================================
-
-def usuario_pertenece_al_viaje(usuario, viaje):
-    """
-    Permite participar al conductor del viaje o a un pasajero
-    cuya solicitud haya sido aceptada.
-    """
-
-    if viaje.conductor.usuario_id == usuario.id:
-        return True
-
-    return SolicitudViaje.objects.filter(
-        viaje=viaje,
-        pasajero=usuario,
-        estado=SolicitudViaje.EstadosSolicitud.ACEPTADA,
-    ).exists()
-
+# =========================================================
+# CREAR ALERTA DE EMERGENCIA
+# =========================================================
 
 @login_required(login_url="login")
 def crear_alerta_viaje(request, viaje_id):
 
+    # -----------------------------------------------------
+    # OBTENER VIAJE
+    # -----------------------------------------------------
+
     viaje = get_object_or_404(
         Viaje.objects.select_related(
+            "conductor",
             "conductor__usuario",
             "vehiculo",
         ),
         pk=viaje_id,
     )
 
+    # -----------------------------------------------------
+    # VALIDAR PARTICIPACIÓN
+    # -----------------------------------------------------
+
     if not usuario_pertenece_al_viaje(
         request.user,
         viaje,
     ):
+
         messages.error(
             request,
             "No tienes permiso para crear alertas en este viaje.",
@@ -2300,57 +2568,117 @@ def crear_alerta_viaje(request, viaje_id):
 
         return redirect("home")
 
+    # -----------------------------------------------------
+    # VALIDAR ESTADO DEL VIAJE
+    # -----------------------------------------------------
+
+    if viaje.estado != Viaje.EstadosViaje.EN_CURSO:
+
+        messages.warning(
+            request,
+            (
+                "Las alertas de emergencia solo pueden "
+                "generarse mientras el viaje está en curso."
+            ),
+        )
+
+        if (
+            viaje.conductor.usuario_id
+            == request.user.id
+        ):
+
+            return redirect(
+                "mis_viajes_conductor"
+            )
+
+        return redirect(
+            "mis_viajes_pasajero"
+        )
+
+    # -----------------------------------------------------
+    # PROCESAR FORMULARIO
+    # -----------------------------------------------------
+
     if request.method == "POST":
 
-        tipo = request.POST.get(
-            "tipo",
-            "",
-        ).strip()
+        tipo = (
+            request.POST
+            .get("tipo", "")
+            .strip()
+        )
 
-        descripcion = request.POST.get(
-            "descripcion",
-            "",
-        ).strip()
+        descripcion = (
+            request.POST
+            .get("descripcion", "")
+            .strip()
+        )
 
-        latitud_texto = request.POST.get(
-            "latitud",
-            "",
-        ).strip()
+        latitud_texto = (
+            request.POST
+            .get("latitud", "")
+            .strip()
+        )
 
-        longitud_texto = request.POST.get(
-            "longitud",
-            "",
-        ).strip()
+        longitud_texto = (
+            request.POST
+            .get("longitud", "")
+            .strip()
+        )
 
         tipos_validos = {
             valor
-            for valor, _ in
-            AlertaEmergencia.TiposAlerta.choices
+            for valor, _ in (
+                AlertaEmergencia
+                .TiposAlerta
+                .choices
+            )
         }
 
         errores = []
 
+        # -------------------------------------------------
+        # VALIDAR TIPO
+        # -------------------------------------------------
+
         if tipo not in tipos_validos:
+
             errores.append(
                 "Selecciona un tipo de emergencia válido."
             )
 
+        # -------------------------------------------------
+        # VALIDAR DESCRIPCIÓN
+        # -------------------------------------------------
+
         if not descripcion:
+
             errores.append(
                 "Describe brevemente lo que está ocurriendo."
             )
 
-        if len(descripcion) > 1000:
+        elif len(descripcion) > 500:
+
             errores.append(
-                "La descripción no puede superar los 1000 caracteres."
+                (
+                    "La descripción no puede superar "
+                    "los 500 caracteres."
+                )
             )
+
+        # -------------------------------------------------
+        # VALIDAR COORDENADAS
+        # -------------------------------------------------
 
         latitud = None
         longitud = None
 
         if latitud_texto or longitud_texto:
 
-            if not latitud_texto or not longitud_texto:
+            if (
+                not latitud_texto
+                or not longitud_texto
+            ):
+
                 errores.append(
                     "La ubicación está incompleta."
                 )
@@ -2358,17 +2686,61 @@ def crear_alerta_viaje(request, viaje_id):
             else:
 
                 try:
-                    latitud = Decimal(latitud_texto)
-                    longitud = Decimal(longitud_texto)
 
-                except InvalidOperation:
-                    errores.append(
-                        "Las coordenadas de ubicación no son válidas."
+                    latitud = Decimal(
+                        latitud_texto
                     )
+
+                    longitud = Decimal(
+                        longitud_texto
+                    )
+
+                    if not (
+                        Decimal("-90")
+                        <= latitud
+                        <= Decimal("90")
+                    ):
+
+                        errores.append(
+                            (
+                                "La latitud debe estar "
+                                "entre -90 y 90."
+                            )
+                        )
+
+                    if not (
+                        Decimal("-180")
+                        <= longitud
+                        <= Decimal("180")
+                    ):
+
+                        errores.append(
+                            (
+                                "La longitud debe estar "
+                                "entre -180 y 180."
+                            )
+                        )
+
+                except (
+                    InvalidOperation,
+                    ValueError,
+                ):
+
+                    errores.append(
+                        (
+                            "Las coordenadas de ubicación "
+                            "no son válidas."
+                        )
+                    )
+
+        # -------------------------------------------------
+        # REGRESAR ERRORES
+        # -------------------------------------------------
 
         if errores:
 
             for error in errores:
+
                 messages.error(
                     request,
                     error,
@@ -2379,11 +2751,13 @@ def crear_alerta_viaje(request, viaje_id):
                 "alertas/crear_alerta.html",
                 {
                     "viaje": viaje,
+
                     "tipos_alerta": (
                         AlertaEmergencia
                         .TiposAlerta
                         .choices
                     ),
+
                     "datos": {
                         "tipo": tipo,
                         "descripcion": descripcion,
@@ -2392,6 +2766,10 @@ def crear_alerta_viaje(request, viaje_id):
                     },
                 },
             )
+
+        # -------------------------------------------------
+        # CREAR ALERTA
+        # -------------------------------------------------
 
         alerta = AlertaEmergencia(
             viaje=viaje,
@@ -2408,17 +2786,23 @@ def crear_alerta_viaje(request, viaje_id):
         )
 
         try:
+
             alerta.full_clean()
             alerta.save()
 
         except ValidationError as error:
 
-            if hasattr(error, "message_dict"):
+            if hasattr(
+                error,
+                "message_dict",
+            ):
 
                 for mensajes_campo in (
                     error.message_dict.values()
                 ):
+
                     for mensaje in mensajes_campo:
+
                         messages.error(
                             request,
                             mensaje,
@@ -2427,6 +2811,7 @@ def crear_alerta_viaje(request, viaje_id):
             else:
 
                 for mensaje in error.messages:
+
                     messages.error(
                         request,
                         mensaje,
@@ -2437,11 +2822,13 @@ def crear_alerta_viaje(request, viaje_id):
                 "alertas/crear_alerta.html",
                 {
                     "viaje": viaje,
+
                     "tipos_alerta": (
                         AlertaEmergencia
                         .TiposAlerta
                         .choices
                     ),
+
                     "datos": {
                         "tipo": tipo,
                         "descripcion": descripcion,
@@ -2453,7 +2840,10 @@ def crear_alerta_viaje(request, viaje_id):
 
         messages.success(
             request,
-            "La alerta de emergencia fue enviada correctamente.",
+            (
+                "La alerta de emergencia fue enviada "
+                "correctamente."
+            ),
         )
 
         return redirect(
@@ -2461,16 +2851,23 @@ def crear_alerta_viaje(request, viaje_id):
             viaje_id=viaje.id,
         )
 
+    # -----------------------------------------------------
+    # MOSTRAR FORMULARIO
+    # -----------------------------------------------------
+
     return render(
         request,
         "alertas/crear_alerta.html",
         {
             "viaje": viaje,
+
             "tipos_alerta": (
                 AlertaEmergencia
                 .TiposAlerta
                 .choices
             ),
+
+            "datos": {},
         },
     )
 
@@ -2952,7 +3349,9 @@ def mis_viajes_pasajero(request):
         for solicitud in solicitudes
     ]
 
-    calificaciones_realizadas = set(
+# Viajes en los que el pasajero ya calificó al conductor.
+
+    calificaciones_conductor_realizadas = set(
         Calificacion.objects
         .filter(
             viaje_id__in=ids_viajes,
@@ -2969,6 +3368,26 @@ def mis_viajes_pasajero(request):
         )
     )
 
+# Viajes en los que el pasajero ya calificó
+# la experiencia general del ride.
+
+    calificaciones_viaje_realizadas = set(
+        Calificacion.objects
+        .filter(
+            viaje_id__in=ids_viajes,
+            autor=request.user,
+            tipo=(
+                Calificacion
+                .TiposCalificacion
+                .VIAJE
+            ),
+        )
+        .values_list(
+            "viaje_id",
+            flat=True,
+        )
+    )
+
     # -----------------------------------------------------
     # PREPARAR DATOS ADICIONALES
     # -----------------------------------------------------
@@ -2977,9 +3396,30 @@ def mis_viajes_pasajero(request):
 
         # Indica si el pasajero ya calificó al conductor.
 
+        # Indica si el pasajero ya calificó al conductor.
+
         solicitud.calificacion_conductor_realizada = (
             solicitud.viaje_id
-            in calificaciones_realizadas
+            in calificaciones_conductor_realizadas
+        )
+
+# Indica si el pasajero ya calificó
+# la experiencia general del viaje.
+
+        solicitud.calificacion_viaje_realizada = (
+            solicitud.viaje_id
+            in calificaciones_viaje_realizadas
+        )
+
+# Solo puede calificar cuando la solicitud y
+# el viaje estén completamente finalizados.
+
+        solicitud.puede_calificar_viaje = (
+            solicitud.estado
+            == SolicitudViaje.EstadosSolicitud.COMPLETADA
+            and solicitud.viaje.estado
+            == Viaje.EstadosViaje.FINALIZADO
+            and not solicitud.calificacion_viaje_realizada
         )
 
         # -------------------------------------------------
@@ -3149,10 +3589,36 @@ def mis_viajes_pasajero(request):
         # ESTADO DE CALIFICACIÓN
         # -------------------------------------------------
 
+        estados_calificacion = []
+
+        if solicitud.calificacion_conductor_realizada:
+
+                estados_calificacion.append(
+                    "Conductor calificado"
+                )
+
+        else:
+
+                estados_calificacion.append(
+                    "Conductor pendiente"
+                )
+
+        if solicitud.calificacion_viaje_realizada:
+
+                estados_calificacion.append(
+                    "Viaje calificado"
+                )
+
+        else:
+
+                estados_calificacion.append(
+                    "Viaje pendiente"
+                )
+
         solicitud.estado_calificacion_resumen = (
-            "Conductor calificado"
-            if solicitud.calificacion_conductor_realizada
-            else "Calificación pendiente"
+                " · ".join(
+                    estados_calificacion
+                )
         )
 
     # -----------------------------------------------------
@@ -3999,6 +4465,82 @@ def finalizar_viaje(request, viaje_id):
         "mis_viajes_conductor"
     )
 
+# =========================================================
+# CONTEXTO DEL MÓDULO ADMINISTRATIVO DE ALERTAS
+# =========================================================
+
+def obtener_contexto_alertas_admin():
+
+    alertas = (
+        AlertaEmergencia.objects
+        .select_related(
+            "usuario",
+            "viaje",
+            "viaje__conductor",
+            "viaje__conductor__usuario",
+            "viaje__vehiculo",
+            "atendida_por",
+        )
+        .order_by(
+            "-fecha_activacion"
+        )
+    )
+
+    return {
+
+        "alertas":
+            alertas,
+
+        "tipos_alerta":
+            AlertaEmergencia
+            .TiposAlerta
+            .choices,
+
+        "estados_alerta":
+            AlertaEmergencia
+            .EstadosAlerta
+            .choices,
+
+        "total_alertas":
+            alertas.count(),
+
+        "total_alertas_activas":
+            alertas.filter(
+                estado=(
+                    AlertaEmergencia
+                    .EstadosAlerta
+                    .ACTIVA
+                )
+            ).count(),
+
+        "total_alertas_en_atencion":
+            alertas.filter(
+                estado=(
+                    AlertaEmergencia
+                    .EstadosAlerta
+                    .EN_ATENCION
+                )
+            ).count(),
+
+        "total_alertas_resueltas":
+            alertas.filter(
+                estado=(
+                    AlertaEmergencia
+                    .EstadosAlerta
+                    .RESUELTA
+                )
+            ).count(),
+
+        "total_falsas_alarmas":
+            alertas.filter(
+                estado=(
+                    AlertaEmergencia
+                    .EstadosAlerta
+                    .FALSA_ALARMA
+                )
+            ).count(),
+
+    }
 
 # =========================================================
 # PANEL ADMINISTRATIVO Y VISTAS ASOCIADAS
@@ -4411,16 +4953,9 @@ def cargar_vista(request, vista):
 
     elif vista == "alertas":
 
-        contexto["alertas"] = (
-            AlertaEmergencia.objects
-            .select_related(
-                "usuario",
-                "viaje",
-            )
-            .order_by(
-                "-fecha_activacion"
-            )
-        )
+        contexto.update(
+            obtener_contexto_alertas_admin()
+    )
 
     # =====================================================
     # PUNTOCACIONES
@@ -4806,25 +5341,278 @@ def panel_admin(request):
     return redirect("index")
 
 
-@user_passes_test(es_administrador, login_url="login")
+# =========================================================
+# PANEL DE ALERTAS
+# =========================================================
+
+@user_passes_test(
+    es_administrador,
+    login_url="login",
+)
 def panel_alertas(request):
-    alertas = (
-        AlertaEmergencia.objects
-        .select_related("usuario", "viaje")
-        .order_by("-fecha_activacion")
+
+    return render(
+        request,
+        "dashAd/partials/alertas.html",
+        obtener_contexto_alertas_admin(),
     )
 
-    contexto = {
-        "alertas": alertas,
-        "total_alertas": alertas.count(),
-        "total_alertas_urgentes": alertas.filter(tipo=AlertaEmergencia.TiposAlerta.PANICO).count(),
-        "total_alertas_medio": alertas.filter(tipo=AlertaEmergencia.TiposAlerta.ACCIDENTE).count(),
-        "total_alertas_bajo": alertas.filter(tipo=AlertaEmergencia.TiposAlerta.OTRO).count(),
-        "total_alertas_activas": alertas.filter(estado=AlertaEmergencia.EstadosAlerta.ACTIVA).count(),
-        "total_alertas_resueltas": alertas.filter(estado=AlertaEmergencia.EstadosAlerta.RESUELTA).count(),
+# =========================================================
+# ACTUALIZAR ALERTA DESDE EL PANEL ADMINISTRATIVO
+# =========================================================
+
+@require_POST
+@user_passes_test(
+    es_administrador,
+    login_url="login",
+)
+def actualizar_alerta_admin(
+    request,
+    alerta_id,
+):
+
+    alerta = get_object_or_404(
+        AlertaEmergencia.objects.select_related(
+            "usuario",
+            "viaje",
+            "atendida_por",
+        ),
+        pk=alerta_id,
+    )
+
+    nuevo_estado = (
+        request.POST
+        .get("estado", "")
+        .strip()
+    )
+
+    estados_validos = {
+        valor
+        for valor, _ in (
+            AlertaEmergencia
+            .EstadosAlerta
+            .choices
+        )
     }
 
-    return render(request, "dashAd/partials/alertas.html", contexto)
+    if nuevo_estado not in estados_validos:
+
+        return JsonResponse(
+            {
+                "ok": False,
+                "error": (
+                    "El estado seleccionado no es válido."
+                ),
+            },
+            status=400,
+        )
+
+    ahora = timezone.now()
+
+    try:
+
+        with transaction.atomic():
+
+            alerta = (
+                AlertaEmergencia.objects
+                .select_for_update()
+                .get(pk=alerta.id)
+            )
+
+            # ---------------------------------------------
+            # VOLVER A ACTIVA
+            # ---------------------------------------------
+
+            if (
+                nuevo_estado
+                == AlertaEmergencia
+                .EstadosAlerta
+                .ACTIVA
+            ):
+
+                alerta.estado = (
+                    AlertaEmergencia
+                    .EstadosAlerta
+                    .ACTIVA
+                )
+
+                alerta.atendida_por = None
+                alerta.fecha_atencion = None
+                alerta.fecha_resolucion = None
+
+            # ---------------------------------------------
+            # MARCAR EN ATENCIÓN
+            # ---------------------------------------------
+
+            elif (
+                nuevo_estado
+                == AlertaEmergencia
+                .EstadosAlerta
+                .EN_ATENCION
+            ):
+
+                alerta.estado = (
+                    AlertaEmergencia
+                    .EstadosAlerta
+                    .EN_ATENCION
+                )
+
+                alerta.atendida_por = (
+                    request.user
+                )
+
+                if alerta.fecha_atencion is None:
+
+                    alerta.fecha_atencion = ahora
+
+                alerta.fecha_resolucion = None
+
+            # ---------------------------------------------
+            # MARCAR RESUELTA
+            # ---------------------------------------------
+
+            elif (
+                nuevo_estado
+                == AlertaEmergencia
+                .EstadosAlerta
+                .RESUELTA
+            ):
+
+                alerta.estado = (
+                    AlertaEmergencia
+                    .EstadosAlerta
+                    .RESUELTA
+                )
+
+                alerta.atendida_por = (
+                    request.user
+                )
+
+                if alerta.fecha_atencion is None:
+
+                    alerta.fecha_atencion = ahora
+
+                alerta.fecha_resolucion = ahora
+
+            # ---------------------------------------------
+            # MARCAR FALSA ALARMA
+            # ---------------------------------------------
+
+            elif (
+                nuevo_estado
+                == AlertaEmergencia
+                .EstadosAlerta
+                .FALSA_ALARMA
+            ):
+
+                alerta.estado = (
+                    AlertaEmergencia
+                    .EstadosAlerta
+                    .FALSA_ALARMA
+                )
+
+                alerta.atendida_por = (
+                    request.user
+                )
+
+                if alerta.fecha_atencion is None:
+
+                    alerta.fecha_atencion = ahora
+
+                alerta.fecha_resolucion = ahora
+
+            alerta.full_clean()
+
+            alerta.save(
+                update_fields=[
+                    "estado",
+                    "atendida_por",
+                    "fecha_atencion",
+                    "fecha_resolucion",
+                ]
+            )
+
+    except ValidationError as error:
+
+        mensajes = []
+
+        if hasattr(
+            error,
+            "message_dict",
+        ):
+
+            for errores_campo in (
+                error.message_dict.values()
+            ):
+
+                mensajes.extend(
+                    str(mensaje)
+                    for mensaje in errores_campo
+                )
+
+        else:
+
+            mensajes.extend(
+                str(mensaje)
+                for mensaje in error.messages
+            )
+
+        return JsonResponse(
+            {
+                "ok": False,
+                "error": (
+                    " ".join(mensajes)
+                    or (
+                        "No fue posible actualizar "
+                        "la alerta."
+                    )
+                ),
+            },
+            status=400,
+        )
+
+    return JsonResponse(
+        {
+            "ok": True,
+
+            "mensaje": (
+                "La alerta fue actualizada correctamente."
+            ),
+
+            "alerta": {
+                "id":
+                    alerta.id,
+
+                "estado":
+                    alerta.estado,
+
+                "estado_display":
+                    alerta.get_estado_display(),
+
+                "atendida_por": (
+                    alerta.atendida_por.nombre_completo
+                    if alerta.atendida_por
+                    else ""
+                ),
+
+                "fecha_atencion": (
+                    timezone.localtime(
+                        alerta.fecha_atencion
+                    ).strftime("%d/%m/%Y %H:%M")
+                    if alerta.fecha_atencion
+                    else ""
+                ),
+
+                "fecha_resolucion": (
+                    timezone.localtime(
+                        alerta.fecha_resolucion
+                    ).strftime("%d/%m/%Y %H:%M")
+                    if alerta.fecha_resolucion
+                    else ""
+                ),
+            },
+        }
+    )
 
 
 # =========================================================

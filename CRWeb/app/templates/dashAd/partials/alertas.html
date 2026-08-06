@@ -1,147 +1,1347 @@
-<section class="contenedor">
+<section
+    class="alertas-admin-contenedor"
+    id="moduloAlertasAdmin">
 
-    <!--================ FILTROS =================-->
+    <!--==================================================
+                    ENCABEZADO
+    ==================================================-->
 
-    <section class="filtros">
+    <header class="alertas-admin-header">
 
-        <div class="buscar">
+        <div class="alertas-admin-header-texto">
+
+            <span class="alertas-admin-etiqueta">
+
+                <i class="fa-solid fa-shield-halved"></i>
+
+                Monitoreo de seguridad
+
+            </span>
+
+            <h1>
+                Alertas de emergencia
+            </h1>
+
+            <p>
+                Consulta las alertas generadas durante los rides,
+                revisa su información y actualiza su estado de atención.
+            </p>
+
+        </div>
+
+        <div class="alertas-admin-header-icono">
+
+            <i class="fa-solid fa-triangle-exclamation"></i>
+
+        </div>
+
+    </header>
+
+
+    <!--==================================================
+                    ESTADÍSTICAS
+    ==================================================-->
+
+    <section class="alertas-estadisticas">
+
+        <!-- TOTAL -->
+
+        <article class="alerta-estadistica-card">
+
+            <div class="alerta-estadistica-icono total">
+
+                <i class="fa-solid fa-bell"></i>
+
+            </div>
+
+            <div>
+
+                <span>
+                    Total de alertas
+                </span>
+
+                <strong id="estadisticaTotalAlertas">
+
+                    {{ total_alertas|default:0 }}
+
+                </strong>
+
+            </div>
+
+        </article>
+
+
+        <!-- ACTIVAS -->
+
+        <article class="alerta-estadistica-card">
+
+            <div class="alerta-estadistica-icono activas">
+
+                <i class="fa-solid fa-circle-exclamation"></i>
+
+            </div>
+
+            <div>
+
+                <span>
+                    Alertas activas
+                </span>
+
+                <strong id="estadisticaAlertasActivas">
+
+                    {{ total_alertas_activas|default:0 }}
+
+                </strong>
+
+            </div>
+
+        </article>
+
+
+        <!-- EN ATENCIÓN -->
+
+        <article class="alerta-estadistica-card">
+
+            <div class="alerta-estadistica-icono atencion">
+
+                <i class="fa-solid fa-user-shield"></i>
+
+            </div>
+
+            <div>
+
+                <span>
+                    En atención
+                </span>
+
+                <strong id="estadisticaAlertasAtencion">
+
+                    {{ total_alertas_en_atencion|default:0 }}
+
+                </strong>
+
+            </div>
+
+        </article>
+
+
+        <!-- RESUELTAS -->
+
+        <article class="alerta-estadistica-card">
+
+            <div class="alerta-estadistica-icono resueltas">
+
+                <i class="fa-solid fa-circle-check"></i>
+
+            </div>
+
+            <div>
+
+                <span>
+                    Resueltas
+                </span>
+
+                <strong id="estadisticaAlertasResueltas">
+
+                    {{ total_alertas_resueltas|default:0 }}
+
+                </strong>
+
+            </div>
+
+        </article>
+
+    </section>
+
+
+    <!--==================================================
+                    FILTROS
+    ==================================================-->
+
+    <section class="alertas-admin-filtros">
+
+        <!-- BUSCADOR -->
+
+        <div class="alertas-buscador">
 
             <i class="fa-solid fa-magnifying-glass"></i>
 
             <input
-                type="text"
+                type="search"
                 id="buscarAlerta"
-                placeholder="Buscar alerta...">
+                placeholder="Buscar por usuario, correo, tipo o descripción..."
+                autocomplete="off">
 
         </div>
 
-        <select id="filtroTipo">
 
-            <option value="Todos">
+        <!-- FILTRO TIPO -->
 
-                Tipo: Todos
+        <div class="alertas-filtro-campo">
 
-            </option>
+            <label
+                for="filtroTipo"
+                class="sr-only">
 
-            <option value="Urgente">
+                Filtrar por tipo
 
-                Urgente
+            </label>
 
-            </option>
+            <select id="filtroTipo">
 
-            <option value="Medio">
+                <option value="todos">
 
-                Medio
+                    Tipo: Todos
 
-            </option>
+                </option>
 
-            <option value="Bajo">
+                {% for valor, etiqueta in tipos_alerta %}
 
-                Bajo
+                    <option value="{{ valor }}">
 
-            </option>
+                        {{ etiqueta }}
 
-        </select>
+                    </option>
 
-        <select id="filtroEstado">
+                {% endfor %}
 
-            <option value="Todos">
+            </select>
 
-                Estado: Todos
+        </div>
 
-            </option>
 
-            <option value="Activo">
+        <!-- FILTRO ESTADO -->
 
-                Activo
+        <div class="alertas-filtro-campo">
 
-            </option>
+            <label
+                for="filtroEstado"
+                class="sr-only">
 
-            <option value="Inactivo">
+                Filtrar por estado
 
-                Inactivo
+            </label>
 
-            </option>
+            <select id="filtroEstado">
 
-        </select>
+                <option value="todos">
 
-        <button id="btnFiltrar">
+                    Estado: Todos
+
+                </option>
+
+                {% for valor, etiqueta in estados_alerta %}
+
+                    <option value="{{ valor }}">
+
+                        {{ etiqueta }}
+
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <!-- BOTÓN FILTRAR -->
+
+        <button
+            type="button"
+            class="btn-filtrar-alertas"
+            id="btnFiltrar">
+
+            <i class="fa-solid fa-filter"></i>
 
             Filtrar
+
+        </button>
+
+
+        <!-- LIMPIAR FILTROS -->
+
+        <button
+            type="button"
+            class="btn-limpiar-alertas"
+            id="btnLimpiarFiltrosAlertas">
+
+            <i class="fa-solid fa-rotate-left"></i>
+
+            Limpiar
 
         </button>
 
     </section>
 
 
+    <!--==================================================
+                    TABLA
+    ==================================================-->
 
-    <!--================ TABLA =================-->
+    <section class="alertas-admin-tabla-contenedor">
 
-    <section class="tabla">
+        <div class="alertas-admin-tabla-scroll">
 
-        <table>
-            <!--  Cabecera de la tabla  -->
-            <thead>
+            <table class="alertas-admin-tabla">
 
-                <tr>
+                <thead>
 
-                    <th>ID</th>
+                    <tr>
 
-                    <th>Nombre</th>
+                        <th scope="col">
+                            ID
+                        </th>
 
-                    <th>Alerta</th>
+                        <th scope="col">
+                            Usuario
+                        </th>
 
-                    <th>Tipo</th>
+                        <th scope="col">
+                            Tipo
+                        </th>
 
-                    <th>Estado</th>
+                        <th scope="col">
+                            Descripción
+                        </th>
 
-                </tr>
+                        <th scope="col">
+                            Viaje
+                        </th>
 
-            </thead>
-            <!-- ======== Cuerpo de la tabla ======== -->
-            <tbody id="tablaAlertas">
-                {% for alerta in alertas %}
-                <tr>
-                    <td>{{ alerta.id }}</td>
-                    <td class="col-usuario">{{ alerta.usuario.get_full_name }}</td>
-                    <td>
-                        <span class="badge tipo-alerta">{{ alerta.tipo }}</span>
-                    </td>
-                    <td class="col-detalle">{{ alerta.descripcion }}</td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="4" style="text-align: center; padding: 30px;">No hay alertas registradas.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
+                        <th scope="col">
+                            Fecha
+                        </th>
 
-        </table>
+                        <th scope="col">
+                            Estado
+                        </th>
 
+                        <th scope="col">
+                            Acciones
+                        </th>
+
+                    </tr>
+
+                </thead>
 
 
-        <!--================ FOOTER =================-->
+                <tbody id="tablaAlertas">
 
-        <div class="footer-tabla">
+                    {% for alerta in alertas %}
 
-            <p>
+                        <tr
+                            class="alerta-admin-fila"
+                            data-alerta-id="{{ alerta.id }}"
+                            data-tipo="{{ alerta.tipo }}"
+                            data-estado="{{ alerta.estado }}">
 
-                Mostrando 1 - 5 de 5 alertas
+                            <!--==================================
+                                        ID
+                            ===================================-->
 
-            </p>
+                            <td class="alerta-columna-id">
 
-            <div class="paginacion">
+                                <strong>
 
-                <button class="pagina activa">
+                                    #{{ alerta.id }}
 
-                    1
+                                </strong>
 
-                </button>
+                            </td>
 
-            </div>
+
+                            <!--==================================
+                                    USUARIO
+                            ===================================-->
+
+                            <td class="alerta-columna-usuario">
+
+                                <div class="alerta-usuario">
+
+                                    <div class="alerta-usuario-foto">
+
+                                        {% if alerta.usuario.foto %}
+
+                                            <img
+                                                src="{{ alerta.usuario.foto.url }}"
+                                                alt="Foto de {{ alerta.usuario.nombre_completo }}">
+
+                                        {% else %}
+
+                                            <i class="fa-solid fa-user"></i>
+
+                                        {% endif %}
+
+                                    </div>
+
+                                    <div class="alerta-usuario-info">
+
+                                        <strong>
+
+                                            {{ alerta.usuario.nombre_completo }}
+
+                                        </strong>
+
+                                        <small>
+
+                                            {{ alerta.usuario.email }}
+
+                                        </small>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+
+                            <!--==================================
+                                        TIPO
+                            ===================================-->
+
+                            <td>
+
+                                <span
+                                    class="
+                                        alerta-tipo-badge
+                                        alerta-tipo-{{ alerta.tipo }}
+                                    ">
+
+                                    {% if alerta.tipo == "panico" %}
+
+                                        <i class="fa-solid fa-bell"></i>
+
+                                    {% elif alerta.tipo == "accidente" %}
+
+                                        <i class="fa-solid fa-car-burst"></i>
+
+                                    {% elif alerta.tipo == "medica" %}
+
+                                        <i class="fa-solid fa-kit-medical"></i>
+
+                                    {% elif alerta.tipo == "seguridad" %}
+
+                                        <i class="fa-solid fa-shield-halved"></i>
+
+                                    {% else %}
+
+                                        <i class="fa-solid fa-triangle-exclamation"></i>
+
+                                    {% endif %}
+
+                                    {{ alerta.get_tipo_display }}
+
+                                </span>
+
+                            </td>
+
+
+                            <!--==================================
+                                    DESCRIPCIÓN
+                            ===================================-->
+
+                            <td class="alerta-columna-descripcion">
+
+                                <p class="alerta-descripcion">
+
+                                    {{ alerta.descripcion|default:"Sin descripción registrada" }}
+
+                                </p>
+
+                            </td>
+
+
+                            <!--==================================
+                                        VIAJE
+                            ===================================-->
+
+                            <td class="alerta-columna-viaje">
+
+                                {% if alerta.viaje %}
+
+                                    <div class="alerta-viaje-tabla">
+
+                                        <strong>
+
+                                            Ride #{{ alerta.viaje.id }}
+
+                                        </strong>
+
+                                        <small>
+
+                                            {{ alerta.viaje.origen|truncatechars:25 }}
+
+                                            <i class="fa-solid fa-arrow-right"></i>
+
+                                            {{ alerta.viaje.destino|truncatechars:25 }}
+
+                                        </small>
+
+                                    </div>
+
+                                {% else %}
+
+                                    <span class="alerta-sin-dato">
+
+                                        Sin viaje relacionado
+
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!--==================================
+                                        FECHA
+                            ===================================-->
+
+                            <td>
+
+                                <div class="alerta-fecha">
+
+                                    <strong>
+
+                                        {{ alerta.fecha_activacion|date:"d/m/Y" }}
+
+                                    </strong>
+
+                                    <small>
+
+                                        {{ alerta.fecha_activacion|date:"H:i" }} h
+
+                                    </small>
+
+                                </div>
+
+                            </td>
+
+
+                            <!--==================================
+                                        ESTADO
+                            ===================================-->
+
+                            <td>
+
+                                <span
+                                    class="
+                                        alerta-admin-estado
+                                        estado-{{ alerta.estado }}
+                                    "
+                                    data-estado-badge="{{ alerta.id }}">
+
+                                    {% if alerta.estado == "activa" %}
+
+                                        <i class="fa-solid fa-circle-exclamation"></i>
+
+                                    {% elif alerta.estado == "en_atencion" %}
+
+                                        <i class="fa-solid fa-user-shield"></i>
+
+                                    {% elif alerta.estado == "resuelta" %}
+
+                                        <i class="fa-solid fa-circle-check"></i>
+
+                                    {% elif alerta.estado == "falsa_alarma" %}
+
+                                        <i class="fa-solid fa-circle-minus"></i>
+
+                                    {% endif %}
+
+                                    <span>
+
+                                        {{ alerta.get_estado_display }}
+
+                                    </span>
+
+                                </span>
+
+                            </td>
+
+
+                            <!--==================================
+                                        ACCIONES
+                            ===================================-->
+
+                            <td>
+
+                                <button
+                                    type="button"
+                                    class="btn-administrar-alerta"
+                                    data-action="administrar-alerta"
+
+                                    data-alerta-id="{{ alerta.id }}"
+
+                                    data-url="{% url 'actualizar_alerta_admin' alerta.id %}"
+
+                                    data-usuario="{{ alerta.usuario.nombre_completo|escape }}"
+
+                                    data-email="{{ alerta.usuario.email|escape }}"
+
+                                    data-telefono="{{ alerta.usuario.telefono|default:'No registrado'|escape }}"
+
+                                    data-tipo="{{ alerta.tipo }}"
+
+                                    data-tipo-label="{{ alerta.get_tipo_display|escape }}"
+
+                                    data-descripcion="{{ alerta.descripcion|default:'Sin descripción registrada'|escape }}"
+
+                                    data-estado="{{ alerta.estado }}"
+
+                                    data-estado-label="{{ alerta.get_estado_display|escape }}"
+
+                                    data-fecha-activacion="{{ alerta.fecha_activacion|date:'d/m/Y H:i' }}"
+
+                                    data-fecha-atencion="{% if alerta.fecha_atencion %}{{ alerta.fecha_atencion|date:'d/m/Y H:i' }}{% endif %}"
+
+                                    data-fecha-resolucion="{% if alerta.fecha_resolucion %}{{ alerta.fecha_resolucion|date:'d/m/Y H:i' }}{% endif %}"
+
+                                    data-atendida-por="{% if alerta.atendida_por %}{{ alerta.atendida_por.nombre_completo|escape }}{% else %}Sin asignar{% endif %}"
+
+                                    data-viaje-id="{% if alerta.viaje %}{{ alerta.viaje.id }}{% endif %}"
+
+                                    data-origen="{% if alerta.viaje %}{{ alerta.viaje.origen|escape }}{% endif %}"
+
+                                    data-destino="{% if alerta.viaje %}{{ alerta.viaje.destino|escape }}{% endif %}"
+
+                                    data-conductor="{% if alerta.viaje %}{{ alerta.viaje.conductor.usuario.nombre_completo|escape }}{% endif %}"
+
+                                    data-vehiculo="{% if alerta.viaje %}{{ alerta.viaje.vehiculo.marca|escape }} {{ alerta.viaje.vehiculo.modelo|escape }}{% endif %}"
+
+                                    data-placas="{% if alerta.viaje %}{{ alerta.viaje.vehiculo.placas|escape }}{% endif %}"
+
+                                    data-latitud="{% if alerta.latitud != None %}{{ alerta.latitud|stringformat:'s' }}{% endif %}"
+
+                                    data-longitud="{% if alerta.longitud != None %}{{ alerta.longitud|stringformat:'s' }}{% endif %}"
+
+                                    aria-haspopup="dialog"
+                                    aria-controls="modalAdministrarAlerta"
+                                    aria-expanded="false">
+
+                                    <i class="fa-solid fa-gear"></i>
+
+                                    Administrar
+
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+                    {% empty %}
+
+                        <tr class="alertas-fila-vacia">
+
+                            <td colspan="8">
+
+                                <div class="alertas-vacias">
+
+                                    <div class="alertas-vacias-icono">
+
+                                        <i class="fa-solid fa-shield-halved"></i>
+
+                                    </div>
+
+                                    <h2>
+
+                                        No hay alertas registradas
+
+                                    </h2>
+
+                                    <p>
+
+                                        Las alertas creadas durante los rides
+                                        aparecerán aquí para que puedan ser atendidas.
+
+                                    </p>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
 
         </div>
 
+
+        <!--==================================================
+                        SIN RESULTADOS
+        ==================================================-->
+
+        <div
+            class="alertas-sin-resultados"
+            id="sinResultadosAlertas"
+            hidden>
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <strong>
+                No se encontraron alertas
+            </strong>
+
+            <span>
+                Prueba utilizando otros términos o filtros.
+            </span>
+
+        </div>
+
+
+        <!--==================================================
+                        FOOTER
+        ==================================================-->
+
+        <footer class="alertas-tabla-footer">
+
+            <p id="contadorAlertas">
+
+                Mostrando
+
+                <strong id="cantidadAlertasVisibles">
+
+                    {{ total_alertas|default:0 }}
+
+                </strong>
+
+                de
+
+                <strong id="cantidadAlertasTotal">
+
+                    {{ total_alertas|default:0 }}
+
+                </strong>
+
+                alertas
+
+            </p>
+
+        </footer>
+
     </section>
+
+
+    <!--==================================================
+            MODAL ADMINISTRAR ALERTA
+    ==================================================-->
+
+    <div
+        class="modal-alerta-overlay"
+        id="modalAdministrarAlerta"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="tituloModalAlerta"
+        aria-hidden="true">
+
+        <section
+            class="modal-alerta"
+            tabindex="-1">
+
+            <!-- CERRAR -->
+
+            <button
+                type="button"
+                class="modal-alerta-cerrar"
+                id="btnCerrarModalAlerta"
+                aria-label="Cerrar modal">
+
+                <i class="fa-solid fa-xmark"></i>
+
+            </button>
+
+
+            <!-- ENCABEZADO -->
+
+            <header class="modal-alerta-header">
+
+                <div class="modal-alerta-header-icono">
+
+                    <i class="fa-solid fa-shield-halved"></i>
+
+                </div>
+
+                <div>
+
+                    <span class="modal-alerta-etiqueta">
+
+                        Gestión de emergencia
+
+                    </span>
+
+                    <h2 id="tituloModalAlerta">
+
+                        Administrar alerta
+
+                    </h2>
+
+                    <p>
+
+                        Revisa la información y actualiza el estado
+                        de atención de esta alerta.
+
+                    </p>
+
+                </div>
+
+            </header>
+
+
+            <!-- CONTENIDO SCROLL -->
+
+            <div class="modal-alerta-contenido">
+
+                <!-- IDENTIFICACIÓN -->
+
+                <section class="modal-alerta-bloque">
+
+                    <div class="modal-alerta-bloque-header">
+
+                        <h3>
+
+                            <i class="fa-solid fa-circle-info"></i>
+
+                            Información general
+
+                        </h3>
+
+                        <span
+                            class="modal-alerta-estado"
+                            id="modalAlertaEstadoActual">
+
+                            Activa
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="modal-alerta-grid">
+
+                        <div class="modal-alerta-dato">
+
+                            <span>
+                                Número de alerta
+                            </span>
+
+                            <strong id="modalAlertaId">
+
+                                —
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="modal-alerta-dato">
+
+                            <span>
+                                Tipo
+                            </span>
+
+                            <strong id="modalAlertaTipo">
+
+                                —
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="modal-alerta-dato">
+
+                            <span>
+                                Fecha de activación
+                            </span>
+
+                            <strong id="modalAlertaFecha">
+
+                                —
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="modal-alerta-dato">
+
+                            <span>
+                                Administrador responsable
+                            </span>
+
+                            <strong id="modalAlertaAdministrador">
+
+                                Sin asignar
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- USUARIO -->
+
+                <section class="modal-alerta-bloque">
+
+                    <div class="modal-alerta-bloque-header">
+
+                        <h3>
+
+                            <i class="fa-solid fa-user"></i>
+
+                            Usuario que generó la alerta
+
+                        </h3>
+
+                    </div>
+
+
+                    <div class="modal-alerta-grid">
+
+                        <div class="modal-alerta-dato">
+
+                            <span>
+                                Nombre
+                            </span>
+
+                            <strong id="modalAlertaUsuario">
+
+                                —
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="modal-alerta-dato">
+
+                            <span>
+                                Correo electrónico
+                            </span>
+
+                            <strong id="modalAlertaEmail">
+
+                                —
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="modal-alerta-dato">
+
+                            <span>
+                                Teléfono
+                            </span>
+
+                            <strong id="modalAlertaTelefono">
+
+                                —
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- DESCRIPCIÓN -->
+
+                <section class="modal-alerta-bloque">
+
+                    <div class="modal-alerta-bloque-header">
+
+                        <h3>
+
+                            <i class="fa-solid fa-align-left"></i>
+
+                            Descripción de la emergencia
+
+                        </h3>
+
+                    </div>
+
+                    <div class="modal-alerta-descripcion">
+
+                        <p id="modalAlertaDescripcion">
+
+                            Sin descripción registrada.
+
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+                <!-- VIAJE -->
+
+                <section
+                    class="modal-alerta-bloque"
+                    id="modalBloqueViaje">
+
+                    <div class="modal-alerta-bloque-header">
+
+                        <h3>
+
+                            <i class="fa-solid fa-car"></i>
+
+                            Viaje relacionado
+
+                        </h3>
+
+                    </div>
+
+
+                    <div class="modal-alerta-ruta">
+
+                        <div>
+
+                            <span>
+                                Origen
+                            </span>
+
+                            <strong id="modalAlertaOrigen">
+
+                                —
+
+                            </strong>
+
+                        </div>
+
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                        <div>
+
+                            <span>
+                                Destino
+                            </span>
+
+                            <strong id="modalAlertaDestino">
+
+                                —
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="modal-alerta-grid">
+
+                        <div class="modal-alerta-dato">
+
+                            <span>
+                                Ride
+                            </span>
+
+                            <strong id="modalAlertaViajeId">
+
+                                —
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="modal-alerta-dato">
+
+                            <span>
+                                Conductor
+                            </span>
+
+                            <strong id="modalAlertaConductor">
+
+                                —
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="modal-alerta-dato">
+
+                            <span>
+                                Vehículo
+                            </span>
+
+                            <strong id="modalAlertaVehiculo">
+
+                                —
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="modal-alerta-dato">
+
+                            <span>
+                                Placas
+                            </span>
+
+                            <strong id="modalAlertaPlacas">
+
+                                —
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- UBICACIÓN -->
+
+                <section class="modal-alerta-bloque">
+
+                    <div class="modal-alerta-bloque-header">
+
+                        <h3>
+
+                            <i class="fa-solid fa-location-dot"></i>
+
+                            Ubicación compartida
+
+                        </h3>
+
+                    </div>
+
+
+                    <div
+                        class="modal-alerta-ubicacion"
+                        id="modalAlertaUbicacionDisponible">
+
+                        <div>
+
+                            <span>
+                                Latitud
+                            </span>
+
+                            <strong id="modalAlertaLatitud">
+
+                                —
+
+                            </strong>
+
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Longitud
+                            </span>
+
+                            <strong id="modalAlertaLongitud">
+
+                                —
+
+                            </strong>
+
+                        </div>
+
+                        <a
+                            href="#"
+                            class="btn-abrir-mapa-alerta"
+                            id="btnAbrirMapaAlerta"
+                            target="_blank"
+                            rel="noopener noreferrer">
+
+                            <i class="fa-solid fa-map-location-dot"></i>
+
+                            Abrir ubicación
+
+                        </a>
+
+                    </div>
+
+
+                    <div
+                        class="modal-alerta-sin-ubicacion"
+                        id="modalAlertaSinUbicacion"
+                        hidden>
+
+                        <i class="fa-solid fa-location-crosshairs"></i>
+
+                        <span>
+
+                            El usuario no compartió su ubicación.
+
+                        </span>
+
+                    </div>
+
+                </section>
+
+
+                <!-- FECHAS DE GESTIÓN -->
+
+                <section class="modal-alerta-bloque">
+
+                    <div class="modal-alerta-bloque-header">
+
+                        <h3>
+
+                            <i class="fa-solid fa-clock-rotate-left"></i>
+
+                            Seguimiento
+
+                        </h3>
+
+                    </div>
+
+
+                    <div class="modal-alerta-grid">
+
+                        <div class="modal-alerta-dato">
+
+                            <span>
+                                Fecha de atención
+                            </span>
+
+                            <strong id="modalAlertaFechaAtencion">
+
+                                Sin registrar
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="modal-alerta-dato">
+
+                            <span>
+                                Fecha de resolución
+                            </span>
+
+                            <strong id="modalAlertaFechaResolucion">
+
+                                Sin registrar
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- FORMULARIO -->
+
+                <form
+                    method="POST"
+                    class="form-administrar-alerta"
+                    id="formAdministrarAlerta">
+
+                    {% csrf_token %}
+
+                    <div class="campo-estado-alerta">
+
+                        <label for="nuevoEstadoAlerta">
+
+                            Nuevo estado
+
+                        </label>
+
+                        <select
+                            name="estado"
+                            id="nuevoEstadoAlerta"
+                            required>
+
+                            {% for valor, etiqueta in estados_alerta %}
+
+                                <option value="{{ valor }}">
+
+                                    {{ etiqueta }}
+
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                        <small>
+
+                            Al marcarla como “En atención”, “Resuelta”
+                            o “Falsa alarma”, quedarás registrado como
+                            administrador responsable.
+
+                        </small>
+
+                    </div>
+
+
+                    <div
+                        class="mensaje-error-alerta"
+                        id="errorAdministrarAlerta"
+                        hidden>
+
+                        <i class="fa-solid fa-circle-exclamation"></i>
+
+                        <span>
+
+                            No fue posible actualizar la alerta.
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="modal-alerta-acciones">
+
+                        <button
+                            type="button"
+                            class="btn-cancelar-modal-alerta"
+                            id="btnCancelarModalAlerta">
+
+                            Cancelar
+
+                        </button>
+
+                        <button
+                            type="submit"
+                            class="btn-guardar-alerta"
+                            id="btnGuardarAlerta">
+
+                            <i class="fa-solid fa-floppy-disk"></i>
+
+                            Guardar cambios
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <!--==================================================
+                    TOAST
+    ==================================================-->
+
+    <div
+        class="alertas-toast-contenedor"
+        id="alertasToastContenedor"
+        aria-live="polite"
+        aria-atomic="true">
+    </div>
 
 </section>

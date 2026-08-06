@@ -1148,6 +1148,10 @@
                                 </button>
 
 
+                                <!-- =================================
+                                    CALIFICAR AL CONDUCTOR
+                                ================================== -->
+
                                 {% if solicitud.calificacion_conductor_realizada %}
 
                                     <span class="calificacion-realizada">
@@ -1169,6 +1173,45 @@
                                         Calificar conductor
 
                                     </a>
+
+                                {% endif %}
+
+
+                                <!-- =================================
+                                    CALIFICAR LA EXPERIENCIA DEL VIAJE
+                                ================================== -->
+
+                                {% if solicitud.calificacion_viaje_realizada %}
+
+                                    <span class="calificacion-realizada calificacion-viaje-realizada">
+
+                                        <i class="fa-solid fa-circle-check"></i>
+
+                                        Viaje calificado
+
+                                    </span>
+
+                                {% elif solicitud.viaje.estado == "finalizado" %}
+
+                                    <button
+                                        type="button"
+                                        class="btn-viaje btn-calificar-viaje"
+                                        data-action="calificar-viaje"
+                                        data-solicitud="{{ solicitud.id }}"
+                                        data-viaje="{{ solicitud.viaje.id }}"
+                                        data-url="{% url 'calificar_viaje' solicitud.id %}"
+                                        data-origen="{{ solicitud.viaje.origen|escape }}"
+                                        data-destino="{{ solicitud.viaje.destino|escape }}"
+                                        data-conductor="{{ solicitud.viaje.conductor.usuario.nombre_completo|escape }}"
+                                        aria-haspopup="dialog"
+                                        aria-controls="modalCalificarViaje"
+                                        aria-expanded="false">
+
+                                        <i class="fa-solid fa-route"></i>
+
+                                        Calificar viaje
+
+                                    </button>
 
                                 {% endif %}
 
@@ -1293,6 +1336,268 @@
             {% endfor %}
 
         </section>
+
+
+        <!-- =================================================
+            MODAL CALIFICAR VIAJE
+        ================================================== -->
+
+        <div
+            class="modal-calificar-viaje-overlay"
+            id="modalCalificarViaje"
+            aria-hidden="true">
+
+            <section
+                class="modal-calificar-viaje"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="tituloModalCalificarViaje"
+                tabindex="-1">
+
+                <button
+                    type="button"
+                    class="modal-calificar-viaje-cerrar"
+                    id="btnCerrarCalificarViaje"
+                    aria-label="Cerrar calificación del viaje">
+
+                    <i class="fa-solid fa-xmark"></i>
+
+                </button>
+
+
+                <header class="calificar-viaje-header">
+
+                    <div class="calificar-viaje-icono">
+
+                        <i class="fa-solid fa-route"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span class="calificar-viaje-etiqueta">
+
+                            Experiencia del ride
+
+                        </span>
+
+                        <h2 id="tituloModalCalificarViaje">
+
+                            Califica tu viaje
+
+                        </h2>
+
+                        <p>
+
+                            Evalúa la experiencia general del recorrido.
+                            Esta calificación es independiente de la
+                            evaluación del conductor.
+
+                        </p>
+
+                    </div>
+
+                </header>
+
+
+                <section class="calificar-viaje-datos">
+
+                    <div class="calificar-viaje-conductor">
+
+                        <span>
+
+                            <i class="fa-solid fa-user-shield"></i>
+
+                            Conductor responsable
+
+                        </span>
+
+                        <strong id="calificarViajeConductor">
+
+                            Conductor no disponible
+
+                        </strong>
+
+                    </div>
+
+
+                    <div class="calificar-viaje-ruta">
+
+                        <div>
+
+                            <small>
+                                Origen
+                            </small>
+
+                            <strong id="calificarViajeOrigen">
+
+                                Origen no disponible
+
+                            </strong>
+
+                        </div>
+
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                        <div>
+
+                            <small>
+                                Destino
+                            </small>
+
+                            <strong id="calificarViajeDestino">
+
+                                Destino no disponible
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <form
+                    method="post"
+                    class="form-calificar-viaje"
+                    id="formCalificarViaje"
+                    novalidate>
+
+                    {% csrf_token %}
+
+                    <input
+                        type="hidden"
+                        name="puntuacion"
+                        id="puntuacionViaje"
+                        value="">
+
+
+                    <fieldset class="campo-calificacion">
+
+                        <legend>
+
+                            ¿Cómo calificarías este ride?
+
+                        </legend>
+
+                        <div
+                            class="estrellas-calificacion-viaje"
+                            role="radiogroup"
+                            aria-label="Puntuación del viaje">
+
+                            {% for valor in "12345" %}
+
+                                <button
+                                    type="button"
+                                    class="estrella-viaje"
+                                    data-value="{{ valor }}"
+                                    aria-label="{{ valor }} estrella{{ valor|pluralize:'s' }}"
+                                    aria-pressed="false">
+
+                                    <i class="fa-solid fa-star"></i>
+
+                                </button>
+
+                            {% endfor %}
+
+                        </div>
+
+                        <p
+                            class="texto-puntuacion-viaje"
+                            id="textoPuntuacionViaje">
+
+                            Selecciona una puntuación
+
+                        </p>
+
+                    </fieldset>
+
+
+                    <div class="campo-calificacion">
+
+                        <label for="comentarioViaje">
+
+                            Comentario sobre tu experiencia
+
+                            <span>
+                                Opcional
+                            </span>
+
+                        </label>
+
+                        <textarea
+                            name="comentario"
+                            id="comentarioViaje"
+                            rows="5"
+                            maxlength="500"
+                            placeholder="Cuéntanos cómo fue tu experiencia durante este ride..."></textarea>
+
+                        <div class="comentario-meta">
+
+                            <span>
+
+                                Evita compartir información personal.
+
+                            </span>
+
+                            <span
+                                class="contador-comentario-viaje"
+                                id="contadorComentarioViaje">
+
+                                0 / 500
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        class="error-calificar-viaje"
+                        id="errorCalificarViaje"
+                        role="alert">
+
+                        <i class="fa-solid fa-circle-exclamation"></i>
+
+                        <span>
+
+                            Selecciona una puntuación antes de continuar.
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="calificar-viaje-acciones">
+
+                        <button
+                            type="button"
+                            class="btn-omitir-calificacion"
+                            id="btnOmitirCalificacionViaje">
+
+                            Omitir por ahora
+
+                        </button>
+
+                        <button
+                            type="submit"
+                            class="btn-enviar-calificacion-viaje">
+
+                            <i class="fa-solid fa-paper-plane"></i>
+
+                            Enviar calificación
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </section>
+
+        </div>
 
 
         <!-- =================================================

@@ -1745,3 +1745,586 @@ document.addEventListener("DOMContentLoaded",()=>{
 
 });
 
+/*==================================================
+        MODAL CALIFICAR VIAJE
+==================================================*/
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const modalOverlay = document.getElementById(
+        "modalCalificarViaje"
+    );
+
+    if (!modalOverlay) {
+        return;
+    }
+
+    const modal = modalOverlay.querySelector(
+        ".modal-calificar-viaje"
+    );
+
+    const botonCerrar = document.getElementById(
+        "btnCerrarCalificarViaje"
+    );
+
+    const botonOmitir = document.getElementById(
+        "btnOmitirCalificacionViaje"
+    );
+
+    const formulario = document.getElementById(
+        "formCalificarViaje"
+    );
+
+    const inputPuntuacion = document.getElementById(
+        "puntuacionViaje"
+    );
+
+    const textareaComentario = document.getElementById(
+        "comentarioViaje"
+    );
+
+    const contadorComentario = document.getElementById(
+        "contadorComentarioViaje"
+    );
+
+    const textoPuntuacion = document.getElementById(
+        "textoPuntuacionViaje"
+    );
+
+    const errorCalificacion = document.getElementById(
+        "errorCalificarViaje"
+    );
+
+    const origenModal = document.getElementById(
+        "calificarViajeOrigen"
+    );
+
+    const destinoModal = document.getElementById(
+        "calificarViajeDestino"
+    );
+
+    const conductorModal = document.getElementById(
+        "calificarViajeConductor"
+    );
+
+    const estrellas = Array.from(
+        modalOverlay.querySelectorAll(
+            ".estrella-viaje"
+        )
+    );
+
+    const botonesAbrir = document.querySelectorAll(
+        '[data-action="calificar-viaje"]'
+    );
+
+    let botonActivo = null;
+
+    const textosPuntuacion = {
+        1: "Muy mala experiencia",
+        2: "Mala experiencia",
+        3: "Experiencia regular",
+        4: "Buena experiencia",
+        5: "Excelente experiencia",
+    };
+
+
+    /*==================================================
+            MOSTRAR ERROR
+    ==================================================*/
+
+    function mostrarError(mensaje) {
+
+        if (!errorCalificacion) {
+            return;
+        }
+
+        const textoError = errorCalificacion.querySelector(
+            "span"
+        );
+
+        if (textoError) {
+            textoError.textContent = mensaje;
+        } else {
+            errorCalificacion.textContent = mensaje;
+        }
+
+        errorCalificacion.classList.add(
+            "visible"
+        );
+
+    }
+
+
+    /*==================================================
+            OCULTAR ERROR
+    ==================================================*/
+
+    function ocultarError() {
+
+        if (!errorCalificacion) {
+            return;
+        }
+
+        errorCalificacion.classList.remove(
+            "visible"
+        );
+
+    }
+
+
+    /*==================================================
+            ACTUALIZAR ESTRELLAS
+    ==================================================*/
+
+    function actualizarEstrellas(valor) {
+
+        estrellas.forEach(function (estrella) {
+
+            const puntuacionEstrella = Number(
+                estrella.dataset.value
+                || estrella.dataset.puntuacion
+                || 0
+            );
+
+            estrella.classList.toggle(
+                "seleccionada",
+                puntuacionEstrella <= valor
+            );
+
+            estrella.setAttribute(
+                "aria-pressed",
+                puntuacionEstrella === valor
+                    ? "true"
+                    : "false"
+            );
+
+        });
+
+        if (inputPuntuacion) {
+            inputPuntuacion.value = valor || "";
+        }
+
+        if (textoPuntuacion) {
+
+            textoPuntuacion.textContent = (
+                textosPuntuacion[valor]
+                || "Selecciona una puntuación"
+            );
+
+        }
+
+        ocultarError();
+
+    }
+
+
+    /*==================================================
+            EFECTO HOVER
+    ==================================================*/
+
+    function mostrarHoverEstrellas(valor) {
+
+        estrellas.forEach(function (estrella) {
+
+            const puntuacionEstrella = Number(
+                estrella.dataset.value
+                || estrella.dataset.puntuacion
+                || 0
+            );
+
+            estrella.classList.toggle(
+                "hover",
+                puntuacionEstrella <= valor
+            );
+
+        });
+
+    }
+
+
+    function limpiarHoverEstrellas() {
+
+        estrellas.forEach(function (estrella) {
+
+            estrella.classList.remove(
+                "hover"
+            );
+
+        });
+
+    }
+
+
+    /*==================================================
+            REINICIAR FORMULARIO
+    ==================================================*/
+
+    function reiniciarFormulario() {
+
+        if (formulario) {
+            formulario.reset();
+        }
+
+        if (inputPuntuacion) {
+            inputPuntuacion.value = "";
+        }
+
+        if (contadorComentario) {
+            contadorComentario.textContent = "0 / 500";
+        }
+
+        actualizarEstrellas(0);
+
+        ocultarError();
+
+    }
+
+
+    /*==================================================
+            ABRIR MODAL
+    ==================================================*/
+
+    function abrirModal(boton) {
+
+        botonActivo = boton;
+
+        reiniciarFormulario();
+
+        const url = boton.dataset.url || "";
+
+        const origen = (
+            boton.dataset.origen
+            || "Origen no disponible"
+        );
+
+        const destino = (
+            boton.dataset.destino
+            || "Destino no disponible"
+        );
+
+        const conductor = (
+            boton.dataset.conductor
+            || "Conductor no disponible"
+        );
+
+        if (formulario) {
+            formulario.action = url;
+        }
+
+        if (origenModal) {
+            origenModal.textContent = origen;
+        }
+
+        if (destinoModal) {
+            destinoModal.textContent = destino;
+        }
+
+        if (conductorModal) {
+            conductorModal.textContent = conductor;
+        }
+
+        boton.setAttribute(
+            "aria-expanded",
+            "true"
+        );
+
+        modalOverlay.classList.add(
+            "activo"
+        );
+
+        modalOverlay.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+        document.body.classList.add(
+            "modal-calificar-viaje-abierto"
+        );
+
+        window.setTimeout(function () {
+
+            if (modal) {
+                modal.focus();
+            }
+
+        }, 100);
+
+    }
+
+
+    /*==================================================
+            CERRAR MODAL
+    ==================================================*/
+
+    function cerrarModal() {
+
+        modalOverlay.classList.remove(
+            "activo"
+        );
+
+        modalOverlay.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+        document.body.classList.remove(
+            "modal-calificar-viaje-abierto"
+        );
+
+        if (botonActivo) {
+
+            botonActivo.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+
+            botonActivo.focus();
+
+        }
+
+        botonActivo = null;
+
+        reiniciarFormulario();
+
+    }
+
+
+    /*==================================================
+            EVENTOS BOTONES ABRIR
+    ==================================================*/
+
+    botonesAbrir.forEach(function (boton) {
+
+        boton.addEventListener(
+            "click",
+            function () {
+
+                abrirModal(boton);
+
+            }
+        );
+
+    });
+
+
+    /*==================================================
+            EVENTOS ESTRELLAS
+    ==================================================*/
+
+    estrellas.forEach(function (estrella) {
+
+        const valor = Number(
+            estrella.dataset.value
+            || estrella.dataset.puntuacion
+            || 0
+        );
+
+        estrella.addEventListener(
+            "click",
+            function () {
+
+                actualizarEstrellas(
+                    valor
+                );
+
+            }
+        );
+
+        estrella.addEventListener(
+            "mouseenter",
+            function () {
+
+                mostrarHoverEstrellas(
+                    valor
+                );
+
+            }
+        );
+
+        estrella.addEventListener(
+            "mouseleave",
+            function () {
+
+                limpiarHoverEstrellas();
+
+            }
+        );
+
+        estrella.addEventListener(
+            "keydown",
+            function (evento) {
+
+                if (
+                    evento.key === "Enter"
+                    || evento.key === " "
+                ) {
+
+                    evento.preventDefault();
+
+                    actualizarEstrellas(
+                        valor
+                    );
+
+                }
+
+            }
+        );
+
+    });
+
+
+    /*==================================================
+            CONTADOR DEL COMENTARIO
+    ==================================================*/
+
+    if (textareaComentario) {
+
+        textareaComentario.addEventListener(
+            "input",
+            function () {
+
+                const longitud = (
+                    textareaComentario.value.length
+                );
+
+                if (contadorComentario) {
+
+                    contadorComentario.textContent = (
+                        `${longitud} / 500`
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /*==================================================
+            VALIDAR ENVÍO
+    ==================================================*/
+
+    if (formulario) {
+
+        formulario.addEventListener(
+            "submit",
+            function (evento) {
+
+                const puntuacion = Number(
+                    inputPuntuacion
+                    ? inputPuntuacion.value
+                    : 0
+                );
+
+                if (
+                    puntuacion < 1
+                    || puntuacion > 5
+                ) {
+
+                    evento.preventDefault();
+
+                    mostrarError(
+                        "Selecciona una puntuación de 1 a 5 estrellas."
+                    );
+
+                    const primeraEstrella = (
+                        estrellas[0]
+                    );
+
+                    if (primeraEstrella) {
+                        primeraEstrella.focus();
+                    }
+
+                    return;
+                }
+
+                const botonEnviar = (
+                    formulario.querySelector(
+                        ".btn-enviar-calificacion-viaje"
+                    )
+                );
+
+                if (botonEnviar) {
+
+                    botonEnviar.disabled = true;
+
+                    botonEnviar.innerHTML = `
+                        <i class="fa-solid fa-spinner fa-spin"></i>
+                        Enviando...
+                    `;
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /*==================================================
+            BOTONES CERRAR
+    ==================================================*/
+
+    if (botonCerrar) {
+
+        botonCerrar.addEventListener(
+            "click",
+            cerrarModal
+        );
+
+    }
+
+    if (botonOmitir) {
+
+        botonOmitir.addEventListener(
+            "click",
+            cerrarModal
+        );
+
+    }
+
+
+    /*==================================================
+            CERRAR AL HACER CLIC FUERA
+    ==================================================*/
+
+    modalOverlay.addEventListener(
+        "click",
+        function (evento) {
+
+            if (
+                evento.target === modalOverlay
+            ) {
+
+                cerrarModal();
+
+            }
+
+        }
+    );
+
+
+    /*==================================================
+            CERRAR CON ESCAPE
+    ==================================================*/
+
+    document.addEventListener(
+        "keydown",
+        function (evento) {
+
+            if (
+                evento.key === "Escape"
+                && modalOverlay.classList.contains(
+                    "activo"
+                )
+            ) {
+
+                cerrarModal();
+
+            }
+
+        }
+    );
+
+});
