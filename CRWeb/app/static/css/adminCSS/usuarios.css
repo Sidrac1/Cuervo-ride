@@ -4,7 +4,9 @@
 ==================================================*/
 
 
-/*================ CONTENEDOR ================*/
+/*==================================================
+                CONTENEDOR GENERAL
+==================================================*/
 
 .contenedor{
 
@@ -13,38 +15,43 @@
 }
 
 
-/*================ FILTROS ================*/
+/*==================================================
+                    FILTROS
+==================================================*/
 
-.filtros{
+.contenedor .filtros{
 
     display:flex;
     align-items:center;
-    gap:18px;
-    margin-bottom:28px;
     flex-wrap:wrap;
+
+    gap:18px;
+
+    margin-bottom:28px;
 
 }
 
 
-/*================ BUSCADOR ================*/
+/*==================================================
+                    BUSCADOR
+==================================================*/
 
-.buscar{
+.contenedor .buscar{
+
+    position:relative;
 
     flex:1;
 
     min-width:280px;
 
-    position:relative;
-
 }
 
-.buscar i{
+.contenedor .buscar i{
 
     position:absolute;
 
-    left:18px;
-
     top:50%;
+    left:18px;
 
     transform:translateY(-50%);
 
@@ -52,118 +59,176 @@
 
     font-size:15px;
 
+    pointer-events:none;
+
 }
 
-.buscar input{
+.contenedor .buscar input{
 
     width:100%;
-
     height:48px;
 
-    padding-left:48px;
-
-    background:#132232;
+    padding:
+        0
+        18px
+        0
+        48px;
 
     border:2px solid #7fd44d;
-
     border-radius:10px;
-
-    color:white;
 
     outline:none;
 
+    background:#132232;
+    color:white;
+
     font-size:15px;
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease,
+        background .2s ease;
 
 }
 
-.buscar input::placeholder{
+.contenedor .buscar input:focus{
+
+    border-color:#98ec63;
+
+    background:#16283a;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(127,212,77,.10);
+
+}
+
+.contenedor .buscar input::placeholder{
 
     color:#8ea2b6;
 
 }
 
 
-/*================ SELECTS ================*/
+/*==================================================
+                    SELECTS
+==================================================*/
 
-#filtroRol,
-#filtroEstado{
+.contenedor #filtroRol,
+.contenedor #filtroEstado{
 
     width:180px;
-
     height:52px;
-
-    background:#132232;
-
-    color:white;
-
-    border:2px solid #7fd44d;
-
-    border-radius:12px;
 
     padding:0 15px;
 
-    cursor:pointer;
+    border:2px solid #7fd44d;
+    border-radius:12px;
 
     outline:none;
 
-    font-size:15px;
-
-}
-
-
-/*================ BOTON FILTRAR ================*/
-
-#btnFiltrar{
-
-    width:130px;
-
-    height:52px;
-
-    border:none;
-
-    border-radius:12px;
-
-    background:#7fd44d;
-
-    color:#11182c;
+    background:#132232;
+    color:white;
 
     font-size:15px;
-
-    font-weight:600;
 
     cursor:pointer;
 
-    transition:.30s;
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease,
+        background .2s ease;
 
 }
 
-#btnFiltrar:hover{
+.contenedor #filtroRol:focus,
+.contenedor #filtroEstado:focus{
+
+    border-color:#98ec63;
+
+    background:#16283a;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(127,212,77,.10);
+
+}
+
+
+/*==================================================
+                BOTÓN FILTRAR
+==================================================*/
+
+.contenedor #btnFiltrar{
+
+    width:130px;
+    height:52px;
+
+    border:none;
+    border-radius:12px;
+
+    background:#7fd44d;
+    color:#11182c;
+
+    font-size:15px;
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:
+        transform .2s ease,
+        background .2s ease,
+        box-shadow .2s ease;
+
+}
+
+.contenedor #btnFiltrar:hover{
 
     transform:translateY(-2px);
 
     background:#8be85a;
 
+    box-shadow:
+        0 10px 24px
+        rgba(127,212,77,.20);
+
+}
+
+.contenedor #btnFiltrar:active{
+
+    transform:translateY(0);
+
 }
 
 
-/*================ TABLA ================*/
+/*==================================================
+                CONTENEDOR TABLA
+==================================================*/
 
-.tabla{
-
-    background:#101c2a;
-
-    border-radius:18px;
+.contenedor .tabla{
 
     overflow:hidden;
 
-    box-shadow:0 0 25px rgba(0,0,0,.35);
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:18px;
+
+    background:#101c2a;
+
+    box-shadow:
+        0 0 25px
+        rgba(0,0,0,.35);
+
+    animation:
+        subirTabla .55s ease;
 
 }
 
 
-/*================ TABLE ================*/
+/*==================================================
+                    TABLE
+==================================================*/
 
-table{
+.contenedor .tabla table{
 
     width:100%;
 
@@ -172,73 +237,88 @@ table{
 }
 
 
-/*================ HEADER TABLA ================*/
+/*==================================================
+                ENCABEZADO TABLA
+==================================================*/
 
-thead{
+.contenedor .tabla thead{
 
     background:#132232;
 
 }
 
-thead tr{
+.contenedor .tabla thead tr{
 
     height:65px;
 
 }
 
-thead th{
+.contenedor .tabla thead th{
+
+    padding:16px;
 
     color:white;
 
     font-size:15px;
-
     font-weight:600;
 
     text-align:center;
 
+    white-space:nowrap;
 
 }
 
 
-/*================ BODY TABLA ================*/
+/*==================================================
+                    BODY TABLA
+==================================================*/
 
-tbody tr{
+.contenedor .tabla tbody tr{
 
-    /*border-bottom:1px solid rgba(255,255,255,.08);*/
-
-    transition:.25s;
+    transition:
+        background .25s ease;
 
 }
 
-tbody tr:hover{
+.contenedor .tabla tbody tr:hover{
 
     background:#16283a;
 
 }
 
-tbody td{
+.contenedor .tabla tbody td{
 
     padding:18px;
 
-    text-align:center;
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.08);
 
     color:white;
 
-    border-bottom:1px solid rgba(255,255,255,.08);
-
     font-size:14px;
+
+    text-align:center;
+
+    vertical-align:middle;
+
+}
+
+.contenedor .tabla tbody tr:last-child td{
+
+    border-bottom:none;
 
 }
 
 
-/*================ ROLES ================*/
+/*==================================================
+                    ROLES
+==================================================*/
 
-.badge{
+.contenedor .tabla .badge{
 
     display:inline-flex;
-
     align-items:center;
-
     justify-content:center;
 
     min-width:115px;
@@ -250,38 +330,39 @@ tbody td{
     color:white;
 
     font-size:13px;
-
     font-weight:600;
 
-}
-
-.pasajero{
-
-    background:#7C3AED;
+    line-height:1.2;
 
 }
 
-.conductor{
+.contenedor .tabla .badge.pasajero{
 
-    background:#2563EB;
+    background:#7c3aed;
 
 }
 
-.admin{
+.contenedor .tabla .badge.conductor{
+
+    background:#2563eb;
+
+}
+
+.contenedor .tabla .badge.admin{
 
     background:#475569;
 
 }
 
 
-/*================ ESTADOS ================*/
+/*==================================================
+                    ESTADOS
+==================================================*/
 
-.estado{
+.contenedor .tabla .estado{
 
     display:inline-flex;
-
     align-items:center;
-
     justify-content:center;
 
     min-width:95px;
@@ -290,73 +371,85 @@ tbody td{
 
     border-radius:30px;
 
-    color:#11182c;
-
     font-size:13px;
-
     font-weight:700;
 
+    line-height:1.2;
+
 }
 
-.activo{
+.contenedor .tabla .estado.activo{
 
     background:#7fd44d;
+    color:#11182c;
 
 }
 
-.inactivo{
+.contenedor .tabla .estado.inactivo{
 
     background:#e53935;
-
     color:white;
 
 }
 
 
-/*================ BOTON EDITAR ================*/
+/*==================================================
+                BOTÓN EDITAR
+==================================================*/
 
-.editar-btn{
+.contenedor .tabla .editar-btn{
 
     width:105px;
-
     height:42px;
 
     border:none;
-
     border-radius:10px;
 
     background:#7fd44d;
-
     color:#11182c;
 
     font-size:14px;
-
-    font-weight:600;
+    font-weight:700;
 
     cursor:pointer;
 
-    transition:.30s;
+    transition:
+        transform .2s ease,
+        background .2s ease,
+        box-shadow .2s ease;
 
 }
 
-.editar-btn:hover{
-
-    background:#8be85a;
+.contenedor .tabla .editar-btn:hover{
 
     transform:translateY(-2px);
 
+    background:#8be85a;
+
+    box-shadow:
+        0 9px 20px
+        rgba(127,212,77,.18);
+
+}
+
+.contenedor .tabla .editar-btn:active{
+
+    transform:translateY(0);
+
 }
 
 
-/*================ FOOTER ================*/
+/*==================================================
+                FOOTER TABLA
+==================================================*/
 
-.footer-tabla{
+.contenedor .tabla .footer-tabla{
 
     display:flex;
-
+    align-items:center;
     justify-content:space-between;
 
-    align-items:center;
+    gap:18px;
 
     padding:22px 25px;
 
@@ -364,7 +457,9 @@ tbody td{
 
 }
 
-.footer-tabla p{
+.contenedor .tabla .footer-tabla p{
+
+    margin:0;
 
     color:#d5dce6;
 
@@ -373,56 +468,61 @@ tbody td{
 }
 
 
-/*================ PAGINACION ================*/
+/*==================================================
+                    PAGINACIÓN
+==================================================*/
 
-.paginacion{
+.contenedor .tabla .paginacion{
 
     display:flex;
+    align-items:center;
 
     gap:10px;
 
 }
 
-.pagina{
+.contenedor .tabla .pagina{
 
     width:38px;
-
     height:38px;
 
     border:none;
-
     border-radius:10px;
 
     background:#1b3044;
-
     color:white;
-
-    cursor:pointer;
 
     font-weight:600;
 
-    transition:.30s;
+    cursor:pointer;
+
+    transition:
+        background .2s ease,
+        color .2s ease,
+        transform .2s ease;
 
 }
 
-.pagina:hover{
+.contenedor .tabla .pagina:hover{
+
+    transform:translateY(-1px);
 
     background:#7fd44d;
-
     color:#11182c;
 
 }
 
-.pagina.activa{
+.contenedor .tabla .pagina.activa{
 
     background:#7fd44d;
-
     color:#11182c;
 
 }
 
 
-/*================ SCROLL =================*/
+/*==================================================
+                    SCROLL GENERAL
+==================================================*/
 
 ::-webkit-scrollbar{
 
@@ -438,102 +538,53 @@ tbody td{
 
 ::-webkit-scrollbar-thumb{
 
-    background:#7fd44d;
-
     border-radius:10px;
-
-}
-
-/*================ RESPONSIVE ================*/
-
-@media(max-width:980px){
-
-    .filtros{
-
-        flex-direction:column;
-
-        align-items:stretch;
-
-    }
-
-    .buscar{
-
-        width:100%;
-
-    }
-
-    #filtroRol,
-    #filtroEstado,
-    #btnFiltrar{
-
-        width:100%;
-
-    }
-
-}
-
-
-@media(max-width:768px){
-
-    .tabla{
-
-        overflow-x:auto;
-
-    }
-
-/*================ SCROLL HORIZONTAL TABLA ================*/
-
-.tabla::-webkit-scrollbar{
-
-    height:10px;
-
-}
-
-.tabla::-webkit-scrollbar-track{
-
-    background:#07111b;
-
-}
-
-.tabla::-webkit-scrollbar-thumb{
 
     background:#7fd44d;
 
-    border-radius:10px;
-
 }
 
-.tabla::-webkit-scrollbar-thumb:hover{
+::-webkit-scrollbar-thumb:hover{
 
     background:#93e85f;
 
 }
 
-    table{
 
-        min-width:900px;
+/*==================================================
+            SCROLL HORIZONTAL DE TABLA
+==================================================*/
 
-    }
+.contenedor .tabla::-webkit-scrollbar{
 
-    .footer-tabla{
-
-        flex-direction:column;
-
-        gap:15px;
-
-        text-align:center;
-
-    }
+    height:10px;
 
 }
 
-/*================ TRANSICIÓN DE ENTRADA ================*/
+.contenedor .tabla::-webkit-scrollbar-track{
 
-.tabla{
-
-    animation:subirTabla .55s ease;
+    background:#07111b;
 
 }
+
+.contenedor .tabla::-webkit-scrollbar-thumb{
+
+    border-radius:10px;
+
+    background:#7fd44d;
+
+}
+
+.contenedor .tabla::-webkit-scrollbar-thumb:hover{
+
+    background:#93e85f;
+
+}
+
+
+/*==================================================
+                ANIMACIÓN DE ENTRADA
+==================================================*/
 
 @keyframes subirTabla{
 
@@ -550,6 +601,96 @@ tbody td{
         opacity:1;
 
         transform:translateY(0);
+
+    }
+
+}
+
+
+/*==================================================
+                    RESPONSIVE
+==================================================*/
+
+@media(max-width:980px){
+
+    .contenedor .filtros{
+
+        flex-direction:column;
+        align-items:stretch;
+
+    }
+
+    .contenedor .buscar{
+
+        width:100%;
+
+    }
+
+    .contenedor #filtroRol,
+    .contenedor #filtroEstado,
+    .contenedor #btnFiltrar{
+
+        width:100%;
+
+    }
+
+}
+
+
+@media(max-width:768px){
+
+    .contenedor .tabla{
+
+        overflow-x:auto;
+
+    }
+
+    .contenedor .tabla table{
+
+        min-width:900px;
+
+    }
+
+    .contenedor .tabla .footer-tabla{
+
+        flex-direction:column;
+
+        text-align:center;
+
+    }
+
+}
+
+
+@media(max-width:520px){
+
+    .contenedor .buscar{
+
+        min-width:0;
+
+    }
+
+    .contenedor .buscar input{
+
+        height:46px;
+
+        font-size:14px;
+
+    }
+
+    .contenedor #filtroRol,
+    .contenedor #filtroEstado,
+    .contenedor #btnFiltrar{
+
+        height:48px;
+
+        font-size:14px;
+
+    }
+
+    .contenedor .tabla .footer-tabla{
+
+        padding:18px;
 
     }
 
