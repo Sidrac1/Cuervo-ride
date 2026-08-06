@@ -1,355 +1,1207 @@
 /*==================================================
-                    INICIO
+                    VARIABLES
 ==================================================*/
 
+:root{
 
-/*================ CONTENEDOR =================*/
+    --inicio-fondo:#0c1524;
+
+    --inicio-panel:#111f32;
+    --inicio-panel-claro:#172941;
+    --inicio-panel-hover:#1b304b;
+
+    --inicio-verde:#98ec63;
+    --inicio-verde-hover:#76cf43;
+    --inicio-verde-suave:rgba(152,236,99,.12);
+
+    --inicio-azul:#62b4ff;
+    --inicio-azul-suave:rgba(98,180,255,.12);
+
+    --inicio-amarillo:#ffc94a;
+    --inicio-amarillo-suave:rgba(255,201,74,.12);
+
+    --inicio-rojo:#ff6978;
+    --inicio-rojo-suave:rgba(255,105,120,.12);
+
+    --inicio-morado:#b28aff;
+    --inicio-morado-suave:rgba(178,138,255,.12);
+
+    --inicio-texto:#f5f8fc;
+    --inicio-texto-secundario:#aab8ca;
+    --inicio-texto-suave:#74879e;
+
+    --inicio-borde:rgba(255,255,255,.08);
+    --inicio-borde-fuerte:rgba(255,255,255,.14);
+
+    --inicio-sombra:
+        0 20px 50px
+        rgba(0,0,0,.24);
+
+    --inicio-sombra-suave:
+        0 12px 32px
+        rgba(0,0,0,.18);
+
+    --inicio-radio-sm:12px;
+    --inicio-radio-md:18px;
+    --inicio-radio-lg:26px;
+
+}
+
+
+/*==================================================
+                    CONTENEDOR
+==================================================*/
 
 .contenedor{
 
     width:100%;
 
+    display:flex;
+    flex-direction:column;
+
+    gap:30px;
+
 }
 
 
-/*================ BIENVENIDA =================*/
+/*==================================================
+                    BIENVENIDA
+==================================================*/
 
 .bienvenida{
 
     position:relative;
 
     display:flex;
-
     align-items:center;
 
-    background:#232d42;
+    min-height:220px;
 
-    border:2px solid #7fd44d;
+    padding:
+        38px
+        45px
+        38px
+        185px;
 
-    border-radius:28px;
+    overflow:visible;
 
-    min-height:210px;
+    border:1px solid
+        rgba(152,236,99,.18);
 
-    margin-bottom:45px;
+    border-radius:var(--inicio-radio-lg);
 
-    padding:35px 45px 35px 170px;
+    background:
 
-    box-shadow:0 15px 35px rgba(0,0,0,.35);
+        radial-gradient(
+            circle at 90% 20%,
+            rgba(152,236,99,.12),
+            transparent 250px
+        ),
+
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.035),
+            transparent 52%
+        ),
+
+        var(--inicio-panel);
+
+    box-shadow:
+        var(--inicio-sombra);
 
 }
 
 
-/*================ FOTO =================*/
+/*==================================================
+            DECORACIÓN BIENVENIDA
+==================================================*/
+
+.bienvenida::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+    left:0;
+
+    width:100%;
+    height:4px;
+
+    border-radius:
+        var(--inicio-radio-lg)
+        var(--inicio-radio-lg)
+        0
+        0;
+
+    background:
+
+        linear-gradient(
+            90deg,
+            transparent,
+            var(--inicio-verde),
+            transparent
+        );
+
+}
+
+.bienvenida::after{
+
+    content:"";
+
+    position:absolute;
+
+    right:-60px;
+    bottom:-100px;
+
+    width:260px;
+    height:260px;
+
+    border-radius:50%;
+
+    background:
+        rgba(152,236,99,.04);
+
+    pointer-events:none;
+
+}
+
+
+/*==================================================
+                    FOTO ADMIN
+==================================================*/
 
 .foto-admin{
 
     position:absolute;
 
-    left:-35px;
-
+    left:28px;
     top:50%;
 
-    transform:translateY(-50%);
+    z-index:2;
+
+    transform:
+        translateY(-50%);
+
+}
+
+.foto-admin::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:-9px;
+
+    border-radius:50%;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            var(--inicio-verde),
+            rgba(98,180,255,.7)
+        );
+
+    opacity:.65;
+
+    filter:blur(2px);
 
 }
 
 .foto-admin img{
 
-    width:150px;
+    position:relative;
 
-    height:150px;
+    display:block;
 
-    border-radius:50%;
-
-    border:4px solid #7fd44d;
+    width:132px;
+    height:132px;
 
     object-fit:cover;
 
+    border:5px solid
+        var(--inicio-panel);
+
+    border-radius:50%;
+
     background:#b8c9e8;
+
+    box-shadow:
+        0 15px 35px
+        rgba(0,0,0,.35);
 
 }
 
 
-/*================ TEXTO =================*/
+/*==================================================
+            TEXTO DE BIENVENIDA
+==================================================*/
 
 .texto-bienvenida{
 
-    flex:1;
+    position:relative;
+
+    z-index:2;
+
+    max-width:950px;
 
 }
 
 .texto-bienvenida h1{
 
-    color:white;
+    margin:0 0 13px;
 
-    font-size:52px;
+    color:var(--inicio-texto);
 
-    font-weight:600;
+    font-size:
+        clamp(
+            32px,
+            4vw,
+            48px
+        );
 
-    margin-bottom:18px;
+    font-weight:800;
+
+    line-height:1.1;
+
+    letter-spacing:-1.2px;
+
+}
+
+.texto-bienvenida h1::after{
+
+    content:"";
+
+    display:block;
+
+    width:70px;
+    height:4px;
+
+    margin-top:14px;
+
+    border-radius:999px;
+
+    background:
+        var(--inicio-verde);
 
 }
 
 .texto-bienvenida p{
 
-    color:#aeb7c4;
+    max-width:900px;
 
-    font-size:28px;
+    margin:0;
 
-    line-height:1.5;
+    color:
+        var(--inicio-texto-secundario);
+
+    font-size:16px;
+
+    line-height:1.75;
 
 }
 
 
-/*================ DASHBOARD =================*/
+/*==================================================
+                    DASHBOARD
+==================================================*/
 
 .dashboard{
 
     display:grid;
 
-    grid-template-columns:repeat(4,1fr);
+    grid-template-columns:
+        repeat(
+            4,
+            minmax(0,1fr)
+        );
 
-    gap:40px;
+    gap:20px;
 
 }
 
 
-/*================ TARJETAS =================*/
+/*==================================================
+            TARJETAS PRINCIPALES
+==================================================*/
 
 .dashboard-card{
 
-    background:#2c3850;
-
-    border:2px solid #7fd44d;
-
-    border-radius:22px;
-
-    padding:30px;
+    position:relative;
 
     display:flex;
-
     align-items:center;
 
     gap:18px;
 
-    transition:.30s;
+    min-width:0;
+    min-height:140px;
 
-    box-shadow:0 15px 35px rgba(0,0,0,.35);
+    padding:22px;
+
+    overflow:hidden;
+
+    border:1px solid
+        var(--inicio-borde);
+
+    border-radius:
+        var(--inicio-radio-md);
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.04),
+            rgba(255,255,255,.012)
+        ),
+
+        var(--inicio-panel);
+
+    box-shadow:
+        var(--inicio-sombra-suave);
+
+    transition:
+
+        transform .25s ease,
+        border-color .25s ease,
+        background .25s ease,
+        box-shadow .25s ease;
+
+}
+
+.dashboard-card::after{
+
+    content:"";
+
+    position:absolute;
+
+    right:-38px;
+    bottom:-55px;
+
+    width:125px;
+    height:125px;
+
+    border-radius:50%;
+
+    background:
+        rgba(255,255,255,.025);
+
+    pointer-events:none;
 
 }
 
 .dashboard-card:hover{
 
-    transform:translateY(-4px);
+    transform:
+        translateY(-5px);
+
+    border-color:
+        rgba(152,236,99,.22);
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(152,236,99,.05),
+            rgba(255,255,255,.018)
+        ),
+
+        var(--inicio-panel-hover);
+
+    box-shadow:
+        0 22px 45px
+        rgba(0,0,0,.28);
 
 }
 
 
-/*================ ICONOS =================*/
+/*==================================================
+        ACENTOS SUPERIORES DE TARJETAS
+==================================================*/
+
+.dashboard-card::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+    left:20px;
+
+    width:50px;
+    height:3px;
+
+    border-radius:
+        0
+        0
+        999px
+        999px;
+
+    background:
+        var(--inicio-azul);
+
+}
+
+.dashboard-card:nth-child(2)::before{
+
+    background:
+        var(--inicio-verde);
+
+}
+
+.dashboard-card:nth-child(3)::before{
+
+    background:
+        var(--inicio-amarillo);
+
+}
+
+.dashboard-card:nth-child(4)::before{
+
+    background:
+        var(--inicio-morado);
+
+}
+
+
+/*==================================================
+            ICONOS DE TARJETAS
+==================================================*/
 
 .icono{
 
-    font-size:56px;
+    position:relative;
 
-    color:#ffffff;
+    z-index:2;
 
-    min-width:65px;
+    flex:0 0 auto;
+
+    display:grid;
+    place-items:center;
+
+    width:58px;
+    height:58px;
+
+    min-width:58px;
+
+    border-radius:17px;
+
+    background:
+        var(--inicio-azul-suave);
+
+    color:
+        var(--inicio-azul);
+
+    font-size:23px;
+
+    box-shadow:
+        inset 0 0 0 1px
+        rgba(98,180,255,.12);
 
 }
 
 .icono.verde{
 
-    color:#24c96f;
+    background:
+        var(--inicio-verde-suave);
+
+    color:
+        var(--inicio-verde);
+
+    box-shadow:
+        inset 0 0 0 1px
+        rgba(152,236,99,.12);
 
 }
 
 .icono.amarillo{
 
-    color:#ffd132;
+    background:
+        var(--inicio-amarillo-suave);
+
+    color:
+        var(--inicio-amarillo);
+
+    box-shadow:
+        inset 0 0 0 1px
+        rgba(255,201,74,.12);
 
 }
 
 .icono.estrella{
 
-    color:#ffd132;
+    background:
+        var(--inicio-morado-suave);
+
+    color:
+        var(--inicio-morado);
+
+    box-shadow:
+        inset 0 0 0 1px
+        rgba(178,138,255,.12);
 
 }
 
 
-/*================ INFORMACIÓN =================*/
+/*==================================================
+        INFORMACIÓN DE TARJETAS
+==================================================*/
 
 .info{
 
+    position:relative;
+
+    z-index:2;
+
     display:flex;
-
     flex-direction:column;
-
-    align-items:center;
-
+    align-items:flex-start;
     justify-content:center;
 
-    text-align:center;
-
-    gap:8px;
-
     flex:1;
+
+    min-width:0;
+
+    text-align:left;
 
 }
 
 .info h3{
 
-    color:white;
+    margin:0 0 8px;
 
-    font-size:27px;
+    color:
+        var(--inicio-texto-secundario);
 
-    font-weight:600;
+    font-size:13px;
 
-    line-height:1.3;
+    font-weight:700;
 
-    margin-bottom:12px;
+    line-height:1.35;
 
-    text-align:center;
+    letter-spacing:.025em;
+
+    text-transform:uppercase;
 
 }
 
 .info span{
-    
+
     display:block;
 
     width:100%;
 
-    font-size:42px;
+    color:
+        var(--inicio-texto);
 
-    font-weight:700;
+    font-size:34px;
 
-    text-align:center;
+    font-weight:850;
 
-    color:white;
+    line-height:1;
+
+    text-align:left;
+
+    letter-spacing:-1px;
+
+}
+
+.promedio-escala{
+
+    display:block;
+
+    width:100%;
+
+    margin-top:7px;
+
+    color:
+        var(--inicio-texto-suave);
+
+    font-size:11px;
+
+    font-weight:600;
+
+    line-height:1.4;
+
+    text-align:left;
 
 }
 
 
-/*================ COLORES =================*/
+/*==================================================
+                    COLORES
+==================================================*/
 
 .verde{
 
-    color:#24d36d !important;
+    color:
+        var(--inicio-verde)
+        !important;
 
 }
 
 .amarillo{
 
-    color:#ffd132 !important;
+    color:
+        var(--inicio-amarillo)
+        !important;
 
 }
 
 .dorado{
 
-    color:#c9ad4a !important;
+    color:
+        var(--inicio-morado)
+        !important;
 
 }
 
+
 /*==================================================
-                inicio.css
-                    PARTE 2
+                ACTIVIDAD RECIENTE
 ==================================================*/
 
+.actividad-reciente{
 
-/*================ TARJETAS =================*/
+    position:relative;
+
+    overflow:hidden;
+
+    padding:27px;
+
+    border:1px solid
+        var(--inicio-borde);
+
+    border-radius:
+        var(--inicio-radio-lg);
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.03),
+            transparent 45%
+        ),
+
+        var(--inicio-panel);
+
+    box-shadow:
+        var(--inicio-sombra-suave);
+
+}
+
+
+/*==================================================
+            HEADER ACTIVIDAD
+==================================================*/
+
+.actividad-header{
+
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+
+    gap:25px;
+
+    margin-bottom:25px;
+    padding-bottom:22px;
+
+    border-bottom:1px solid
+        var(--inicio-borde);
+
+}
+
+.actividad-header > div:first-child{
+
+    min-width:0;
+
+}
+
+.actividad-etiqueta{
+
+    display:inline-flex;
+    align-items:center;
+
+    margin-bottom:8px;
+
+    padding:5px 10px;
+
+    border:1px solid
+        rgba(152,236,99,.18);
+
+    border-radius:999px;
+
+    background:
+        var(--inicio-verde-suave);
+
+    color:
+        var(--inicio-verde);
+
+    font-size:9px;
+
+    font-weight:800;
+
+    letter-spacing:.08em;
+
+    text-transform:uppercase;
+
+}
+
+.actividad-header h2{
+
+    margin:0 0 7px;
+
+    color:
+        var(--inicio-texto);
+
+    font-size:25px;
+
+    font-weight:800;
+
+    letter-spacing:-.4px;
+
+}
+
+.actividad-header p{
+
+    margin:0;
+
+    color:
+        var(--inicio-texto-secundario);
+
+    font-size:13px;
+
+    line-height:1.6;
+
+}
+
+.actividad-header-icono{
+
+    flex:0 0 auto;
+
+    display:grid;
+    place-items:center;
+
+    width:48px;
+    height:48px;
+
+    border-radius:15px;
+
+    background:
+        var(--inicio-verde-suave);
+
+    color:
+        var(--inicio-verde);
+
+    font-size:18px;
+
+}
+
+
+/*==================================================
+            LISTA DE ACTIVIDAD
+==================================================*/
+
+.actividad-lista{
+
+    position:relative;
+
+    display:flex;
+    flex-direction:column;
+
+    gap:11px;
+
+}
+
+.actividad-item{
+
+    position:relative;
+
+    display:flex;
+    align-items:flex-start;
+
+    gap:15px;
+
+    min-width:0;
+
+    padding:15px;
+
+    border:1px solid
+        transparent;
+
+    border-radius:
+        var(--inicio-radio-sm);
+
+    background:
+        rgba(255,255,255,.022);
+
+    transition:
+
+        transform .2s ease,
+        border-color .2s ease,
+        background .2s ease;
+
+}
+
+.actividad-item:hover{
+
+    transform:
+        translateX(4px);
+
+    border-color:
+        var(--inicio-borde);
+
+    background:
+        rgba(255,255,255,.04);
+
+}
+
+
+/*==================================================
+            ICONOS DE ACTIVIDAD
+==================================================*/
+
+.actividad-icono{
+
+    flex:0 0 auto;
+
+    display:grid;
+    place-items:center;
+
+    width:42px;
+    height:42px;
+
+    border-radius:13px;
+
+    background:
+        var(--inicio-azul-suave);
+
+    color:
+        var(--inicio-azul);
+
+    font-size:15px;
+
+}
+
+.actividad-usuario
+.actividad-icono{
+
+    background:
+        var(--inicio-azul-suave);
+
+    color:
+        var(--inicio-azul);
+
+}
+
+.actividad-viaje
+.actividad-icono{
+
+    background:
+        var(--inicio-verde-suave);
+
+    color:
+        var(--inicio-verde);
+
+}
+
+.actividad-solicitud
+.actividad-icono{
+
+    background:
+        var(--inicio-morado-suave);
+
+    color:
+        var(--inicio-morado);
+
+}
+
+.actividad-calificacion
+.actividad-icono{
+
+    background:
+        var(--inicio-amarillo-suave);
+
+    color:
+        var(--inicio-amarillo);
+
+}
+
+.actividad-alerta
+.actividad-icono{
+
+    background:
+        var(--inicio-rojo-suave);
+
+    color:
+        var(--inicio-rojo);
+
+}
+
+
+/*==================================================
+            CONTENIDO ACTIVIDAD
+==================================================*/
+
+.actividad-contenido{
+
+    flex:1;
+
+    min-width:0;
+
+}
+
+.actividad-contenido-header{
+
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+
+    gap:18px;
+
+    margin-bottom:5px;
+
+}
+
+.actividad-contenido strong{
+
+    display:block;
+
+    min-width:0;
+
+    color:
+        var(--inicio-texto);
+
+    font-size:13px;
+
+    font-weight:800;
+
+    line-height:1.4;
+
+}
+
+.actividad-contenido time{
+
+    flex:0 0 auto;
+
+    color:
+        var(--inicio-texto-suave);
+
+    font-size:10px;
+
+    font-weight:600;
+
+    white-space:nowrap;
+
+}
+
+.actividad-contenido p{
+
+    margin:0;
+
+    color:
+        var(--inicio-texto-secundario);
+
+    font-size:12px;
+
+    line-height:1.55;
+
+    overflow-wrap:anywhere;
+
+}
+
+
+/*==================================================
+            ACTIVIDAD VACÍA
+==================================================*/
+
+.actividad-vacia{
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+
+    min-height:270px;
+
+    padding:35px;
+
+    border:1px dashed
+        var(--inicio-borde-fuerte);
+
+    border-radius:
+        var(--inicio-radio-md);
+
+    background:
+        rgba(255,255,255,.015);
+
+    text-align:center;
+
+}
+
+.actividad-vacia-icono{
+
+    display:grid;
+    place-items:center;
+
+    width:64px;
+    height:64px;
+
+    margin-bottom:15px;
+
+    border-radius:19px;
+
+    background:
+        var(--inicio-verde-suave);
+
+    color:
+        var(--inicio-verde);
+
+    font-size:24px;
+
+}
+
+.actividad-vacia h3{
+
+    margin:0 0 8px;
+
+    color:
+        var(--inicio-texto);
+
+    font-size:18px;
+
+}
+
+.actividad-vacia p{
+
+    max-width:450px;
+
+    margin:0;
+
+    color:
+        var(--inicio-texto-secundario);
+
+    font-size:12px;
+
+    line-height:1.65;
+
+}
+
+
+/*==================================================
+        CLASES ANTIGUAS DE COMPATIBILIDAD
+==================================================*/
 
 .tarjetas-inicio{
 
     display:grid;
 
-    grid-template-columns:repeat(4,1fr);
+    grid-template-columns:
+        repeat(
+            4,
+            minmax(0,1fr)
+        );
 
-    gap:28px;
+    gap:20px;
 
 }
-
 
 .tarjeta-inicio{
 
-    background:#2b3c59;
-
-    border:2px solid #7fd44d;
-
-    border-radius:18px;
-
-    padding:24px;
-
     display:flex;
-
     align-items:center;
 
-    gap:18px;
+    gap:16px;
 
-    transition:.30s;
+    min-width:0;
 
-    animation:subir .45s ease;
+    padding:20px;
+
+    border:1px solid
+        var(--inicio-borde);
+
+    border-radius:
+        var(--inicio-radio-md);
+
+    background:
+        var(--inicio-panel);
+
+    box-shadow:
+        var(--inicio-sombra-suave);
+
+    transition:
+        transform .25s ease,
+        border-color .25s ease;
+
+    animation:
+        subir .45s ease;
 
 }
-
 
 .tarjeta-inicio:hover{
 
-    transform:translateY(-5px);
+    transform:
+        translateY(-4px);
 
-    box-shadow:0 10px 20px rgba(0,0,0,.25);
+    border-color:
+        rgba(152,236,99,.22);
 
 }
-
 
 .tarjeta-inicio i{
 
-    font-size:46px;
+    font-size:25px;
 
-    color:#7fd44d;
+    color:
+        var(--inicio-verde);
 
 }
-
 
 .tarjeta-inicio .amarillo{
 
-    color:#ffc107;
+    color:
+        var(--inicio-amarillo);
 
 }
-
 
 .info-tarjeta h3{
 
-    color:#d7e3ec;
+    margin:0 0 7px;
 
-    font-size:20px;
+    color:
+        var(--inicio-texto-secundario);
 
-    margin-bottom:12px;
-
-    font-weight:600;
-
-}
-
-
-.info-tarjeta p{
-
-    color:#7fd44d;
-
-    font-size:34px;
+    font-size:13px;
 
     font-weight:700;
 
 }
 
+.info-tarjeta p{
 
-.info-tarjeta .negro{
+    margin:0;
 
-    color:#11182c;
+    color:
+        var(--inicio-verde);
+
+    font-size:29px;
+
+    font-weight:800;
 
 }
 
+.info-tarjeta .negro{
+
+    color:
+        var(--inicio-texto);
+
+}
 
 .info-tarjeta .amarillo{
 
-    color:#d8b14c;
+    color:
+        var(--inicio-amarillo);
 
 }
 
@@ -364,7 +1216,8 @@
 
         opacity:0;
 
-        transform:translateY(25px);
+        transform:
+            translateY(18px);
 
     }
 
@@ -372,18 +1225,47 @@
 
         opacity:1;
 
-        transform:translateY(0);
+        transform:
+            translateY(0);
 
     }
 
 }
 
+.dashboard-card,
+.actividad-reciente{
 
-/*================ SCROLL =================*/
+    animation:
+        subir .45s ease both;
+
+}
+
+.dashboard-card:nth-child(2){
+
+    animation-delay:.05s;
+
+}
+
+.dashboard-card:nth-child(3){
+
+    animation-delay:.10s;
+
+}
+
+.dashboard-card:nth-child(4){
+
+    animation-delay:.15s;
+
+}
+
+
+/*==================================================
+                    SCROLL
+==================================================*/
 
 ::-webkit-scrollbar{
 
-    width:10px;
+    width:9px;
 
 }
 
@@ -395,64 +1277,257 @@
 
 ::-webkit-scrollbar-thumb{
 
-    background:#7fd44d;
+    border-radius:999px;
 
-    border-radius:10px;
+    background:
+        rgba(152,236,99,.65);
+
+}
+
+::-webkit-scrollbar-thumb:hover{
+
+    background:
+        var(--inicio-verde);
 
 }
 
 
-/*================ RESPONSIVE =================*/
+/*==================================================
+                    RESPONSIVE
+==================================================*/
 
-@media(max-width:1200px){
+@media(max-width:1300px){
 
+    .dashboard,
     .tarjetas-inicio{
 
-        grid-template-columns:repeat(2,1fr);
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0,1fr)
+            );
 
     }
 
 }
 
+
+/*==================================================
+                    TABLET
+==================================================*/
 
 @media(max-width:900px){
 
     .bienvenida{
 
-        flex-direction:column;
+        min-height:auto;
+
+        padding:
+            155px
+            28px
+            32px;
 
         text-align:center;
+
+    }
+
+    .foto-admin{
+
+        top:25px;
+        left:50%;
+
+        transform:
+            translateX(-50%);
+
+    }
+
+    .foto-admin img{
+
+        width:110px;
+        height:110px;
+
+    }
+
+    .texto-bienvenida{
+
+        max-width:none;
+
+    }
+
+    .texto-bienvenida h1::after{
+
+        margin-left:auto;
+        margin-right:auto;
+
+    }
+
+    .texto-bienvenida p{
+
+        font-size:14px;
 
     }
 
 }
 
 
+/*==================================================
+                    MÓVIL
+==================================================*/
+
 @media(max-width:650px){
 
+    .contenedor{
+
+        gap:20px;
+
+    }
+
+    .dashboard,
     .tarjetas-inicio{
 
         grid-template-columns:1fr;
+
+        gap:14px;
+
+    }
+
+    .dashboard-card{
+
+        min-height:115px;
+
+        padding:18px;
+
+    }
+
+    .icono{
+
+        width:50px;
+        height:50px;
+
+        min-width:50px;
+
+        border-radius:14px;
+
+        font-size:20px;
+
+    }
+
+    .info h3{
+
+        font-size:11px;
+
+    }
+
+    .info span{
+
+        font-size:29px;
 
     }
 
     .bienvenida{
 
-        padding:30px;
+        border-radius:20px;
 
-    }
-
-    .foto-admin{
-
-        width:130px;
-
-        height:130px;
+        padding:
+            145px
+            20px
+            28px;
 
     }
 
     .texto-bienvenida h1{
 
-        font-size:36px;
+        font-size:29px;
+
+    }
+
+    .texto-bienvenida p{
+
+        font-size:13px;
+
+        line-height:1.65;
+
+    }
+
+    .actividad-reciente{
+
+        padding:18px;
+
+        border-radius:20px;
+
+    }
+
+    .actividad-header{
+
+        align-items:flex-start;
+
+    }
+
+    .actividad-header-icono{
+
+        width:42px;
+        height:42px;
+
+    }
+
+    .actividad-contenido-header{
+
+        flex-direction:column;
+
+        gap:3px;
+
+    }
+
+    .actividad-contenido time{
+
+        white-space:normal;
+
+    }
+
+}
+
+
+/*==================================================
+                    MÓVIL PEQUEÑO
+==================================================*/
+
+@media(max-width:420px){
+
+    .bienvenida{
+
+        padding-left:16px;
+        padding-right:16px;
+
+    }
+
+    .dashboard-card{
+
+        align-items:flex-start;
+
+    }
+
+    .actividad-header-icono{
+
+        display:none;
+
+    }
+
+    .actividad-item{
+
+        gap:11px;
+
+        padding:13px;
+
+    }
+
+    .actividad-icono{
+
+        width:38px;
+        height:38px;
+
+        border-radius:11px;
+
+        font-size:13px;
 
     }
 

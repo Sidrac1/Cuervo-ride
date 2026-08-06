@@ -4043,21 +4043,300 @@ def cargar_vista(request, vista):
 
     if vista == "inicio":
 
-        contexto["total_usuarios"] = (
-            Usuario.objects.count()
+        # -------------------------------------------------
+        # NOMBRE DEL ADMINISTRADOR AUTENTICADO
+        # -------------------------------------------------
+
+        nombre_admin = (
+            getattr(request.user, "nombre_completo", "")
+            or request.user.get_full_name()
+            or getattr(request.user, "nombre", "")
+            or getattr(request.user, "email", "")
+            or "Administrador"
         )
 
-        contexto["total_alertas_activas"] = (
-            AlertaEmergencia.objects
+        nombre_admin = str(nombre_admin).strip()
+
+        if nombre_admin:
+            nombre_admin = nombre_admin.split()[0]
+        else:
+            nombre_admin = "Administrador"
+
+        # -------------------------------------------------
+        # TOTALES GENERALES
+        # -------------------------------------------------
+
+        total_usuarios = Usuario.objects.count()
+
+        total_rides_activos = (
+            Viaje.objects
             .filter(
-                estado=(
-                    AlertaEmergencia
-                    .EstadosAlerta
-                    .ACTIVA
-                )
+                estado__in=[
+                    Viaje.EstadosViaje.DISPONIBLE,
+                    Viaje.EstadosViaje.COMPLETO,
+                    Viaje.EstadosViaje.EN_CURSO,
+                ]
             )
             .count()
         )
+
+        total_alertas_activas = (
+            AlertaEmergencia.objects
+            .filter(
+                estado=AlertaEmergencia.EstadosAlerta.ACTIVA
+            )
+            .count()
+        )
+
+        # -------------------------------------------------
+        # PROMEDIO GENERAL DE CALIFICACIONES
+        # -------------------------------------------------
+
+        resumen_calificaciones = (
+            Calificacion.objects
+            .filter(
+                estado__in=[
+                    Calificacion.EstadosCalificacion.VISIBLE,
+                    Calificacion.EstadosCalificacion.EN_REVISION,
+                ]
+            )
+            .aggregate(
+                promedio=Avg("puntuacion"),
+                total=Count("id"),
+            )
+        )
+
+        promedio_calificaciones = round(
+            float(resumen_calificaciones.get("promedio") or 0),
+            1,
+        )
+
+        total_calificaciones = (
+            resumen_calificaciones.get("total")
+            or 0
+        )
+
+        # -------------------------------------------------
+        # ACTIVIDAD RECIENTE
+        # -------------------------------------------------
+
+        actividad_reciente = []
+
+        # Usuarios recientes
+        usuarios_recientes = (
+            Usuario.objects
+            .order_by("-date_joined")[:5]
+        )
+
+        for usuario in usuarios_recientes:
+
+            nombre_usuario = (
+                getattr(usuario, "nombre_completo", "")
+                or usuario.get_full_name()
+                or getattr(usuario, "nombre", "")
+                or getattr(usuario, "email", "")
+                or "Usuario"
+            )
+
+            actividad_reciente.append({
+                "tipo": "usuario",
+                "titulo": "Nuevo usuario registrado",
+                "descripcion": (
+                    f"{nombre_usuario} se registró en Cuervo-Ride."
+                ),
+                "fecha": usuario.date_joined,
+                "icono": "fa-user-plus",
+                "clase": "actividad-usuario",
+            })
+
+        # Viajes recientes
+        viajes_recientes = (
+            Viaje.objects
+            .select_related(
+                "conductor",
+                "conductor__usuario",
+            )
+            .order_by("-fecha_creacion")[:5]
+        )
+
+        for viaje in viajes_recientes:
+
+            usuario_conductor = viaje.conductor.usuario
+
+            nombre_conductor = (
+                getattr(
+                    usuario_conductor,
+                    "nombre_completo",
+                    "",
+                )
+                or usuario_conductor.get_full_name()
+                or getattr(
+                    usuario_conductor,
+                    "nombre",
+                    "",
+                )
+                or "Un conductor"
+            )
+
+            actividad_reciente.append({
+                "tipo": "viaje",
+                "titulo": "Nuevo ride publicado",
+                "descripcion": (
+                    f"{nombre_conductor} publicó un ride "
+                    f"de {viaje.origen} hacia {viaje.destino}."
+                ),
+                "fecha": viaje.fecha_creacion,
+                "icono": "fa-car-side",
+                "clase": "actividad-viaje",
+            })
+
+        # Solicitudes recientes
+        solicitudes_recientes = (
+            SolicitudViaje.objects
+            .select_related(
+                "pasajero",
+                "viaje",
+            )
+            .order_by("-fecha_solicitud")[:5]
+        )
+
+        for solicitud in solicitudes_recientes:
+
+            pasajero = solicitud.pasajero
+
+            nombre_pasajero = (
+                getattr(pasajero, "nombre_completo", "")
+                or pasajero.get_full_name()
+                or getattr(pasajero, "nombre", "")
+                or "Un pasajero"
+            )
+
+            cantidad_asientos = (
+                solicitud.asientos_solicitados
+            )
+
+            actividad_reciente.append({
+                "tipo": "solicitud",
+                "titulo": "Nueva solicitud de viaje",
+                "descripcion": (
+                    f"{nombre_pasajero} solicitó "
+                    f"{cantidad_asientos} lugar"
+                    f"{'es' if cantidad_asientos != 1 else ''} "
+                    f"para el ride hacia "
+                    f"{solicitud.viaje.destino}."
+                ),
+                "fecha": solicitud.fecha_solicitud,
+                "icono": "fa-ticket",
+                "clase": "actividad-solicitud",
+            })
+
+        # Calificaciones recientes
+        calificaciones_recientes = (
+            Calificacion.objects
+            .select_related(
+                "autor",
+                "destinatario",
+                "viaje",
+            )
+            .order_by("-fecha")[:5]
+        )
+
+        for calificacion in calificaciones_recientes:
+
+            autor = calificacion.autor
+
+            nombre_autor = (
+                getattr(autor, "nombre_completo", "")
+                or autor.get_full_name()
+                or getattr(autor, "nombre", "")
+                or "Un usuario"
+            )
+
+            puntuacion = calificacion.puntuacion
+
+            actividad_reciente.append({
+                "tipo": "calificacion",
+                "titulo": "Nueva calificación",
+                "descripcion": (
+                    f"{nombre_autor} registró una calificación "
+                    f"de {puntuacion} estrella"
+                    f"{'s' if puntuacion != 1 else ''}."
+                ),
+                "fecha": calificacion.fecha,
+                "icono": "fa-star",
+                "clase": "actividad-calificacion",
+            })
+
+        # Alertas recientes
+        alertas_recientes = (
+            AlertaEmergencia.objects
+            .select_related(
+                "usuario",
+                "viaje",
+            )
+            .order_by("-fecha_activacion")[:5]
+        )
+
+        for alerta in alertas_recientes:
+
+            usuario_alerta = alerta.usuario
+
+            nombre_usuario_alerta = (
+                getattr(
+                    usuario_alerta,
+                    "nombre_completo",
+                    "",
+                )
+                or usuario_alerta.get_full_name()
+                or getattr(
+                    usuario_alerta,
+                    "nombre",
+                    "",
+                )
+                or "Un usuario"
+            )
+
+            actividad_reciente.append({
+                "tipo": "alerta",
+                "titulo": "Alerta de emergencia",
+                "descripcion": (
+                    f"{nombre_usuario_alerta} generó una alerta "
+                    f"de tipo {alerta.get_tipo_display()}."
+                ),
+                "fecha": alerta.fecha_activacion,
+                "icono": "fa-triangle-exclamation",
+                "clase": "actividad-alerta",
+            })
+
+        # Ordenar por fecha y conservar solo los 10 más recientes.
+        actividad_reciente = [
+            actividad
+            for actividad in actividad_reciente
+            if actividad.get("fecha") is not None
+        ]
+
+        actividad_reciente.sort(
+            key=lambda actividad: actividad["fecha"],
+            reverse=True,
+        )
+
+        actividad_reciente = actividad_reciente[:10]
+
+        # -------------------------------------------------
+        # CONTEXTO DEL INICIO
+        # -------------------------------------------------
+
+        contexto.update({
+            "nombre_admin": nombre_admin,
+            "total_usuarios": total_usuarios,
+            "total_rides_activos": total_rides_activos,
+            "total_alertas_activas": total_alertas_activas,
+            "promedio_calificaciones": (
+                promedio_calificaciones
+            ),
+            "total_calificaciones": total_calificaciones,
+            "actividad_reciente": actividad_reciente,
+        })
 
 
     # =====================================================

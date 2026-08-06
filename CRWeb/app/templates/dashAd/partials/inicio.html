@@ -1,61 +1,294 @@
 {% load static %}
+
 <section class="contenedor">
-    <!--================ BIENVENIDA =================-->
+
+    <!--==================================================
+                        BIENVENIDA
+    ==================================================-->
+
     <section class="bienvenida">
+
         <div class="foto-admin">
-            <img src="{% static 'img/admin.png' %}" alt="Administrador">
+
+            <img
+                src="{% static 'img/admin.png' %}"
+                alt="Administrador">
+
         </div>
 
         <div class="texto-bienvenida">
-            <h1>¡Bienvenido, Jean!</h1>
+
+            <h1>
+
+                ¡Bienvenido,
+                {{ nombre_admin }}!
+
+            </h1>
+
             <p>
-                Gestiona todos los usuarios registrados, monitorea los rides activos,
-                administra las alertas del sistema y consulta las estadísticas generales
+
+                Gestiona todos los usuarios registrados,
+                monitorea los rides activos,
+                administra las alertas del sistema
+                y consulta las estadísticas generales
                 desde un solo lugar.
+
             </p>
+
         </div>
+
     </section>
 
-    <!--================ TARJETAS =================-->
+
+    <!--==================================================
+                    TARJETAS DASHBOARD
+    ==================================================-->
+
     <section class="dashboard">
+
+        <!-- Usuarios -->
+
         <div class="dashboard-card">
+
             <div class="icono">
+
                 <i class="fa-solid fa-users"></i>
+
             </div>
+
             <div class="info">
-                <h3>Usuarios Registrados</h3>
-                <span id="totalUsuarios">{{ total_usuarios }}</span>
+
+                <h3>
+
+                    Usuarios Registrados
+
+                </h3>
+
+                <span id="totalUsuarios">
+
+                    {{ total_usuarios }}
+
+                </span>
+
             </div>
+
         </div>
 
+
+        <!-- Rides -->
+
         <div class="dashboard-card">
+
             <div class="icono verde">
+
                 <i class="fa-solid fa-car"></i>
+
             </div>
+
             <div class="info">
-                <h3>Rides Activos</h3>
-                <span id="totalRides" class="verde">1</span>
+
+                <h3>
+
+                    Rides Activos
+
+                </h3>
+
+                <span
+                    id="totalRides"
+                    class="verde">
+
+                    {{ total_rides_activos }}
+
+                </span>
+
             </div>
+
         </div>
 
+
+        <!-- Alertas -->
+
         <div class="dashboard-card">
+
             <div class="icono amarillo">
+
                 <i class="fa-solid fa-triangle-exclamation"></i>
+
             </div>
+
             <div class="info">
-                <h3>Alertas Activas</h3>
-                <span id="totalAlertas" class="amarillo">{{ total_alertas_activas }}</span>
+
+                <h3>
+
+                    Alertas Activas
+
+                </h3>
+
+                <span
+                    id="totalAlertas"
+                    class="amarillo">
+
+                    {{ total_alertas_activas }}
+
+                </span>
+
             </div>
+
         </div>
 
+
+        <!-- Calificación -->
+
         <div class="dashboard-card">
+
             <div class="icono estrella">
+
                 <i class="fa-solid fa-star"></i>
+
             </div>
+
             <div class="info">
-                <h3>Calificación Promedio</h3>
-                <span id="promedio" class="dorado">4.7</span>
+
+                <h3>
+
+                    Calificación Promedio
+
+                </h3>
+
+                <span
+                    id="promedio"
+                    class="dorado">
+
+                    {{ promedio_calificaciones }}
+
+                </span>
+
+                <small class="promedio-escala">
+
+                    Basado en
+                    {{ total_calificaciones }}
+                    calificaciones
+
+                </small>
+
             </div>
+
         </div>
+
     </section>
+
+
+    <!--==================================================
+                ACTIVIDAD RECIENTE
+    ==================================================-->
+
+    <section class="actividad-reciente">
+
+        <div class="actividad-header">
+
+            <div>
+
+                <span class="actividad-etiqueta">
+
+                    Monitoreo del sistema
+
+                </span>
+
+                <h2>
+
+                    Actividad reciente
+
+                </h2>
+
+                <p>
+
+                    Últimos movimientos registrados
+                    en Cuervo-Ride.
+
+                </p>
+
+            </div>
+
+            <div class="actividad-header-icono">
+
+                <i class="fa-solid fa-clock-rotate-left"></i>
+
+            </div>
+
+        </div>
+
+
+        <div class="actividad-lista">
+
+            {% for actividad in actividad_reciente %}
+
+                <article
+                    class="actividad-item {{ actividad.clase }}">
+
+                    <div class="actividad-icono">
+
+                        <i class="fa-solid {{ actividad.icono }}"></i>
+
+                    </div>
+
+                    <div class="actividad-contenido">
+
+                        <div class="actividad-contenido-header">
+
+                            <strong>
+
+                                {{ actividad.titulo }}
+
+                            </strong>
+
+                            <time
+                                datetime="{{ actividad.fecha|date:'c' }}">
+
+                                {{ actividad.fecha|timesince }} atrás
+
+                            </time>
+
+                        </div>
+
+                        <p>
+
+                            {{ actividad.descripcion }}
+
+                        </p>
+
+                    </div>
+
+                </article>
+
+            {% empty %}
+
+                <div class="actividad-vacia">
+
+                    <div class="actividad-vacia-icono">
+
+                        <i class="fa-solid fa-inbox"></i>
+
+                    </div>
+
+                    <h3>
+
+                        Sin actividad reciente
+
+                    </h3>
+
+                    <p>
+
+                        Aún no existen movimientos
+                        registrados en el sistema.
+
+                    </p>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
 </section>
