@@ -11,7 +11,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1.0">
 
-    <title>Información Médica</title>
+    <title>Información Médica | Cuervo-Ride</title>
 
     <!-- Font Awesome -->
     <link
@@ -27,328 +27,205 @@
 
 <body>
 
-    <!--=====================================
-                BOTÓN REGRESAR
-    ======================================-->
 
-    <a href="{% url 'register' %}" class="back">
+    <!--==================================================
+                DECORACIÓN DE FONDO
+    ==================================================-->
 
-        <i class="fa-solid fa-arrow-left"></i>
+    <div class="fondo-decorativo">
 
-        Regresar
+        <span class="fondo-luz fondo-luz-uno"></span>
 
-    </a>
+        <span class="fondo-luz fondo-luz-dos"></span>
 
-
-    <!--=====================================
-                    MARCA
-    ======================================-->
-
-    <div class="brand">
-
-        Cuervo-<span>Ride</span>
+        <span class="fondo-grid"></span>
 
     </div>
 
 
-    <!--=====================================
-                    TARJETA
-    ======================================-->
+    <!--==================================================
+                    BARRA SUPERIOR
+    ==================================================-->
 
-    <div class="card">
+    <header class="medico-topbar">
 
-        <h1>Información Médica</h1>
+        <a
+            href="{% url 'register' %}"
+            class="back">
 
-        <p class="descripcion">
+            <span class="back-icono">
 
-            Esta información ayudará a brindar un viaje más seguro.
-            Puedes omitir este paso y completarlo posteriormente con ayuda de un administrador.
+                <i class="fa-solid fa-arrow-left"></i>
 
-        </p>
+            </span>
+
+            <span>
+                Regresar
+            </span>
+
+        </a>
 
 
-        <!--=====================================
-            INDICADOR DE PROGRESO
-        ======================================-->
+        <div class="brand">
 
-        <div class="progress">
+            <div class="brand-icono">
 
-            <div class="step completed">
-
-                <div class="circle">
-
-                    <i class="fa-solid fa-check"></i>
-
-                </div>
-
-                <span>Cuenta</span>
+                <i class="fa-solid fa-crow"></i>
 
             </div>
 
-            <div class="line completed"></div>
+            <div class="brand-texto">
 
-            <div class="step active">
+                <strong>
+                    Cuervo-<span>Ride</span>
+                </strong>
 
-                <div class="circle">
-
-                    2
-
-                </div>
-
-                <span>Información Médica</span>
-
-            </div>
-
-            <div class="line"></div>
-
-            <div class="step">
-
-                <div class="circle">
-
-                    3
-
-                </div>
-
-                <span>Inicio</span>
+                <small>
+                    Movilidad universitaria
+                </small>
 
             </div>
 
         </div>
 
-
-        <!--=====================================
-                    FORMULARIO
-        ======================================-->
-
-        <form
-            id="formInfoMedica"
-            method="POST">
-
-            {% csrf_token %}
+    </header>
 
 
-            <!--=====================================
-                INFORMACIÓN GENERAL
-            ======================================-->
+    <!--==================================================
+                    CONTENIDO
+    ==================================================-->
 
-            <section class="bloque">
+    <main class="medico-main">
 
-                <h2>Información General</h2>
-
-                <div class="grid">
-
-                    <!-- Discapacidad -->
-
-                    <div class="campo">
-
-                        <label>
-
-                            ¿Presenta alguna discapacidad?
-
-                        </label>
-
-                        <div class="radio-group">
-
-                            <label for="discapacidadSi">
-
-                                <input
-                                    type="radio"
-                                    id="discapacidadSi"
-                                    name="discapacidad"
-                                    value="si">
-
-                                Sí
-
-                            </label>
-
-                            <label for="discapacidadNo">
-
-                                <input
-                                    type="radio"
-                                    id="discapacidadNo"
-                                    name="discapacidad"
-                                    value="no"
-                                    checked>
-
-                                No
-
-                            </label>
-
-                        </div>
-
-                    </div>
+        <div class="medico-wrapper">
 
 
-                    <!-- Tipo de sangre -->
+            <!--==================================================
+                        ENCABEZADO
+            ==================================================-->
 
-                    <div class="campo">
+            <header class="medico-header">
 
-                        <label for="tipoSangre">
+                <div class="medico-header-contenido">
 
-                            Tipo de sangre
+                    <span class="medico-etiqueta">
 
-                        </label>
+                        <i class="fa-solid fa-heart-pulse"></i>
 
-                        <select
-                            id="tipoSangre"
-                            name="tipo_sangre">
+                        Seguridad del pasajero
 
-                            <option value="">
+                    </span>
 
-                                Seleccionar...
 
-                            </option>
+                    <h1>
+                        Información Médica
+                    </h1>
 
-                            <option value="A+">A+</option>
 
-                            <option value="A-">A-</option>
+                    <p>
 
-                            <option value="B+">B+</option>
+                        Esta información ayudará a brindar un viaje
+                        más seguro y permitirá conocer datos importantes
+                        en caso de una emergencia.
 
-                            <option value="B-">B-</option>
-
-                            <option value="AB+">AB+</option>
-
-                            <option value="AB-">AB-</option>
-
-                            <option value="O+">O+</option>
-
-                            <option value="O-">O-</option>
-
-                        </select>
-
-                    </div>
+                    </p>
 
                 </div>
 
-            </section>
+
+                <div class="medico-header-icono">
+
+                    <i class="fa-solid fa-notes-medical"></i>
+
+                </div>
+
+            </header>
 
 
-            <!--=====================================
-                DATOS DE DISCAPACIDAD
-            ======================================-->
+            <!--==================================================
+                    INDICADOR DE PROGRESO
+            ==================================================-->
 
-            <section
-                class="bloque"
-                id="datosDiscapacidad">
+            <section class="progress-card">
 
-                <h2>Información sobre la discapacidad</h2>
-
-                <div class="grid">
-
-                    <!-- Tipo de discapacidad -->
-
-                    <div class="campo">
-
-                        <label for="tipoDiscapacidad">
-
-                            Tipo de discapacidad
-
-                        </label>
-
-                        <select
-                            id="tipoDiscapacidad"
-                            name="tipo_discapacidad">
-
-                            <option value="">
-
-                                Seleccionar...
-
-                            </option>
-
-                            <option value="Visual">Visual</option>
-
-                            <option value="Auditiva">Auditiva</option>
-
-                            <option value="Motriz">Motriz</option>
-
-                            <option value="Intelectual">Intelectual</option>
-
-                            <option value="Psicosocial">Psicosocial</option>
-
-                        </select>
-
-                    </div>
+                <div class="progress">
 
 
-                    <!-- Vehículo adaptado -->
+                    <!-- CUENTA -->
 
-                    <div class="campo">
+                    <div class="step completed">
 
-                        <label>
+                        <div class="circle">
 
-                            ¿Requiere vehículo adaptado?
+                            <i class="fa-solid fa-check"></i>
 
-                        </label>
+                        </div>
 
-                        <div class="radio-group">
+                        <div class="step-info">
 
-                            <label for="vehiculoAdaptadoSi">
+                            <small>
+                                Paso 1
+                            </small>
 
-                                <input
-                                    type="radio"
-                                    id="vehiculoAdaptadoSi"
-                                    name="vehiculo_adaptado"
-                                    value="si">
-
-                                Sí
-
-                            </label>
-
-                            <label for="vehiculoAdaptadoNo">
-
-                                <input
-                                    type="radio"
-                                    id="vehiculoAdaptadoNo"
-                                    name="vehiculo_adaptado"
-                                    value="no"
-                                    checked>
-
-                                No
-
-                            </label>
+                            <span>
+                                Cuenta
+                            </span>
 
                         </div>
 
                     </div>
 
 
-                    <!-- Cuidados especiales -->
+                    <div class="line completed"></div>
 
-                    <div class="campo">
 
-                        <label>
+                    <!-- INFORMACIÓN MÉDICA -->
 
-                            ¿Requiere cuidados especiales?
+                    <div class="step active">
 
-                        </label>
+                        <div class="circle">
 
-                        <div class="radio-group">
+                            2
 
-                            <label for="cuidadosEspecialesSi">
+                        </div>
 
-                                <input
-                                    type="radio"
-                                    id="cuidadosEspecialesSi"
-                                    name="cuidados_especiales"
-                                    value="si">
+                        <div class="step-info">
 
-                                Sí
+                            <small>
+                                Paso 2
+                            </small>
 
-                            </label>
+                            <span>
+                                Información Médica
+                            </span>
 
-                            <label for="cuidadosEspecialesNo">
+                        </div>
 
-                                <input
-                                    type="radio"
-                                    id="cuidadosEspecialesNo"
-                                    name="cuidados_especiales"
-                                    value="no"
-                                    checked>
+                    </div>
 
-                                No
 
-                            </label>
+                    <div class="line"></div>
+
+
+                    <!-- INICIO -->
+
+                    <div class="step">
+
+                        <div class="circle">
+
+                            3
+
+                        </div>
+
+                        <div class="step-info">
+
+                            <small>
+                                Paso 3
+                            </small>
+
+                            <span>
+                                Inicio
+                            </span>
 
                         </div>
 
@@ -359,233 +236,830 @@
             </section>
 
 
-            <!--=====================================
-                        APOYOS
-            ======================================-->
+            <!--==================================================
+                        TARJETA PRINCIPAL
+            ==================================================-->
 
-            <section
-                class="bloque"
-                id="apoyosDiscapacidad">
-
-                <h2>Apoyos que utiliza</h2>
-
-                <div class="checkbox-grid">
-
-                    <label for="usaBaston">
-
-                        <input
-                            type="checkbox"
-                            id="usaBaston"
-                            name="usa_baston">
-
-                        Bastón
-
-                    </label>
+            <section class="card">
 
 
-                    <label for="usaPerroGuia">
+                <!--==================================================
+                        MENSAJE INFORMATIVO
+                ==================================================-->
 
-                        <input
-                            type="checkbox"
-                            id="usaPerroGuia"
-                            name="usa_perro_guia">
+                <div class="aviso-medico">
 
-                        Perro guía
+                    <div class="aviso-icono">
 
-                    </label>
-
-
-                    <label for="usaSillaRuedas">
-
-                        <input
-                            type="checkbox"
-                            id="usaSillaRuedas"
-                            name="usa_silla_ruedas">
-
-                        Silla de ruedas
-
-                    </label>
-
-
-                    <label for="usaAndadera">
-
-                        <input
-                            type="checkbox"
-                            id="usaAndadera"
-                            name="usa_andadera">
-
-                        Andadera
-
-                    </label>
-
-
-                    <label for="usaMuletas">
-
-                        <input
-                            type="checkbox"
-                            id="usaMuletas"
-                            name="usa_muletas">
-
-                        Muletas
-
-                    </label>
-
-
-                    <label for="usaProtesis">
-
-                        <input
-                            type="checkbox"
-                            id="usaProtesis"
-                            name="usa_protesis">
-
-                        Prótesis
-
-                    </label>
-
-
-                    <label for="usaOtroApoyo">
-
-                        <input
-                            type="checkbox"
-                            id="usaOtroApoyo">
-
-                        Otro
-
-                    </label>
-
-                </div>
-
-
-                <!-- Otro apoyo -->
-
-                <div
-                    class="campo otro-apoyo-campo"
-                    id="campoOtroApoyo">
-
-                    <label for="otroApoyo">
-
-                        Especifique otro apoyo
-
-                    </label>
-
-                    <input
-                        type="text"
-                        id="otroApoyo"
-                        name="otro_apoyo"
-                        maxlength="100"
-                        placeholder="Escriba el apoyo que utiliza..."
-                        disabled>
-
-                </div>
-
-            </section>
-
-
-            <!--=====================================
-                CONTACTO DE EMERGENCIA
-            ======================================-->
-
-            <section class="bloque">
-
-                <h2>Contacto de emergencia</h2>
-
-                <div class="grid">
-
-                    <!-- Nombre -->
-
-                    <div class="campo">
-
-                        <label for="nombreContacto">
-
-                            Nombre
-
-                        </label>
-
-                        <input
-                            type="text"
-                            id="nombreContacto"
-                            name="nombre_contacto"
-                            maxlength="100"
-                            autocomplete="name">
+                        <i class="fa-solid fa-shield-heart"></i>
 
                     </div>
 
 
-                    <!-- Teléfono -->
+                    <div>
 
-                    <div class="campo">
+                        <strong>
+                            Información opcional y de seguridad
+                        </strong>
 
-                        <label for="telefonoContacto">
+                        <p>
 
-                            Teléfono
+                            Puedes omitir este paso y completar tu
+                            información posteriormente con ayuda de
+                            un administrador.
 
-                        </label>
-
-                        <input
-                            type="tel"
-                            id="telefonoContacto"
-                            name="telefono_contacto"
-                            maxlength="20"
-                            autocomplete="tel"
-                            placeholder="Ej. 6641234567">
+                        </p>
 
                     </div>
 
                 </div>
 
+
+                <!--==================================================
+                            FORMULARIO
+                ==================================================-->
+
+                <form
+                    id="formInfoMedica"
+                    method="POST">
+
+                    {% csrf_token %}
+
+
+                    <!--==================================================
+                            INFORMACIÓN GENERAL
+                    ==================================================-->
+
+                    <section class="bloque">
+
+                        <header class="bloque-header">
+
+                            <div class="bloque-icono">
+
+                                <i class="fa-solid fa-heart-pulse"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Datos básicos
+                                </span>
+
+                                <h2>
+                                    Información General
+                                </h2>
+
+                                <p>
+                                    Información médica básica que puede
+                                    ser útil durante un viaje.
+                                </p>
+
+                            </div>
+
+                        </header>
+
+
+                        <div class="bloque-contenido">
+
+                            <div class="grid">
+
+
+                                <!-- DISCAPACIDAD -->
+
+                                <div class="campo">
+
+                                    <label>
+
+                                        <i class="fa-solid fa-universal-access"></i>
+
+                                        ¿Presenta alguna discapacidad?
+
+                                    </label>
+
+
+                                    <div class="radio-group">
+
+                                        <label for="discapacidadSi">
+
+                                            <input
+                                                type="radio"
+                                                id="discapacidadSi"
+                                                name="discapacidad"
+                                                value="si">
+
+                                            <span>
+                                                Sí
+                                            </span>
+
+                                        </label>
+
+
+                                        <label for="discapacidadNo">
+
+                                            <input
+                                                type="radio"
+                                                id="discapacidadNo"
+                                                name="discapacidad"
+                                                value="no"
+                                                checked>
+
+                                            <span>
+                                                No
+                                            </span>
+
+                                        </label>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- TIPO DE SANGRE -->
+
+                                <div class="campo">
+
+                                    <label for="tipoSangre">
+
+                                        <i class="fa-solid fa-droplet"></i>
+
+                                        Tipo de sangre
+
+                                    </label>
+
+
+                                    <select
+                                        id="tipoSangre"
+                                        name="tipo_sangre">
+
+                                        <option value="">
+                                            Seleccionar...
+                                        </option>
+
+                                        <option value="A+">A+</option>
+                                        <option value="A-">A-</option>
+
+                                        <option value="B+">B+</option>
+                                        <option value="B-">B-</option>
+
+                                        <option value="AB+">AB+</option>
+                                        <option value="AB-">AB-</option>
+
+                                        <option value="O+">O+</option>
+                                        <option value="O-">O-</option>
+
+                                    </select>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!--==================================================
+                        INFORMACIÓN DE DISCAPACIDAD
+                    ==================================================-->
+
+                    <section
+                        class="bloque bloque-discapacidad"
+                        id="datosDiscapacidad">
+
+                        <header class="bloque-header">
+
+                            <div class="bloque-icono">
+
+                                <i class="fa-solid fa-wheelchair"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Accesibilidad
+                                </span>
+
+                                <h2>
+                                    Información sobre la discapacidad
+                                </h2>
+
+                                <p>
+                                    Indica cualquier requerimiento que
+                                    pueda ser importante durante el viaje.
+                                </p>
+
+                            </div>
+
+                        </header>
+
+
+                        <div class="bloque-contenido">
+
+                            <div class="grid">
+
+
+                                <!-- TIPO DE DISCAPACIDAD -->
+
+                                <div class="campo">
+
+                                    <label for="tipoDiscapacidad">
+
+                                        <i class="fa-solid fa-list"></i>
+
+                                        Tipo de discapacidad
+
+                                    </label>
+
+
+                                    <select
+                                        id="tipoDiscapacidad"
+                                        name="tipo_discapacidad">
+
+                                        <option value="">
+                                            Seleccionar...
+                                        </option>
+
+                                        <option value="visual">
+                                            Visual
+                                        </option>
+
+                                        <option value="auditiva">
+                                            Auditiva
+                                        </option>
+
+                                        <option value="motriz">
+                                            Motriz
+                                        </option>
+
+                                        <option value="intelectual">
+                                            Intelectual
+                                        </option>
+
+                                        <option value="psicosocial">
+                                            Psicosocial
+                                        </option>
+
+                                        <option value="multiple">
+                                            Múltiple
+                                        </option>
+
+                                        <option value="otra">
+                                            Otra
+                                        </option>
+
+                                    </select>
+
+                                </div>
+
+
+                                <!-- VEHÍCULO ADAPTADO -->
+
+                                <div class="campo">
+
+                                    <label>
+
+                                        <i class="fa-solid fa-car-side"></i>
+
+                                        ¿Requiere vehículo adaptado?
+
+                                    </label>
+
+
+                                    <div class="radio-group">
+
+                                        <label for="vehiculoAdaptadoSi">
+
+                                            <input
+                                                type="radio"
+                                                id="vehiculoAdaptadoSi"
+                                                name="vehiculo_adaptado"
+                                                value="si">
+
+                                            <span>
+                                                Sí
+                                            </span>
+
+                                        </label>
+
+
+                                        <label for="vehiculoAdaptadoNo">
+
+                                            <input
+                                                type="radio"
+                                                id="vehiculoAdaptadoNo"
+                                                name="vehiculo_adaptado"
+                                                value="no"
+                                                checked>
+
+                                            <span>
+                                                No
+                                            </span>
+
+                                        </label>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- CUIDADOS ESPECIALES -->
+
+                                <div class="campo ancho">
+
+                                    <label>
+
+                                        <i class="fa-solid fa-hand-holding-medical"></i>
+
+                                        ¿Requiere cuidados especiales?
+
+                                    </label>
+
+
+                                    <div class="radio-group">
+
+                                        <label for="cuidadosEspecialesSi">
+
+                                            <input
+                                                type="radio"
+                                                id="cuidadosEspecialesSi"
+                                                name="cuidados_especiales"
+                                                value="si">
+
+                                            <span>
+                                                Sí
+                                            </span>
+
+                                        </label>
+
+
+                                        <label for="cuidadosEspecialesNo">
+
+                                            <input
+                                                type="radio"
+                                                id="cuidadosEspecialesNo"
+                                                name="cuidados_especiales"
+                                                value="no"
+                                                checked>
+
+                                            <span>
+                                                No
+                                            </span>
+
+                                        </label>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!--==================================================
+                                APOYOS
+                    ==================================================-->
+
+                    <section
+                        class="bloque bloque-apoyos"
+                        id="apoyosDiscapacidad">
+
+                        <header class="bloque-header">
+
+                            <div class="bloque-icono">
+
+                                <i class="fa-solid fa-person-walking-with-cane"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Asistencia
+                                </span>
+
+                                <h2>
+                                    Apoyos que utiliza
+                                </h2>
+
+                                <p>
+                                    Selecciona los apoyos de movilidad o
+                                    asistencia que utilizas habitualmente.
+                                </p>
+
+                            </div>
+
+                        </header>
+
+
+                        <div class="bloque-contenido">
+
+                            <div class="checkbox-grid">
+
+
+                                <label for="usaBaston">
+
+                                    <input
+                                        type="checkbox"
+                                        id="usaBaston"
+                                        name="usa_baston">
+
+                                    <span class="checkbox-icono">
+
+                                        <i class="fa-solid fa-person-walking-with-cane"></i>
+
+                                    </span>
+
+                                    <span>
+                                        Bastón
+                                    </span>
+
+                                </label>
+
+
+                                <label for="usaPerroGuia">
+
+                                    <input
+                                        type="checkbox"
+                                        id="usaPerroGuia"
+                                        name="usa_perro_guia">
+
+                                    <span class="checkbox-icono">
+
+                                        <i class="fa-solid fa-dog"></i>
+
+                                    </span>
+
+                                    <span>
+                                        Perro guía
+                                    </span>
+
+                                </label>
+
+
+                                <label for="usaSillaRuedas">
+
+                                    <input
+                                        type="checkbox"
+                                        id="usaSillaRuedas"
+                                        name="usa_silla_ruedas">
+
+                                    <span class="checkbox-icono">
+
+                                        <i class="fa-solid fa-wheelchair"></i>
+
+                                    </span>
+
+                                    <span>
+                                        Silla de ruedas
+                                    </span>
+
+                                </label>
+
+
+                                <label for="usaAndadera">
+
+                                    <input
+                                        type="checkbox"
+                                        id="usaAndadera"
+                                        name="usa_andadera">
+
+                                    <span class="checkbox-icono">
+
+                                        <i class="fa-solid fa-person-walking"></i>
+
+                                    </span>
+
+                                    <span>
+                                        Andadera
+                                    </span>
+
+                                </label>
+
+
+                                <label for="usaMuletas">
+
+                                    <input
+                                        type="checkbox"
+                                        id="usaMuletas"
+                                        name="usa_muletas">
+
+                                    <span class="checkbox-icono">
+
+                                        <i class="fa-solid fa-person-walking-arrow-right"></i>
+
+                                    </span>
+
+                                    <span>
+                                        Muletas
+                                    </span>
+
+                                </label>
+
+
+                                <label for="usaProtesis">
+
+                                    <input
+                                        type="checkbox"
+                                        id="usaProtesis"
+                                        name="usa_protesis">
+
+                                    <span class="checkbox-icono">
+
+                                        <i class="fa-solid fa-kit-medical"></i>
+
+                                    </span>
+
+                                    <span>
+                                        Prótesis
+                                    </span>
+
+                                </label>
+
+
+                                <label for="usaOtroApoyo">
+
+                                    <input
+                                        type="checkbox"
+                                        id="usaOtroApoyo">
+
+                                    <span class="checkbox-icono">
+
+                                        <i class="fa-solid fa-circle-plus"></i>
+
+                                    </span>
+
+                                    <span>
+                                        Otro
+                                    </span>
+
+                                </label>
+
+                            </div>
+
+
+                            <!-- OTRO APOYO -->
+
+                            <div
+                                class="campo otro-apoyo-campo"
+                                id="campoOtroApoyo">
+
+                                <label for="otroApoyo">
+
+                                    <i class="fa-solid fa-pen"></i>
+
+                                    Especifique otro apoyo
+
+                                </label>
+
+
+                                <input
+                                    type="text"
+                                    id="otroApoyo"
+                                    name="otro_apoyo"
+                                    maxlength="100"
+                                    placeholder="Escriba el apoyo que utiliza..."
+                                    disabled>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!--==================================================
+                        CONTACTO DE EMERGENCIA
+                    ==================================================-->
+
+                    <section class="bloque">
+
+                        <header class="bloque-header">
+
+                            <div class="bloque-icono emergencia">
+
+                                <i class="fa-solid fa-phone-volume"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    En caso de emergencia
+                                </span>
+
+                                <h2>
+                                    Contacto de emergencia
+                                </h2>
+
+                                <p>
+                                    Persona a quien se puede contactar si
+                                    ocurre alguna situación durante un viaje.
+                                </p>
+
+                            </div>
+
+                        </header>
+
+
+                        <div class="bloque-contenido">
+
+                            <div class="grid">
+
+
+                                <!-- NOMBRE -->
+
+                                <div class="campo">
+
+                                    <label for="nombreContacto">
+
+                                        <i class="fa-solid fa-user"></i>
+
+                                        Nombre
+
+                                    </label>
+
+
+                                    <input
+                                        type="text"
+                                        id="nombreContacto"
+                                        name="nombre_contacto"
+                                        maxlength="100"
+                                        autocomplete="name"
+                                        placeholder="Nombre del contacto">
+
+                                </div>
+
+
+                                <!-- TELÉFONO -->
+
+                                <div class="campo">
+
+                                    <label for="telefonoContacto">
+
+                                        <i class="fa-solid fa-phone"></i>
+
+                                        Teléfono
+
+                                    </label>
+
+
+                                    <input
+                                        type="tel"
+                                        id="telefonoContacto"
+                                        name="telefono_contacto"
+                                        maxlength="20"
+                                        autocomplete="tel"
+                                        placeholder="Ej. 6641234567">
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!--==================================================
+                            OBSERVACIONES
+                    ==================================================-->
+
+                    <section class="bloque">
+
+                        <header class="bloque-header">
+
+                            <div class="bloque-icono observaciones">
+
+                                <i class="fa-solid fa-clipboard"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Información adicional
+                                </span>
+
+                                <h2>
+                                    Observaciones
+                                </h2>
+
+                                <p>
+                                    Agrega cualquier información que consideres
+                                    importante para tu seguridad.
+                                </p>
+
+                            </div>
+
+                        </header>
+
+
+                        <div class="bloque-contenido">
+
+                            <div class="campo">
+
+                                <label for="observaciones">
+
+                                    <i class="fa-solid fa-message"></i>
+
+                                    Información adicional
+
+                                </label>
+
+
+                                <textarea
+                                    id="observaciones"
+                                    name="observaciones"
+                                    rows="5"
+                                    maxlength="500"
+                                    placeholder="Información adicional..."></textarea>
+
+                                <small class="campo-ayuda">
+
+                                    <i class="fa-solid fa-circle-info"></i>
+
+                                    Evita incluir información que no sea
+                                    necesaria para tu seguridad durante los viajes.
+
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!--==================================================
+                            ACCIONES
+                    ==================================================-->
+
+                    <footer class="acciones">
+
+                        <div class="acciones-info">
+
+                            <i class="fa-solid fa-lock"></i>
+
+                            <p>
+                                Tu información médica será utilizada
+                                únicamente con fines de seguridad.
+                            </p>
+
+                        </div>
+
+
+                        <div class="acciones-botones">
+
+                            <a
+                                href="{% url 'home' %}"
+                                class="omitir">
+
+                                Omitir por ahora
+
+                            </a>
+
+                            <a href="{% url 'home' %}">
+                            <button
+                                type="submit"
+                                class="guardar">
+
+                                <i class="fa-solid fa-floppy-disk"></i>
+
+                                <span>
+                                    Guardar información
+                                </span>
+
+                                <i class="fa-solid fa-arrow-right"></i>
+
+                            </button>
+                            </a>
+
+                        </div>
+
+                    </footer>
+
+                </form>
+
             </section>
 
+        </div>
 
-            <!--=====================================
-                    OBSERVACIONES
-            ======================================-->
-
-            <section class="bloque">
-
-                <h2>Observaciones</h2>
-
-                <textarea
-                    id="observaciones"
-                    name="observaciones"
-                    rows="5"
-                    maxlength="500"
-                    placeholder="Información adicional..."></textarea>
-
-            </section>
+    </main>
 
 
-            <!--=====================================
-                        BOTONES
-            ======================================-->
-
-            <div class="acciones">
-
-                <button
-                    type="submit"
-                    class="guardar">
-
-                    Guardar información
-
-                </button>
-
-                <a
-                    href="{% url 'home' %}"
-                    class="omitir">
-
-                    Omitir por ahora
-
-                </a>
-
-            </div>
-
-        </form>
-
-    </div>
-
-
-    <!--=====================================
-                    JAVASCRIPT
-    ======================================-->
+    <!--==================================================
+                        JAVASCRIPT
+    ==================================================-->
 
     <script src="{% static 'js/discapacidades.js' %}"></script>
 
