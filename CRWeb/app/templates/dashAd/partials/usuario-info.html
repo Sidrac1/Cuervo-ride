@@ -1,91 +1,1073 @@
 {% load static %}
-<div class="usuario-card">
-    <!--================ SIDEBAR =================-->
-    <aside class="usuario-sidebar">
-        <img id="fotoUsuario" src="{% static 'img/admin.png' %}" class="foto-usuario" alt="Usuario">
-        <h2 id="nombreTitulo">Cargando...</h2>
 
-        <button class="tab-btn active" id="btnGeneral">Información General</button>
-        <button class="tab-btn" id="btnVerificacion" style="display:none;">Verificación de Conductor</button>
-        <button class="tab-btn" id="btnMedico">Expediente Médico</button>
-    </aside>
+<section
+    class="usuario-detalle-admin"
+    id="moduloDetalleUsuario">
 
-    <!--================ PANEL: INFORMACIÓN GENERAL =================-->
-    <section class="usuario-panel" id="panelGeneral">
-        <h2>Información General</h2>
-        <form id="formGeneral">
-            <input type="hidden" id="usuarioId">
-            
-            <div class="grid-info">
-                <div class="campo">
-                    <label>Nombre</label>
-                    <input id="nombre" type="text" placeholder="Nombre">
-                </div>
+    <!--==================================================
+                    ENCABEZADO
+    ==================================================-->
 
-                <div class="campo">
-                    <label>Correo Institucional</label>
-                    <input id="correo" type="email" placeholder="Correo">
-                </div>
+    <header class="usuario-detalle-header">
 
-                <div class="campo">
-                    <label>Matrícula</label>
-                    <input id="matricula" type="text" placeholder="Matrícula">
-                </div>
+        <div class="usuario-detalle-header-texto">
 
-                <div class="campo">
-                    <label>Cuatrimestre / Grado</label>
-                    <input id="cuatrimestre" type="text" placeholder="Grado y grupo">
-                </div>
+            <span class="usuario-detalle-etiqueta">
 
-                <div class="campo">
-                    <label>Carrera</label>
-                    <input id="carrera" type="text" placeholder="Carrera">
-                </div>
+                <i class="fa-solid fa-user-gear"></i>
 
-                <div class="campo">
-                    <label>Rol</label>
-                    <select id="rol">
-                        <option value="administrador">Administrador</option>
-                        <option value="conductor">Conductor</option>
-                        <option value="pasajero">Pasajero</option>
-                    </select>
-                </div>
+                Gestión de cuenta
 
-                <div class="campo">
-                    <label>Estado</label>
-                    <select id="estado">
-                        <option value="activa">Activa</option>
-                        <option value="suspendida">Suspendida</option>
-                        <option value="bloqueada">Bloqueada</option>
-                        <option value="pendiente">Pendiente</option>
-                    </select>
-                </div>
+            </span>
 
-                <div class="campo">
-                    <label>Contraseña (Dejar en blanco para no cambiar)</label>
-                    <input id="password" type="password" placeholder="••••••••">
-                </div>
+            <h1>
+                Información del usuario
+            </h1>
 
-                <div class="campo ancho">
-                    <label>Teléfono</label>
-                    <input id="telefono" type="text" placeholder="Teléfono">
-                </div>
-            </div>
+            <p>
+                Consulta los datos generales de la cuenta,
+                actualiza su información y revisa los documentos
+                asociados cuando corresponda.
+            </p>
 
-            <div class="acciones-info">
-                <button type="button" id="volver">Regresar</button>
-                <button type="submit" id="guardar">Guardar Cambios</button>
-            </div>
-        </form>
-    </section>
-
-    <!--================ PANEL: VERIFICACIÓN (AGREGADO) =================-->
-    <section class="usuario-panel" id="panelVerificacion" style="display: none;">
-        <h2>Verificación de Conductor y Vehículo</h2>
-        
-        <!-- Aquí usuario-info.js inyectará la licencia y datos del vehículo -->
-        <div id="verificacionContenido">
-            <p>Cargando información de verificación...</p>
         </div>
-    </section>
-</div>
+
+        <div class="usuario-detalle-header-icono">
+
+            <i class="fa-solid fa-address-card"></i>
+
+        </div>
+
+    </header>
+
+
+    <!--==================================================
+                    CONTENIDO PRINCIPAL
+    ==================================================-->
+
+    <div class="usuario-detalle-layout">
+
+        <!--==================================================
+                        SIDEBAR
+        ==================================================-->
+
+        <aside class="usuario-detalle-sidebar">
+
+            <div class="usuario-perfil-resumen">
+
+                <div class="usuario-perfil-foto-contenedor">
+
+                    <img
+                        id="fotoUsuario"
+                        src="{% static 'img/admin.png' %}"
+                        class="usuario-perfil-foto"
+                        alt="Foto del usuario">
+
+                    <span class="usuario-perfil-indicador">
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                    </span>
+
+                </div>
+
+                <div class="usuario-perfil-identidad">
+
+                    <span>
+                        Cuenta seleccionada
+                    </span>
+
+                    <h2 id="nombreTitulo">
+                        Cargando...
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <!--==============================================
+                            NAVEGACIÓN
+            ===============================================-->
+
+            <nav
+                class="usuario-detalle-tabs"
+                aria-label="Secciones del usuario">
+
+                <button
+                    type="button"
+                    class="usuario-tab-btn tab-btn active"
+                    id="btnGeneral"
+                    data-panel="general">
+
+                    <span class="usuario-tab-icono">
+
+                        <i class="fa-solid fa-user"></i>
+
+                    </span>
+
+                    <span class="usuario-tab-texto">
+
+                        <strong>
+                            Información general
+                        </strong>
+
+                        <small>
+                            Datos y configuración
+                        </small>
+
+                    </span>
+
+                    <i class="fa-solid fa-chevron-right"></i>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="usuario-tab-btn tab-btn"
+                    id="btnVerificacion"
+                    data-panel="verificacion"
+                    hidden>
+
+                    <span class="usuario-tab-icono">
+
+                        <i class="fa-solid fa-id-card"></i>
+
+                    </span>
+
+                    <span class="usuario-tab-texto">
+
+                        <strong>
+                            Verificación
+                        </strong>
+
+                        <small>
+                            Conductor y vehículo
+                        </small>
+
+                    </span>
+
+                    <i class="fa-solid fa-chevron-right"></i>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="usuario-tab-btn tab-btn"
+                    id="btnMedico"
+                    data-panel="medico">
+
+                    <span class="usuario-tab-icono">
+
+                        <i class="fa-solid fa-notes-medical"></i>
+
+                    </span>
+
+                    <span class="usuario-tab-texto">
+
+                        <strong>
+                            Expediente médico
+                        </strong>
+
+                        <small>
+                            Información de emergencia
+                        </small>
+
+                    </span>
+
+                    <i class="fa-solid fa-chevron-right"></i>
+
+                </button>
+
+            </nav>
+
+
+            <!--==============================================
+                        INFORMACIÓN AUXILIAR
+            ===============================================-->
+
+            <div class="usuario-detalle-aviso">
+
+                <i class="fa-solid fa-shield-halved"></i>
+
+                <p>
+                    Los cambios realizados en esta sección afectan
+                    directamente el acceso y la información de la cuenta.
+                </p>
+
+            </div>
+
+        </aside>
+
+
+        <!--==================================================
+                PANEL: INFORMACIÓN GENERAL
+        ==================================================-->
+
+        <section
+            class="usuario-detalle-panel usuario-panel"
+            id="panelGeneral">
+
+            <header class="usuario-panel-header">
+
+                <div>
+
+                    <span class="usuario-panel-etiqueta">
+                        Datos de la cuenta
+                    </span>
+
+                    <h2>
+                        Información general
+                    </h2>
+
+                    <p>
+                        Modifica los datos principales, el rol y el
+                        estado de acceso del usuario.
+                    </p>
+
+                </div>
+
+                <div class="usuario-panel-header-icono">
+
+                    <i class="fa-solid fa-user-pen"></i>
+
+                </div>
+
+            </header>
+
+
+            <form
+                id="formGeneral"
+                class="usuario-detalle-form">
+
+                <input
+                    type="hidden"
+                    id="usuarioId">
+
+
+                <!--==========================================
+                        INFORMACIÓN PERSONAL
+                ===========================================-->
+
+                <section class="usuario-form-bloque">
+
+                    <div class="usuario-form-bloque-header">
+
+                        <div>
+
+                            <span>
+                                Información personal
+                            </span>
+
+                            <h3>
+                                Datos de identificación
+                            </h3>
+
+                        </div>
+
+                        <i class="fa-solid fa-address-card"></i>
+
+                    </div>
+
+
+                    <div class="usuario-form-grid">
+
+                        <div class="usuario-campo campo">
+
+                            <label for="nombre">
+
+                                <i class="fa-solid fa-user"></i>
+
+                                Nombre completo
+
+                            </label>
+
+                            <input
+                                id="nombre"
+                                type="text"
+                                placeholder="Nombre completo"
+                                autocomplete="name">
+
+                        </div>
+
+
+                        <div class="usuario-campo campo">
+
+                            <label for="correo">
+
+                                <i class="fa-regular fa-envelope"></i>
+
+                                Correo institucional
+
+                            </label>
+
+                            <input
+                                id="correo"
+                                type="email"
+                                placeholder="correo@ut-tijuana.edu.mx"
+                                autocomplete="email">
+
+                        </div>
+
+
+                        <div class="usuario-campo campo">
+
+                            <label for="matricula">
+
+                                <i class="fa-solid fa-id-badge"></i>
+
+                                Matrícula
+
+                            </label>
+
+                            <input
+                                id="matricula"
+                                type="text"
+                                placeholder="Matrícula"
+                                autocomplete="off">
+
+                        </div>
+
+
+                        <div class="usuario-campo campo">
+
+                            <label for="telefono">
+
+                                <i class="fa-solid fa-phone"></i>
+
+                                Teléfono
+
+                            </label>
+
+                            <input
+                                id="telefono"
+                                type="text"
+                                placeholder="Teléfono"
+                                autocomplete="tel">
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!--==========================================
+                        INFORMACIÓN ACADÉMICA
+                ===========================================-->
+
+                <section class="usuario-form-bloque">
+
+                    <div class="usuario-form-bloque-header">
+
+                        <div>
+
+                            <span>
+                                Información académica
+                            </span>
+
+                            <h3>
+                                Datos escolares
+                            </h3>
+
+                        </div>
+
+                        <i class="fa-solid fa-graduation-cap"></i>
+
+                    </div>
+
+
+                    <div class="usuario-form-grid">
+
+                        <div class="usuario-campo campo">
+
+                            <label for="cuatrimestre">
+
+                                <i class="fa-solid fa-layer-group"></i>
+
+                                Cuatrimestre / grado
+
+                            </label>
+
+                            <input
+                                id="cuatrimestre"
+                                type="text"
+                                placeholder="Grado y grupo"
+                                autocomplete="off">
+
+                        </div>
+
+
+                        <div class="usuario-campo campo">
+
+                            <label for="carrera">
+
+                                <i class="fa-solid fa-book-open"></i>
+
+                                Carrera
+
+                            </label>
+
+                            <input
+                                id="carrera"
+                                type="text"
+                                placeholder="Carrera"
+                                autocomplete="off">
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!--==========================================
+                        CONFIGURACIÓN DE CUENTA
+                ===========================================-->
+
+                <section class="usuario-form-bloque">
+
+                    <div class="usuario-form-bloque-header">
+
+                        <div>
+
+                            <span>
+                                Control de acceso
+                            </span>
+
+                            <h3>
+                                Configuración de cuenta
+                            </h3>
+
+                        </div>
+
+                        <i class="fa-solid fa-shield-halved"></i>
+
+                    </div>
+
+
+                    <div class="usuario-form-grid">
+
+                        <div class="usuario-campo campo">
+
+                            <label for="rol">
+
+                                <i class="fa-solid fa-users-gear"></i>
+
+                                Rol
+
+                            </label>
+
+                            <select id="rol">
+
+                                <option value="administrador">
+                                    Administrador
+                                </option>
+
+                                <option value="conductor">
+                                    Conductor
+                                </option>
+
+                                <option value="pasajero">
+                                    Pasajero
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="usuario-campo campo">
+
+                            <label for="estado">
+
+                                <i class="fa-solid fa-toggle-on"></i>
+
+                                Estado de la cuenta
+
+                            </label>
+
+                            <select id="estado">
+
+                                <option value="activa">
+                                    Activa
+                                </option>
+
+                                <option value="suspendida">
+                                    Suspendida
+                                </option>
+
+                                <option value="bloqueada">
+                                    Bloqueada
+                                </option>
+
+                                <option value="pendiente">
+                                    Pendiente
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="usuario-campo campo usuario-campo-ancho ancho">
+
+                            <label for="password">
+
+                                <i class="fa-solid fa-key"></i>
+
+                                Nueva contraseña
+
+                            </label>
+
+                            <div class="usuario-password-contenedor">
+
+                                <input
+                                    id="password"
+                                    type="password"
+                                    placeholder="Dejar en blanco para conservar la actual"
+                                    autocomplete="new-password">
+
+                                <button
+                                    type="button"
+                                    class="btn-mostrar-password"
+                                    id="btnMostrarPassword"
+                                    aria-label="Mostrar u ocultar contraseña">
+
+                                    <i class="fa-regular fa-eye"></i>
+
+                                </button>
+
+                            </div>
+
+                            <small>
+                                Solo completa este campo cuando necesites
+                                reemplazar la contraseña actual.
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!--==========================================
+                            ACCIONES
+                ===========================================-->
+
+                <footer class="usuario-form-acciones acciones-info">
+
+                    <button
+                        type="button"
+                        class="btn-regresar-usuario"
+                        id="volver">
+
+                        <i class="fa-solid fa-arrow-left"></i>
+
+                        Regresar
+
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="btn-guardar-usuario"
+                        id="guardar">
+
+                        <i class="fa-solid fa-floppy-disk"></i>
+
+                        Guardar cambios
+
+                    </button>
+
+                </footer>
+
+            </form>
+
+        </section>
+
+
+        <!--==================================================
+                PANEL: VERIFICACIÓN
+        ==================================================-->
+
+        <section
+            class="usuario-detalle-panel usuario-panel"
+            id="panelVerificacion"
+            hidden>
+
+            <header class="usuario-panel-header">
+
+                <div>
+
+                    <span class="usuario-panel-etiqueta">
+                        Validación documental
+                    </span>
+
+                    <h2>
+                        Verificación de conductor y vehículo
+                    </h2>
+
+                    <p>
+                        Revisa la licencia, los datos del vehículo y
+                        los documentos asociados a la cuenta.
+                    </p>
+
+                </div>
+
+                <div class="usuario-panel-header-icono verificacion">
+
+                    <i class="fa-solid fa-id-card-clip"></i>
+
+                </div>
+
+            </header>
+
+
+            <div
+                class="usuario-verificacion-contenido"
+                id="verificacionContenido">
+
+                <div class="usuario-panel-cargando">
+
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+
+                    <strong>
+                        Cargando información de verificación
+                    </strong>
+
+                    <span>
+                        Espera un momento mientras consultamos los documentos.
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!--==================================================
+                PANEL: EXPEDIENTE MÉDICO
+        ==================================================-->
+
+        <section
+            class="usuario-detalle-panel usuario-panel expediente-medico-admin"
+            id="panelMedico"
+            hidden>
+
+            <!--==============================================
+                    ENCABEZADO DEL PANEL
+            ===============================================-->
+
+            <header class="usuario-panel-header expediente-panel-header">
+
+                <div>
+
+                    <span class="usuario-panel-etiqueta">
+                        Datos médicos
+                    </span>
+
+                    <h2>
+                        Expediente médico del usuario
+                    </h2>
+
+                    <p>
+                        Actualiza los datos que podrían ser necesarios
+                        para brindar asistencia durante un viaje.
+                    </p>
+
+                </div>
+
+                <div class="usuario-panel-header-icono medico">
+
+                    <i class="fa-solid fa-heart-pulse"></i>
+
+                </div>
+
+            </header>
+
+
+            <!--==============================================
+                        FORMULARIO
+            ===============================================-->
+
+            <form
+                id="formMedico"
+                class="usuario-detalle-form expediente-medico-form">
+
+                <!--==========================================
+                        INFORMACIÓN MÉDICA BÁSICA
+                ===========================================-->
+
+                <section class="usuario-form-bloque expediente-bloque">
+
+                    <div class="usuario-form-bloque-header">
+
+                        <div>
+
+                            <span>
+                                Información principal
+                            </span>
+
+                            <h3>
+                                Datos médicos básicos
+                            </h3>
+
+                        </div>
+
+                        <i class="fa-solid fa-kit-medical"></i>
+
+                    </div>
+
+
+                    <div class="usuario-form-grid">
+
+                        <!-- TIPO DE SANGRE -->
+
+                        <div class="usuario-campo campo">
+
+                            <label for="tipoSangre">
+
+                                <i class="fa-solid fa-droplet"></i>
+
+                                Tipo de sangre
+
+                            </label>
+
+                            <select id="tipoSangre">
+
+                                <option value="">
+                                    Seleccione...
+                                </option>
+
+                                <option value="O+">
+                                    O+
+                                </option>
+
+                                <option value="O-">
+                                    O-
+                                </option>
+
+                                <option value="A+">
+                                    A+
+                                </option>
+
+                                <option value="A-">
+                                    A-
+                                </option>
+
+                                <option value="B+">
+                                    B+
+                                </option>
+
+                                <option value="B-">
+                                    B-
+                                </option>
+
+                                <option value="AB+">
+                                    AB+
+                                </option>
+
+                                <option value="AB-">
+                                    AB-
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- ALERGIAS -->
+
+                        <div class="usuario-campo campo">
+
+                            <label for="alergias">
+
+                                <i class="fa-solid fa-allergies"></i>
+
+                                Alergias
+
+                            </label>
+
+                            <input
+                                id="alergias"
+                                type="text"
+                                placeholder="Ejemplo: penicilina, alimentos o materiales"
+                                autocomplete="off">
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!--==========================================
+                        PADECIMIENTOS Y MEDICAMENTOS
+                ===========================================-->
+
+                <section class="usuario-form-bloque expediente-bloque">
+
+                    <div class="usuario-form-bloque-header">
+
+                        <div>
+
+                            <span>
+                                Historial médico
+                            </span>
+
+                            <h3>
+                                Padecimientos y tratamientos
+                            </h3>
+
+                        </div>
+
+                        <i class="fa-solid fa-stethoscope"></i>
+
+                    </div>
+
+
+                    <div class="usuario-form-grid">
+
+                        <!-- ENFERMEDADES -->
+
+                        <div class="usuario-campo campo usuario-campo-ancho ancho">
+
+                            <label for="enfermedades">
+
+                                <i class="fa-solid fa-heart-crack"></i>
+
+                                Enfermedades o padecimientos
+
+                            </label>
+
+                            <textarea
+                                id="enfermedades"
+                                rows="4"
+                                placeholder="Describe enfermedades, padecimientos o condiciones médicas relevantes..."></textarea>
+
+                            <small>
+                                Registra únicamente información que pueda ser
+                                importante durante una emergencia.
+                            </small>
+
+                        </div>
+
+
+                        <!-- MEDICAMENTOS -->
+
+                        <div class="usuario-campo campo usuario-campo-ancho ancho">
+
+                            <label for="medicamentos">
+
+                                <i class="fa-solid fa-pills"></i>
+
+                                Medicamentos
+
+                            </label>
+
+                            <textarea
+                                id="medicamentos"
+                                rows="4"
+                                placeholder="Indica los medicamentos que utiliza actualmente..."></textarea>
+
+                            <small>
+                                Puedes incluir el nombre del medicamento,
+                                dosis y frecuencia cuando esté disponible.
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!--==========================================
+                        CONTACTO DE EMERGENCIA
+                ===========================================-->
+
+                <section class="usuario-form-bloque expediente-bloque">
+
+                    <div class="usuario-form-bloque-header">
+
+                        <div>
+
+                            <span>
+                                Persona de apoyo
+                            </span>
+
+                            <h3>
+                                Contacto de emergencia
+                            </h3>
+
+                        </div>
+
+                        <i class="fa-solid fa-phone-volume"></i>
+
+                    </div>
+
+
+                    <div class="usuario-form-grid">
+
+                        <!-- NOMBRE DEL CONTACTO -->
+
+                        <div class="usuario-campo campo">
+
+                            <label for="contacto">
+
+                                <i class="fa-solid fa-user-group"></i>
+
+                                Nombre del contacto
+
+                            </label>
+
+                            <input
+                                id="contacto"
+                                type="text"
+                                placeholder="Nombre completo"
+                                autocomplete="off">
+
+                        </div>
+
+
+                        <!-- TELÉFONO -->
+
+                        <div class="usuario-campo campo">
+
+                            <label for="telefonoEmergencia">
+
+                                <i class="fa-solid fa-phone"></i>
+
+                                Teléfono de emergencia
+
+                            </label>
+
+                            <input
+                                id="telefonoEmergencia"
+                                type="tel"
+                                placeholder="Número telefónico"
+                                autocomplete="off">
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!--==========================================
+                        OBSERVACIONES
+                ===========================================-->
+
+                <section class="usuario-form-bloque expediente-bloque">
+
+                    <div class="usuario-form-bloque-header">
+
+                        <div>
+
+                            <span>
+                                Información adicional
+                            </span>
+
+                            <h3>
+                                Observaciones médicas
+                            </h3>
+
+                        </div>
+
+                        <i class="fa-solid fa-clipboard-medical"></i>
+
+                    </div>
+
+
+                    <div class="usuario-form-grid">
+
+                        <div class="usuario-campo campo usuario-campo-ancho ancho">
+
+                            <label for="observaciones">
+
+                                <i class="fa-solid fa-comment-medical"></i>
+
+                                Observaciones
+
+                            </label>
+
+                            <textarea
+                                id="observaciones"
+                                rows="5"
+                                placeholder="Agrega indicaciones, restricciones o información adicional..."></textarea>
+
+                            <small>
+                                Este espacio puede utilizarse para registrar
+                                indicaciones relevantes que no correspondan
+                                a los campos anteriores.
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!--==========================================
+                        AVISO DE SEGURIDAD
+                ===========================================-->
+
+                <div class="expediente-seguridad-aviso">
+
+                    <div class="expediente-seguridad-icono">
+
+                        <i class="fa-solid fa-shield-heart"></i>
+
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Información médica confidencial
+                        </strong>
+
+                        <p>
+                            Verifica que los datos sean correctos antes
+                            de guardar. Esta información podría utilizarse
+                            para brindar asistencia durante una emergencia.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!--==========================================
+                            ACCIONES
+                ===========================================-->
+
+                <footer class="usuario-form-acciones acciones-info">
+
+                    <button
+                        type="submit"
+                        class="btn-guardar-usuario btn-guardar-expediente"
+                        id="guardarExpediente">
+
+                        <i class="fa-solid fa-floppy-disk"></i>
+
+                        Guardar expediente
+
+                    </button>
+
+                </footer>
+
+            </form>
+
+        </section>
+
+    </div>
+
+</section>

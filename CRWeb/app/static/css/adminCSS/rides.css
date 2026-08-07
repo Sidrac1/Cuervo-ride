@@ -1,750 +1,564 @@
 /*==================================================
-    CUERVO-RIDE
-    ADMINISTRACIÓN DE VIAJES
+                RIDES.CSS
+        Panel administrativo de rides
 ==================================================*/
 
 
 /*==================================================
-    VARIABLES LOCALES
+                VARIABLES LOCALES
 ==================================================*/
 
-.contenedor {
+.rides-admin-contenedor{
 
-    --rides-fondo: #0b1424;
-    --rides-panel: #101b2d;
-    --rides-panel-secundario: #142238;
-    --rides-panel-hover: #192a43;
-    --rides-campo: #0c182a;
+    --rides-panel:#101f32;
+    --rides-panel-claro:#152a42;
+    --rides-panel-hover:#19314c;
+    --rides-panel-profundo:#091725;
 
-    --rides-verde: #98ec63;
-    --rides-verde-hover: #b4f28d;
-    --rides-verde-suave: rgba(152, 236, 99, 0.11);
-    --rides-verde-borde: rgba(152, 236, 99, 0.36);
+    --rides-texto:#f4f8fc;
+    --rides-texto-secundario:#9eb2c7;
+    --rides-texto-suave:#6f849b;
 
-    --rides-azul: #54a8ff;
-    --rides-azul-suave: rgba(84, 168, 255, 0.12);
+    --rides-verde:#98ec63;
+    --rides-verde-hover:#78d049;
+    --rides-verde-suave:rgba(152,236,99,.11);
 
-    --rides-rojo: #ff6674;
-    --rides-rojo-suave: rgba(255, 102, 116, 0.12);
+    --rides-azul:#5eb1ff;
+    --rides-azul-suave:rgba(94,177,255,.12);
 
-    --rides-amarillo: #f8c34d;
-    --rides-amarillo-suave: rgba(248, 195, 77, 0.12);
+    --rides-rojo:#ff6472;
+    --rides-rojo-suave:rgba(255,100,114,.12);
 
-    --rides-morado: #b48cff;
-    --rides-morado-suave: rgba(180, 140, 255, 0.12);
+    --rides-amarillo:#ffc34d;
+    --rides-amarillo-suave:rgba(255,195,77,.12);
 
-    --rides-texto: #f7f9fc;
-    --rides-texto-secundario: #aebbd0;
-    --rides-texto-suave: #7f90aa;
+    --rides-morado:#ad86ff;
+    --rides-morado-suave:rgba(173,134,255,.12);
 
-    --rides-borde: #263750;
-    --rides-borde-claro: #354b69;
+    --rides-gris:#94a3b8;
+    --rides-gris-suave:rgba(148,163,184,.12);
 
-    width: 100%;
-    min-width: 0;
+    --rides-borde:rgba(255,255,255,.075);
+    --rides-borde-fuerte:rgba(255,255,255,.13);
 
-    color: var(--rides-texto);
+    --rides-sombra:
+        0 20px 55px
+        rgba(0,0,0,.25);
+
+    --rides-sombra-suave:
+        0 11px 30px
+        rgba(0,0,0,.17);
+
+    --rides-radio-sm:11px;
+    --rides-radio-md:17px;
+    --rides-radio-lg:24px;
 
 }
 
 
 /*==================================================
-    RESET INTERNO
+                CONTENEDOR PRINCIPAL
 ==================================================*/
 
-.contenedor *,
-.contenedor *::before,
-.contenedor *::after {
+.rides-admin-contenedor{
 
-    box-sizing: border-box;
+    width:100%;
+
+    display:flex;
+    flex-direction:column;
+
+    gap:24px;
+
+    color:
+        var(--rides-texto);
 
 }
 
-.contenedor button,
-.contenedor input,
-.contenedor select {
+.rides-admin-contenedor *{
 
-    font: inherit;
+    box-sizing:border-box;
+
+}
+
+.rides-admin-contenedor a{
+
+    color:inherit;
+    text-decoration:none;
+
+}
+
+.rides-admin-contenedor img{
+
+    display:block;
+
+    max-width:100%;
 
 }
 
 
 /*==================================================
-    FILTROS
+                UTILIDAD ACCESIBLE
 ==================================================*/
 
-.contenedor .filtros {
+.rides-admin-contenedor .sr-only{
 
-    width: 100%;
+    position:absolute;
 
-    display: grid;
+    width:1px;
+    height:1px;
 
-    grid-template-columns:
-        minmax(260px, 1fr)
-        minmax(180px, 220px)
-        minmax(180px, 220px)
-        135px;
+    padding:0;
+    margin:-1px;
 
-    align-items: center;
+    overflow:hidden;
 
-    gap: 13px;
+    clip:rect(0,0,0,0);
 
-    margin-bottom: 20px;
-    padding: 16px;
+    white-space:nowrap;
 
-    border: 1px solid var(--rides-borde);
-    border-radius: 17px;
+    border:0;
+
+}
+
+
+/*==================================================
+                ENCABEZADO
+==================================================*/
+
+.rides-admin-header{
+
+    position:relative;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    gap:28px;
+
+    min-height:175px;
+
+    padding:30px 34px;
+
+    overflow:hidden;
+
+    border:1px solid
+        rgba(152,236,99,.15);
+
+    border-radius:
+        var(--rides-radio-lg);
 
     background:
-        linear-gradient(
-            145deg,
-            rgba(17, 29, 48, 0.98),
-            rgba(12, 22, 38, 0.98)
-        );
 
-    box-shadow:
-        0 14px 34px rgba(0, 0, 0, 0.18);
-
-}
-
-
-/*==================================================
-    BUSCADOR
-==================================================*/
-
-.contenedor .buscar {
-
-    position: relative;
-
-    width: 100%;
-    min-width: 0;
-
-}
-
-.contenedor .buscar i {
-
-    position: absolute;
-
-    top: 50%;
-    left: 16px;
-
-    z-index: 2;
-
-    color: var(--rides-verde);
-
-    font-size: 14px;
-
-    transform: translateY(-50%);
-
-    pointer-events: none;
-
-}
-
-.contenedor .buscar input {
-
-    width: 100%;
-    height: 48px;
-
-    padding:
-        0
-        15px
-        0
-        44px;
-
-    border: 1px solid var(--rides-borde);
-    border-radius: 12px;
-
-    outline: none;
-
-    background: var(--rides-campo);
-    color: var(--rides-texto);
-
-    font-size: 13px;
-
-    transition:
-        border-color 0.22s ease,
-        background 0.22s ease,
-        box-shadow 0.22s ease;
-
-}
-
-.contenedor .buscar input::placeholder {
-
-    color: var(--rides-texto-suave);
-
-}
-
-.contenedor .buscar input:hover {
-
-    border-color: var(--rides-borde-claro);
-
-    background: #101e32;
-
-}
-
-.contenedor .buscar input:focus {
-
-    border-color: var(--rides-verde);
-
-    box-shadow:
-        0 0 0 3px rgba(152, 236, 99, 0.1);
-
-}
-
-
-/*==================================================
-    FILTRO DE FECHA
-==================================================*/
-
-.contenedor #filtroFecha {
-
-    width: 100%;
-    height: 48px;
-
-    padding:
-        0
-        14px;
-
-    border: 1px solid var(--rides-borde);
-    border-radius: 12px;
-
-    outline: none;
-
-    background: var(--rides-campo);
-    color: var(--rides-texto);
-
-    font-size: 13px;
-
-    cursor: pointer;
-
-    transition:
-        border-color 0.22s ease,
-        background 0.22s ease,
-        box-shadow 0.22s ease;
-
-}
-
-.contenedor #filtroFecha::placeholder {
-
-    color: var(--rides-texto-suave);
-
-}
-
-.contenedor #filtroFecha:hover {
-
-    border-color: var(--rides-borde-claro);
-
-    background: #101e32;
-
-}
-
-.contenedor #filtroFecha:focus {
-
-    border-color: var(--rides-verde);
-
-    box-shadow:
-        0 0 0 3px rgba(152, 236, 99, 0.1);
-
-}
-
-
-/*==================================================
-    SELECT DE ESTADO
-==================================================*/
-
-.contenedor #filtroEstado {
-
-    width: 100%;
-    height: 48px;
-
-    padding:
-        0
-        40px
-        0
-        14px;
-
-    border: 1px solid var(--rides-borde);
-    border-radius: 12px;
-
-    outline: none;
-
-    appearance: none;
-
-    background-color: var(--rides-campo);
-
-    background-image:
-        linear-gradient(
-            45deg,
-            transparent 50%,
-            var(--rides-verde) 50%
+        radial-gradient(
+            circle at 92% 15%,
+            rgba(94,177,255,.11),
+            transparent 240px
         ),
-        linear-gradient(
-            135deg,
-            var(--rides-verde) 50%,
-            transparent 50%
-        );
 
-    background-position:
-        calc(100% - 18px) 20px,
-        calc(100% - 13px) 20px;
+        radial-gradient(
+            circle at 76% 100%,
+            rgba(152,236,99,.06),
+            transparent 220px
+        ),
 
-    background-size:
-        5px 5px,
-        5px 5px;
-
-    background-repeat: no-repeat;
-
-    color: var(--rides-texto);
-
-    font-size: 13px;
-
-    cursor: pointer;
-
-    transition:
-        border-color 0.22s ease,
-        background-color 0.22s ease,
-        box-shadow 0.22s ease;
-
-}
-
-.contenedor #filtroEstado:hover {
-
-    border-color: var(--rides-borde-claro);
-
-    background-color: #101e32;
-
-}
-
-.contenedor #filtroEstado:focus {
-
-    border-color: var(--rides-verde);
-
-    box-shadow:
-        0 0 0 3px rgba(152, 236, 99, 0.1);
-
-}
-
-.contenedor #filtroEstado option {
-
-    background: var(--rides-panel-secundario);
-    color: var(--rides-texto);
-
-}
-
-
-/*==================================================
-    BOTÓN FILTRAR
-==================================================*/
-
-.contenedor #btnFiltrar {
-
-    width: 100%;
-    height: 48px;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    gap: 8px;
-
-    border: none;
-    border-radius: 12px;
-
-    background:
-        linear-gradient(
-            135deg,
-            var(--rides-verde),
-            #75d341
-        );
-
-    color: #0b1424;
-
-    font-size: 13px;
-    font-weight: 800;
-
-    cursor: pointer;
-
-    box-shadow:
-        0 10px 24px rgba(152, 236, 99, 0.13);
-
-    transition:
-        transform 0.22s ease,
-        background 0.22s ease,
-        box-shadow 0.22s ease;
-
-}
-
-.contenedor #btnFiltrar:hover {
-
-    transform: translateY(-2px);
-
-    background:
-        linear-gradient(
-            135deg,
-            var(--rides-verde-hover),
-            var(--rides-verde)
-        );
-
-    box-shadow:
-        0 14px 28px rgba(152, 236, 99, 0.19);
-
-}
-
-.contenedor #btnFiltrar:active {
-
-    transform: scale(0.97);
-
-}
-
-
-/*==================================================
-    CONTENEDOR DE LA TABLA
-==================================================*/
-
-.contenedor .tabla {
-
-    width: 100%;
-    min-width: 0;
-
-    overflow: hidden;
-
-    border: 1px solid var(--rides-borde);
-    border-radius: 18px;
-
-    background:
         linear-gradient(
             145deg,
-            rgba(16, 28, 46, 0.99),
-            rgba(11, 21, 37, 0.99)
-        );
+            rgba(255,255,255,.035),
+            transparent 48%
+        ),
+
+        var(--rides-panel);
 
     box-shadow:
-        0 18px 42px rgba(0, 0, 0, 0.24);
+        var(--rides-sombra);
 
     animation:
-        aparecerTabla 0.35s ease both;
+        ridesSubir .45s ease both;
 
 }
 
+.rides-admin-header::before{
 
-/*==================================================
-    TABLA
-==================================================*/
+    content:"";
 
-.contenedor .tabla table {
+    position:absolute;
 
-    width: 100%;
+    top:0;
+    left:0;
 
-    border-collapse: collapse;
-    border-spacing: 0;
-
-}
-
-.contenedor .tabla thead {
+    width:100%;
+    height:3px;
 
     background:
+
         linear-gradient(
             90deg,
-            #14233a,
-            #101d31
+            transparent,
+            var(--rides-verde),
+            var(--rides-azul),
+            transparent
         );
 
 }
 
-.contenedor .tabla thead th {
+.rides-admin-header::after{
 
-    padding:
-        15px
-        14px;
+    content:"";
 
-    border-bottom:
-        1px solid var(--rides-borde);
+    position:absolute;
 
-    color: var(--rides-texto-secundario);
+    right:-75px;
+    bottom:-120px;
 
-    font-size: 10px;
-    font-weight: 800;
+    width:280px;
+    height:280px;
 
-    text-align: left;
-    text-transform: uppercase;
-    letter-spacing: 0.055em;
-
-    white-space: nowrap;
-
-}
-
-.contenedor .tabla tbody tr {
-
-    transition:
-        background 0.2s ease,
-        transform 0.2s ease;
-
-}
-
-.contenedor .tabla tbody tr:not(.fila-vacia):hover {
+    border-radius:50%;
 
     background:
-        rgba(255, 255, 255, 0.025);
+        rgba(255,255,255,.025);
 
-}
-
-.contenedor .tabla tbody td {
-
-    padding:
-        15px
-        14px;
-
-    border-bottom:
-        1px solid rgba(255, 255, 255, 0.055);
-
-    color: var(--rides-texto-secundario);
-
-    font-size: 12px;
-
-    text-align: left;
-    vertical-align: middle;
-
-}
-
-.contenedor .tabla tbody tr:last-child td {
-
-    border-bottom: none;
-
-}
-
-.contenedor .tabla tbody td:first-child {
-
-    color: var(--rides-verde);
-
-    font-weight: 800;
-
-    white-space: nowrap;
+    pointer-events:none;
 
 }
 
 
 /*==================================================
-    CONDUCTOR EN TABLA
+            TEXTO DEL ENCABEZADO
 ==================================================*/
 
-.contenedor .conductor-tabla {
+.rides-admin-header-texto{
 
-    min-width: 175px;
+    position:relative;
 
-    display: flex;
-    align-items: center;
+    z-index:2;
 
-    gap: 10px;
+    min-width:0;
 
-}
-
-.contenedor .conductor-tabla img {
-
-    width: 38px;
-    height: 38px;
-
-    flex-shrink: 0;
-
-    object-fit: cover;
-
-    border: 2px solid var(--rides-verde-borde);
-    border-radius: 50%;
-
-    background: var(--rides-campo);
+    max-width:830px;
 
 }
 
-.contenedor .conductor-tabla > div {
+.rides-admin-etiqueta{
 
-    min-width: 0;
+    display:inline-flex;
+    align-items:center;
+
+    gap:7px;
+
+    margin-bottom:10px;
+    padding:6px 11px;
+
+    border:1px solid
+        rgba(152,236,99,.20);
+
+    border-radius:999px;
+
+    background:
+        var(--rides-verde-suave);
+
+    color:
+        var(--rides-verde);
+
+    font-size:9px;
+    font-weight:850;
+
+    letter-spacing:.08em;
+    text-transform:uppercase;
 
 }
 
-.contenedor .conductor-tabla strong {
+.rides-admin-header h1{
 
-    display: block;
+    margin:0 0 10px;
 
-    max-width: 175px;
+    color:
+        var(--rides-texto);
 
-    overflow: hidden;
+    font-size:
+        clamp(
+            30px,
+            4vw,
+            42px
+        );
 
-    color: var(--rides-texto);
+    font-weight:850;
 
-    font-size: 12px;
+    line-height:1.08;
 
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    letter-spacing:-1px;
 
 }
 
-.contenedor .conductor-tabla small {
+.rides-admin-header p{
 
-    display: block;
+    max-width:720px;
 
-    margin-top: 3px;
+    margin:0;
 
-    color: var(--rides-texto-suave);
+    color:
+        var(--rides-texto-secundario);
 
-    font-size: 9px;
+    font-size:14px;
+    line-height:1.7;
 
 }
 
 
 /*==================================================
-    RUTA EN TABLA
+            ICONO DEL ENCABEZADO
 ==================================================*/
 
-.contenedor .ruta-tabla {
+.rides-admin-header-icono{
 
-    min-width: 215px;
+    position:relative;
 
-    display: flex;
-    flex-direction: column;
+    z-index:2;
 
-    gap: 6px;
+    flex:0 0 auto;
 
-}
+    display:grid;
+    place-items:center;
 
-.contenedor .ruta-tabla span {
+    width:82px;
+    height:82px;
 
-    display: flex;
-    align-items: flex-start;
+    border:1px solid
+        rgba(94,177,255,.22);
 
-    gap: 7px;
+    border-radius:24px;
 
-    color: var(--rides-texto-secundario);
+    background:
 
-    font-size: 11px;
-    line-height: 1.4;
+        linear-gradient(
+            145deg,
+            rgba(94,177,255,.16),
+            rgba(94,177,255,.07)
+        );
 
-}
+    color:
+        var(--rides-azul);
 
-.contenedor .ruta-tabla span:first-child i {
+    font-size:31px;
 
-    color: var(--rides-verde);
+    box-shadow:
 
-}
+        inset 0 0 0 1px
+        rgba(255,255,255,.025),
 
-.contenedor .ruta-tabla span:last-child i {
-
-    color: var(--rides-azul);
-
-}
-
-.contenedor .ruta-tabla i {
-
-    width: 13px;
-
-    flex-shrink: 0;
-
-    margin-top: 2px;
-
-    text-align: center;
+        0 17px 38px
+        rgba(94,177,255,.11);
 
 }
 
 
 /*==================================================
-    LUGARES
+                ESTADÍSTICAS
 ==================================================*/
 
-.contenedor .lugares-tabla {
+.rides-estadisticas{
 
-    min-width: 55px;
+    display:grid;
 
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    grid-template-columns:
+        repeat(
+            4,
+            minmax(0,1fr)
+        );
 
-    padding:
-        6px
-        9px;
-
-    border: 1px solid var(--rides-verde-borde);
-    border-radius: 999px;
-
-    background: var(--rides-verde-suave);
-    color: var(--rides-verde);
-
-    font-size: 10px;
-    font-weight: 800;
+    gap:16px;
 
 }
 
 
 /*==================================================
-    VEHÍCULO
+            TARJETAS DE ESTADÍSTICAS
 ==================================================*/
 
-.contenedor .vehiculo-tabla {
+.ride-estadistica-card{
 
-    min-width: 135px;
+    position:relative;
 
-}
+    display:flex;
+    align-items:center;
 
-.contenedor .vehiculo-tabla strong {
+    gap:15px;
 
-    display: block;
+    min-width:0;
+    min-height:115px;
 
-    color: var(--rides-texto);
+    padding:19px;
 
-    font-size: 11px;
+    overflow:hidden;
 
-    white-space: nowrap;
+    border:1px solid
+        var(--rides-borde);
 
-}
+    border-radius:
+        var(--rides-radio-md);
 
-.contenedor .vehiculo-tabla small {
+    background:
 
-    display: block;
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.035),
+            rgba(255,255,255,.012)
+        ),
 
-    margin-top: 3px;
+        var(--rides-panel);
 
-    color: var(--rides-texto-suave);
+    box-shadow:
+        var(--rides-sombra-suave);
 
-    font-size: 9px;
+    transition:
 
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
+        transform .22s ease,
+        border-color .22s ease,
+        background .22s ease,
+        box-shadow .22s ease;
 
-}
-
-
-/*==================================================
-    BADGES DE ESTADO
-==================================================*/
-
-.contenedor .estado {
-
-    min-width: 116px;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    gap: 7px;
-
-    padding:
-        7px
-        11px;
-
-    border: 1px solid transparent;
-    border-radius: 999px;
-
-    font-size: 9px;
-    font-weight: 800;
-
-    white-space: nowrap;
+    animation:
+        ridesSubir .45s ease both;
 
 }
 
+.ride-estadistica-card:nth-child(1){
 
-/* BORRADOR */
+    animation-delay:.04s;
 
-.contenedor .estado-borrador {
+}
+
+.ride-estadistica-card:nth-child(2){
+
+    animation-delay:.08s;
+
+}
+
+.ride-estadistica-card:nth-child(3){
+
+    animation-delay:.12s;
+
+}
+
+.ride-estadistica-card:nth-child(4){
+
+    animation-delay:.16s;
+
+}
+
+.ride-estadistica-card::after{
+
+    content:"";
+
+    position:absolute;
+
+    right:-40px;
+    bottom:-58px;
+
+    width:125px;
+    height:125px;
+
+    border-radius:50%;
+
+    background:
+        rgba(255,255,255,.025);
+
+    pointer-events:none;
+
+}
+
+.ride-estadistica-card:hover{
+
+    transform:
+        translateY(-4px);
 
     border-color:
-        rgba(180, 140, 255, 0.33);
+        rgba(152,236,99,.18);
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(152,236,99,.035),
+            rgba(255,255,255,.015)
+        ),
+
+        var(--rides-panel-hover);
+
+    box-shadow:
+        0 18px 38px
+        rgba(0,0,0,.24);
+
+}
+
+
+/*==================================================
+        ICONOS DE ESTADÍSTICAS
+==================================================*/
+
+.ride-estadistica-icono{
+
+    position:relative;
+
+    z-index:2;
+
+    flex:0 0 auto;
+
+    display:grid;
+    place-items:center;
+
+    width:50px;
+    height:50px;
+
+    border-radius:15px;
+
+    font-size:19px;
+
+}
+
+.ride-estadistica-icono.total{
+
+    border:1px solid
+        rgba(94,177,255,.13);
+
+    background:
+        var(--rides-azul-suave);
+
+    color:
+        var(--rides-azul);
+
+}
+
+.ride-estadistica-icono.disponibles{
+
+    border:1px solid
+        rgba(152,236,99,.13);
+
+    background:
+        var(--rides-verde-suave);
+
+    color:
+        var(--rides-verde);
+
+}
+
+.ride-estadistica-icono.curso{
+
+    border:1px solid
+        rgba(255,195,77,.13);
+
+    background:
+        var(--rides-amarillo-suave);
+
+    color:
+        var(--rides-amarillo);
+
+}
+
+.ride-estadistica-icono.finalizados{
+
+    border:1px solid
+        rgba(173,134,255,.13);
 
     background:
         var(--rides-morado-suave);
@@ -755,12 +569,630 @@
 }
 
 
-/* DISPONIBLE */
+/*==================================================
+        INFORMACIÓN DE ESTADÍSTICAS
+==================================================*/
 
-.contenedor .estado-disponible {
+.ride-estadistica-card > div:last-child{
+
+    position:relative;
+
+    z-index:2;
+
+    min-width:0;
+
+}
+
+.ride-estadistica-card span{
+
+    display:block;
+
+    margin-bottom:6px;
+
+    overflow:hidden;
+
+    color:
+        var(--rides-texto-secundario);
+
+    font-size:11px;
+    font-weight:700;
+
+    line-height:1.3;
+
+    text-overflow:ellipsis;
+    white-space:nowrap;
+
+}
+
+.ride-estadistica-card strong{
+
+    display:block;
+
+    color:
+        var(--rides-texto);
+
+    font-size:28px;
+    font-weight:850;
+
+    line-height:1;
+
+    letter-spacing:-.6px;
+
+}
+
+
+/*==================================================
+                FILTROS
+==================================================*/
+
+.rides-admin-filtros{
+
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+
+    gap:11px;
+
+    padding:12px;
+
+    border:1px solid
+        var(--rides-borde);
+
+    border-radius:
+        var(--rides-radio-md);
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.025),
+            transparent
+        ),
+
+        rgba(16,31,50,.88);
+
+    box-shadow:
+        var(--rides-sombra-suave);
+
+    backdrop-filter:
+        blur(10px);
+
+    animation:
+        ridesSubir .45s ease both;
+
+    animation-delay:.20s;
+
+}
+
+
+/*==================================================
+                BUSCADOR
+==================================================*/
+
+.rides-buscador{
+
+    position:relative;
+
+    flex:1;
+
+    min-width:290px;
+
+}
+
+.rides-buscador > i{
+
+    position:absolute;
+
+    top:50%;
+    left:16px;
+
+    z-index:2;
+
+    transform:
+        translateY(-50%);
+
+    color:
+        var(--rides-verde);
+
+    font-size:14px;
+
+    pointer-events:none;
+
+}
+
+.rides-buscador input{
+
+    width:100%;
+    height:46px;
+
+    padding:
+        0
+        16px
+        0
+        44px;
+
+    border:1px solid
+        var(--rides-borde);
+
+    border-radius:
+        var(--rides-radio-sm);
+
+    outline:none;
+
+    background:
+        rgba(7,21,35,.68);
+
+    color:
+        var(--rides-texto);
+
+    font-size:12px;
+
+    transition:
+
+        border-color .2s ease,
+        background .2s ease,
+        box-shadow .2s ease;
+
+}
+
+.rides-buscador input::placeholder{
+
+    color:
+        var(--rides-texto-suave);
+
+}
+
+.rides-buscador input:hover{
 
     border-color:
-        var(--rides-verde-borde);
+        var(--rides-borde-fuerte);
+
+}
+
+.rides-buscador input:focus{
+
+    border-color:
+        rgba(152,236,99,.42);
+
+    background:
+        rgba(7,21,35,.9);
+
+    box-shadow:
+
+        0 0 0 4px
+        rgba(152,236,99,.075);
+
+}
+
+
+/*==================================================
+                CAMPOS DE FILTRO
+==================================================*/
+
+.rides-filtro-campo{
+
+    position:relative;
+
+    flex:0 0 auto;
+
+}
+
+.rides-filtro-campo select,
+.rides-filtro-campo input{
+
+    width:190px;
+    height:46px;
+
+    padding:0 36px 0 14px;
+
+    border:1px solid
+        var(--rides-borde);
+
+    border-radius:
+        var(--rides-radio-sm);
+
+    outline:none;
+
+    background-color:
+        rgba(7,21,35,.68);
+
+    color:
+        var(--rides-texto);
+
+    font-size:11px;
+    font-weight:650;
+
+    cursor:pointer;
+
+    transition:
+
+        border-color .2s ease,
+        background .2s ease,
+        box-shadow .2s ease;
+
+}
+
+.rides-filtro-campo select:hover,
+.rides-filtro-campo input:hover{
+
+    border-color:
+        var(--rides-borde-fuerte);
+
+}
+
+.rides-filtro-campo select:focus,
+.rides-filtro-campo input:focus{
+
+    border-color:
+        rgba(152,236,99,.42);
+
+    background-color:
+        rgba(7,21,35,.9);
+
+    box-shadow:
+
+        0 0 0 4px
+        rgba(152,236,99,.075);
+
+}
+
+.rides-filtro-campo select option{
+
+    background:#102033;
+
+    color:
+        var(--rides-texto);
+
+}
+
+
+/*==================================================
+                FILTRO FECHA
+==================================================*/
+
+.rides-filtro-fecha > i{
+
+    position:absolute;
+
+    top:50%;
+    left:14px;
+
+    z-index:2;
+
+    transform:
+        translateY(-50%);
+
+    color:
+        var(--rides-azul);
+
+    font-size:12px;
+
+    pointer-events:none;
+
+}
+
+.rides-filtro-fecha input{
+
+    padding-left:38px;
+
+}
+
+
+/*==================================================
+                BOTÓN LIMPIAR
+==================================================*/
+
+.btn-limpiar-rides{
+
+    flex:0 0 auto;
+
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+
+    gap:7px;
+
+    min-height:46px;
+
+    padding:10px 15px;
+
+    border:1px solid
+        var(--rides-borde);
+
+    border-radius:
+        var(--rides-radio-sm);
+
+    background:
+        rgba(255,255,255,.035);
+
+    color:
+        var(--rides-texto-secundario);
+
+    font-size:10px;
+    font-weight:800;
+
+    cursor:pointer;
+
+    transition:
+
+        transform .18s ease,
+        background .18s ease,
+        border-color .18s ease,
+        color .18s ease;
+
+}
+
+.btn-limpiar-rides:hover{
+
+    transform:
+        translateY(-2px);
+
+    border-color:
+        var(--rides-borde-fuerte);
+
+    background:
+        rgba(255,255,255,.065);
+
+    color:
+        var(--rides-texto);
+
+}
+
+.btn-limpiar-rides:active{
+
+    transform:
+        translateY(0);
+
+}
+
+
+/*==================================================
+        CONTENEDOR DE LA TABLA
+==================================================*/
+
+.rides-admin-tabla-contenedor{
+
+    position:relative;
+
+    overflow:hidden;
+
+    border:1px solid
+        var(--rides-borde);
+
+    border-radius:
+        var(--rides-radio-lg);
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.025),
+            transparent 44%
+        ),
+
+        var(--rides-panel);
+
+    box-shadow:
+        var(--rides-sombra);
+
+    animation:
+        ridesSubir .45s ease both;
+
+    animation-delay:.24s;
+
+}
+
+
+/*==================================================
+            SCROLL DE LA TABLA
+==================================================*/
+
+.rides-admin-tabla-scroll{
+
+    width:100%;
+
+    overflow-x:auto;
+
+    scrollbar-width:thin;
+
+    scrollbar-color:
+        rgba(152,236,99,.60)
+        rgba(7,17,27,.8);
+
+}
+
+
+/*==================================================
+                    TABLA
+==================================================*/
+
+.rides-admin-tabla{
+
+    width:100%;
+
+    min-width:1280px;
+
+    border-collapse:collapse;
+
+    table-layout:auto;
+
+}
+
+
+/*==================================================
+            ENCABEZADO TABLA
+==================================================*/
+
+.rides-admin-tabla thead{
+
+    background:
+
+        linear-gradient(
+            180deg,
+            rgba(255,255,255,.025),
+            transparent
+        ),
+
+        #0d1d2f;
+
+}
+
+.rides-admin-tabla thead tr{
+
+    height:64px;
+
+}
+
+.rides-admin-tabla thead th{
+
+    position:relative;
+
+    padding:16px 15px;
+
+    border-bottom:1px solid
+        var(--rides-borde);
+
+    color:
+        var(--rides-texto-secundario);
+
+    font-size:10px;
+    font-weight:850;
+
+    line-height:1.3;
+
+    letter-spacing:.055em;
+    text-align:left;
+    text-transform:uppercase;
+
+    white-space:nowrap;
+
+}
+
+.rides-admin-tabla thead th:first-child{
+
+    padding-left:22px;
+
+}
+
+.rides-admin-tabla thead th:last-child{
+
+    padding-right:22px;
+
+}
+
+.rides-admin-tabla thead th::after{
+
+    content:"";
+
+    position:absolute;
+
+    right:0;
+    top:50%;
+
+    width:1px;
+    height:25px;
+
+    transform:
+        translateY(-50%);
+
+    background:
+        rgba(255,255,255,.045);
+
+}
+
+.rides-admin-tabla thead th:last-child::after{
+
+    display:none;
+
+}
+
+
+/*==================================================
+                FILAS
+==================================================*/
+
+.ride-admin-fila{
+
+    transition:
+
+        background .2s ease,
+        box-shadow .2s ease;
+
+}
+
+.ride-admin-fila:hover{
+
+    background:
+        rgba(255,255,255,.027);
+
+    box-shadow:
+        inset 3px 0 0
+        rgba(152,236,99,.60);
+
+}
+
+.ride-admin-fila td{
+
+    padding:17px 15px;
+
+    border-bottom:1px solid
+        rgba(255,255,255,.055);
+
+    color:
+        var(--rides-texto);
+
+    font-size:11px;
+
+    line-height:1.5;
+
+    vertical-align:middle;
+
+}
+
+.ride-admin-fila:last-child td{
+
+    border-bottom:none;
+
+}
+
+.ride-admin-fila td:first-child{
+
+    padding-left:22px;
+
+}
+
+.ride-admin-fila td:last-child{
+
+    padding-right:22px;
+
+}
+
+
+/*==================================================
+                ID
+==================================================*/
+
+.ride-columna-id{
+
+    width:75px;
+
+}
+
+.ride-columna-id strong{
+
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+
+    min-width:45px;
+    min-height:31px;
+
+    padding:5px 8px;
+
+    border:1px solid
+        rgba(152,236,99,.14);
+
+    border-radius:9px;
 
     background:
         var(--rides-verde-suave);
@@ -768,15 +1200,257 @@
     color:
         var(--rides-verde);
 
+    font-size:10px;
+    font-weight:850;
+
 }
 
 
-/* COMPLETO */
+/*==================================================
+                CONDUCTOR
+==================================================*/
 
-.contenedor .estado-completo {
+.ride-columna-conductor{
+
+    min-width:235px;
+
+}
+
+.ride-conductor-tabla{
+
+    display:flex;
+    align-items:center;
+
+    gap:11px;
+
+    min-width:0;
+
+}
+
+.ride-conductor-foto{
+
+    flex:0 0 auto;
+
+    display:grid;
+    place-items:center;
+
+    width:42px;
+    height:42px;
+
+    overflow:hidden;
+
+    border:1px solid
+        rgba(152,236,99,.16);
+
+    border-radius:13px;
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(152,236,99,.11),
+            rgba(94,177,255,.07)
+        );
+
+    color:
+        var(--rides-verde);
+
+    font-size:15px;
+
+}
+
+.ride-conductor-foto img{
+
+    width:100%;
+    height:100%;
+
+    object-fit:cover;
+
+}
+
+.ride-conductor-info{
+
+    min-width:0;
+
+}
+
+.ride-conductor-info strong,
+.ride-conductor-info small{
+
+    display:block;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+    white-space:nowrap;
+
+}
+
+.ride-conductor-info strong{
+
+    max-width:190px;
+
+    margin-bottom:3px;
+
+    color:
+        var(--rides-texto);
+
+    font-size:11px;
+    font-weight:800;
+
+}
+
+.ride-conductor-info small{
+
+    max-width:190px;
+
+    color:
+        var(--rides-texto-suave);
+
+    font-size:9px;
+
+}
+
+
+/*==================================================
+                RUTA
+==================================================*/
+
+.ride-columna-ruta{
+
+    min-width:280px;
+
+}
+
+.ride-ruta-tabla{
+
+    display:flex;
+    flex-direction:column;
+
+    gap:7px;
+
+    min-width:0;
+
+}
+
+.ride-ruta-tabla span{
+
+    display:flex;
+    align-items:center;
+
+    gap:8px;
+
+    max-width:290px;
+
+    overflow:hidden;
+
+    color:
+        var(--rides-texto-secundario);
+
+    font-size:10px;
+
+    text-overflow:ellipsis;
+    white-space:nowrap;
+
+}
+
+.ride-ruta-tabla span:first-child i{
+
+    color:
+        var(--rides-verde);
+
+}
+
+.ride-ruta-tabla span:last-child i{
+
+    color:
+        var(--rides-azul);
+
+}
+
+.ride-ruta-tabla i{
+
+    flex:0 0 auto;
+
+    width:13px;
+
+    text-align:center;
+
+}
+
+
+/*==================================================
+                HORA
+==================================================*/
+
+.ride-hora-tabla{
+
+    display:flex;
+    align-items:center;
+
+    gap:7px;
+
+    white-space:nowrap;
+
+}
+
+.ride-hora-tabla i{
+
+    color:
+        var(--rides-azul);
+
+    font-size:12px;
+
+}
+
+.ride-hora-tabla strong{
+
+    color:
+        var(--rides-texto);
+
+    font-size:10px;
+
+}
+
+
+/*==================================================
+                LUGARES
+==================================================*/
+
+.ride-lugares-tabla{
+
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+
+    gap:6px;
+
+    min-width:78px;
+
+    padding:8px 10px;
+
+    border:1px solid
+        rgba(152,236,99,.25);
+
+    border-radius:999px;
+
+    background:
+        var(--rides-verde-suave);
+
+    color:
+        var(--rides-verde);
+
+    font-size:9px;
+    font-weight:850;
+
+    white-space:nowrap;
+
+}
+
+.ride-lugares-tabla.pocos-lugares{
 
     border-color:
-        var(--rides-amarillo);
+        rgba(255,195,77,.25);
 
     background:
         var(--rides-amarillo-suave);
@@ -786,45 +1460,10 @@
 
 }
 
-
-/* EN CURSO */
-
-.contenedor .estado-en_curso {
+.ride-lugares-tabla.sin-lugares{
 
     border-color:
-        rgba(84, 168, 255, 0.35);
-
-    background:
-        var(--rides-azul-suave);
-
-    color:
-        var(--rides-azul);
-
-}
-
-
-/* FINALIZADO */
-
-.contenedor .estado-finalizado {
-
-    border-color:
-        rgba(152, 236, 99, 0.3);
-
-    background:
-        rgba(152, 236, 99, 0.08);
-
-    color:
-        #b3f58c;
-
-}
-
-
-/* CANCELADO */
-
-.contenedor .estado-cancelado {
-
-    border-color:
-        rgba(255, 102, 116, 0.35);
+        rgba(255,100,114,.25);
 
     background:
         var(--rides-rojo-suave);
@@ -836,356 +1475,479 @@
 
 
 /*==================================================
-    ESTADO VACÍO
+                FECHA
 ==================================================*/
 
-.contenedor .fila-vacia td {
+.ride-fecha-tabla{
 
-    padding:
-        45px
-        20px !important;
+    min-width:95px;
 
 }
 
-.contenedor .estado-vacio-rides {
+.ride-fecha-tabla strong,
+.ride-fecha-tabla small{
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    gap: 9px;
-
-    color: var(--rides-texto-secundario);
-
-    text-align: center;
+    display:block;
 
 }
 
-.contenedor .estado-vacio-rides > i {
+.ride-fecha-tabla strong{
 
-    width: 58px;
-    height: 58px;
+    margin-bottom:3px;
 
-    display: grid;
-    place-items: center;
+    color:
+        var(--rides-texto);
 
-    margin-bottom: 5px;
-
-    border: 1px solid var(--rides-verde-borde);
-    border-radius: 16px;
-
-    background: var(--rides-verde-suave);
-    color: var(--rides-verde);
-
-    font-size: 23px;
+    font-size:10px;
 
 }
 
-.contenedor .estado-vacio-rides strong {
+.ride-fecha-tabla small{
 
-    color: var(--rides-texto);
+    color:
+        var(--rides-texto-suave);
 
-    font-size: 15px;
+    font-size:8px;
 
-}
-
-.contenedor .estado-vacio-rides span {
-
-    max-width: 430px;
-
-    color: var(--rides-texto-suave);
-
-    font-size: 11px;
-    line-height: 1.55;
+    text-transform:capitalize;
 
 }
 
 
 /*==================================================
-    FOOTER DE LA TABLA
+                VEHÍCULO
 ==================================================*/
 
-.contenedor .footer-tabla {
+.ride-columna-vehiculo{
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    gap: 16px;
-
-    padding:
-        15px
-        18px;
-
-    border-top:
-        1px solid var(--rides-borde);
-
-    background:
-        rgba(12, 24, 42, 0.9);
+    min-width:190px;
 
 }
 
-.contenedor .footer-tabla p {
+.ride-vehiculo-tabla{
 
-    color: var(--rides-texto-secundario);
+    display:flex;
+    align-items:center;
 
-    font-size: 11px;
+    gap:10px;
+
+    min-width:0;
+
+}
+
+.ride-vehiculo-icono{
+
+    flex:0 0 auto;
+
+    display:grid;
+    place-items:center;
+
+    width:38px;
+    height:38px;
+
+    border:1px solid
+        rgba(94,177,255,.14);
+
+    border-radius:11px;
+
+    background:
+        var(--rides-azul-suave);
+
+    color:
+        var(--rides-azul);
+
+    font-size:13px;
+
+}
+
+.ride-vehiculo-tabla > div:last-child{
+
+    min-width:0;
+
+}
+
+.ride-vehiculo-tabla strong,
+.ride-vehiculo-tabla small{
+
+    display:block;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+    white-space:nowrap;
+
+}
+
+.ride-vehiculo-tabla strong{
+
+    max-width:145px;
+
+    margin-bottom:3px;
+
+    color:
+        var(--rides-texto);
+
+    font-size:10px;
+
+}
+
+.ride-vehiculo-tabla small{
+
+    max-width:145px;
+
+    color:
+        var(--rides-texto-suave);
+
+    font-size:8px;
 
 }
 
 
 /*==================================================
-    PAGINACIÓN
+                ESTADOS
 ==================================================*/
 
-.contenedor .paginacion {
+.ride-admin-estado{
 
-    display: flex;
-    align-items: center;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
 
-    gap: 7px;
+    gap:6px;
 
-}
+    min-width:112px;
 
-.contenedor .pagina {
+    padding:8px 10px;
 
-    width: 35px;
-    height: 35px;
+    border:1px solid transparent;
 
-    display: grid;
-    place-items: center;
+    border-radius:999px;
 
-    border: 1px solid var(--rides-borde);
-    border-radius: 9px;
+    font-size:8px;
+    font-weight:850;
 
-    background: var(--rides-panel-secundario);
-    color: var(--rides-texto-secundario);
-
-    font-size: 11px;
-    font-weight: 700;
-
-    cursor: pointer;
-
-    transition:
-        transform 0.2s ease,
-        border-color 0.2s ease,
-        background 0.2s ease,
-        color 0.2s ease;
+    white-space:nowrap;
 
 }
 
-.contenedor .pagina:hover {
+.ride-admin-estado i{
 
-    transform: translateY(-2px);
-
-    border-color: var(--rides-verde-borde);
-
-    background: var(--rides-verde-suave);
-    color: var(--rides-verde);
+    font-size:8px;
 
 }
 
-.contenedor .pagina.activa {
-
-    border-color: var(--rides-verde);
-
-    background: var(--rides-verde);
-    color: #0b1424;
-
-}
-
-
-/*==================================================
-    FLATPICKR
-==================================================*/
-
-.flatpickr-calendar {
-
-    overflow: hidden;
-
-    border: 1px solid
-        rgba(152, 236, 99, 0.4) !important;
-
-    border-radius: 15px !important;
-
-    background: #111e31 !important;
-
-    box-shadow:
-        0 18px 42px rgba(0, 0, 0, 0.42) !important;
-
-}
-
-.flatpickr-calendar::before,
-.flatpickr-calendar::after {
-
-    border-bottom-color:
-        #111e31 !important;
-
-}
-
-.flatpickr-months,
-.flatpickr-month,
-.flatpickr-weekdays {
-
-    background:
-        #111e31 !important;
-
-}
-
-.flatpickr-current-month,
-.flatpickr-current-month input.cur-year,
-.flatpickr-current-month .flatpickr-monthDropdown-months {
-
-    color:
-        #f7f9fc !important;
-
-}
-
-.flatpickr-current-month
-.flatpickr-monthDropdown-months {
-
-    background:
-        #111e31 !important;
-
-}
-
-.flatpickr-current-month
-.flatpickr-monthDropdown-months
-option {
-
-    background:
-        #111e31;
-
-}
-
-.flatpickr-weekday {
-
-    color:
-        #98ec63 !important;
-
-    font-size: 11px !important;
-    font-weight: 800 !important;
-
-}
-
-.flatpickr-day {
-
-    border-radius:
-        9px !important;
-
-    color:
-        #dce6f4 !important;
-
-}
-
-.flatpickr-day:hover,
-.flatpickr-day:focus {
+.ride-admin-estado.estado-borrador{
 
     border-color:
-        rgba(152, 236, 99, 0.25) !important;
+        rgba(148,163,184,.22);
 
     background:
-        rgba(152, 236, 99, 0.16) !important;
+        var(--rides-gris-suave);
 
-    color:
-        #98ec63 !important;
+    color:#bdc8d6;
 
 }
 
-.flatpickr-day.today {
+.ride-admin-estado.estado-disponible{
 
     border-color:
-        #98ec63 !important;
+        rgba(152,236,99,.22);
 
-    color:
-        #98ec63 !important;
+    background:
+        var(--rides-verde-suave);
+
+    color:#b2f58b;
 
 }
 
-.flatpickr-day.selected,
-.flatpickr-day.startRange,
-.flatpickr-day.endRange {
+.ride-admin-estado.estado-completo{
 
     border-color:
-        #98ec63 !important;
+        rgba(255,195,77,.22);
 
     background:
-        #98ec63 !important;
+        var(--rides-amarillo-suave);
 
-    color:
-        #0b1424 !important;
-
-}
-
-.flatpickr-day.prevMonthDay,
-.flatpickr-day.nextMonthDay {
-
-    color:
-        #60738e !important;
+    color:#ffd479;
 
 }
 
-.flatpickr-day.flatpickr-disabled {
+.ride-admin-estado.estado-en_curso{
 
-    color:
-        #44536a !important;
-
-}
-
-.flatpickr-prev-month svg,
-.flatpickr-next-month svg {
-
-    fill:
-        #98ec63 !important;
-
-}
-
-.flatpickr-prev-month:hover svg,
-.flatpickr-next-month:hover svg {
-
-    fill:
-        #b4f28d !important;
-
-}
-
-.numInputWrapper input {
+    border-color:
+        rgba(94,177,255,.22);
 
     background:
-        transparent !important;
+        var(--rides-azul-suave);
 
-    color:
-        #f7f9fc !important;
+    color:#83c5ff;
+
+}
+
+.ride-admin-estado.estado-finalizado{
+
+    border-color:
+        rgba(173,134,255,.22);
+
+    background:
+        var(--rides-morado-suave);
+
+    color:#c5a9ff;
+
+}
+
+.ride-admin-estado.estado-cancelado{
+
+    border-color:
+        rgba(255,100,114,.22);
+
+    background:
+        var(--rides-rojo-suave);
+
+    color:#ff939d;
 
 }
 
 
 /*==================================================
-    SCROLL DE LA TABLA
+                ESTADO VACÍO
 ==================================================*/
 
-.contenedor .tabla::-webkit-scrollbar {
+.rides-fila-vacia td{
 
-    height: 9px;
+    padding:0 !important;
 
-}
-
-.contenedor .tabla::-webkit-scrollbar-track {
-
-    background: #0a1424;
+    border-bottom:none !important;
 
 }
 
-.contenedor .tabla::-webkit-scrollbar-thumb {
+.rides-vacios{
 
-    border-radius: 999px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+
+    min-height:360px;
+
+    padding:45px 25px;
+
+    text-align:center;
+
+}
+
+.rides-vacios-icono{
+
+    display:grid;
+    place-items:center;
+
+    width:68px;
+    height:68px;
+
+    margin-bottom:17px;
+
+    border:1px solid
+        rgba(152,236,99,.16);
+
+    border-radius:21px;
 
     background:
-        rgba(152, 236, 99, 0.68);
+        var(--rides-verde-suave);
+
+    color:
+        var(--rides-verde);
+
+    font-size:26px;
 
 }
 
-.contenedor .tabla::-webkit-scrollbar-thumb:hover {
+.rides-vacios h2{
+
+    margin:0 0 8px;
+
+    color:
+        var(--rides-texto);
+
+    font-size:19px;
+
+}
+
+.rides-vacios p{
+
+    max-width:450px;
+
+    margin:0;
+
+    color:
+        var(--rides-texto-secundario);
+
+    font-size:11px;
+    line-height:1.65;
+
+}
+
+
+/*==================================================
+            SIN RESULTADOS
+==================================================*/
+
+.rides-sin-resultados{
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+
+    min-height:260px;
+
+    padding:35px;
+
+    border-top:1px solid
+        var(--rides-borde);
+
+    background:
+        rgba(7,18,29,.38);
+
+    text-align:center;
+
+}
+
+.rides-sin-resultados[hidden]{
+
+    display:none !important;
+
+}
+
+.rides-sin-resultados i{
+
+    display:grid;
+    place-items:center;
+
+    width:56px;
+    height:56px;
+
+    margin-bottom:14px;
+
+    border-radius:17px;
+
+    background:
+        var(--rides-azul-suave);
+
+    color:
+        var(--rides-azul);
+
+    font-size:20px;
+
+}
+
+.rides-sin-resultados strong{
+
+    display:block;
+
+    margin-bottom:6px;
+
+    color:
+        var(--rides-texto);
+
+    font-size:15px;
+
+}
+
+.rides-sin-resultados span{
+
+    max-width:430px;
+
+    color:
+        var(--rides-texto-secundario);
+
+    font-size:10px;
+    line-height:1.55;
+
+}
+
+
+/*==================================================
+                FOOTER
+==================================================*/
+
+.rides-tabla-footer{
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    gap:18px;
+
+    min-height:65px;
+
+    padding:17px 22px;
+
+    border-top:1px solid
+        var(--rides-borde);
+
+    background:
+
+        linear-gradient(
+            180deg,
+            transparent,
+            rgba(255,255,255,.018)
+        ),
+
+        #0d1d2f;
+
+}
+
+.rides-tabla-footer p{
+
+    margin:0;
+
+    color:
+        var(--rides-texto-secundario);
+
+    font-size:10px;
+
+}
+
+.rides-tabla-footer strong{
+
+    color:
+        var(--rides-texto);
+
+    font-weight:800;
+
+}
+
+
+/*==================================================
+                SCROLL
+==================================================*/
+
+.rides-admin-tabla-scroll::-webkit-scrollbar{
+
+    height:10px;
+
+}
+
+.rides-admin-tabla-scroll::-webkit-scrollbar-track{
+
+    background:
+        rgba(7,17,27,.85);
+
+}
+
+.rides-admin-tabla-scroll::-webkit-scrollbar-thumb{
+
+    border:2px solid
+        rgba(7,17,27,.85);
+
+    border-radius:999px;
+
+    background:
+        rgba(152,236,99,.56);
+
+}
+
+.rides-admin-tabla-scroll::-webkit-scrollbar-thumb:hover{
 
     background:
         var(--rides-verde);
@@ -1194,23 +1956,39 @@ option {
 
 
 /*==================================================
-    ANIMACIÓN
+                FOCUS
 ==================================================*/
 
-@keyframes aparecerTabla {
+.rides-admin-contenedor button:focus-visible,
+.rides-admin-contenedor input:focus-visible,
+.rides-admin-contenedor select:focus-visible{
 
-    from {
+    outline:2px solid
+        var(--rides-verde);
 
-        opacity: 0;
+    outline-offset:3px;
+
+}
+
+
+/*==================================================
+                ANIMACIÓN
+==================================================*/
+
+@keyframes ridesSubir{
+
+    from{
+
+        opacity:0;
 
         transform:
-            translateY(8px);
+            translateY(18px);
 
     }
 
-    to {
+    to{
 
-        opacity: 1;
+        opacity:1;
 
         transform:
             translateY(0);
@@ -1221,115 +1999,195 @@ option {
 
 
 /*==================================================
-    RESPONSIVE
+                RESPONSIVE
 ==================================================*/
 
-@media (max-width: 1250px) {
+@media(max-width:1250px){
 
-    .contenedor .filtros {
+    .rides-estadisticas{
 
         grid-template-columns:
-            minmax(260px, 1fr)
-            minmax(170px, 210px)
-            minmax(170px, 210px)
-            125px;
-
-    }
-
-    .contenedor .tabla {
-
-        overflow-x: auto;
-
-    }
-
-    .contenedor .tabla table {
-
-        min-width: 1120px;
+            repeat(
+                2,
+                minmax(0,1fr)
+            );
 
     }
 
 }
 
 
-@media (max-width: 900px) {
+@media(max-width:1050px){
 
-    .contenedor .filtros {
+    .rides-admin-tabla{
 
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
-
-    }
-
-    .contenedor .buscar {
-
-        grid-column:
-            1 / -1;
+        min-width:1180px;
 
     }
 
-    .contenedor #btnFiltrar {
+    .rides-buscador{
 
-        width: 100%;
+        flex-basis:100%;
 
     }
 
 }
 
 
-@media (max-width: 620px) {
+@media(max-width:900px){
 
-    .contenedor .filtros {
+    .rides-admin-header{
 
-        grid-template-columns:
-            1fr;
+        align-items:flex-start;
 
-        padding: 13px;
-
-    }
-
-    .contenedor .buscar {
-
-        grid-column:
-            auto;
+        min-height:auto;
 
     }
 
-    .contenedor .footer-tabla {
+    .rides-admin-header-icono{
 
-        align-items: flex-start;
-        flex-direction: column;
+        width:65px;
+        height:65px;
 
-    }
+        border-radius:19px;
 
-    .contenedor .paginacion {
-
-        width: 100%;
-
-        justify-content: flex-end;
+        font-size:25px;
 
     }
 
 }
 
 
-/*==================================================
-    ACCESIBILIDAD
-==================================================*/
+@media(max-width:650px){
 
-@media (prefers-reduced-motion: reduce) {
+    .rides-admin-contenedor{
 
-    .contenedor *,
-    .contenedor *::before,
-    .contenedor *::after {
+        gap:18px;
 
-        animation-duration:
-            0.01ms !important;
+    }
 
-        animation-iteration-count:
-            1 !important;
+    .rides-admin-header{
 
-        transition-duration:
-            0.01ms !important;
+        padding:24px 20px;
+
+        border-radius:19px;
+
+    }
+
+    .rides-admin-header-icono{
+
+        display:none;
+
+    }
+
+    .rides-admin-header h1{
+
+        font-size:29px;
+
+    }
+
+    .rides-admin-header p{
+
+        font-size:12px;
+
+    }
+
+    .rides-estadisticas{
+
+        grid-template-columns:1fr;
+
+        gap:11px;
+
+    }
+
+    .ride-estadistica-card{
+
+        min-height:96px;
+
+        padding:16px;
+
+    }
+
+    .ride-estadistica-icono{
+
+        width:45px;
+        height:45px;
+
+        font-size:17px;
+
+    }
+
+    .ride-estadistica-card strong{
+
+        font-size:25px;
+
+    }
+
+    .rides-admin-filtros{
+
+        align-items:stretch;
+        flex-direction:column;
+
+        padding:10px;
+
+    }
+
+    .rides-buscador{
+
+        width:100%;
+        min-width:0;
+
+    }
+
+    .rides-filtro-campo{
+
+        width:100%;
+
+    }
+
+    .rides-filtro-campo select,
+    .rides-filtro-campo input,
+    .btn-limpiar-rides{
+
+        width:100%;
+
+    }
+
+    .rides-admin-tabla-contenedor{
+
+        border-radius:18px;
+
+    }
+
+    .rides-admin-tabla{
+
+        min-width:1100px;
+
+    }
+
+    .rides-tabla-footer{
+
+        justify-content:center;
+
+        padding:15px;
+
+        text-align:center;
+
+    }
+
+}
+
+
+@media(prefers-reduced-motion:reduce){
+
+    .rides-admin-contenedor *,
+    .rides-admin-contenedor *::before,
+    .rides-admin-contenedor *::after{
+
+        animation:none !important;
+        transition:none !important;
+
+        scroll-behavior:auto !important;
 
     }
 

@@ -1,400 +1,1669 @@
 /*==================================================
-                expediente.css
+                EXPEDIENTE.CSS
+    Expediente médico desde el panel administrativo
 ==================================================*/
 
 
-/*================ CONTENEDOR =================*/
+/*==================================================
+                VARIABLES LOCALES
+==================================================*/
 
-.usuario-card{
+.expediente-medico-admin{
 
-    background:#101c2a;
+    --exp-panel:#101f32;
+    --exp-panel-hover:#19314c;
+    --exp-panel-profundo:#091725;
 
-    border-radius:18px;
+    --exp-texto:#f4f8fc;
+    --exp-texto-secundario:#9eb2c7;
+    --exp-texto-suave:#70869d;
+
+    --exp-verde:#98ec63;
+    --exp-verde-suave:rgba(152,236,99,.11);
+
+    --exp-celeste:#61d7e8;
+    --exp-celeste-hover:#42bdce;
+    --exp-celeste-suave:rgba(97,215,232,.11);
+
+    --exp-azul:#5eb1ff;
+    --exp-azul-suave:rgba(94,177,255,.12);
+
+    --exp-amarillo:#ffc34d;
+    --exp-amarillo-suave:rgba(255,195,77,.12);
+
+    --exp-rojo:#ff7080;
+    --exp-rojo-suave:rgba(255,112,128,.11);
+
+    --exp-borde:rgba(255,255,255,.075);
+    --exp-borde-fuerte:rgba(255,255,255,.14);
+
+    --exp-sombra:
+        0 22px 58px
+        rgba(0,0,0,.27);
+
+    --exp-sombra-suave:
+        0 12px 32px
+        rgba(0,0,0,.18);
+
+    --exp-radio-sm:11px;
+    --exp-radio-md:17px;
+    --exp-radio-lg:24px;
+
+}
+
+
+/*==================================================
+                REINICIO LOCAL
+==================================================*/
+
+.expediente-medico-admin,
+.expediente-medico-admin *,
+.expediente-medico-admin *::before,
+.expediente-medico-admin *::after{
+
+    box-sizing:border-box;
+
+}
+
+.expediente-medico-admin{
+
+    width:100%;
+
+    display:flex;
+    flex-direction:column;
+
+    gap:24px;
+
+    color:
+        var(--exp-texto);
+
+}
+
+.expediente-medico-admin img{
+
+    display:block;
+
+    max-width:100%;
+
+}
+
+.expediente-medico-admin button,
+.expediente-medico-admin input,
+.expediente-medico-admin select,
+.expediente-medico-admin textarea{
+
+    font:inherit;
+
+}
+
+.expediente-medico-admin button{
+
+    border:none;
+
+}
+
+.expediente-medico-admin [hidden]{
+
+    display:none !important;
+
+}
+
+
+/*==================================================
+                ENCABEZADO PRINCIPAL
+==================================================*/
+
+.expediente-medico-header{
+
+    position:relative;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    gap:28px;
+
+    min-height:175px;
+
+    padding:30px 34px;
 
     overflow:hidden;
 
-    display:flex;
+    border:1px solid
+        rgba(97,215,232,.15);
 
-    min-height:680px;
+    border-radius:
+        var(--exp-radio-lg);
 
-    box-shadow:0 15px 35px rgba(0,0,0,.35);
+    background:
+
+        radial-gradient(
+            circle at 92% 15%,
+            rgba(97,215,232,.12),
+            transparent 245px
+        ),
+
+        radial-gradient(
+            circle at 76% 100%,
+            rgba(152,236,99,.055),
+            transparent 225px
+        ),
+
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.035),
+            transparent 48%
+        ),
+
+        var(--exp-panel);
+
+    box-shadow:
+        var(--exp-sombra);
+
+    animation:
+        expedienteSubir .45s ease both;
 
 }
 
+.expediente-medico-header::before{
 
-/*================ SIDEBAR =================*/
+    content:"";
 
-.usuario-sidebar{
+    position:absolute;
+
+    top:0;
+    left:0;
+
+    width:100%;
+    height:3px;
+
+    background:
+
+        linear-gradient(
+            90deg,
+            transparent,
+            var(--exp-verde),
+            var(--exp-celeste),
+            transparent
+        );
+
+}
+
+.expediente-medico-header::after{
+
+    content:"";
+
+    position:absolute;
+
+    right:-75px;
+    bottom:-120px;
 
     width:280px;
-
-    background:#132232;
-
-    padding:35px 25px;
-
-    display:flex;
-
-    flex-direction:column;
-
-    align-items:center;
-
-}
-
-
-/*================ FOTO =================*/
-
-.foto-usuario{
-
-    width:160px;
-
-    height:160px;
+    height:280px;
 
     border-radius:50%;
 
-    border:5px solid #7fd44d;
+    background:
+        rgba(255,255,255,.025);
 
-    object-fit:cover;
+    pointer-events:none;
 
 }
 
 
-/*================ NOMBRE =================*/
+/*==================================================
+            TEXTO DEL ENCABEZADO
+==================================================*/
 
-.usuario-sidebar h2{
+.usuario-detalle-header-texto{
 
-    margin-top:25px;
+    position:relative;
 
-    margin-bottom:40px;
+    z-index:2;
 
-    font-size:24px;
+    min-width:0;
 
-    font-weight:600;
+    max-width:820px;
 
-    color:#ffffff;
+}
+
+.usuario-detalle-etiqueta{
+
+    display:inline-flex;
+    align-items:center;
+
+    gap:7px;
+
+    margin-bottom:10px;
+    padding:6px 11px;
+
+    border:1px solid
+        rgba(97,215,232,.20);
+
+    border-radius:999px;
+
+    background:
+        var(--exp-celeste-suave);
+
+    color:
+        var(--exp-celeste);
+
+    font-size:9px;
+    font-weight:850;
+
+    letter-spacing:.08em;
+    text-transform:uppercase;
+
+}
+
+.expediente-medico-header h1{
+
+    margin:0 0 10px;
+
+    color:
+        var(--exp-texto);
+
+    font-size:
+        clamp(
+            30px,
+            4vw,
+            42px
+        );
+
+    font-weight:850;
+
+    line-height:1.08;
+
+    letter-spacing:-1px;
+
+}
+
+.expediente-medico-header p{
+
+    max-width:720px;
+
+    margin:0;
+
+    color:
+        var(--exp-texto-secundario);
+
+    font-size:14px;
+    line-height:1.7;
+
+}
+
+
+/*==================================================
+            ICONO DEL ENCABEZADO
+==================================================*/
+
+.expediente-header-icono{
+
+    position:relative;
+
+    z-index:2;
+
+    flex:0 0 auto;
+
+    display:grid;
+    place-items:center;
+
+    width:82px;
+    height:82px;
+
+    border:1px solid
+        rgba(97,215,232,.22);
+
+    border-radius:24px;
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(97,215,232,.16),
+            rgba(97,215,232,.06)
+        );
+
+    color:
+        var(--exp-celeste);
+
+    font-size:31px;
+
+    box-shadow:
+
+        inset 0 0 0 1px
+        rgba(255,255,255,.025),
+
+        0 17px 38px
+        rgba(97,215,232,.10);
+
+}
+
+
+/*==================================================
+                LAYOUT PRINCIPAL
+==================================================*/
+
+.usuario-detalle-layout{
+
+    display:grid;
+
+    grid-template-columns:
+        minmax(250px,300px)
+        minmax(0,1fr);
+
+    align-items:start;
+
+    gap:22px;
+
+}
+
+
+/*==================================================
+                    SIDEBAR
+==================================================*/
+
+.usuario-detalle-sidebar{
+
+    position:sticky;
+
+    top:22px;
+
+    display:flex;
+    flex-direction:column;
+
+    gap:18px;
+
+    min-width:0;
+
+    padding:20px;
+
+    border:1px solid
+        var(--exp-borde);
+
+    border-radius:
+        var(--exp-radio-lg);
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.027),
+            transparent 48%
+        ),
+
+        var(--exp-panel);
+
+    box-shadow:
+        var(--exp-sombra-suave);
+
+    animation:
+        expedienteSubir .45s ease both;
+
+    animation-delay:.06s;
+
+}
+
+
+/*==================================================
+            RESUMEN DEL USUARIO
+==================================================*/
+
+.usuario-perfil-resumen{
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+
+    padding:20px 12px 18px;
+
+    border:1px solid
+        var(--exp-borde);
+
+    border-radius:18px;
+
+    background:
+
+        radial-gradient(
+            circle at top,
+            rgba(97,215,232,.10),
+            transparent 130px
+        ),
+
+        rgba(255,255,255,.02);
 
     text-align:center;
 
 }
 
+.usuario-perfil-foto-contenedor{
 
-/*================ BOTONES SIDEBAR =================*/
+    position:relative;
 
-.tab-btn{
+    width:112px;
+    height:112px;
+
+    margin-bottom:14px;
+
+}
+
+.usuario-perfil-foto{
+
+    width:100%;
+    height:100%;
+
+    object-fit:cover;
+
+    border:3px solid
+        rgba(97,215,232,.75);
+
+    border-radius:32px;
+
+    background:
+        #0a1828;
+
+    box-shadow:
+
+        0 0 0 7px
+        rgba(97,215,232,.055),
+
+        0 18px 34px
+        rgba(0,0,0,.28);
+
+}
+
+.usuario-perfil-indicador.medico{
+
+    position:absolute;
+
+    right:-3px;
+    bottom:5px;
+
+    display:grid;
+    place-items:center;
+
+    width:30px;
+    height:30px;
+
+    border:4px solid
+        var(--exp-panel);
+
+    border-radius:50%;
+
+    background:
+        var(--exp-celeste);
+
+    color:#071925;
+
+    font-size:11px;
+
+}
+
+.usuario-perfil-identidad{
+
+    width:100%;
+    min-width:0;
+
+}
+
+.usuario-perfil-identidad span{
+
+    display:block;
+
+    margin-bottom:6px;
+
+    color:
+        var(--exp-texto-suave);
+
+    font-size:8px;
+    font-weight:800;
+
+    letter-spacing:.075em;
+    text-transform:uppercase;
+
+}
+
+.usuario-perfil-identidad h2{
+
+    margin:0;
+
+    overflow:hidden;
+
+    color:
+        var(--exp-texto);
+
+    font-size:17px;
+    font-weight:850;
+
+    line-height:1.3;
+
+    text-overflow:ellipsis;
+
+}
+
+
+/*==================================================
+                NAVEGACIÓN DE TABS
+==================================================*/
+
+.usuario-detalle-tabs{
+
+    display:flex;
+    flex-direction:column;
+
+    gap:8px;
+
+}
+
+.usuario-tab-btn{
+
+    position:relative;
 
     width:100%;
 
-    height:55px;
+    display:grid;
 
-    border:none;
+    grid-template-columns:
+        40px
+        minmax(0,1fr)
+        16px;
+
+    align-items:center;
+
+    gap:10px;
+
+    min-height:66px;
+
+    padding:10px 12px;
+
+    border:1px solid
+        var(--exp-borde);
+
+    border-radius:14px;
+
+    background:
+        rgba(255,255,255,.018);
+
+    color:
+        var(--exp-texto-secundario);
+
+    text-align:left;
+
+    cursor:pointer;
+
+    transition:
+
+        transform .2s ease,
+        border-color .2s ease,
+        background .2s ease,
+        color .2s ease,
+        box-shadow .2s ease;
+
+}
+
+.usuario-tab-btn:hover{
+
+    transform:
+        translateX(3px);
+
+    border-color:
+        var(--exp-borde-fuerte);
+
+    background:
+        rgba(255,255,255,.045);
+
+    color:
+        var(--exp-texto);
+
+}
+
+.usuario-tab-btn.active{
+
+    border-color:
+        rgba(97,215,232,.23);
+
+    background:
+
+        linear-gradient(
+            135deg,
+            rgba(97,215,232,.13),
+            rgba(97,215,232,.035)
+        );
+
+    color:
+        var(--exp-texto);
+
+    box-shadow:
+        inset 3px 0 0
+        var(--exp-celeste);
+
+}
+
+.usuario-tab-icono{
+
+    display:grid;
+    place-items:center;
+
+    width:40px;
+    height:40px;
+
+    border:1px solid
+        var(--exp-borde);
 
     border-radius:12px;
 
-    margin-bottom:15px;
+    background:
+        rgba(255,255,255,.035);
 
-    background:#1b3044;
-
-    color:white;
-
-    font-size:15px;
-
-    font-weight:600;
-
-    cursor:pointer;
-
-    transition:.30s;
-
-}
-
-.tab-btn:hover{
-
-    background:#7fd44d;
-
-    color:#11182c;
-
-}
-
-.tab-btn.active{
-
-    background:#7fd44d;
-
-    color:#11182c;
-
-}
-
-
-/*================ PANEL =================*/
-
-.usuario-panel{
-
-    flex:1;
-
-    padding:45px;
-
-}
-
-.usuario-panel h2{
-
-    color:white;
-
-    font-size:32px;
-
-    margin-bottom:35px;
-
-    font-weight:700;
-
-}
-
-
-/*================ GRID =================*/
-
-.grid-info{
-
-    display:grid;
-
-    grid-template-columns:repeat(2,1fr);
-
-    gap:25px;
-
-}
-
-
-/*================ CAMPOS =================*/
-
-.campo{
-
-    display:flex;
-
-    flex-direction:column;
-
-}
-
-.campo label{
-
-    margin-bottom:8px;
-
-    color:#d7e3ec;
+    color:
+        var(--exp-texto-secundario);
 
     font-size:14px;
 
-    font-weight:500;
+}
+
+.usuario-tab-btn.active
+.usuario-tab-icono{
+
+    border-color:
+        rgba(97,215,232,.20);
+
+    background:
+        var(--exp-celeste-suave);
+
+    color:
+        var(--exp-celeste);
 
 }
 
-/*================ INPUTS =================*/
+.usuario-tab-texto{
 
-.campo input,
-
-.campo select,
-
-.campo textarea{
-
-    background:#132232;
-
-    border:2px solid #7fd44d;
-
-    border-radius:10px;
-
-    padding:14px 16px;
-
-    color:white;
-
-    outline:none;
-
-    font-size:15px;
-
-    font-family:'Poppins',sans-serif;
-
-    resize:none;
-
-    transition:.25s;
+    min-width:0;
 
 }
 
-.campo input{
+.usuario-tab-texto strong,
+.usuario-tab-texto small{
 
-    height:52px;
+    display:block;
 
-}
+    overflow:hidden;
 
-.campo select{
-
-    height:52px;
-
-}
-
-.campo textarea{
-
-    min-height:120px;
+    text-overflow:ellipsis;
+    white-space:nowrap;
 
 }
 
+.usuario-tab-texto strong{
 
-/*================ FOCUS =================*/
+    margin-bottom:3px;
 
-.campo input:focus,
+    color:inherit;
 
-.campo select:focus,
-
-.campo textarea:focus{
-
-    border-color:#94e363;
-
-    box-shadow:0 0 10px rgba(127,212,77,.25);
+    font-size:10px;
+    font-weight:800;
 
 }
 
+.usuario-tab-texto small{
 
-/*================ PLACEHOLDER =================*/
+    color:
+        var(--exp-texto-suave);
 
-.campo input::placeholder,
+    font-size:8px;
 
-.campo textarea::placeholder{
+}
 
-    color:#9eaab8;
+.usuario-tab-btn > i:last-child{
+
+    color:
+        var(--exp-texto-suave);
+
+    font-size:9px;
+
+}
+
+.usuario-tab-btn:hover > i:last-child,
+.usuario-tab-btn.active > i:last-child{
+
+    color:
+        var(--exp-celeste);
 
 }
 
 
-/*================ CAMPO ANCHO =================*/
+/*==================================================
+                AVISO DEL SIDEBAR
+==================================================*/
 
-.ancho{
-
-    grid-column:1 / span 2;
-
-}
-
-
-/*================ ACCIONES =================*/
-
-.acciones-info{
-
-    margin-top:40px;
+.expediente-aviso{
 
     display:flex;
+    align-items:flex-start;
 
-    justify-content:flex-end;
+    gap:10px;
+
+    padding:13px;
+
+    border:1px solid
+        rgba(97,215,232,.14);
+
+    border-radius:14px;
+
+    background:
+        var(--exp-celeste-suave);
+
+}
+
+.expediente-aviso > i{
+
+    flex:0 0 auto;
+
+    margin-top:2px;
+
+    color:
+        var(--exp-celeste);
+
+    font-size:14px;
+
+}
+
+.expediente-aviso p{
+
+    margin:0;
+
+    color:#b8d9df;
+
+    font-size:8px;
+    line-height:1.55;
+
+}
+
+
+/*==================================================
+                PANEL PRINCIPAL
+==================================================*/
+
+.usuario-detalle-panel{
+
+    min-width:0;
+
+    overflow:hidden;
+
+    border:1px solid
+        var(--exp-borde);
+
+    border-radius:
+        var(--exp-radio-lg);
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.025),
+            transparent 46%
+        ),
+
+        var(--exp-panel);
+
+    box-shadow:
+        var(--exp-sombra);
+
+    animation:
+        expedienteSubir .45s ease both;
+
+    animation-delay:.11s;
+
+}
+
+
+/*==================================================
+            ENCABEZADO DEL PANEL
+==================================================*/
+
+.expediente-panel-header{
+
+    position:relative;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    gap:22px;
+
+    min-height:125px;
+
+    padding:24px 27px;
+
+    border-bottom:1px solid
+        var(--exp-borde);
+
+    background:
+
+        radial-gradient(
+            circle at 94% 10%,
+            rgba(97,215,232,.08),
+            transparent 190px
+        ),
+
+        rgba(10,27,45,.55);
+
+}
+
+.expediente-panel-header > div:first-child{
+
+    min-width:0;
+
+}
+
+.usuario-panel-etiqueta{
+
+    display:block;
+
+    margin-bottom:5px;
+
+    color:
+        var(--exp-celeste);
+
+    font-size:8px;
+    font-weight:850;
+
+    letter-spacing:.075em;
+    text-transform:uppercase;
+
+}
+
+.expediente-panel-header h2{
+
+    margin:0 0 7px;
+
+    color:
+        var(--exp-texto);
+
+    font-size:23px;
+    font-weight:850;
+
+    line-height:1.2;
+
+}
+
+.expediente-panel-header p{
+
+    max-width:680px;
+
+    margin:0;
+
+    color:
+        var(--exp-texto-secundario);
+
+    font-size:10px;
+    line-height:1.65;
+
+}
+
+.usuario-panel-header-icono.medico{
+
+    flex:0 0 auto;
+
+    display:grid;
+    place-items:center;
+
+    width:55px;
+    height:55px;
+
+    border:1px solid
+        rgba(97,215,232,.18);
+
+    border-radius:17px;
+
+    background:
+        var(--exp-celeste-suave);
+
+    color:
+        var(--exp-celeste);
+
+    font-size:20px;
+
+}
+
+
+/*==================================================
+                    FORMULARIO
+==================================================*/
+
+.expediente-medico-form{
+
+    display:flex;
+    flex-direction:column;
 
     gap:18px;
 
+    padding:22px;
+
 }
 
 
-/*================ BOTON REGRESAR =================*/
+/*==================================================
+            BLOQUES DEL FORMULARIO
+==================================================*/
 
-#volver{
+.expediente-bloque{
 
-    width:170px;
+    overflow:hidden;
 
-    height:50px;
+    border:1px solid
+        var(--exp-borde);
 
-    border:none;
+    border-radius:17px;
 
-    border-radius:10px;
+    background:
 
-    background:#d84343;
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.019),
+            transparent
+        ),
 
-    color:white;
+        rgba(6,18,31,.40);
 
-    font-size:15px;
+    transition:
 
-    font-weight:600;
+        transform .22s ease,
+        border-color .22s ease,
+        background .22s ease,
+        box-shadow .22s ease;
+
+}
+
+.expediente-bloque:hover{
+
+    transform:
+        translateY(-2px);
+
+    border-color:
+        rgba(97,215,232,.14);
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(97,215,232,.025),
+            transparent
+        ),
+
+        rgba(6,18,31,.46);
+
+    box-shadow:
+        0 15px 30px
+        rgba(0,0,0,.12);
+
+}
+
+.usuario-form-bloque-header{
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    gap:15px;
+
+    min-height:70px;
+
+    padding:14px 17px;
+
+    border-bottom:1px solid
+        rgba(255,255,255,.055);
+
+    background:
+        rgba(255,255,255,.018);
+
+}
+
+.usuario-form-bloque-header > div{
+
+    min-width:0;
+
+}
+
+.usuario-form-bloque-header span{
+
+    display:block;
+
+    margin-bottom:3px;
+
+    color:
+        var(--exp-texto-suave);
+
+    font-size:7px;
+    font-weight:800;
+
+    letter-spacing:.07em;
+    text-transform:uppercase;
+
+}
+
+.usuario-form-bloque-header h3{
+
+    margin:0;
+
+    color:
+        var(--exp-texto);
+
+    font-size:12px;
+    font-weight:800;
+
+}
+
+.usuario-form-bloque-header > i{
+
+    flex:0 0 auto;
+
+    display:grid;
+    place-items:center;
+
+    width:39px;
+    height:39px;
+
+    border:1px solid
+        rgba(97,215,232,.15);
+
+    border-radius:12px;
+
+    background:
+        var(--exp-celeste-suave);
+
+    color:
+        var(--exp-celeste);
+
+    font-size:13px;
+
+}
+
+
+/*==================================================
+                GRID DEL FORMULARIO
+==================================================*/
+
+.usuario-form-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0,1fr)
+        );
+
+    gap:14px;
+
+    padding:17px;
+
+}
+
+
+/*==================================================
+                CAMPOS
+==================================================*/
+
+.usuario-campo{
+
+    min-width:0;
+
+    display:flex;
+    flex-direction:column;
+
+    gap:7px;
+
+}
+
+.usuario-campo-ancho{
+
+    grid-column:1 / -1;
+
+}
+
+.usuario-campo label{
+
+    display:flex;
+    align-items:center;
+
+    gap:7px;
+
+    color:
+        var(--exp-texto-secundario);
+
+    font-size:9px;
+    font-weight:750;
+
+}
+
+.usuario-campo label i{
+
+    width:13px;
+
+    color:
+        var(--exp-celeste);
+
+    font-size:10px;
+
+    text-align:center;
+
+}
+
+.usuario-campo input,
+.usuario-campo select,
+.usuario-campo textarea{
+
+    width:100%;
+
+    border:1px solid
+        var(--exp-borde);
+
+    border-radius:
+        var(--exp-radio-sm);
+
+    outline:none;
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(97,215,232,.012),
+            transparent
+        ),
+
+        rgba(5,17,29,.72);
+
+    color:
+        var(--exp-texto);
+
+    font-size:10px;
+
+    transition:
+
+        border-color .2s ease,
+        background .2s ease,
+        box-shadow .2s ease;
+
+}
+
+.usuario-campo input,
+.usuario-campo select{
+
+    height:46px;
+
+    padding:0 14px;
+
+}
+
+.usuario-campo textarea{
+
+    min-height:125px;
+
+    padding:13px 14px;
+
+    line-height:1.65;
+
+    resize:vertical;
+
+}
+
+#observaciones{
+
+    min-height:150px;
+
+}
+
+.usuario-campo input::placeholder,
+.usuario-campo textarea::placeholder{
+
+    color:
+        var(--exp-texto-suave);
+
+}
+
+.usuario-campo input:hover,
+.usuario-campo select:hover,
+.usuario-campo textarea:hover{
+
+    border-color:
+        var(--exp-borde-fuerte);
+
+}
+
+.usuario-campo input:focus,
+.usuario-campo select:focus,
+.usuario-campo textarea:focus{
+
+    border-color:
+        rgba(97,215,232,.42);
+
+    background:
+        rgba(5,17,29,.94);
+
+    box-shadow:
+        0 0 0 4px
+        rgba(97,215,232,.075);
+
+}
+
+.usuario-campo select{
 
     cursor:pointer;
 
-    transition:.30s;
+}
+
+.usuario-campo select option{
+
+    background:#102033;
+
+    color:
+        var(--exp-texto);
 
 }
 
-#volver:hover{
+.usuario-campo > small{
 
-    background:#bf3434;
+    color:
+        var(--exp-texto-suave);
 
-    transform:translateY(-2px);
+    font-size:8px;
+    line-height:1.55;
 
 }
 
 
-/*================ BOTON GUARDAR =================*/
+/*==================================================
+            AVISO DE SEGURIDAD
+==================================================*/
 
-#guardar{
+.expediente-seguridad-aviso{
 
-    width:190px;
+    display:flex;
+    align-items:flex-start;
 
-    height:50px;
+    gap:13px;
 
-    border:none;
+    padding:16px;
 
-    border-radius:10px;
+    border:1px solid
+        rgba(97,215,232,.16);
 
-    background:#7fd44d;
+    border-radius:16px;
 
-    color:#11182c;
+    background:
 
-    font-size:15px;
+        radial-gradient(
+            circle at top left,
+            rgba(97,215,232,.08),
+            transparent 170px
+        ),
 
-    font-weight:700;
+        linear-gradient(
+            145deg,
+            rgba(97,215,232,.045),
+            rgba(152,236,99,.018)
+        ),
+
+        rgba(7,20,34,.56);
+
+}
+
+.expediente-seguridad-icono{
+
+    flex:0 0 auto;
+
+    display:grid;
+    place-items:center;
+
+    width:45px;
+    height:45px;
+
+    border:1px solid
+        rgba(97,215,232,.20);
+
+    border-radius:14px;
+
+    background:
+        var(--exp-celeste-suave);
+
+    color:
+        var(--exp-celeste);
+
+    font-size:17px;
+
+}
+
+.expediente-seguridad-aviso > div:last-child{
+
+    min-width:0;
+
+}
+
+.expediente-seguridad-aviso strong{
+
+    display:block;
+
+    margin-bottom:5px;
+
+    color:
+        var(--exp-texto);
+
+    font-size:11px;
+    font-weight:800;
+
+}
+
+.expediente-seguridad-aviso p{
+
+    margin:0;
+
+    color:
+        var(--exp-texto-secundario);
+
+    font-size:9px;
+    line-height:1.65;
+
+}
+
+
+/*==================================================
+            ACCIONES DEL FORMULARIO
+==================================================*/
+
+.usuario-form-acciones{
+
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+
+    gap:11px;
+
+    padding-top:4px;
+
+}
+
+.btn-regresar-usuario,
+.btn-guardar-expediente{
+
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+
+    gap:8px;
+
+    min-height:44px;
+
+    padding:10px 17px;
+
+    border-radius:11px;
+
+    font-size:9px;
+    font-weight:850;
 
     cursor:pointer;
 
-    transition:.30s;
+    transition:
+
+        transform .18s ease,
+        border-color .18s ease,
+        background .18s ease,
+        color .18s ease,
+        box-shadow .18s ease,
+        opacity .18s ease;
 
 }
 
-#guardar:hover{
+.btn-regresar-usuario{
 
-    background:#91df60;
+    border:1px solid
+        var(--exp-borde);
 
-    transform:translateY(-2px);
+    background:
+        rgba(255,255,255,.035);
+
+    color:
+        var(--exp-texto-secundario);
+
+}
+
+.btn-regresar-usuario:hover{
+
+    transform:
+        translateY(-2px);
+
+    border-color:
+        var(--exp-borde-fuerte);
+
+    background:
+        rgba(255,255,255,.065);
+
+    color:
+        var(--exp-texto);
+
+}
+
+.btn-guardar-expediente{
+
+    border:1px solid
+        rgba(97,215,232,.24);
+
+    background:
+
+        linear-gradient(
+            135deg,
+            var(--exp-celeste),
+            var(--exp-celeste-hover)
+        );
+
+    color:#071824;
+
+    box-shadow:
+        0 11px 25px
+        rgba(66,189,206,.17);
+
+}
+
+.btn-guardar-expediente:hover{
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 15px 31px
+        rgba(66,189,206,.25);
+
+}
+
+.btn-regresar-usuario:active,
+.btn-guardar-expediente:active{
+
+    transform:
+        translateY(0);
+
+}
+
+.btn-guardar-expediente:disabled{
+
+    cursor:wait;
+
+    opacity:.6;
+
+    transform:none;
 
 }
 
 
-/*================ SCROLL =================*/
+/*==================================================
+                ESTADOS Y MENSAJES
+==================================================*/
 
+.expediente-medico-admin
+.campo-error input,
+.expediente-medico-admin
+.campo-error select,
+.expediente-medico-admin
+.campo-error textarea{
+
+    border-color:
+        rgba(255,112,128,.48);
+
+    box-shadow:
+        0 0 0 4px
+        rgba(255,112,128,.075);
+
+}
+
+.mensaje-expediente{
+
+    display:flex;
+    align-items:flex-start;
+
+    gap:9px;
+
+    padding:12px 14px;
+
+    border-radius:12px;
+
+    font-size:9px;
+    line-height:1.55;
+
+}
+
+.mensaje-expediente.exito{
+
+    border:1px solid
+        rgba(152,236,99,.24);
+
+    background:
+        var(--exp-verde-suave);
+
+    color:#c7fdaa;
+
+}
+
+.mensaje-expediente.error{
+
+    border:1px solid
+        rgba(255,112,128,.24);
+
+    background:
+        var(--exp-rojo-suave);
+
+    color:#ffb3bc;
+
+}
+
+
+/*==================================================
+                    FOCUS
+==================================================*/
+
+.expediente-medico-admin
+button:focus-visible,
+.expediente-medico-admin
+input:focus-visible,
+.expediente-medico-admin
+select:focus-visible,
+.expediente-medico-admin
+textarea:focus-visible{
+
+    outline:2px solid
+        var(--exp-celeste);
+
+    outline-offset:3px;
+
+}
+
+
+/*==================================================
+                    SCROLL
+==================================================*/
+
+.expediente-medico-admin
 ::-webkit-scrollbar{
 
-    width:10px;
+    width:9px;
+    height:9px;
 
 }
 
+.expediente-medico-admin
 ::-webkit-scrollbar-track{
 
     background:#07111b;
 
 }
 
+.expediente-medico-admin
 ::-webkit-scrollbar-thumb{
 
-    background:#7fd44d;
+    border-radius:999px;
 
-    border-radius:10px;
+    background:
+        rgba(97,215,232,.56);
+
+}
+
+.expediente-medico-admin
+::-webkit-scrollbar-thumb:hover{
+
+    background:
+        var(--exp-celeste);
 
 }
 
 
-/*================ RESPONSIVE =================*/
+/*==================================================
+                ANIMACIÓN
+==================================================*/
+
+@keyframes expedienteSubir{
+
+    from{
+
+        opacity:0;
+
+        transform:
+            translateY(18px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:
+            translateY(0);
+
+    }
+
+}
+
+
+/*==================================================
+                RESPONSIVE
+==================================================*/
 
 @media(max-width:1100px){
 
-    .usuario-card{
+    .usuario-detalle-layout{
 
-        flex-direction:column;
+        grid-template-columns:
+            250px
+            minmax(0,1fr);
 
-    }
-
-    .usuario-sidebar{
-
-        width:100%;
+        gap:16px;
 
     }
 
-    .grid-info{
+    .usuario-form-grid{
 
         grid-template-columns:1fr;
 
     }
 
-    .ancho{
+    .usuario-campo-ancho{
 
         grid-column:auto;
 
@@ -403,33 +1672,264 @@
 }
 
 
-@media(max-width:700px){
+@media(max-width:850px){
 
-    .usuario-panel{
+    .expediente-medico-header{
 
-        padding:25px;
+        align-items:flex-start;
 
-    }
-
-    .acciones-info{
-
-        flex-direction:column;
+        min-height:auto;
 
     }
 
-    #volver,
+    .expediente-header-icono{
 
-    #guardar{
+        width:65px;
+        height:65px;
+
+        border-radius:19px;
+
+        font-size:25px;
+
+    }
+
+    .usuario-detalle-layout{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .usuario-detalle-sidebar{
+
+        position:relative;
+
+        top:auto;
+
+    }
+
+    .usuario-perfil-resumen{
+
+        flex-direction:row;
+
+        gap:15px;
+
+        text-align:left;
+
+    }
+
+    .usuario-perfil-foto-contenedor{
+
+        flex:0 0 auto;
+
+        width:82px;
+        height:82px;
+
+        margin:0;
+
+    }
+
+    .usuario-detalle-tabs{
+
+        display:grid;
+
+        grid-template-columns:
+            repeat(
+                3,
+                minmax(0,1fr)
+            );
+
+    }
+
+    .usuario-tab-btn{
+
+        grid-template-columns:
+            38px
+            minmax(0,1fr);
+
+    }
+
+    .usuario-tab-btn > i:last-child{
+
+        display:none;
+
+    }
+
+}
+
+
+@media(max-width:650px){
+
+    .expediente-medico-admin{
+
+        gap:18px;
+
+    }
+
+    .expediente-medico-header{
+
+        padding:24px 20px;
+
+        border-radius:19px;
+
+    }
+
+    .expediente-header-icono{
+
+        display:none;
+
+    }
+
+    .expediente-medico-header h1{
+
+        font-size:29px;
+
+    }
+
+    .expediente-medico-header p{
+
+        font-size:12px;
+
+    }
+
+    .usuario-detalle-sidebar,
+    .usuario-detalle-panel{
+
+        border-radius:18px;
+
+    }
+
+    .usuario-detalle-tabs{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .usuario-tab-btn{
+
+        grid-template-columns:
+            40px
+            minmax(0,1fr)
+            16px;
+
+    }
+
+    .usuario-tab-btn > i:last-child{
+
+        display:block;
+
+    }
+
+    .expediente-panel-header{
+
+        align-items:flex-start;
+
+        min-height:auto;
+
+        padding:20px;
+
+    }
+
+    .usuario-panel-header-icono.medico{
+
+        width:48px;
+        height:48px;
+
+        border-radius:14px;
+
+        font-size:17px;
+
+    }
+
+    .expediente-panel-header h2{
+
+        font-size:20px;
+
+    }
+
+    .expediente-medico-form{
+
+        padding:14px;
+
+    }
+
+    .usuario-form-grid{
+
+        padding:14px;
+
+    }
+
+    .usuario-form-acciones{
+
+        align-items:stretch;
+        flex-direction:column-reverse;
+
+    }
+
+    .btn-regresar-usuario,
+    .btn-guardar-expediente{
 
         width:100%;
 
     }
 
-    .foto-usuario{
+    .expediente-seguridad-aviso{
 
-        width:130px;
+        padding:14px;
 
-        height:130px;
+    }
+
+}
+
+
+@media(max-width:430px){
+
+    .usuario-perfil-resumen{
+
+        flex-direction:column;
+
+        text-align:center;
+
+    }
+
+    .usuario-perfil-foto-contenedor{
+
+        width:96px;
+        height:96px;
+
+    }
+
+    .usuario-panel-header-icono.medico{
+
+        display:none;
+
+    }
+
+    .expediente-seguridad-aviso{
+
+        align-items:center;
+        flex-direction:column;
+
+        text-align:center;
+
+    }
+
+}
+
+
+/*==================================================
+        MOVIMIENTO REDUCIDO
+==================================================*/
+
+@media(prefers-reduced-motion:reduce){
+
+    .expediente-medico-admin *,
+    .expediente-medico-admin *::before,
+    .expediente-medico-admin *::after{
+
+        animation:none !important;
+        transition:none !important;
+
+        scroll-behavior:auto !important;
 
     }
 

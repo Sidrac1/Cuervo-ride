@@ -4887,11 +4887,44 @@ def cargar_vista(request, vista):
 
     elif vista == "usuarios":
 
-        contexto["usuarios"] = (
+    # -------------------------------------------------
+    # CONSULTA BASE
+    # -------------------------------------------------
+
+        usuarios = (
             Usuario.objects
             .all()
             .order_by("-id")
         )
+
+    # -------------------------------------------------
+    # CONTEXTO DE USUARIOS
+    # -------------------------------------------------
+
+        contexto.update({
+
+            "usuarios":
+            usuarios,
+
+            "total_usuarios":
+            usuarios.count(),
+
+            "total_pasajeros":
+            usuarios.filter(
+                rol=Usuario.Roles.PASAJERO
+            ).count(),
+
+            "total_conductores":
+            usuarios.filter(
+                rol=Usuario.Roles.CONDUCTOR
+            ).count(),
+
+            "total_administradores":
+            usuarios.filter(
+                rol=Usuario.Roles.ADMINISTRADOR
+            ).count(),
+
+        })
 
 
     # =====================================================

@@ -1,75 +1,576 @@
-<section class="contenedor">
+<section
+    class="usuarios-admin-contenedor"
+    id="moduloUsuariosAdmin">
 
-    <!--================ FILTROS =================-->
-    <section class="filtros">
-        <div class="buscar">
+    <!--==================================================
+                    ENCABEZADO
+    ==================================================-->
+
+    <header class="usuarios-admin-header">
+
+        <div class="usuarios-admin-header-texto">
+
+            <span class="usuarios-admin-etiqueta">
+
+                <i class="fa-solid fa-users-gear"></i>
+
+                Gestión de cuentas
+
+            </span>
+
+            <h1>
+                Administración de usuarios
+            </h1>
+
+            <p>
+                Consulta las cuentas registradas, revisa sus roles,
+                estado de acceso y administra su información desde
+                un solo lugar.
+            </p>
+
+        </div>
+
+        <div class="usuarios-admin-header-icono">
+
+            <i class="fa-solid fa-users"></i>
+
+        </div>
+
+    </header>
+
+
+    <!--==================================================
+                    ESTADÍSTICAS
+    ==================================================-->
+
+    <section class="usuarios-estadisticas">
+
+        <!-- TOTAL -->
+
+        <article class="usuario-estadistica-card">
+
+            <div class="usuario-estadistica-icono total">
+
+                <i class="fa-solid fa-users"></i>
+
+            </div>
+
+            <div>
+
+                <span>
+                    Total de usuarios
+                </span>
+
+                <strong id="estadisticaTotalUsuarios">
+
+                    {{ total_usuarios|default:usuarios|length }}
+
+                </strong>
+
+            </div>
+
+        </article>
+
+
+        <!-- PASAJEROS -->
+
+        <article class="usuario-estadistica-card">
+
+            <div class="usuario-estadistica-icono pasajeros">
+
+                <i class="fa-solid fa-user-group"></i>
+
+            </div>
+
+            <div>
+
+                <span>
+                    Pasajeros
+                </span>
+
+                <strong id="estadisticaUsuariosPasajeros">
+
+                    {{ total_pasajeros|default:0 }}
+
+                </strong>
+
+            </div>
+
+        </article>
+
+
+        <!-- CONDUCTORES -->
+
+        <article class="usuario-estadistica-card">
+
+            <div class="usuario-estadistica-icono conductores">
+
+                <i class="fa-solid fa-car-side"></i>
+
+            </div>
+
+            <div>
+
+                <span>
+                    Conductores
+                </span>
+
+                <strong id="estadisticaUsuariosConductores">
+
+                    {{ total_conductores|default:0 }}
+
+                </strong>
+
+            </div>
+
+        </article>
+
+
+        <!-- ADMINISTRADORES -->
+
+        <article class="usuario-estadistica-card">
+
+            <div class="usuario-estadistica-icono administradores">
+
+                <i class="fa-solid fa-user-shield"></i>
+
+            </div>
+
+            <div>
+
+                <span>
+                    Administradores
+                </span>
+
+                <strong id="estadisticaUsuariosAdministradores">
+
+                    {{ total_administradores|default:0 }}
+
+                </strong>
+
+            </div>
+
+        </article>
+
+    </section>
+
+
+    <!--==================================================
+                    FILTROS
+    ==================================================-->
+
+    <section class="usuarios-admin-filtros">
+
+        <!-- BUSCADOR -->
+
+        <div class="usuarios-buscador">
+
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="buscarUsuario" placeholder="Buscar usuario...">
+
+            <input
+                type="search"
+                id="buscarUsuario"
+                placeholder="Buscar por nombre, correo o matrícula..."
+                autocomplete="off">
+
         </div>
 
-        <select id="filtroRol">
-            <option value="Todos">Rol: Todos</option>
-            <option value="Administrador">Administrador</option>
-            <option value="Conductor">Conductor</option>
-            <option value="Pasajero">Pasajero</option>
-        </select>
 
-        <select id="filtroEstado">
-            <option value="Todos">Estado: Todos</option>
-            <option value="Activo">Activo</option>
-            <option value="Inactivo">Inactivo</option>
-        </select>
+        <!-- FILTRO ROL -->
 
-        <button id="btnFiltrar">Filtrar</button>
-    </section>
+        <div class="usuarios-filtro-campo">
 
-    <!--================ TABLA =================-->
-    <section class="tabla">
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Email</th>
-                    <th>Rol</th>
-                    <th>Estado</th>
-                    <th>Detalles</th>
-                </tr>
-            </thead>
-            <tbody id="tablaUsuarios">
-                {% for u in usuarios %}
-                <tr>
-                    <td>{{ u.id }}</td>
-                    <td>{{ u.get_full_name|default:u.nombre }}</td>
-                    <td>{{ u.email }}</td>
-                    <td>
-                        <span class="badge {{ u.rol }}">
-                            {{ u.get_rol_display|default:u.rol|capfirst }}
-                        </span>
-                    </td>
-                    <td>
-                        <span class="estado {% if u.estado_cuenta == 'activa' %}activo{% else %}inactivo{% endif %}">
-                            {% if u.estado_cuenta == 'activa' %}Activo{% else %}Inactivo{% endif %}
-                        </span>
-                    </td>
-                    <td>
-                        <button class="editar-btn" data-id="{{ u.id }}">
-                            Editar
-                        </button>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="6" style="text-align: center; padding: 30px; color: #888;">
-                        No hay usuarios registrados.
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+            <label
+                for="filtroRol"
+                class="sr-only">
 
-        <div class="footer-tabla">
-            <p>Mostrando {{ usuarios|length }} usuarios</p>
+                Filtrar por rol
+
+            </label>
+
+            <select id="filtroRol">
+
+                <option value="todos">
+                    Rol: Todos
+                </option>
+
+                <option value="administrador">
+                    Administrador
+                </option>
+
+                <option value="conductor">
+                    Conductor
+                </option>
+
+                <option value="pasajero">
+                    Pasajero
+                </option>
+
+            </select>
+
         </div>
+
+
+        <!-- FILTRO ESTADO -->
+
+        <div class="usuarios-filtro-campo">
+
+            <label
+                for="filtroEstado"
+                class="sr-only">
+
+                Filtrar por estado
+
+            </label>
+
+            <select id="filtroEstado">
+
+                <option value="todos">
+                    Estado: Todos
+                </option>
+
+                <option value="activa">
+                    Activo
+                </option>
+
+                <option value="inactiva">
+                    Inactivo
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- LIMPIAR -->
+
+        <button
+            type="button"
+            class="btn-limpiar-usuarios"
+            id="btnLimpiarFiltrosUsuarios">
+
+            <i class="fa-solid fa-rotate-left"></i>
+
+            Limpiar
+
+        </button>
+
     </section>
+
+
+    <!--==================================================
+                    TABLA
+    ==================================================-->
+
+    <section class="usuarios-admin-tabla-contenedor">
+
+        <div class="usuarios-admin-tabla-scroll">
+
+            <table class="usuarios-admin-tabla">
+
+                <thead>
+
+                    <tr>
+
+                        <th scope="col">
+                            ID
+                        </th>
+
+                        <th scope="col">
+                            Usuario
+                        </th>
+
+                        <th scope="col">
+                            Correo electrónico
+                        </th>
+
+                        <th scope="col">
+                            Rol
+                        </th>
+
+                        <th scope="col">
+                            Estado
+                        </th>
+
+                        <th scope="col">
+                            Acciones
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="tablaUsuarios">
+
+                    {% for u in usuarios %}
+
+                        <tr
+                            class="usuario-admin-fila"
+                            data-usuario-id="{{ u.id }}"
+                            data-nombre="{{ u.get_full_name|default:u.nombre|lower|escape }}"
+                            data-email="{{ u.email|lower|escape }}"
+                            data-matricula="{{ u.matricula|default:''|lower|escape }}"
+                            data-rol="{{ u.rol }}"
+                            data-estado="{{ u.estado_cuenta }}">
+
+                            <!-- ID -->
+
+                            <td class="usuario-columna-id">
+
+                                <strong>
+
+                                    #{{ u.id }}
+
+                                </strong>
+
+                            </td>
+
+
+                            <!-- USUARIO -->
+
+                            <td class="usuario-columna-persona">
+
+                                <div class="usuario-tabla">
+
+                                    <div class="usuario-tabla-foto">
+
+                                        {% if u.foto %}
+
+                                            <img
+                                                src="{{ u.foto.url }}"
+                                                alt="Foto de {{ u.get_full_name|default:u.nombre }}">
+
+                                        {% else %}
+
+                                            <i class="fa-solid fa-user"></i>
+
+                                        {% endif %}
+
+                                    </div>
+
+                                    <div class="usuario-tabla-info">
+
+                                        <strong>
+
+                                            {{ u.get_full_name|default:u.nombre }}
+
+                                        </strong>
+
+                                        <small>
+
+                                            {% if u.matricula %}
+
+                                                {{ u.matricula }}
+
+                                            {% else %}
+
+                                                Sin matrícula registrada
+
+                                            {% endif %}
+
+                                        </small>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+
+                            <!-- CORREO -->
+
+                            <td class="usuario-columna-email">
+
+                                <div class="usuario-email-tabla">
+
+                                    <i class="fa-regular fa-envelope"></i>
+
+                                    <span>
+
+                                        {{ u.email }}
+
+                                    </span>
+
+                                </div>
+
+                            </td>
+
+
+                            <!-- ROL -->
+
+                            <td>
+
+                                <span
+                                    class="
+                                        usuario-rol-badge
+                                        rol-{{ u.rol }}
+                                    ">
+
+                                    {% if u.rol == "administrador" %}
+
+                                        <i class="fa-solid fa-user-shield"></i>
+
+                                    {% elif u.rol == "conductor" %}
+
+                                        <i class="fa-solid fa-car-side"></i>
+
+                                    {% elif u.rol == "pasajero" %}
+
+                                        <i class="fa-solid fa-user-group"></i>
+
+                                    {% else %}
+
+                                        <i class="fa-solid fa-user"></i>
+
+                                    {% endif %}
+
+                                    {{ u.get_rol_display|default:u.rol|capfirst }}
+
+                                </span>
+
+                            </td>
+
+
+                            <!-- ESTADO -->
+
+                            <td>
+
+                                <span
+                                    class="
+                                        usuario-admin-estado
+                                        estado-{{ u.estado_cuenta }}
+                                    ">
+
+                                    {% if u.estado_cuenta == "activa" %}
+
+                                        <i class="fa-solid fa-circle-check"></i>
+
+                                        Activo
+
+                                    {% else %}
+
+                                        <i class="fa-solid fa-circle-xmark"></i>
+
+                                        Inactivo
+
+                                    {% endif %}
+
+                                </span>
+
+                            </td>
+
+
+                            <!-- ACCIONES -->
+
+                            <td>
+
+                                <button
+                                    type="button"
+                                    class="btn-editar-usuario editar-btn"
+                                    data-id="{{ u.id }}">
+
+                                    <i class="fa-solid fa-pen-to-square"></i>
+
+                                    Editar
+
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+                    {% empty %}
+
+                        <tr class="usuarios-fila-vacia">
+
+                            <td colspan="6">
+
+                                <div class="usuarios-vacios">
+
+                                    <div class="usuarios-vacios-icono">
+
+                                        <i class="fa-solid fa-users"></i>
+
+                                    </div>
+
+                                    <h2>
+                                        No hay usuarios registrados
+                                    </h2>
+
+                                    <p>
+                                        Cuando se registren nuevas cuentas,
+                                        aparecerán en esta sección.
+                                    </p>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <!--==================================================
+                    SIN RESULTADOS
+        ==================================================-->
+
+        <div
+            class="usuarios-sin-resultados"
+            id="sinResultadosUsuarios"
+            hidden>
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <strong>
+                No se encontraron usuarios
+            </strong>
+
+            <span>
+                Prueba con otro nombre, correo, matrícula,
+                rol o estado.
+            </span>
+
+        </div>
+
+
+        <!--==================================================
+                    FOOTER
+        ==================================================-->
+
+        <footer class="usuarios-tabla-footer">
+
+            <p id="textoResultadosUsuarios">
+
+                Mostrando
+
+                <strong id="cantidadUsuariosVisibles">
+
+                    {{ usuarios|length }}
+
+                </strong>
+
+                de
+
+                <strong id="cantidadUsuariosTotal">
+
+                    {{ usuarios|length }}
+
+                </strong>
+
+                usuario{{ usuarios|length|pluralize }}
+
+            </p>
+
+        </footer>
+
+    </section>
+
 </section>

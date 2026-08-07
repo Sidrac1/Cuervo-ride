@@ -1,331 +1,657 @@
-<section class="contenedor">
+<section
+    class="rides-admin-contenedor"
+    id="moduloRidesAdmin">
 
-    <!--================ FILTROS =================-->
+    <!--==================================================
+                    ENCABEZADO
+    ==================================================-->
 
-    <section class="filtros">
+    <header class="rides-admin-header">
 
-        <div class="buscar">
+        <div class="rides-admin-header-texto">
+
+            <span class="rides-admin-etiqueta">
+
+                <i class="fa-solid fa-route"></i>
+
+                Monitoreo de movilidad
+
+            </span>
+
+            <h1>
+                Administración de rides
+            </h1>
+
+            <p>
+                Consulta los viajes registrados, revisa su disponibilidad,
+                ocupación, estado y la información del conductor asignado.
+            </p>
+
+        </div>
+
+        <div class="rides-admin-header-icono">
+
+            <i class="fa-solid fa-car-side"></i>
+
+        </div>
+
+    </header>
+
+
+    <!--==================================================
+                    ESTADÍSTICAS
+    ==================================================-->
+
+    <section class="rides-estadisticas">
+
+        <!-- TOTAL -->
+
+        <article class="ride-estadistica-card">
+
+            <div class="ride-estadistica-icono total">
+
+                <i class="fa-solid fa-route"></i>
+
+            </div>
+
+            <div>
+
+                <span>
+                    Total de rides
+                </span>
+
+                <strong id="estadisticaTotalRides">
+
+                    {{ total_viajes|default:viajes|length }}
+
+                </strong>
+
+            </div>
+
+        </article>
+
+
+        <!-- DISPONIBLES -->
+
+        <article class="ride-estadistica-card">
+
+            <div class="ride-estadistica-icono disponibles">
+
+                <i class="fa-solid fa-circle-check"></i>
+
+            </div>
+
+            <div>
+
+                <span>
+                    Disponibles
+                </span>
+
+                <strong id="estadisticaRidesDisponibles">
+
+                    {{ viajes_disponibles|default:0 }}
+
+                </strong>
+
+            </div>
+
+        </article>
+
+
+        <!-- EN CURSO -->
+
+        <article class="ride-estadistica-card">
+
+            <div class="ride-estadistica-icono curso">
+
+                <i class="fa-solid fa-car-side"></i>
+
+            </div>
+
+            <div>
+
+                <span>
+                    En curso
+                </span>
+
+                <strong id="estadisticaRidesCurso">
+
+                    {{ viajes_en_curso|default:0 }}
+
+                </strong>
+
+            </div>
+
+        </article>
+
+
+        <!-- FINALIZADOS -->
+
+        <article class="ride-estadistica-card">
+
+            <div class="ride-estadistica-icono finalizados">
+
+                <i class="fa-solid fa-flag-checkered"></i>
+
+            </div>
+
+            <div>
+
+                <span>
+                    Finalizados
+                </span>
+
+                <strong id="estadisticaRidesFinalizados">
+
+                    {{ viajes_finalizados|default:0 }}
+
+                </strong>
+
+            </div>
+
+        </article>
+
+    </section>
+
+
+    <!--==================================================
+                    FILTROS
+    ==================================================-->
+
+    <section class="rides-admin-filtros">
+
+        <!-- BUSCADOR -->
+
+        <div class="rides-buscador">
 
             <i class="fa-solid fa-magnifying-glass"></i>
 
             <input
-                type="text"
+                type="search"
                 id="buscarRide"
-                placeholder="Buscar por conductor, origen o destino..."
+                placeholder="Buscar por conductor, matrícula, origen o destino..."
                 autocomplete="off">
 
         </div>
 
 
-        <input
-            type="text"
-            id="filtroFecha"
-            placeholder="Seleccione fecha"
-            autocomplete="off">
+        <!-- FECHA -->
+
+        <div class="rides-filtro-campo rides-filtro-fecha">
+
+            <label
+                for="filtroFecha"
+                class="sr-only">
+
+                Filtrar por fecha
+
+            </label>
+
+            <i class="fa-regular fa-calendar"></i>
+
+            <input
+                type="text"
+                id="filtroFecha"
+                placeholder="Seleccione fecha"
+                autocomplete="off">
+
+        </div>
 
 
-        <select id="filtroEstado">
+        <!-- ESTADO -->
 
-            <option value="todos">
-                Estado: Todos
-            </option>
+        <div class="rides-filtro-campo">
 
-            <option value="borrador">
-                Borrador
-            </option>
+            <label
+                for="filtroEstado"
+                class="sr-only">
 
-            <option value="disponible">
-                Disponible
-            </option>
+                Filtrar por estado
 
-            <option value="completo">
-                Sin lugares
-            </option>
+            </label>
 
-            <option value="en_curso">
-                En curso
-            </option>
+            <select id="filtroEstado">
 
-            <option value="finalizado">
-                Finalizado
-            </option>
+                <option value="todos">
+                    Estado: Todos
+                </option>
 
-            <option value="cancelado">
-                Cancelado
-            </option>
+                <option value="borrador">
+                    Borrador
+                </option>
 
-        </select>
+                <option value="disponible">
+                    Disponible
+                </option>
 
+                <option value="completo">
+                    Sin lugares
+                </option>
+
+                <option value="en_curso">
+                    En curso
+                </option>
+
+                <option value="finalizado">
+                    Finalizado
+                </option>
+
+                <option value="cancelado">
+                    Cancelado
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- LIMPIAR -->
 
         <button
             type="button"
-            id="btnFiltrar">
+            class="btn-limpiar-rides"
+            id="btnLimpiarFiltrosRides">
 
-            <i class="fa-solid fa-filter"></i>
+            <i class="fa-solid fa-rotate-left"></i>
 
-            Filtrar
+            Limpiar
 
         </button>
 
     </section>
 
 
-    <!--================ TABLA =================-->
+    <!--==================================================
+                    TABLA
+    ==================================================-->
 
-    <section class="tabla">
+    <section class="rides-admin-tabla-contenedor">
 
-        <table>
+        <div class="rides-admin-tabla-scroll">
 
-            <thead>
+            <table class="rides-admin-tabla">
 
-                <tr>
+                <thead>
 
-                    <th>ID</th>
+                    <tr>
 
-                    <th>Conductor</th>
+                        <th scope="col">
+                            ID
+                        </th>
 
-                    <th>Origen / Destino</th>
+                        <th scope="col">
+                            Conductor
+                        </th>
 
-                    <th>Hora de salida</th>
+                        <th scope="col">
+                            Origen / Destino
+                        </th>
 
-                    <th>Lugares</th>
+                        <th scope="col">
+                            Hora de salida
+                        </th>
 
-                    <th>Fecha</th>
+                        <th scope="col">
+                            Lugares
+                        </th>
 
-                    <th>Vehículo</th>
+                        <th scope="col">
+                            Fecha
+                        </th>
 
-                    <th>Estado</th>
+                        <th scope="col">
+                            Vehículo
+                        </th>
 
-                </tr>
+                        <th scope="col">
+                            Estado
+                        </th>
 
-            </thead>
+                    </tr>
 
-
-            <tbody id="tablaRides">
-
-                {% for viaje in viajes %}
-
-                    <tr
-                        data-ride-id="{{ viaje.id }}"
-                        data-conductor="{{ viaje.conductor.usuario.nombre_completo|lower }}"
-                        data-origen="{{ viaje.origen|lower }}"
-                        data-destino="{{ viaje.destino|lower }}"
-                        data-fecha="{{ viaje.fecha_hora_salida|date:'Y-m-d' }}"
-                        data-estado="{{ viaje.estado }}">
-
-                        <td>
-
-                            #{{ viaje.id }}
-
-                        </td>
+                </thead>
 
 
-                        <td>
+                <tbody id="tablaRides">
 
-                            <div class="conductor-tabla">
+                    {% for viaje in viajes %}
 
-                                {% if viaje.conductor.usuario.foto %}
+                        <tr
+                            class="ride-admin-fila"
+                            data-ride-id="{{ viaje.id }}"
+                            data-conductor="{{ viaje.conductor.usuario.nombre_completo|lower|escape }}"
+                            data-matricula="{{ viaje.conductor.usuario.matricula|default:''|lower|escape }}"
+                            data-origen="{{ viaje.origen|lower|escape }}"
+                            data-destino="{{ viaje.destino|lower|escape }}"
+                            data-fecha="{{ viaje.fecha_hora_salida|date:'Y-m-d' }}"
+                            data-estado="{{ viaje.estado }}">
 
-                                    <img
-                                        src="{{ viaje.conductor.usuario.foto.url }}"
-                                        alt="Foto de {{ viaje.conductor.usuario.nombre_completo }}">
+                            <!-- ID -->
 
-                                {% endif %}
+                            <td class="ride-columna-id">
 
-                                <div>
+                                <strong>
 
-                                    <strong>
+                                    #{{ viaje.id }}
 
-                                        {{ viaje.conductor.usuario.nombre_completo }}
+                                </strong>
 
-                                    </strong>
+                            </td>
 
-                                    {% if viaje.conductor.usuario.matricula %}
+
+                            <!-- CONDUCTOR -->
+
+                            <td class="ride-columna-conductor">
+
+                                <div class="ride-conductor-tabla">
+
+                                    <div class="ride-conductor-foto">
+
+                                        {% if viaje.conductor.usuario.foto %}
+
+                                            <img
+                                                src="{{ viaje.conductor.usuario.foto.url }}"
+                                                alt="Foto de {{ viaje.conductor.usuario.nombre_completo }}">
+
+                                        {% else %}
+
+                                            <i class="fa-solid fa-user"></i>
+
+                                        {% endif %}
+
+                                    </div>
+
+                                    <div class="ride-conductor-info">
+
+                                        <strong>
+
+                                            {{ viaje.conductor.usuario.nombre_completo }}
+
+                                        </strong>
 
                                         <small>
 
-                                            {{ viaje.conductor.usuario.matricula }}
+                                            {% if viaje.conductor.usuario.matricula %}
+
+                                                {{ viaje.conductor.usuario.matricula }}
+
+                                            {% else %}
+
+                                                Sin matrícula registrada
+
+                                            {% endif %}
 
                                         </small>
 
-                                    {% endif %}
+                                    </div>
 
                                 </div>
 
-                            </div>
-
-                        </td>
+                            </td>
 
 
-                        <td>
+                            <!-- RUTA -->
 
-                            <div class="ruta-tabla">
+                            <td class="ride-columna-ruta">
 
-                                <span>
+                                <div class="ride-ruta-tabla">
 
-                                    <i class="fa-solid fa-location-dot"></i>
+                                    <span>
 
-                                    {{ viaje.origen }}
+                                        <i class="fa-solid fa-location-dot"></i>
+
+                                        {{ viaje.origen }}
+
+                                    </span>
+
+                                    <span>
+
+                                        <i class="fa-solid fa-arrow-right"></i>
+
+                                        {{ viaje.destino }}
+
+                                    </span>
+
+                                </div>
+
+                            </td>
+
+
+                            <!-- HORA -->
+
+                            <td>
+
+                                <div class="ride-hora-tabla">
+
+                                    <i class="fa-regular fa-clock"></i>
+
+                                    <strong>
+
+                                        {{ viaje.fecha_hora_salida|date:"H:i" }} h
+
+                                    </strong>
+
+                                </div>
+
+                            </td>
+
+
+                            <!-- LUGARES -->
+
+                            <td>
+
+                                <span
+                                    class="
+                                        ride-lugares-tabla
+                                        {% if viaje.asientos_disponibles == 0 %}
+                                            sin-lugares
+                                        {% elif viaje.asientos_disponibles <= 1 %}
+                                            pocos-lugares
+                                        {% endif %}
+                                    ">
+
+                                    <i class="fa-solid fa-chair"></i>
+
+                                    {{ viaje.asientos_disponibles }}
+                                    /
+                                    {{ viaje.asientos_totales }}
 
                                 </span>
 
-                                <span>
+                            </td>
 
-                                    <i class="fa-solid fa-arrow-right"></i>
 
-                                    {{ viaje.destino }}
+                            <!-- FECHA -->
+
+                            <td>
+
+                                <div class="ride-fecha-tabla">
+
+                                    <strong>
+
+                                        {{ viaje.fecha_hora_salida|date:"d/m/Y" }}
+
+                                    </strong>
+
+                                    <small>
+
+                                        {{ viaje.fecha_hora_salida|date:"l" }}
+
+                                    </small>
+
+                                </div>
+
+                            </td>
+
+
+                            <!-- VEHÍCULO -->
+
+                            <td class="ride-columna-vehiculo">
+
+                                <div class="ride-vehiculo-tabla">
+
+                                    <div class="ride-vehiculo-icono">
+
+                                        <i class="fa-solid fa-car"></i>
+
+                                    </div>
+
+                                    <div>
+
+                                        <strong>
+
+                                            {{ viaje.vehiculo.marca }}
+                                            {{ viaje.vehiculo.modelo }}
+
+                                        </strong>
+
+                                        <small>
+
+                                            {{ viaje.vehiculo.placas|default:"Sin placas" }}
+
+                                        </small>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+
+                            <!-- ESTADO -->
+
+                            <td>
+
+                                <span
+                                    class="
+                                        ride-admin-estado
+                                        estado-{{ viaje.estado }}
+                                    ">
+
+                                    {% if viaje.estado == "borrador" %}
+
+                                        <i class="fa-solid fa-file-pen"></i>
+
+                                    {% elif viaje.estado == "disponible" %}
+
+                                        <i class="fa-solid fa-circle-check"></i>
+
+                                    {% elif viaje.estado == "completo" %}
+
+                                        <i class="fa-solid fa-users-slash"></i>
+
+                                    {% elif viaje.estado == "en_curso" %}
+
+                                        <i class="fa-solid fa-car-side"></i>
+
+                                    {% elif viaje.estado == "finalizado" %}
+
+                                        <i class="fa-solid fa-flag-checkered"></i>
+
+                                    {% elif viaje.estado == "cancelado" %}
+
+                                        <i class="fa-solid fa-ban"></i>
+
+                                    {% endif %}
+
+                                    {{ viaje.get_estado_display }}
 
                                 </span>
 
-                            </div>
+                            </td>
 
-                        </td>
+                        </tr>
 
+                    {% empty %}
 
-                        <td>
+                        <tr class="rides-fila-vacia">
 
-                            {{ viaje.fecha_hora_salida|date:"H:i" }} h
+                            <td colspan="8">
 
-                        </td>
+                                <div class="rides-vacios">
 
+                                    <div class="rides-vacios-icono">
 
-                        <td>
+                                        <i class="fa-solid fa-route"></i>
 
-                            <span class="lugares-tabla">
+                                    </div>
 
-                                {{ viaje.asientos_disponibles }}
-                                /
-                                {{ viaje.asientos_totales }}
+                                    <h2>
+                                        No hay rides registrados
+                                    </h2>
 
-                            </span>
+                                    <p>
+                                        Cuando los conductores publiquen viajes,
+                                        aparecerán en esta sección.
+                                    </p>
 
-                        </td>
+                                </div>
 
+                            </td>
 
-                        <td>
+                        </tr>
 
-                            {{ viaje.fecha_hora_salida|date:"d/m/Y" }}
+                    {% endfor %}
 
-                        </td>
+                </tbody>
 
+            </table>
 
-                        <td>
-
-                            <div class="vehiculo-tabla">
-
-                                <strong>
-
-                                    {{ viaje.vehiculo.marca }}
-                                    {{ viaje.vehiculo.modelo }}
-
-                                </strong>
-
-                                <small>
-
-                                    {{ viaje.vehiculo.placas }}
-
-                                </small>
-
-                            </div>
-
-                        </td>
+        </div>
 
 
-                        <td>
+        <!--==================================================
+                    SIN RESULTADOS
+        ==================================================-->
 
-                            <span class="estado estado-{{ viaje.estado }}">
+        <div
+            class="rides-sin-resultados"
+            id="sinResultadosRides"
+            hidden>
 
-                                {% if viaje.estado == "borrador" %}
+            <i class="fa-solid fa-magnifying-glass"></i>
 
-                                    <i class="fa-solid fa-file-pen"></i>
+            <strong>
+                No se encontraron rides
+            </strong>
 
-                                {% elif viaje.estado == "disponible" %}
+            <span>
+                Prueba con otros términos, una fecha diferente
+                o cambia el estado seleccionado.
+            </span>
 
-                                    <i class="fa-solid fa-circle-check"></i>
-
-                                {% elif viaje.estado == "completo" %}
-
-                                    <i class="fa-solid fa-users-slash"></i>
-
-                                {% elif viaje.estado == "en_curso" %}
-
-                                    <i class="fa-solid fa-car-side"></i>
-
-                                {% elif viaje.estado == "finalizado" %}
-
-                                    <i class="fa-solid fa-flag-checkered"></i>
-
-                                {% elif viaje.estado == "cancelado" %}
-
-                                    <i class="fa-solid fa-ban"></i>
-
-                                {% endif %}
-
-                                {{ viaje.get_estado_display }}
-
-                            </span>
-
-                        </td>
-
-                    </tr>
-
-                {% empty %}
-
-                    <tr class="fila-vacia">
-
-                        <td colspan="8">
-
-                            <div class="estado-vacio-rides">
-
-                                <i class="fa-solid fa-route"></i>
-
-                                <strong>
-                                    No hay viajes registrados
-                                </strong>
-
-                                <span>
-                                    Cuando los conductores publiquen viajes,
-                                    aparecerán en esta tabla.
-                                </span>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-                {% endfor %}
-
-            </tbody>
-
-        </table>
+        </div>
 
 
-        <!--================ FOOTER TABLA =================-->
+        <!--==================================================
+                    FOOTER
+        ==================================================-->
 
-        <div class="footer-tabla">
+        <footer class="rides-tabla-footer">
 
             <p id="textoResultados">
 
-                Mostrando {{ viajes|length }}
-                viaje{{ viajes|length|pluralize }}
+                Mostrando
+
+                <strong id="cantidadRidesVisibles">
+
+                    {{ viajes|length }}
+
+                </strong>
+
+                de
+
+                <strong id="cantidadRidesTotal">
+
+                    {{ viajes|length }}
+
+                </strong>
+
+                ride{{ viajes|length|pluralize }}
 
             </p>
 
-
-            <div class="paginacion">
-
-                <button
-                    type="button"
-                    class="pagina activa">
-
-                    1
-
-                </button>
-
-            </div>
-
-        </div>
+        </footer>
 
     </section>
 
