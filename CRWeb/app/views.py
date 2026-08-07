@@ -5209,7 +5209,7 @@ def cargar_vista(request, vista):
 
 
         # -------------------------------------------------
-        # VIAJES FINALIZADOS SIN EVALUACIÓN
+        # VIAJES FINALIZADOS SIN EVALUACIÓN DEL VIAJE
         # -------------------------------------------------
 
         viajes_finalizados = (
@@ -5223,18 +5223,39 @@ def cargar_vista(request, vista):
             )
         )
 
+
+        # -------------------------------------------------
+        # TOTAL DE VIAJES FINALIZADOS
+        # -------------------------------------------------
+
         total_viajes_finalizados = (
-            viajes_finalizados.count()
+            viajes_finalizados
+            .count()
         )
+
+
+        # -------------------------------------------------
+        # VIAJES QUE YA TIENEN CALIFICACIÓN
+        # DE TIPO "VIAJE"
+        # -------------------------------------------------
 
         viajes_evaluados = (
             viajes_finalizados
             .filter(
-                calificaciones__isnull=False
+                calificaciones__tipo=(
+                Calificacion
+                .TiposCalificacion
+                .VIAJE
+                )
             )
             .distinct()
             .count()
         )
+
+
+        # -------------------------------------------------
+        # VIAJES SIN CALIFICACIÓN DE EXPERIENCIA
+        # -------------------------------------------------
 
         viajes_sin_evaluar = max(
             total_viajes_finalizados
