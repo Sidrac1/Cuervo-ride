@@ -48,6 +48,7 @@ function obtenerCSRFToken() {
 
 }
 
+
 /*==================================================
         USUARIO INFO + VERIFICACIÓN + EXPEDIENTE
 ==================================================*/
@@ -162,6 +163,41 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
         );
 
 
+    /*==================================================
+            VERIFICACIÓN MÉDICA
+    ==================================================*/
+
+    const estadoVerificacionMedica =
+        document.getElementById(
+            "estadoVerificacionMedica"
+        );
+
+    const estadoExpedienteTexto =
+        document.getElementById(
+            "estadoExpedienteTexto"
+        );
+
+    const estadoExpedienteDescripcion =
+        document.getElementById(
+            "estadoExpedienteDescripcion"
+        );
+
+    const badgeExpediente =
+        document.getElementById(
+            "badgeExpediente"
+        );
+
+    const badgeExpedienteTexto =
+        document.getElementById(
+            "badgeExpedienteTexto"
+        );
+
+    const btnAprobarExpediente =
+        document.getElementById(
+            "btnAprobarExpediente"
+        );
+
+
     const btnMostrarPassword =
         document.getElementById(
             "btnMostrarPassword"
@@ -190,7 +226,7 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
 
 
     /*==================================================
-            ASIGNAR VALOR A UN CAMPO
+            ASIGNAR VALOR A CAMPO
     ==================================================*/
 
     function asignarValor(
@@ -211,8 +247,9 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
 
     }
 
+
     /*==================================================
-            ASIGNAR ESTADO A RADIO
+            ASIGNAR RADIO
     ==================================================*/
 
     function asignarRadio(
@@ -232,9 +269,12 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
             : "no";
 
 
-        const radio = document.querySelector(
-            `input[name="${nombre}"][value="${valorNormalizado}"]`
-        );
+        const radio =
+            document.querySelector(
+
+                `input[name="${nombre}"][value="${valorNormalizado}"]`
+
+            );
 
 
         if (radio) {
@@ -247,7 +287,7 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
 
 
     /*==================================================
-            ASIGNAR ESTADO A CHECKBOX
+            ASIGNAR CHECKBOX
     ==================================================*/
 
     function asignarCheckbox(
@@ -279,7 +319,7 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
 
 
     /*==================================================
-            OBTENER VALOR BOOLEANO DE RADIO
+            OBTENER RADIO BOOLEANO
     ==================================================*/
 
     function obtenerRadioBooleano(
@@ -288,7 +328,9 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
 
         const seleccionado =
             document.querySelector(
+
                 `input[name="${nombre}"]:checked`
+
             );
 
 
@@ -308,11 +350,15 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
     ) {
 
         return Boolean(
-            document.getElementById(id)
+
+            document
+                .getElementById(id)
                 ?.checked
+
         );
 
     }
+
 
     /*==================================================
         CONTROLES DEL EXPEDIENTE MÉDICO
@@ -439,7 +485,9 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
                 }
 
 
-                if (control === otroApoyo) {
+                if (
+                    control === otroApoyo
+                ) {
 
                     control.disabled = (
                         !tieneDiscapacidad
@@ -530,6 +578,7 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
         actualizarCampoOtroApoyo
     );
 
+
     /*==================================================
                     ESCAPAR HTML
     ==================================================*/
@@ -539,22 +588,27 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
         return String(
             valor ?? ""
         )
+
             .replaceAll(
                 "&",
                 "&amp;"
             )
+
             .replaceAll(
                 "<",
                 "&lt;"
             )
+
             .replaceAll(
                 ">",
                 "&gt;"
             )
+
             .replaceAll(
                 '"',
                 "&quot;"
             )
+
             .replaceAll(
                 "'",
                 "&#039;"
@@ -682,10 +736,13 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
     ) {
 
         return (
+
             obtenerRolNormalizado(
                 usuario
             )
+
             === "conductor"
+
         );
 
     }
@@ -711,8 +768,7 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
         if (panelVerificacion) {
 
             panelVerificacion.hidden = (
-                nombrePanel
-                !== "verificacion"
+                nombrePanel !== "verificacion"
             );
 
         }
@@ -728,58 +784,38 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
 
 
         btnGeneral?.classList.toggle(
-
             "active",
-
             nombrePanel === "general"
-
         );
 
 
         btnVerificacion?.classList.toggle(
-
             "active",
-
-            nombrePanel
-            === "verificacion"
-
+            nombrePanel === "verificacion"
         );
 
 
         btnMedico?.classList.toggle(
-
             "active",
-
             nombrePanel === "medico"
-
         );
 
 
         btnGeneral?.toggleAttribute(
-
             "aria-current",
-
             nombrePanel === "general"
-
         );
 
 
         btnVerificacion?.toggleAttribute(
-
             "aria-current",
-
-            nombrePanel
-            === "verificacion"
-
+            nombrePanel === "verificacion"
         );
 
 
         btnMedico?.toggleAttribute(
-
             "aria-current",
-
             nombrePanel === "medico"
-
         );
 
     }
@@ -796,101 +832,292 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
         if (!url) {
 
             return `
-                <article
+                <div
                     class="
-                        documento-card
-                        documento-vacio
+                        verificacion-documento
+                        sin-documento
                     "
                 >
 
                     <div
                         class="
-                            documento-card-contenido
+                            verificacion-documento-icono
                         "
                     >
 
                         <i
                             class="
-                                fa-regular
+                                fa-solid
                                 fa-file-circle-xmark
                             "
                         ></i>
 
-                        <strong>
-                            ${escaparHtml(titulo)}
-                        </strong>
+                    </div>
+
+
+                    <div
+                        class="
+                            verificacion-documento-info
+                        "
+                    >
 
                         <span>
-                            Documento no registrado
+                            ${escaparHtml(titulo)}
                         </span>
+
+                        <strong>
+                            No disponible
+                        </strong>
 
                     </div>
 
-                </article>
+                </div>
             `;
 
         }
 
 
         return `
-            <article
-                class="documento-card"
+            <a
+                href="${escaparHtml(url)}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="
+                    verificacion-documento
+                    documento-disponible
+                "
             >
 
-                <a
-                    href="${escaparHtml(url)}"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="documento-enlace"
+                <div
+                    class="
+                        verificacion-documento-icono
+                    "
                 >
 
-                    <img
-                        src="${escaparHtml(url)}"
-                        alt="${escaparHtml(titulo)}"
-                    >
-
-                    <div
+                    <i
                         class="
-                            documento-card-contenido
+                            fa-solid
+                            fa-file-image
                         "
-                    >
+                    ></i>
 
-                        <strong>
-                            ${escaparHtml(titulo)}
-                        </strong>
+                </div>
 
-                        <span>
-                            Haz clic para ampliar
-                        </span>
 
-                    </div>
+                <div
+                    class="
+                        verificacion-documento-info
+                    "
+                >
 
-                </a>
+                    <span>
+                        ${escaparHtml(titulo)}
+                    </span>
 
-            </article>
+                    <strong>
+                        Ver documento
+                    </strong>
+
+                </div>
+
+
+                <i
+                    class="
+                        fa-solid
+                        fa-arrow-up-right-from-square
+                        verificacion-documento-abrir
+                    "
+                ></i>
+
+            </a>
         `;
 
     }
 
 
     /*==================================================
-                CREAR DATOS DEL VEHÍCULO
+        NORMALIZAR ESTADO DE VERIFICACIÓN
+    ==================================================*/
+
+    function normalizarEstadoVerificacion(
+        estado
+    ) {
+
+        return String(
+            estado || ""
+        )
+            .trim()
+            .toLowerCase();
+
+    }
+
+
+    /*==================================================
+            CREAR BADGE DE VERIFICACIÓN
+    ==================================================*/
+
+    function crearBadgeVerificacion(
+        estado,
+        estadoDisplay = ""
+    ) {
+
+        const estadoNormalizado =
+            normalizarEstadoVerificacion(
+                estado
+            );
+
+
+        let clase =
+            "pendiente";
+
+        let icono =
+            "fa-clock";
+
+        let texto =
+            estadoDisplay
+            || "Pendiente";
+
+
+        /*==================================================
+                        APROBADO
+        ==================================================*/
+
+        if (
+            estadoNormalizado === "aprobado"
+        ) {
+
+            clase =
+                "aprobado";
+
+            icono =
+                "fa-circle-check";
+
+            texto =
+                estadoDisplay
+                || "Aprobado";
+
+        }
+
+
+        /*==================================================
+                        RECHAZADO
+        ==================================================*/
+
+        else if (
+            estadoNormalizado === "rechazado"
+        ) {
+
+            clase =
+                "rechazado";
+
+            icono =
+                "fa-circle-xmark";
+
+            texto =
+                estadoDisplay
+                || "Rechazado";
+
+        }
+
+
+        /*==================================================
+                    EN REVISIÓN
+        ==================================================*/
+
+        else if (
+
+            estadoNormalizado === "en_revision"
+            || estadoNormalizado === "en revisión"
+            || estadoNormalizado === "revision"
+
+        ) {
+
+            clase =
+                "pendiente";
+
+            icono =
+                "fa-clock";
+
+            texto =
+                estadoDisplay
+                || "En revisión";
+
+        }
+
+
+        return `
+            <span
+                class="
+                    badge-verificacion-documento
+                    ${clase}
+                "
+            >
+
+                <i
+                    class="
+                        fa-solid
+                        ${icono}
+                    "
+                ></i>
+
+                ${escaparHtml(texto)}
+
+            </span>
+        `;
+
+    }
+
+
+    /*==================================================
+                CREAR VEHÍCULO
     ==================================================*/
 
     function crearVehiculo(
         vehiculo
     ) {
 
+        /*==================================================
+                    SIN VEHÍCULO
+        ==================================================*/
+
         if (!vehiculo) {
 
             return `
                 <section
-                    class="verificacion-seccion"
+                    class="
+                        verificacion-seccion
+                        verificacion-vehiculo
+                    "
                 >
 
-                    <h3>
-                        Información del vehículo
-                    </h3>
+                    <div
+                        class="
+                            verificacion-seccion-header
+                        "
+                    >
+
+                        <div>
+
+                            <span>
+                                Validación vehicular
+                            </span>
+
+                            <h3>
+                                Información del vehículo
+                            </h3>
+
+                        </div>
+
+
+                        <i
+                            class="
+                                fa-solid
+                                fa-car-side
+                            "
+                        ></i>
+
+                    </div>
+
 
                     <div
                         class="
@@ -910,9 +1137,11 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
                         </strong>
 
                         <span>
+
                             El conductor no tiene
                             un vehículo activo
                             registrado.
+
                         </span>
 
                     </div>
@@ -923,30 +1152,127 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
         }
 
 
+        /*==================================================
+                    MARCA Y MODELO
+        ==================================================*/
+
         const marcaModelo = (
 
-            `${vehiculo.marca || ""} ` +
-            `${vehiculo.modelo || ""}`
+            `${vehiculo.marca || ""} `
+            + `${vehiculo.modelo || ""}`
 
-        ).trim() || "No registrado";
+        )
+            .trim()
 
+            || "No registrado";
+
+
+        /*==================================================
+                    ESTADO VEHÍCULO
+        ==================================================*/
+
+        const estadoVehiculo =
+            normalizarEstadoVerificacion(
+                vehiculo.estado
+            );
+
+
+        const estaAprobado = (
+            estadoVehiculo === "aprobado"
+        );
+
+
+        /*==================================================
+                    GENERAR TARJETA
+        ==================================================*/
 
         return `
             <section
-                class="verificacion-seccion"
+                class="
+                    verificacion-seccion
+                    verificacion-vehiculo
+                "
             >
 
-                <h3>
-                    Información del vehículo
-                </h3>
-
+                <!--==========================================
+                        CABECERA DEL VEHÍCULO
+                ===========================================-->
 
                 <div
-                    class="verificacion-grid"
+                    class="
+                        verificacion-seccion-header
+                    "
                 >
 
+                    <div>
+
+                        <span>
+                            Validación vehicular
+                        </span>
+
+                        <h3>
+                            Información del vehículo
+                        </h3>
+
+                    </div>
+
+
                     <div
-                        class="verificacion-dato"
+                        class="
+                            verificacion-header-estado
+                        "
+                    >
+
+                        ${crearBadgeVerificacion(
+                            vehiculo.estado,
+                            vehiculo.estado_display
+                        )}
+
+                    </div>
+
+                </div>
+
+
+                <!--==========================================
+                        DATOS DEL VEHÍCULO
+                ===========================================-->
+
+                <div
+                    class="
+                        verificacion-grid
+                    "
+                >
+
+                    <!-- DUEÑO -->
+
+                    <div
+                        class="
+                            verificacion-dato
+                        "
+                    >
+
+                        <span>
+                            Dueño
+                        </span>
+
+                        <strong>
+
+                            ${escaparHtml(
+                                vehiculo.dueno
+                                || "No registrado"
+                            )}
+
+                        </strong>
+
+                    </div>
+
+
+                    <!-- MARCA / MODELO -->
+
+                    <div
+                        class="
+                            verificacion-dato
+                        "
                     >
 
                         <span>
@@ -954,16 +1280,22 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
                         </span>
 
                         <strong>
+
                             ${escaparHtml(
                                 marcaModelo
                             )}
+
                         </strong>
 
                     </div>
 
 
+                    <!-- AÑO -->
+
                     <div
-                        class="verificacion-dato"
+                        class="
+                            verificacion-dato
+                        "
                     >
 
                         <span>
@@ -971,17 +1303,23 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
                         </span>
 
                         <strong>
+
                             ${escaparHtml(
                                 vehiculo.anio
                                 || "No registrado"
                             )}
+
                         </strong>
 
                     </div>
 
 
+                    <!-- COLOR -->
+
                     <div
-                        class="verificacion-dato"
+                        class="
+                            verificacion-dato
+                        "
                     >
 
                         <span>
@@ -989,17 +1327,23 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
                         </span>
 
                         <strong>
+
                             ${escaparHtml(
                                 vehiculo.color
                                 || "No registrado"
                             )}
+
                         </strong>
 
                     </div>
 
 
+                    <!-- PLACAS -->
+
                     <div
-                        class="verificacion-dato"
+                        class="
+                            verificacion-dato
+                        "
                     >
 
                         <span>
@@ -1007,17 +1351,23 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
                         </span>
 
                         <strong>
+
                             ${escaparHtml(
                                 vehiculo.placas
                                 || "No registradas"
                             )}
+
                         </strong>
 
                     </div>
 
 
+                    <!-- CAPACIDAD -->
+
                     <div
-                        class="verificacion-dato"
+                        class="
+                            verificacion-dato
+                        "
                     >
 
                         <span>
@@ -1025,47 +1375,12 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
                         </span>
 
                         <strong>
+
                             ${escaparHtml(
                                 vehiculo.capacidad
                                 || "No registrada"
                             )}
-                        </strong>
 
-                    </div>
-
-
-                    <div
-                        class="verificacion-dato"
-                    >
-
-                        <span>
-                            Estado
-                        </span>
-
-                        <strong>
-                            ${escaparHtml(
-                                vehiculo.estado_display
-                                || vehiculo.estado
-                                || "Pendiente"
-                            )}
-                        </strong>
-
-                    </div>
-
-
-                    <div
-                        class="verificacion-dato"
-                    >
-
-                        <span>
-                            Motivo de rechazo
-                        </span>
-
-                        <strong>
-                            ${escaparHtml(
-                                vehiculo.motivo_rechazo
-                                || "Sin observaciones"
-                            )}
                         </strong>
 
                     </div>
@@ -1073,8 +1388,60 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
                 </div>
 
 
+                <!--==========================================
+                        MOTIVO DE RECHAZO
+                ===========================================-->
+
+                ${
+                    estadoVehiculo === "rechazado"
+
+                        ? `
+                            <div
+                                class="
+                                    verificacion-motivo-rechazo
+                                "
+                            >
+
+                                <i
+                                    class="
+                                        fa-solid
+                                        fa-triangle-exclamation
+                                    "
+                                ></i>
+
+
+                                <div>
+
+                                    <span>
+                                        Motivo del rechazo
+                                    </span>
+
+                                    <strong>
+
+                                        ${escaparHtml(
+                                            vehiculo.motivo_rechazo
+                                            || "Sin motivo registrado"
+                                        )}
+
+                                    </strong>
+
+                                </div>
+
+                            </div>
+                        `
+
+                        : ""
+                }
+
+
+                <!--==========================================
+                        DOCUMENTOS DEL VEHÍCULO
+                ===========================================-->
+
                 <div
-                    class="verificacion-documentos"
+                    class="
+                        verificacion-documentos
+                    "
                 >
 
                     ${crearDocumento(
@@ -1091,8 +1458,122 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
 
                     ${crearDocumento(
                         vehiculo.documento_seguro,
-                        "Documento de seguro"
+                        "Documento del seguro"
                     )}
+
+                </div>
+
+
+                <!--==========================================
+                        ACCIONES DEL VEHÍCULO
+                ===========================================-->
+
+                <div
+                    class="
+                        verificacion-acciones
+                        verificacion-acciones-vehiculo
+                    "
+                >
+
+                    <div
+                        class="
+                            verificacion-acciones-info
+                        "
+                    >
+
+                        <i
+                            class="
+                                fa-solid
+                                fa-shield-halved
+                            "
+                        ></i>
+
+
+                        <span>
+
+                            ${
+                                estaAprobado
+
+                                    ? (
+                                        "Este vehículo ya está "
+                                        + "autorizado."
+                                    )
+
+                                    : (
+                                        "Revisa la fotografía, "
+                                        + "la tarjeta de circulación "
+                                        + "y el seguro antes de aprobar."
+                                    )
+                            }
+
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        class="
+                            verificacion-acciones-botones
+                        "
+                    >
+
+                        <!-- RECHAZAR -->
+
+                        <button
+                            type="button"
+                            class="
+                                btn-rechazar-verificacion
+                                btn-rechazar-vehiculo
+                            "
+                            data-vehiculo-id="${escaparHtml(
+                                vehiculo.id || ""
+                            )}"
+                            ${estaAprobado ? "disabled" : ""}
+                        >
+
+                            <i
+                                class="
+                                    fa-solid
+                                    fa-circle-xmark
+                                "
+                            ></i>
+
+                            Rechazar vehículo
+
+                        </button>
+
+
+                        <!-- APROBAR -->
+
+                        <button
+                            type="button"
+                            class="
+                                btn-aprobar-verificacion
+                                btn-aprobar-vehiculo
+                            "
+                            data-vehiculo-id="${escaparHtml(
+                                vehiculo.id || ""
+                            )}"
+                            ${estaAprobado ? "disabled" : ""}
+                        >
+
+                            <i
+                                class="
+                                    fa-solid
+                                    fa-circle-check
+                                "
+                            ></i>
+
+
+                            ${
+                                estaAprobado
+                                    ? "Vehículo aprobado"
+                                    : "Aprobar vehículo"
+                            }
+
+                        </button>
+
+                    </div>
 
                 </div>
 
@@ -1101,8 +1582,7 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
 
     }
 
-
-    /*==================================================
+        /*==================================================
                 PINTAR VERIFICACIÓN
     ==================================================*/
 
@@ -1131,6 +1611,7 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
         if (!conductor) {
 
             verificacionContenido.innerHTML = `
+
                 <div
                     class="
                         usuario-panel-cargando
@@ -1149,14 +1630,17 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
                     </strong>
 
                     <span>
-                        Este usuario tiene rol
-                        de conductor, pero todavía
-                        no ha registrado su licencia
-                        o documentación.
+
+                        Este usuario tiene rol de conductor,
+                        pero todavía no ha registrado su
+                        licencia o documentación.
+
                     </span>
 
                 </div>
+
             `;
+
 
             return;
 
@@ -1164,26 +1648,93 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
 
 
         /*==================================================
-                    LICENCIA + VEHÍCULO
+                ESTADO DEL CONDUCTOR
+        ==================================================*/
+
+        const estadoConductor =
+            normalizarEstadoVerificacion(
+                conductor.estado_verificacion
+            );
+
+
+        const conductorAprobado = (
+            estadoConductor === "aprobado"
+        );
+
+
+        /*==================================================
+                CONSTRUIR CONTENIDO
         ==================================================*/
 
         verificacionContenido.innerHTML = `
 
+
+            <!--==============================================
+                    VERIFICACIÓN DE LICENCIA
+            ===============================================-->
+
             <section
-                class="verificacion-seccion"
+                class="
+                    verificacion-seccion
+                    verificacion-licencia
+                "
             >
 
-                <h3>
-                    Información de la licencia
-                </h3>
-
+                <!--==========================================
+                        CABECERA LICENCIA
+                ===========================================-->
 
                 <div
-                    class="verificacion-grid"
+                    class="
+                        verificacion-seccion-header
+                    "
                 >
 
+                    <div>
+
+                        <span>
+                            Identificación del conductor
+                        </span>
+
+                        <h3>
+                            Información de la licencia
+                        </h3>
+
+                    </div>
+
+
                     <div
-                        class="verificacion-dato"
+                        class="
+                            verificacion-header-estado
+                        "
+                    >
+
+                        ${crearBadgeVerificacion(
+                            conductor.estado_verificacion,
+                            conductor.estado_verificacion_display
+                        )}
+
+                    </div>
+
+                </div>
+
+
+                <!--==========================================
+                        DATOS DE LICENCIA
+                ===========================================-->
+
+                <div
+                    class="
+                        verificacion-grid
+                    "
+                >
+
+                    <!-- NÚMERO DE LICENCIA -->
+
+                    <div
+                        class="
+                            verificacion-dato
+                        "
                     >
 
                         <span>
@@ -1191,17 +1742,23 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
                         </span>
 
                         <strong>
+
                             ${escaparHtml(
                                 conductor.numero_licencia
                                 || "No registrado"
                             )}
+
                         </strong>
 
                     </div>
 
 
+                    <!-- FECHA DE VENCIMIENTO -->
+
                     <div
-                        class="verificacion-dato"
+                        class="
+                            verificacion-dato
+                        "
                     >
 
                         <span>
@@ -1209,17 +1766,23 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
                         </span>
 
                         <strong>
+
                             ${escaparHtml(
                                 conductor.fecha_vencimiento
                                 || "No registrada"
                             )}
+
                         </strong>
 
                     </div>
 
 
+                    <!-- ESTADO -->
+
                     <div
-                        class="verificacion-dato"
+                        class="
+                            verificacion-dato
+                        "
                     >
 
                         <span>
@@ -1227,29 +1790,13 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
                         </span>
 
                         <strong>
+
                             ${escaparHtml(
                                 conductor.estado_verificacion_display
                                 || conductor.estado_verificacion
                                 || "Pendiente"
                             )}
-                        </strong>
 
-                    </div>
-
-
-                    <div
-                        class="verificacion-dato"
-                    >
-
-                        <span>
-                            Motivo de rechazo
-                        </span>
-
-                        <strong>
-                            ${escaparHtml(
-                                conductor.motivo_rechazo
-                                || "Sin observaciones"
-                            )}
                         </strong>
 
                     </div>
@@ -1257,8 +1804,60 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
                 </div>
 
 
+                <!--==========================================
+                        MOTIVO DE RECHAZO
+                ===========================================-->
+
+                ${
+                    estadoConductor === "rechazado"
+
+                        ? `
+                            <div
+                                class="
+                                    verificacion-motivo-rechazo
+                                "
+                            >
+
+                                <i
+                                    class="
+                                        fa-solid
+                                        fa-triangle-exclamation
+                                    "
+                                ></i>
+
+
+                                <div>
+
+                                    <span>
+                                        Motivo del rechazo
+                                    </span>
+
+                                    <strong>
+
+                                        ${escaparHtml(
+                                            conductor.motivo_rechazo
+                                            || "Sin motivo registrado"
+                                        )}
+
+                                    </strong>
+
+                                </div>
+
+                            </div>
+                        `
+
+                        : ""
+                }
+
+
+                <!--==========================================
+                        DOCUMENTOS DE LICENCIA
+                ===========================================-->
+
                 <div
-                    class="verificacion-documentos"
+                    class="
+                        verificacion-documentos
+                    "
                 >
 
                     ${crearDocumento(
@@ -1274,8 +1873,125 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
 
                 </div>
 
+
+                <!--==========================================
+                        ACCIONES DE LICENCIA
+                ===========================================-->
+
+                <div
+                    class="
+                        verificacion-acciones
+                        verificacion-acciones-conductor
+                    "
+                >
+
+                    <div
+                        class="
+                            verificacion-acciones-info
+                        "
+                    >
+
+                        <i
+                            class="
+                                fa-solid
+                                fa-id-card
+                            "
+                        ></i>
+
+
+                        <span>
+
+                            ${
+                                conductorAprobado
+
+                                    ? (
+                                        "La documentación del conductor "
+                                        + "ya fue aprobada."
+                                    )
+
+                                    : (
+                                        "Comprueba ambas caras de la "
+                                        + "licencia antes de aprobar."
+                                    )
+                            }
+
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        class="
+                            verificacion-acciones-botones
+                        "
+                    >
+
+                        <!-- RECHAZAR LICENCIA -->
+
+                        <button
+                            type="button"
+                            class="
+                                btn-rechazar-verificacion
+                                btn-rechazar-conductor
+                            "
+                            data-usuario-id="${escaparHtml(
+                                usuario.id
+                            )}"
+                            ${conductorAprobado ? "disabled" : ""}
+                        >
+
+                            <i
+                                class="
+                                    fa-solid
+                                    fa-circle-xmark
+                                "
+                            ></i>
+
+                            Rechazar licencia
+
+                        </button>
+
+
+                        <!-- APROBAR LICENCIA -->
+
+                        <button
+                            type="button"
+                            class="
+                                btn-aprobar-verificacion
+                                btn-aprobar-conductor
+                            "
+                            data-usuario-id="${escaparHtml(
+                                usuario.id
+                            )}"
+                            ${conductorAprobado ? "disabled" : ""}
+                        >
+
+                            <i
+                                class="
+                                    fa-solid
+                                    fa-circle-check
+                                "
+                            ></i>
+
+
+                            ${
+                                conductorAprobado
+                                    ? "Licencia aprobada"
+                                    : "Aprobar licencia"
+                            }
+
+                        </button>
+
+                    </div>
+
+                </div>
+
             </section>
 
+
+            <!--==============================================
+                        VEHÍCULO
+            ===============================================-->
 
             ${crearVehiculo(
                 vehiculo
@@ -1284,6 +2000,713 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
         `;
 
     }
+
+
+    /*==================================================
+        ACTUALIZAR VERIFICACIÓN DE CONDUCTOR
+    ==================================================*/
+
+    async function actualizarVerificacionConductor(
+        estado,
+        motivo = ""
+    ) {
+
+        const respuesta =
+            await fetch(
+
+                `/api/admin/conductores/${usuarioId}/verificar/`,
+
+                {
+
+                    method:
+                        "POST",
+
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json",
+
+                        "X-CSRFToken":
+                            obtenerCSRFToken(),
+
+                        "X-Requested-With":
+                            "XMLHttpRequest",
+
+                    },
+
+
+                    credentials:
+                        "same-origin",
+
+
+                    body:
+                        JSON.stringify({
+
+                            estado:
+                                estado,
+
+                            motivo:
+                                motivo,
+
+                        }),
+
+                }
+
+            );
+
+
+        const datos =
+            await leerJson(
+                respuesta
+            );
+
+
+        if (!datos.ok) {
+
+            throw new Error(
+
+                datos.error
+                || (
+                    "No se pudo actualizar "
+                    + "la verificación del conductor."
+                )
+
+            );
+
+        }
+
+
+        return datos;
+
+    }
+
+
+    /*==================================================
+        ACTUALIZAR VERIFICACIÓN DE VEHÍCULO
+    ==================================================*/
+
+    async function actualizarVerificacionVehiculo(
+        vehiculoId,
+        estado,
+        motivo = ""
+    ) {
+
+        const respuesta =
+            await fetch(
+
+                `/api/admin/vehiculos/${vehiculoId}/verificar/`,
+
+                {
+
+                    method:
+                        "POST",
+
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json",
+
+                        "X-CSRFToken":
+                            obtenerCSRFToken(),
+
+                        "X-Requested-With":
+                            "XMLHttpRequest",
+
+                    },
+
+
+                    credentials:
+                        "same-origin",
+
+
+                    body:
+                        JSON.stringify({
+
+                            estado:
+                                estado,
+
+                            motivo:
+                                motivo,
+
+                        }),
+
+                }
+
+            );
+
+
+        const datos =
+            await leerJson(
+                respuesta
+            );
+
+
+        if (!datos.ok) {
+
+            throw new Error(
+
+                datos.error
+                || (
+                    "No se pudo actualizar "
+                    + "la verificación del vehículo."
+                )
+
+            );
+
+        }
+
+
+        return datos;
+
+    }
+
+
+    /*==================================================
+        RECARGAR PANEL DE VERIFICACIÓN
+    ==================================================*/
+
+    async function recargarVerificacion() {
+
+        const usuario =
+            await cargarUsuario();
+
+
+        pintarVerificacion(
+            usuario
+        );
+
+
+        mostrarPanel(
+            "verificacion"
+        );
+
+    }
+
+        /*==================================================
+        CLICK EN BOTONES DINÁMICOS DE VERIFICACIÓN
+    ==================================================*/
+
+    verificacionContenido?.addEventListener(
+        "click",
+        async function (evento) {
+
+            const boton =
+                evento.target.closest(
+                    "button"
+                );
+
+
+            if (
+                !boton
+                || boton.disabled
+            ) {
+
+                return;
+
+            }
+
+
+            /*==================================================
+                    APROBAR LICENCIA
+            ==================================================*/
+
+            if (
+                boton.classList.contains(
+                    "btn-aprobar-conductor"
+                )
+            ) {
+
+                const confirmar =
+                    window.confirm(
+
+                        "¿Deseas aprobar la licencia "
+                        + "y documentación de este conductor?"
+
+                    );
+
+
+                if (!confirmar) {
+
+                    return;
+
+                }
+
+
+                const textoOriginal =
+                    boton.innerHTML;
+
+
+                boton.disabled =
+                    true;
+
+
+                boton.innerHTML = `
+                    <i
+                        class="
+                            fa-solid
+                            fa-spinner
+                            fa-spin
+                        "
+                    ></i>
+
+                    Aprobando...
+                `;
+
+
+                try {
+
+                    const datos =
+                        await actualizarVerificacionConductor(
+                            "aprobado"
+                        );
+
+
+                    alert(
+
+                        datos.mensaje
+                        || (
+                            "Licencia aprobada "
+                            + "correctamente."
+                        )
+
+                    );
+
+
+                    await recargarVerificacion();
+
+
+                } catch (error) {
+
+                    console.error(
+
+                        "Error al aprobar conductor:",
+
+                        error
+
+                    );
+
+
+                    alert(
+
+                        normalizarError(
+                            error
+                        )
+
+                    );
+
+
+                    boton.disabled =
+                        false;
+
+
+                    boton.innerHTML =
+                        textoOriginal;
+
+                }
+
+
+                return;
+
+            }
+
+
+            /*==================================================
+                    RECHAZAR LICENCIA
+            ==================================================*/
+
+            if (
+                boton.classList.contains(
+                    "btn-rechazar-conductor"
+                )
+            ) {
+
+                const motivo =
+                    window.prompt(
+
+                        "Escribe el motivo por el que "
+                        + "se rechaza la licencia:"
+
+                    );
+
+
+                if (
+                    motivo === null
+                ) {
+
+                    return;
+
+                }
+
+
+                const motivoLimpio =
+                    motivo.trim();
+
+
+                if (!motivoLimpio) {
+
+                    alert(
+                        "Debes indicar un motivo de rechazo."
+                    );
+
+                    return;
+
+                }
+
+
+                const textoOriginal =
+                    boton.innerHTML;
+
+
+                boton.disabled =
+                    true;
+
+
+                boton.innerHTML = `
+                    <i
+                        class="
+                            fa-solid
+                            fa-spinner
+                            fa-spin
+                        "
+                    ></i>
+
+                    Rechazando...
+                `;
+
+
+                try {
+
+                    const datos =
+                        await actualizarVerificacionConductor(
+                            "rechazado",
+                            motivoLimpio
+                        );
+
+
+                    alert(
+
+                        datos.mensaje
+                        || (
+                            "Licencia rechazada "
+                            + "correctamente."
+                        )
+
+                    );
+
+
+                    await recargarVerificacion();
+
+
+                } catch (error) {
+
+                    console.error(
+
+                        "Error al rechazar conductor:",
+
+                        error
+
+                    );
+
+
+                    alert(
+
+                        normalizarError(
+                            error
+                        )
+
+                    );
+
+
+                    boton.disabled =
+                        false;
+
+
+                    boton.innerHTML =
+                        textoOriginal;
+
+                }
+
+
+                return;
+
+            }
+
+
+            /*==================================================
+                    APROBAR VEHÍCULO
+            ==================================================*/
+
+            if (
+                boton.classList.contains(
+                    "btn-aprobar-vehiculo"
+                )
+            ) {
+
+                const vehiculoId =
+                    boton.dataset.vehiculoId;
+
+
+                if (!vehiculoId) {
+
+                    alert(
+
+                        "No se encontró el identificador "
+                        + "del vehículo."
+
+                    );
+
+                    return;
+
+                }
+
+
+                const confirmar =
+                    window.confirm(
+
+                        "¿Deseas aprobar este vehículo "
+                        + "y sus documentos?"
+
+                    );
+
+
+                if (!confirmar) {
+
+                    return;
+
+                }
+
+
+                const textoOriginal =
+                    boton.innerHTML;
+
+
+                boton.disabled =
+                    true;
+
+
+                boton.innerHTML = `
+                    <i
+                        class="
+                            fa-solid
+                            fa-spinner
+                            fa-spin
+                        "
+                    ></i>
+
+                    Aprobando...
+                `;
+
+
+                try {
+
+                    const datos =
+                        await actualizarVerificacionVehiculo(
+
+                            vehiculoId,
+
+                            "aprobado"
+
+                        );
+
+
+                    alert(
+
+                        datos.mensaje
+                        || (
+                            "Vehículo aprobado "
+                            + "correctamente."
+                        )
+
+                    );
+
+
+                    await recargarVerificacion();
+
+
+                } catch (error) {
+
+                    console.error(
+
+                        "Error al aprobar vehículo:",
+
+                        error
+
+                    );
+
+
+                    alert(
+
+                        normalizarError(
+                            error
+                        )
+
+                    );
+
+
+                    boton.disabled =
+                        false;
+
+
+                    boton.innerHTML =
+                        textoOriginal;
+
+                }
+
+
+                return;
+
+            }
+
+
+            /*==================================================
+                    RECHAZAR VEHÍCULO
+            ==================================================*/
+
+            if (
+                boton.classList.contains(
+                    "btn-rechazar-vehiculo"
+                )
+            ) {
+
+                const vehiculoId =
+                    boton.dataset.vehiculoId;
+
+
+                if (!vehiculoId) {
+
+                    alert(
+
+                        "No se encontró el identificador "
+                        + "del vehículo."
+
+                    );
+
+                    return;
+
+                }
+
+
+                const motivo =
+                    window.prompt(
+
+                        "Escribe el motivo por el que "
+                        + "se rechaza el vehículo:"
+
+                    );
+
+
+                if (
+                    motivo === null
+                ) {
+
+                    return;
+
+                }
+
+
+                const motivoLimpio =
+                    motivo.trim();
+
+
+                if (!motivoLimpio) {
+
+                    alert(
+                        "Debes indicar un motivo de rechazo."
+                    );
+
+                    return;
+
+                }
+
+
+                const textoOriginal =
+                    boton.innerHTML;
+
+
+                boton.disabled =
+                    true;
+
+
+                boton.innerHTML = `
+                    <i
+                        class="
+                            fa-solid
+                            fa-spinner
+                            fa-spin
+                        "
+                    ></i>
+
+                    Rechazando...
+                `;
+
+
+                try {
+
+                    const datos =
+                        await actualizarVerificacionVehiculo(
+
+                            vehiculoId,
+
+                            "rechazado",
+
+                            motivoLimpio
+
+                        );
+
+
+                    alert(
+
+                        datos.mensaje
+                        || (
+                            "Vehículo rechazado "
+                            + "correctamente."
+                        )
+
+                    );
+
+
+                    await recargarVerificacion();
+
+
+                } catch (error) {
+
+                    console.error(
+
+                        "Error al rechazar vehículo:",
+
+                        error
+
+                    );
+
+
+                    alert(
+
+                        normalizarError(
+                            error
+                        )
+
+                    );
+
+
+                    boton.disabled =
+                        false;
+
+
+                    boton.innerHTML =
+                        textoOriginal;
+
+                }
+
+
+                return;
+
+            }
+
+        }
+    );
+
         /*==================================================
                     PINTAR USUARIO
     ==================================================*/
@@ -1333,45 +2756,54 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
             usuario.id
         );
 
+
         asignarValor(
             "nombre",
             usuario.nombre
         );
+
 
         asignarValor(
             "correo",
             usuario.correo
         );
 
+
         asignarValor(
             "matricula",
             usuario.matricula
         );
+
 
         asignarValor(
             "cuatrimestre",
             usuario.cuatrimestre
         );
 
+
         asignarValor(
             "carrera",
             usuario.carrera
         );
+
 
         asignarValor(
             "rol",
             usuario.rol
         );
 
+
         asignarValor(
             "estado",
             usuario.estado
         );
 
+
         asignarValor(
             "telefono",
             usuario.telefono
         );
+
 
         asignarValor(
             "password",
@@ -1459,18 +2891,19 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
 
     async function cargarUsuario() {
 
-        const respuesta = await fetch(
+        const respuesta =
+            await fetch(
 
-            `/api/admin/usuarios/${usuarioId}/`,
+                `/api/admin/usuarios/${usuarioId}/`,
 
-            {
+                {
 
-                credentials:
-                    "same-origin",
+                    credentials:
+                        "same-origin",
 
-            }
+                }
 
-        );
+            );
 
 
         const datos =
@@ -1504,7 +2937,138 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
     }
 
 
+    /*==================================================
+        PINTAR ESTADO DEL EXPEDIENTE MÉDICO
+    ==================================================*/
+
+    function pintarEstadoExpediente(
+        verificado
+    ) {
+
+        const estaVerificado =
+            verificado === true
+            || verificado === "true"
+            || verificado === 1
+            || verificado === "1";
+
+
+        estadoVerificacionMedica?.classList.toggle(
+            "verificado",
+            estaVerificado
+        );
+
+
         /*==================================================
+                    TEXTO PRINCIPAL
+        ==================================================*/
+
+        if (estadoExpedienteTexto) {
+
+            estadoExpedienteTexto.textContent =
+                estaVerificado
+                    ? "Expediente verificado"
+                    : "Pendiente de verificación";
+
+        }
+
+
+        /*==================================================
+                    DESCRIPCIÓN
+        ==================================================*/
+
+        if (estadoExpedienteDescripcion) {
+
+            estadoExpedienteDescripcion.textContent =
+                estaVerificado
+                    ? (
+                        "La información médica ya fue revisada "
+                        + "y aprobada por un administrador."
+                    )
+                    : (
+                        "La información médica todavía no ha sido "
+                        + "revisada por un administrador."
+                    );
+
+        }
+
+
+        /*==================================================
+                    BADGE
+        ==================================================*/
+
+        if (badgeExpediente) {
+
+            badgeExpediente.classList.toggle(
+                "pendiente",
+                !estaVerificado
+            );
+
+
+            badgeExpediente.classList.toggle(
+                "verificado",
+                estaVerificado
+            );
+
+        }
+
+
+        if (badgeExpedienteTexto) {
+
+            badgeExpedienteTexto.textContent =
+                estaVerificado
+                    ? "Verificado"
+                    : "Pendiente";
+
+        }
+
+
+        /*==================================================
+                    ICONO DEL BADGE
+        ==================================================*/
+
+        const iconoBadge =
+            badgeExpediente?.querySelector(
+                "i"
+            );
+
+
+        if (iconoBadge) {
+
+            iconoBadge.className =
+                estaVerificado
+                    ? "fa-solid fa-circle-check"
+                    : "fa-solid fa-clock";
+
+        }
+
+
+        /*==================================================
+                BOTÓN APROBAR EXPEDIENTE
+        ==================================================*/
+
+        if (btnAprobarExpediente) {
+
+            btnAprobarExpediente.disabled =
+                estaVerificado;
+
+
+            btnAprobarExpediente.innerHTML =
+                estaVerificado
+                    ? `
+                        <i class="fa-solid fa-circle-check"></i>
+                        Expediente aprobado
+                    `
+                    : `
+                        <i class="fa-solid fa-circle-check"></i>
+                        Aprobar expediente
+                    `;
+
+        }
+
+    }
+
+
+    /*==================================================
                 CARGAR DATOS MÉDICOS
     ==================================================*/
 
@@ -1522,16 +3086,19 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
         }
 
 
-        const respuesta = await fetch(
+        const respuesta =
+            await fetch(
 
-            `/api/admin/usuarios/${usuarioId}/expediente-medico/`,
+                `/api/admin/usuarios/${usuarioId}/expediente-medico/`,
 
-            {
-                credentials:
-                    "same-origin",
-            }
+                {
 
-        );
+                    credentials:
+                        "same-origin",
+
+                }
+
+            );
 
 
         const datos =
@@ -1637,11 +3204,14 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
         );
 
 
-        const tieneOtroApoyo = Boolean(
-            String(
-                expediente.otro_apoyo || ""
-            ).trim()
-        );
+        const tieneOtroApoyo =
+            Boolean(
+
+                String(
+                    expediente.otro_apoyo || ""
+                ).trim()
+
+            );
 
 
         if (usaOtroApoyo) {
@@ -1681,6 +3251,15 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
         asignarValor(
             "observaciones",
             expediente.observaciones
+        );
+
+
+        /*==================================================
+            ESTADO DE VERIFICACIÓN MÉDICA
+        ==================================================*/
+
+        pintarEstadoExpediente(
+            expediente.verificado
         );
 
 
@@ -1822,7 +3401,9 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
         );
 
     }
-        /*==================================================
+
+
+    /*==================================================
                     NAVEGACIÓN
     ==================================================*/
 
@@ -1834,6 +3415,7 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
                 "pestanaUsuarioAdmin",
                 "general"
             );
+
 
             mostrarPanel(
                 "general"
@@ -1900,15 +3482,20 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
             } catch (error) {
 
                 console.error(
+
                     "Error al cargar expediente médico:",
+
                     error
+
                 );
 
 
                 alert(
+
                     normalizarError(
                         error
                     )
+
                 );
 
             }
@@ -2054,8 +3641,7 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
 
     }
 
-
-    /*==================================================
+        /*==================================================
                 GUARDAR USUARIO
     ==================================================*/
 
@@ -2239,11 +3825,9 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
                 await cargarUsuario();
 
 
-                /*
-                Si el rol cambió de conductor a otro,
-                evitamos dejar abierta la pestaña
-                de verificación.
-                */
+                /*==================================================
+                    SI DEJÓ DE SER CONDUCTOR
+                ==================================================*/
 
                 if (
                     !esUsuarioConductor(
@@ -2300,6 +3884,177 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
 
         }
     );
+
+
+    /*==================================================
+            APROBAR EXPEDIENTE MÉDICO
+    ==================================================*/
+
+    btnAprobarExpediente?.addEventListener(
+        "click",
+        async function () {
+
+            const confirmar =
+                window.confirm(
+                    "¿Deseas aprobar este expediente médico?"
+                );
+
+
+            if (!confirmar) {
+
+                return;
+
+            }
+
+
+            /*==================================================
+                    ESTADO VISUAL DEL BOTÓN
+            ==================================================*/
+
+            btnAprobarExpediente.disabled =
+                true;
+
+
+            btnAprobarExpediente.innerHTML = `
+                <i
+                    class="
+                        fa-solid
+                        fa-spinner
+                        fa-spin
+                    "
+                ></i>
+
+                Aprobando expediente...
+            `;
+
+
+            try {
+
+                /*==================================================
+                        PETICIÓN AL BACKEND
+                ==================================================*/
+
+                const respuesta =
+                    await fetch(
+
+                        `/api/admin/usuarios/${usuarioId}/expediente-medico/actualizar/`,
+
+                        {
+
+                            method:
+                                "POST",
+
+
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json",
+
+                                "X-CSRFToken":
+                                    obtenerCSRFToken(),
+
+                                "X-Requested-With":
+                                    "XMLHttpRequest",
+
+                            },
+
+
+                            credentials:
+                                "same-origin",
+
+
+                            body:
+                                JSON.stringify({
+
+                                    verificado:
+                                        true
+
+                                }),
+
+                        }
+
+                    );
+
+
+                const datos =
+                    await leerJson(
+                        respuesta
+                    );
+
+
+                if (!datos.ok) {
+
+                    throw new Error(
+
+                        datos.error
+                        || (
+                            "No se pudo aprobar "
+                            + "el expediente médico."
+                        )
+
+                    );
+
+                }
+
+
+                /*==================================================
+                        ACTUALIZAR INTERFAZ
+                ==================================================*/
+
+                pintarEstadoExpediente(
+                    true
+                );
+
+
+                expedienteCargado =
+                    false;
+
+
+                alert(
+
+                    datos.mensaje
+                    || (
+                        "Expediente médico "
+                        + "aprobado correctamente."
+                    )
+
+                );
+
+
+            } catch (error) {
+
+                console.error(
+
+                    "Error al aprobar expediente médico:",
+
+                    error
+
+                );
+
+
+                alert(
+
+                    normalizarError(
+                        error
+                    )
+
+                );
+
+
+                btnAprobarExpediente.disabled =
+                    false;
+
+
+                btnAprobarExpediente.innerHTML = `
+                    <i class="fa-solid fa-circle-check"></i>
+                    Aprobar expediente
+                `;
+
+            }
+
+        }
+    );
+
         /*==================================================
             GUARDAR EXPEDIENTE MÉDICO
     ==================================================*/
@@ -2311,17 +4066,34 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
             evento.preventDefault();
 
 
+            /*==================================================
+                    COMPROBAR DISCAPACIDAD
+            ==================================================*/
+
             const tieneDiscapacidad =
                 obtenerRadioBooleano(
                     "discapacidad"
                 );
 
 
+            /*==================================================
+                    CONSTRUIR PAYLOAD
+            ==================================================*/
+
             const payload = {
+
+
+                /*==============================================
+                        DISCAPACIDAD
+                ==============================================*/
 
                 discapacidad:
                     tieneDiscapacidad,
 
+
+                /*==============================================
+                    INFORMACIÓN GENERAL
+                ==============================================*/
 
                 tipo_sangre:
                     document
@@ -2331,6 +4103,10 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
                         ?.value
                     || "",
 
+
+                /*==============================================
+                    TIPO DE DISCAPACIDAD
+                ==============================================*/
 
                 tipo_discapacidad:
                     tieneDiscapacidad
@@ -2345,6 +4121,10 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
                         : "",
 
 
+                /*==============================================
+                    VEHÍCULO ADAPTADO
+                ==============================================*/
+
                 vehiculo_adaptado:
                     tieneDiscapacidad
                         ? obtenerRadioBooleano(
@@ -2352,6 +4132,10 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
                         )
                         : false,
 
+
+                /*==============================================
+                    CUIDADOS ESPECIALES
+                ==============================================*/
 
                 cuidados_especiales:
                     tieneDiscapacidad
@@ -2361,6 +4145,10 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
                         : false,
 
 
+                /*==============================================
+                            BASTÓN
+                ==============================================*/
+
                 usa_baston:
                     tieneDiscapacidad
                         ? obtenerCheckbox(
@@ -2368,6 +4156,10 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
                         )
                         : false,
 
+
+                /*==============================================
+                        PERRO GUÍA
+                ==============================================*/
 
                 usa_perro_guia:
                     tieneDiscapacidad
@@ -2377,6 +4169,10 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
                         : false,
 
 
+                /*==============================================
+                    SILLA DE RUEDAS
+                ==============================================*/
+
                 usa_silla_ruedas:
                     tieneDiscapacidad
                         ? obtenerCheckbox(
@@ -2384,6 +4180,10 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
                         )
                         : false,
 
+
+                /*==============================================
+                        ANDADERA
+                ==============================================*/
 
                 usa_andadera:
                     tieneDiscapacidad
@@ -2393,6 +4193,10 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
                         : false,
 
 
+                /*==============================================
+                        MULETAS
+                ==============================================*/
+
                 usa_muletas:
                     tieneDiscapacidad
                         ? obtenerCheckbox(
@@ -2401,6 +4205,10 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
                         : false,
 
 
+                /*==============================================
+                        PRÓTESIS
+                ==============================================*/
+
                 usa_protesis:
                     tieneDiscapacidad
                         ? obtenerCheckbox(
@@ -2408,6 +4216,10 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
                         )
                         : false,
 
+
+                /*==============================================
+                        OTRO APOYO
+                ==============================================*/
 
                 otro_apoyo:
                     (
@@ -2422,6 +4234,10 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
                         )
                         : "",
 
+
+                /*==============================================
+                CONTACTO DE EMERGENCIA
+                ==============================================*/
 
                 nombre_contacto:
                     document
@@ -2443,6 +4259,10 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
                     || "",
 
 
+                /*==============================================
+                        OBSERVACIONES
+                ==============================================*/
+
                 observaciones:
                     document
                         .getElementById(
@@ -2455,6 +4275,10 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
             };
 
 
+            /*==================================================
+                    CAMBIAR ESTADO DEL BOTÓN
+            ==================================================*/
+
             cambiarEstadoBoton(
                 btnGuardarExpediente,
                 true,
@@ -2464,6 +4288,10 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
 
 
             try {
+
+                /*==================================================
+                        ENVIAR DATOS AL BACKEND
+                ==================================================*/
 
                 const respuesta =
                     await fetch(
@@ -2525,6 +4353,10 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
                 }
 
 
+                /*==================================================
+                        DATOS GUARDADOS
+                ==================================================*/
+
                 expedienteCargado =
                     true;
 
@@ -2539,6 +4371,10 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
 
                 );
 
+
+                /*==================================================
+                        RECARGAR DESDE LA BD
+                ==================================================*/
 
                 await cargarDatosMedicos(
                     true
@@ -2557,13 +4393,19 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
 
 
                 alert(
+
                     normalizarError(
                         error
                     )
+
                 );
 
 
             } finally {
+
+                /*==================================================
+                        RESTAURAR BOTÓN
+                ==================================================*/
 
                 cambiarEstadoBoton(
                     btnGuardarExpediente,
@@ -2587,7 +4429,16 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
 
             try {
 
+                /*==================================================
+                        CARGAR INFORMACIÓN
+                ==================================================*/
+
                 await cargarUsuario();
+
+
+                /*==================================================
+                    ABRIR PESTAÑA CORRESPONDIENTE
+                ==================================================*/
 
                 await abrirPestanaInicial();
 

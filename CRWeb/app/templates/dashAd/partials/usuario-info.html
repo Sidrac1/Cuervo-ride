@@ -694,6 +694,73 @@
 
 
     <!--==================================================
+            ESTADO DE VERIFICACIÓN MÉDICA
+    ==================================================-->
+
+    <section
+        class="estado-verificacion-medica"
+        id="estadoVerificacionMedica">
+
+        <div class="estado-verificacion-info">
+
+            <div class="estado-verificacion-icono">
+
+                <i class="fa-solid fa-shield-heart"></i>
+
+            </div>
+
+            <div class="estado-verificacion-texto">
+
+                <span>
+                    Estado del expediente
+                </span>
+
+                <strong id="estadoExpedienteTexto">
+                    Pendiente de verificación
+                </strong>
+
+                <p id="estadoExpedienteDescripcion">
+                    La información médica todavía no ha sido revisada
+                    por un administrador.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="estado-verificacion-acciones">
+
+            <span
+                class="badge-verificacion pendiente"
+                id="badgeExpediente">
+
+                <i class="fa-solid fa-clock"></i>
+
+                <span id="badgeExpedienteTexto">
+                    Pendiente
+                </span>
+
+            </span>
+
+
+            <button
+                type="button"
+                class="btn-aprobar-expediente"
+                id="btnAprobarExpediente">
+
+                <i class="fa-solid fa-circle-check"></i>
+
+                Aprobar expediente
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!--==================================================
                     FORMULARIO
     ==================================================-->
 

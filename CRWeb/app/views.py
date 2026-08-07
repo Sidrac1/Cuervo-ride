@@ -5938,6 +5938,23 @@ def api_actualizar_expediente_medico(request, usuario_id):
         info.telefono_contacto = data.get("telefonoEmergencia", "").strip()
         info.observaciones = data.get("observaciones", "").strip()
 
+        info.observaciones = data.get(
+            "observaciones",
+            ""
+        ).strip()
+
+
+        # -------------------------------------------------
+        # ESTADO DE VERIFICACIÓN MÉDICA
+        # -------------------------------------------------
+
+        if "verificado" in data:
+
+            info.verificado = bool(
+                data.get("verificado")
+            )
+
+
         info.full_clean()
         info.save()
 
