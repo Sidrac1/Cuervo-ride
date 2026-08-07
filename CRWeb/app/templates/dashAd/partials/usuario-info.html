@@ -651,423 +651,704 @@
 
 
 
+<!--==================================================
+        PANEL: EXPEDIENTE MÉDICO
+==================================================-->
+
+<section
+    class="usuario-detalle-panel usuario-panel expediente-medico-admin"
+    id="panelMedico"
+    hidden>
+
+    <!--==================================================
+            ENCABEZADO DEL PANEL
+    ==================================================-->
+
+    <header class="usuario-panel-header expediente-panel-header">
+
+        <div>
+
+            <span class="usuario-panel-etiqueta">
+                Información de emergencia
+            </span>
+
+            <h2>
+                Expediente médico del usuario
+            </h2>
+
+            <p>
+                Consulta y actualiza la información médica y de
+                accesibilidad proporcionada por el usuario durante
+                su registro.
+            </p>
+
+        </div>
+
+        <div class="usuario-panel-header-icono medico">
+
+            <i class="fa-solid fa-notes-medical"></i>
+
+        </div>
+
+    </header>
+
+
+    <!--==================================================
+                    FORMULARIO
+    ==================================================-->
+
+    <form
+        id="formMedico"
+        class="usuario-detalle-form expediente-medico-form">
+
+        {% csrf_token %}
+
+
         <!--==================================================
-                PANEL: EXPEDIENTE MÉDICO
+                INFORMACIÓN GENERAL
         ==================================================-->
 
-        <section
-            class="usuario-detalle-panel usuario-panel expediente-medico-admin"
-            id="panelMedico"
-            hidden>
+        <section class="usuario-form-bloque expediente-bloque">
 
-            <!--==============================================
-                    ENCABEZADO DEL PANEL
-            ===============================================-->
-
-            <header class="usuario-panel-header expediente-panel-header">
+            <div class="usuario-form-bloque-header">
 
                 <div>
 
-                    <span class="usuario-panel-etiqueta">
-                        Datos médicos
+                    <span>
+                        Información principal
                     </span>
 
-                    <h2>
-                        Expediente médico del usuario
-                    </h2>
-
-                    <p>
-                        Actualiza los datos que podrían ser necesarios
-                        para brindar asistencia durante un viaje.
-                    </p>
+                    <h3>
+                        Datos médicos generales
+                    </h3>
 
                 </div>
 
-                <div class="usuario-panel-header-icono medico">
+                <i class="fa-solid fa-kit-medical"></i>
 
-                    <i class="fa-solid fa-heart-pulse"></i>
-
-                </div>
-
-            </header>
+            </div>
 
 
-            <!--==============================================
-                        FORMULARIO
-            ===============================================-->
+            <div class="usuario-form-grid">
 
-            <form
-                id="formMedico"
-                class="usuario-detalle-form expediente-medico-form">
+                <!-- DISCAPACIDAD -->
 
-                <!--==========================================
-                        INFORMACIÓN MÉDICA BÁSICA
-                ===========================================-->
+                <div class="usuario-campo campo">
 
-                <section class="usuario-form-bloque expediente-bloque">
+                    <label>
 
-                    <div class="usuario-form-bloque-header">
+                        <i class="fa-solid fa-wheelchair"></i>
 
-                        <div>
+                        ¿Presenta alguna discapacidad?
 
-                            <span>
-                                Información principal
-                            </span>
+                    </label>
 
-                            <h3>
-                                Datos médicos básicos
-                            </h3>
+                    <div class="radio-group expediente-radio-group">
 
-                        </div>
-
-                        <i class="fa-solid fa-kit-medical"></i>
-
-                    </div>
-
-
-                    <div class="usuario-form-grid">
-
-                        <!-- TIPO DE SANGRE -->
-
-                        <div class="usuario-campo campo">
-
-                            <label for="tipoSangre">
-
-                                <i class="fa-solid fa-droplet"></i>
-
-                                Tipo de sangre
-
-                            </label>
-
-                            <select id="tipoSangre">
-
-                                <option value="">
-                                    Seleccione...
-                                </option>
-
-                                <option value="O+">
-                                    O+
-                                </option>
-
-                                <option value="O-">
-                                    O-
-                                </option>
-
-                                <option value="A+">
-                                    A+
-                                </option>
-
-                                <option value="A-">
-                                    A-
-                                </option>
-
-                                <option value="B+">
-                                    B+
-                                </option>
-
-                                <option value="B-">
-                                    B-
-                                </option>
-
-                                <option value="AB+">
-                                    AB+
-                                </option>
-
-                                <option value="AB-">
-                                    AB-
-                                </option>
-
-                            </select>
-
-                        </div>
-
-
-                        <!-- ALERGIAS -->
-
-                        <div class="usuario-campo campo">
-
-                            <label for="alergias">
-
-                                <i class="fa-solid fa-allergies"></i>
-
-                                Alergias
-
-                            </label>
+                        <label for="discapacidadSi">
 
                             <input
-                                id="alergias"
-                                type="text"
-                                placeholder="Ejemplo: penicilina, alimentos o materiales"
-                                autocomplete="off">
-
-                        </div>
-
-                    </div>
-
-                </section>
-
-
-                <!--==========================================
-                        PADECIMIENTOS Y MEDICAMENTOS
-                ===========================================-->
-
-                <section class="usuario-form-bloque expediente-bloque">
-
-                    <div class="usuario-form-bloque-header">
-
-                        <div>
+                                type="radio"
+                                id="discapacidadSi"
+                                name="discapacidad"
+                                value="si">
 
                             <span>
-                                Historial médico
+                                Sí
                             </span>
 
-                            <h3>
-                                Padecimientos y tratamientos
-                            </h3>
-
-                        </div>
-
-                        <i class="fa-solid fa-stethoscope"></i>
-
-                    </div>
+                        </label>
 
 
-                    <div class="usuario-form-grid">
-
-                        <!-- ENFERMEDADES -->
-
-                        <div class="usuario-campo campo usuario-campo-ancho ancho">
-
-                            <label for="enfermedades">
-
-                                <i class="fa-solid fa-heart-crack"></i>
-
-                                Enfermedades o padecimientos
-
-                            </label>
-
-                            <textarea
-                                id="enfermedades"
-                                rows="4"
-                                placeholder="Describe enfermedades, padecimientos o condiciones médicas relevantes..."></textarea>
-
-                            <small>
-                                Registra únicamente información que pueda ser
-                                importante durante una emergencia.
-                            </small>
-
-                        </div>
-
-
-                        <!-- MEDICAMENTOS -->
-
-                        <div class="usuario-campo campo usuario-campo-ancho ancho">
-
-                            <label for="medicamentos">
-
-                                <i class="fa-solid fa-pills"></i>
-
-                                Medicamentos
-
-                            </label>
-
-                            <textarea
-                                id="medicamentos"
-                                rows="4"
-                                placeholder="Indica los medicamentos que utiliza actualmente..."></textarea>
-
-                            <small>
-                                Puedes incluir el nombre del medicamento,
-                                dosis y frecuencia cuando esté disponible.
-                            </small>
-
-                        </div>
-
-                    </div>
-
-                </section>
-
-
-                <!--==========================================
-                        CONTACTO DE EMERGENCIA
-                ===========================================-->
-
-                <section class="usuario-form-bloque expediente-bloque">
-
-                    <div class="usuario-form-bloque-header">
-
-                        <div>
-
-                            <span>
-                                Persona de apoyo
-                            </span>
-
-                            <h3>
-                                Contacto de emergencia
-                            </h3>
-
-                        </div>
-
-                        <i class="fa-solid fa-phone-volume"></i>
-
-                    </div>
-
-
-                    <div class="usuario-form-grid">
-
-                        <!-- NOMBRE DEL CONTACTO -->
-
-                        <div class="usuario-campo campo">
-
-                            <label for="contacto">
-
-                                <i class="fa-solid fa-user-group"></i>
-
-                                Nombre del contacto
-
-                            </label>
+                        <label for="discapacidadNo">
 
                             <input
-                                id="contacto"
-                                type="text"
-                                placeholder="Nombre completo"
-                                autocomplete="off">
-
-                        </div>
-
-
-                        <!-- TELÉFONO -->
-
-                        <div class="usuario-campo campo">
-
-                            <label for="telefonoEmergencia">
-
-                                <i class="fa-solid fa-phone"></i>
-
-                                Teléfono de emergencia
-
-                            </label>
-
-                            <input
-                                id="telefonoEmergencia"
-                                type="tel"
-                                placeholder="Número telefónico"
-                                autocomplete="off">
-
-                        </div>
-
-                    </div>
-
-                </section>
-
-
-                <!--==========================================
-                        OBSERVACIONES
-                ===========================================-->
-
-                <section class="usuario-form-bloque expediente-bloque">
-
-                    <div class="usuario-form-bloque-header">
-
-                        <div>
+                                type="radio"
+                                id="discapacidadNo"
+                                name="discapacidad"
+                                value="no"
+                                checked>
 
                             <span>
-                                Información adicional
+                                No
                             </span>
 
-                            <h3>
-                                Observaciones médicas
-                            </h3>
-
-                        </div>
-
-                        <i class="fa-solid fa-clipboard-medical"></i>
-
-                    </div>
-
-
-                    <div class="usuario-form-grid">
-
-                        <div class="usuario-campo campo usuario-campo-ancho ancho">
-
-                            <label for="observaciones">
-
-                                <i class="fa-solid fa-comment-medical"></i>
-
-                                Observaciones
-
-                            </label>
-
-                            <textarea
-                                id="observaciones"
-                                rows="5"
-                                placeholder="Agrega indicaciones, restricciones o información adicional..."></textarea>
-
-                            <small>
-                                Este espacio puede utilizarse para registrar
-                                indicaciones relevantes que no correspondan
-                                a los campos anteriores.
-                            </small>
-
-                        </div>
-
-                    </div>
-
-                </section>
-
-
-                <!--==========================================
-                        AVISO DE SEGURIDAD
-                ===========================================-->
-
-                <div class="expediente-seguridad-aviso">
-
-                    <div class="expediente-seguridad-icono">
-
-                        <i class="fa-solid fa-shield-heart"></i>
-
-                    </div>
-
-                    <div>
-
-                        <strong>
-                            Información médica confidencial
-                        </strong>
-
-                        <p>
-                            Verifica que los datos sean correctos antes
-                            de guardar. Esta información podría utilizarse
-                            para brindar asistencia durante una emergencia.
-                        </p>
+                        </label>
 
                     </div>
 
                 </div>
 
 
-                <!--==========================================
-                            ACCIONES
-                ===========================================-->
+                <!-- TIPO DE SANGRE -->
 
-                <footer class="usuario-form-acciones acciones-info">
+                <div class="usuario-campo campo">
 
-                    <button
-                        type="submit"
-                        class="btn-guardar-usuario btn-guardar-expediente"
-                        id="guardarExpediente">
+                    <label for="tipoSangre">
 
-                        <i class="fa-solid fa-floppy-disk"></i>
+                        <i class="fa-solid fa-droplet"></i>
 
-                        Guardar expediente
+                        Tipo de sangre
 
-                    </button>
+                    </label>
 
-                </footer>
+                    <select
+                        id="tipoSangre"
+                        name="tipo_sangre">
 
-            </form>
+                        <option value="">
+                            Seleccionar...
+                        </option>
+
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+
+                    </select>
+
+                </div>
+
+            </div>
 
         </section>
 
-    </div>
+
+        <!--==================================================
+                INFORMACIÓN DE DISCAPACIDAD
+        ==================================================-->
+
+        <section
+            class="usuario-form-bloque expediente-bloque"
+            id="datosDiscapacidad">
+
+            <div class="usuario-form-bloque-header">
+
+                <div>
+
+                    <span>
+                        Accesibilidad
+                    </span>
+
+                    <h3>
+                        Información sobre la discapacidad
+                    </h3>
+
+                </div>
+
+                <i class="fa-solid fa-universal-access"></i>
+
+            </div>
+
+
+            <div class="usuario-form-grid">
+
+                <!-- TIPO DE DISCAPACIDAD -->
+
+                <div class="usuario-campo campo">
+
+                    <label for="tipoDiscapacidad">
+
+                        <i class="fa-solid fa-list"></i>
+
+                        Tipo de discapacidad
+
+                    </label>
+
+                    <select
+                        id="tipoDiscapacidad"
+                        name="tipo_discapacidad">
+
+                        <option value="">
+                            Seleccionar...
+                        </option>
+
+                        <option value="visual">
+                            Visual
+                        </option>
+
+                        <option value="auditiva">
+                            Auditiva
+                        </option>
+
+                        <option value="motriz">
+                            Motriz
+                        </option>
+
+                        <option value="intelectual">
+                            Intelectual
+                        </option>
+
+                        <option value="psicosocial">
+                            Psicosocial
+                        </option>
+
+                        <option value="multiple">
+                            Múltiple
+                        </option>
+
+                        <option value="otra">
+                            Otra
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- VEHÍCULO ADAPTADO -->
+
+                <div class="usuario-campo campo">
+
+                    <label>
+
+                        <i class="fa-solid fa-car-side"></i>
+
+                        ¿Requiere vehículo adaptado?
+
+                    </label>
+
+                    <div class="radio-group expediente-radio-group">
+
+                        <label for="vehiculoAdaptadoSi">
+
+                            <input
+                                type="radio"
+                                id="vehiculoAdaptadoSi"
+                                name="vehiculo_adaptado"
+                                value="si">
+
+                            <span>
+                                Sí
+                            </span>
+
+                        </label>
+
+
+                        <label for="vehiculoAdaptadoNo">
+
+                            <input
+                                type="radio"
+                                id="vehiculoAdaptadoNo"
+                                name="vehiculo_adaptado"
+                                value="no"
+                                checked>
+
+                            <span>
+                                No
+                            </span>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CUIDADOS ESPECIALES -->
+
+                <div class="usuario-campo campo usuario-campo-ancho ancho">
+
+                    <label>
+
+                        <i class="fa-solid fa-hand-holding-medical"></i>
+
+                        ¿Requiere cuidados especiales?
+
+                    </label>
+
+                    <div class="radio-group expediente-radio-group">
+
+                        <label for="cuidadosEspecialesSi">
+
+                            <input
+                                type="radio"
+                                id="cuidadosEspecialesSi"
+                                name="cuidados_especiales"
+                                value="si">
+
+                            <span>
+                                Sí
+                            </span>
+
+                        </label>
+
+
+                        <label for="cuidadosEspecialesNo">
+
+                            <input
+                                type="radio"
+                                id="cuidadosEspecialesNo"
+                                name="cuidados_especiales"
+                                value="no"
+                                checked>
+
+                            <span>
+                                No
+                            </span>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!--==================================================
+                    APOYOS UTILIZADOS
+        ==================================================-->
+
+        <section
+            class="usuario-form-bloque expediente-bloque"
+            id="apoyosDiscapacidad">
+
+            <div class="usuario-form-bloque-header">
+
+                <div>
+
+                    <span>
+                        Asistencia personal
+                    </span>
+
+                    <h3>
+                        Apoyos que utiliza
+                    </h3>
+
+                </div>
+
+                <i class="fa-solid fa-person-walking-with-cane"></i>
+
+            </div>
+
+
+            <div class="usuario-form-grid">
+
+                <div class="usuario-campo campo usuario-campo-ancho ancho">
+
+                    <div class="checkbox-grid expediente-checkbox-grid">
+
+                        <label for="usaBaston">
+
+                            <input
+                                type="checkbox"
+                                id="usaBaston"
+                                name="usa_baston">
+
+                            <span>
+                                <i class="fa-solid fa-person-walking-with-cane"></i>
+                                Bastón
+                            </span>
+
+                        </label>
+
+
+                        <label for="usaPerroGuia">
+
+                            <input
+                                type="checkbox"
+                                id="usaPerroGuia"
+                                name="usa_perro_guia">
+
+                            <span>
+                                <i class="fa-solid fa-dog"></i>
+                                Perro guía
+                            </span>
+
+                        </label>
+
+
+                        <label for="usaSillaRuedas">
+
+                            <input
+                                type="checkbox"
+                                id="usaSillaRuedas"
+                                name="usa_silla_ruedas">
+
+                            <span>
+                                <i class="fa-solid fa-wheelchair"></i>
+                                Silla de ruedas
+                            </span>
+
+                        </label>
+
+
+                        <label for="usaAndadera">
+
+                            <input
+                                type="checkbox"
+                                id="usaAndadera"
+                                name="usa_andadera">
+
+                            <span>
+                                <i class="fa-solid fa-person-walking"></i>
+                                Andadera
+                            </span>
+
+                        </label>
+
+
+                        <label for="usaMuletas">
+
+                            <input
+                                type="checkbox"
+                                id="usaMuletas"
+                                name="usa_muletas">
+
+                            <span>
+                                <i class="fa-solid fa-crutch"></i>
+                                Muletas
+                            </span>
+
+                        </label>
+
+
+                        <label for="usaProtesis">
+
+                            <input
+                                type="checkbox"
+                                id="usaProtesis"
+                                name="usa_protesis">
+
+                            <span>
+                                <i class="fa-solid fa-person"></i>
+                                Prótesis
+                            </span>
+
+                        </label>
+
+
+                        <label for="usaOtroApoyo">
+
+                            <input
+                                type="checkbox"
+                                id="usaOtroApoyo">
+
+                            <span>
+                                <i class="fa-solid fa-circle-plus"></i>
+                                Otro apoyo
+                            </span>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+                <!-- OTRO APOYO -->
+
+                <div
+                    class="usuario-campo campo usuario-campo-ancho ancho otro-apoyo-campo"
+                    id="campoOtroApoyo"
+                    hidden>
+
+                    <label for="otroApoyo">
+
+                        <i class="fa-solid fa-pen"></i>
+
+                        Especifique otro apoyo
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="otroApoyo"
+                        name="otro_apoyo"
+                        maxlength="150"
+                        placeholder="Escriba el apoyo que utiliza..."
+                        disabled>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!--==================================================
+                CONTACTO DE EMERGENCIA
+        ==================================================-->
+
+        <section class="usuario-form-bloque expediente-bloque">
+
+            <div class="usuario-form-bloque-header">
+
+                <div>
+
+                    <span>
+                        Persona de apoyo
+                    </span>
+
+                    <h3>
+                        Contacto de emergencia
+                    </h3>
+
+                </div>
+
+                <i class="fa-solid fa-phone-volume"></i>
+
+            </div>
+
+
+            <div class="usuario-form-grid">
+
+                <!-- NOMBRE -->
+
+                <div class="usuario-campo campo">
+
+                    <label for="nombreContacto">
+
+                        <i class="fa-solid fa-user-group"></i>
+
+                        Nombre del contacto
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nombreContacto"
+                        name="nombre_contacto"
+                        maxlength="100"
+                        placeholder="Nombre completo"
+                        autocomplete="off">
+
+                </div>
+
+
+                <!-- TELÉFONO -->
+
+                <div class="usuario-campo campo">
+
+                    <label for="telefonoContacto">
+
+                        <i class="fa-solid fa-phone"></i>
+
+                        Teléfono de emergencia
+
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="telefonoContacto"
+                        name="telefono_contacto"
+                        maxlength="20"
+                        placeholder="Ejemplo: 6641234567"
+                        autocomplete="off">
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!--==================================================
+                    OBSERVACIONES
+        ==================================================-->
+
+        <section class="usuario-form-bloque expediente-bloque">
+
+            <div class="usuario-form-bloque-header">
+
+                <div>
+
+                    <span>
+                        Información adicional
+                    </span>
+
+                    <h3>
+                        Observaciones
+                    </h3>
+
+                </div>
+
+                <i class="fa-solid fa-note-sticky"></i>
+
+            </div>
+
+
+            <div class="usuario-form-grid">
+
+                <div class="usuario-campo campo usuario-campo-ancho ancho">
+
+                    <label for="observaciones">
+
+                        <i class="fa-solid fa-comment-medical"></i>
+
+                        Observaciones médicas
+
+                    </label>
+
+                    <textarea
+                        id="observaciones"
+                        name="observaciones"
+                        rows="5"
+                        maxlength="500"
+                        placeholder="Información adicional proporcionada por el usuario..."></textarea>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!--==================================================
+                    AVISO
+        ==================================================-->
+
+        <div class="expediente-seguridad-aviso">
+
+            <div class="expediente-seguridad-icono">
+
+                <i class="fa-solid fa-shield-heart"></i>
+
+            </div>
+
+            <div>
+
+                <strong>
+                    Información médica confidencial
+                </strong>
+
+                <p>
+                    Estos datos fueron proporcionados por el usuario
+                    durante su registro. Verifica cuidadosamente cualquier
+                    cambio antes de guardar.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!--==================================================
+                    ACCIONES
+        ==================================================-->
+
+        <footer class="usuario-form-acciones acciones-info">
+
+            <button
+                type="submit"
+                class="btn-guardar-usuario btn-guardar-expediente"
+                id="guardarExpediente">
+
+                <i class="fa-solid fa-floppy-disk"></i>
+
+                Guardar expediente
+
+            </button>
+
+        </footer>
+
+    </form>
 
 </section>

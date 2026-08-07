@@ -1,4 +1,54 @@
 /*==================================================
+            OBTENER TOKEN CSRF
+==================================================*/
+
+function obtenerCSRFToken() {
+
+    const inputToken =
+        document.querySelector(
+            "[name=csrfmiddlewaretoken]"
+        );
+
+    if (inputToken) {
+
+        return inputToken.value;
+
+    }
+
+
+    const cookies =
+        document.cookie.split(";");
+
+
+    for (const cookie of cookies) {
+
+        const cookieLimpia =
+            cookie.trim();
+
+        if (
+            cookieLimpia.startsWith(
+                "csrftoken="
+            )
+        ) {
+
+            return decodeURIComponent(
+
+                cookieLimpia.substring(
+                    "csrftoken=".length
+                )
+
+            );
+
+        }
+
+    }
+
+
+    return "";
+
+}
+
+/*==================================================
         USUARIO INFO + VERIFICACIÓN + EXPEDIENTE
 ==================================================*/
 
@@ -161,6 +211,324 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
 
     }
 
+    /*==================================================
+            ASIGNAR ESTADO A RADIO
+    ==================================================*/
+
+    function asignarRadio(
+        nombre,
+        valor
+    ) {
+
+        const valorNormalizado = (
+            valor === true
+            || valor === "true"
+            || valor === "si"
+            || valor === "sí"
+            || valor === 1
+            || valor === "1"
+        )
+            ? "si"
+            : "no";
+
+
+        const radio = document.querySelector(
+            `input[name="${nombre}"][value="${valorNormalizado}"]`
+        );
+
+
+        if (radio) {
+
+            radio.checked = true;
+
+        }
+
+    }
+
+
+    /*==================================================
+            ASIGNAR ESTADO A CHECKBOX
+    ==================================================*/
+
+    function asignarCheckbox(
+        id,
+        valor
+    ) {
+
+        const checkbox =
+            document.getElementById(id);
+
+
+        if (!checkbox) {
+
+            return;
+
+        }
+
+
+        checkbox.checked = (
+            valor === true
+            || valor === "true"
+            || valor === "si"
+            || valor === "sí"
+            || valor === 1
+            || valor === "1"
+        );
+
+    }
+
+
+    /*==================================================
+            OBTENER VALOR BOOLEANO DE RADIO
+    ==================================================*/
+
+    function obtenerRadioBooleano(
+        nombre
+    ) {
+
+        const seleccionado =
+            document.querySelector(
+                `input[name="${nombre}"]:checked`
+            );
+
+
+        return (
+            seleccionado?.value === "si"
+        );
+
+    }
+
+
+    /*==================================================
+            OBTENER CHECKBOX
+    ==================================================*/
+
+    function obtenerCheckbox(
+        id
+    ) {
+
+        return Boolean(
+            document.getElementById(id)
+                ?.checked
+        );
+
+    }
+
+    /*==================================================
+        CONTROLES DEL EXPEDIENTE MÉDICO
+    ==================================================*/
+
+    const discapacidadSi =
+        document.getElementById(
+            "discapacidadSi"
+        );
+
+    const discapacidadNo =
+        document.getElementById(
+            "discapacidadNo"
+        );
+
+    const datosDiscapacidad =
+        document.getElementById(
+            "datosDiscapacidad"
+        );
+
+    const apoyosDiscapacidad =
+        document.getElementById(
+            "apoyosDiscapacidad"
+        );
+
+    const usaOtroApoyo =
+        document.getElementById(
+            "usaOtroApoyo"
+        );
+
+    const campoOtroApoyo =
+        document.getElementById(
+            "campoOtroApoyo"
+        );
+
+    const otroApoyo =
+        document.getElementById(
+            "otroApoyo"
+        );
+
+
+    /*==================================================
+        ACTUALIZAR SECCIONES DE DISCAPACIDAD
+    ==================================================*/
+
+    function actualizarSeccionesDiscapacidad() {
+
+        const tieneDiscapacidad =
+            discapacidadSi?.checked === true;
+
+
+        datosDiscapacidad?.classList.toggle(
+            "seccion-inactiva",
+            !tieneDiscapacidad
+        );
+
+
+        apoyosDiscapacidad?.classList.toggle(
+            "seccion-inactiva",
+            !tieneDiscapacidad
+        );
+
+
+        const controles = [
+
+            document.getElementById(
+                "tipoDiscapacidad"
+            ),
+
+            document.getElementById(
+                "vehiculoAdaptadoSi"
+            ),
+
+            document.getElementById(
+                "vehiculoAdaptadoNo"
+            ),
+
+            document.getElementById(
+                "cuidadosEspecialesSi"
+            ),
+
+            document.getElementById(
+                "cuidadosEspecialesNo"
+            ),
+
+            document.getElementById(
+                "usaBaston"
+            ),
+
+            document.getElementById(
+                "usaPerroGuia"
+            ),
+
+            document.getElementById(
+                "usaSillaRuedas"
+            ),
+
+            document.getElementById(
+                "usaAndadera"
+            ),
+
+            document.getElementById(
+                "usaMuletas"
+            ),
+
+            document.getElementById(
+                "usaProtesis"
+            ),
+
+            usaOtroApoyo,
+
+            otroApoyo,
+
+        ];
+
+
+        controles.forEach(
+            function (control) {
+
+                if (!control) {
+
+                    return;
+
+                }
+
+
+                if (control === otroApoyo) {
+
+                    control.disabled = (
+                        !tieneDiscapacidad
+                        || !usaOtroApoyo?.checked
+                    );
+
+                } else {
+
+                    control.disabled =
+                        !tieneDiscapacidad;
+
+                }
+
+            }
+        );
+
+
+        if (!tieneDiscapacidad) {
+
+            if (usaOtroApoyo) {
+
+                usaOtroApoyo.checked =
+                    false;
+
+            }
+
+
+            actualizarCampoOtroApoyo();
+
+        }
+
+    }
+
+
+    /*==================================================
+            MOSTRAR CAMPO OTRO APOYO
+    ==================================================*/
+
+    function actualizarCampoOtroApoyo() {
+
+        const mostrar = Boolean(
+
+            discapacidadSi?.checked
+            && usaOtroApoyo?.checked
+
+        );
+
+
+        if (campoOtroApoyo) {
+
+            campoOtroApoyo.hidden =
+                !mostrar;
+
+        }
+
+
+        if (otroApoyo) {
+
+            otroApoyo.disabled =
+                !mostrar;
+
+
+            if (!mostrar) {
+
+                otroApoyo.value = "";
+
+            }
+
+        }
+
+    }
+
+
+    discapacidadSi?.addEventListener(
+        "change",
+        actualizarSeccionesDiscapacidad
+    );
+
+
+    discapacidadNo?.addEventListener(
+        "change",
+        actualizarSeccionesDiscapacidad
+    );
+
+
+    usaOtroApoyo?.addEventListener(
+        "change",
+        actualizarCampoOtroApoyo
+    );
 
     /*==================================================
                     ESCAPAR HTML
@@ -1136,7 +1504,7 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
     }
 
 
-    /*==================================================
+        /*==================================================
                 CARGAR DATOS MÉDICOS
     ==================================================*/
 
@@ -1144,16 +1512,9 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
         forzarRecarga = false
     ) {
 
-        /*
-        Evitamos consultar la API cada vez que
-        el usuario cambia de pestaña.
-        */
-
         if (
-
             expedienteCargado
             && !forzarRecarga
-
         ) {
 
             return;
@@ -1166,10 +1527,8 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
             `/api/admin/usuarios/${usuarioId}/expediente-medico/`,
 
             {
-
                 credentials:
                     "same-origin",
-
             }
 
         );
@@ -1201,70 +1560,137 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
 
 
         /*==================================================
-                LLENAR FORMULARIO MÉDICO
+                    INFORMACIÓN GENERAL
+        ==================================================*/
+
+        asignarRadio(
+            "discapacidad",
+            expediente.discapacidad
+        );
+
+
+        asignarValor(
+            "tipoSangre",
+            expediente.tipo_sangre
+        );
+
+
+        /*==================================================
+                INFORMACIÓN DE DISCAPACIDAD
         ==================================================*/
 
         asignarValor(
-
-            "tipoSangre",
-
-            expediente.tipo_sangre
-
+            "tipoDiscapacidad",
+            expediente.tipo_discapacidad
         );
 
 
-        asignarValor(
-
-            "alergias",
-
-            expediente.alergias
-
+        asignarRadio(
+            "vehiculo_adaptado",
+            expediente.vehiculo_adaptado
         );
 
 
-        asignarValor(
-
-            "enfermedades",
-
-            expediente.condiciones_medicas
-
+        asignarRadio(
+            "cuidados_especiales",
+            expediente.cuidados_especiales
         );
 
 
-        asignarValor(
+        /*==================================================
+                    APOYOS UTILIZADOS
+        ==================================================*/
 
-            "medicamentos",
-
-            expediente.medicamentos
-
+        asignarCheckbox(
+            "usaBaston",
+            expediente.usa_baston
         );
 
 
+        asignarCheckbox(
+            "usaPerroGuia",
+            expediente.usa_perro_guia
+        );
+
+
+        asignarCheckbox(
+            "usaSillaRuedas",
+            expediente.usa_silla_ruedas
+        );
+
+
+        asignarCheckbox(
+            "usaAndadera",
+            expediente.usa_andadera
+        );
+
+
+        asignarCheckbox(
+            "usaMuletas",
+            expediente.usa_muletas
+        );
+
+
+        asignarCheckbox(
+            "usaProtesis",
+            expediente.usa_protesis
+        );
+
+
+        const tieneOtroApoyo = Boolean(
+            String(
+                expediente.otro_apoyo || ""
+            ).trim()
+        );
+
+
+        if (usaOtroApoyo) {
+
+            usaOtroApoyo.checked =
+                tieneOtroApoyo;
+
+        }
+
+
         asignarValor(
+            "otroApoyo",
+            expediente.otro_apoyo
+        );
 
-            "contacto",
 
+        /*==================================================
+                CONTACTO DE EMERGENCIA
+        ==================================================*/
+
+        asignarValor(
+            "nombreContacto",
             expediente.nombre_contacto
-
         );
 
 
         asignarValor(
-
-            "telefonoEmergencia",
-
+            "telefonoContacto",
             expediente.telefono_contacto
-
         );
 
+
+        /*==================================================
+                    OBSERVACIONES
+        ==================================================*/
 
         asignarValor(
-
             "observaciones",
-
             expediente.observaciones
-
         );
+
+
+        /*==================================================
+                ACTUALIZAR ESTADO VISUAL
+        ==================================================*/
+
+        actualizarSeccionesDiscapacidad();
+
+        actualizarCampoOtroApoyo();
 
 
         expedienteCargado =
@@ -1885,7 +2311,17 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
             evento.preventDefault();
 
 
+            const tieneDiscapacidad =
+                obtenerRadioBooleano(
+                    "discapacidad"
+                );
+
+
             const payload = {
+
+                discapacidad:
+                    tieneDiscapacidad,
+
 
                 tipo_sangre:
                     document
@@ -1896,50 +2332,111 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
                     || "",
 
 
-                alergias:
+                tipo_discapacidad:
+                    tieneDiscapacidad
+                        ? (
+                            document
+                                .getElementById(
+                                    "tipoDiscapacidad"
+                                )
+                                ?.value
+                            || ""
+                        )
+                        : "",
+
+
+                vehiculo_adaptado:
+                    tieneDiscapacidad
+                        ? obtenerRadioBooleano(
+                            "vehiculo_adaptado"
+                        )
+                        : false,
+
+
+                cuidados_especiales:
+                    tieneDiscapacidad
+                        ? obtenerRadioBooleano(
+                            "cuidados_especiales"
+                        )
+                        : false,
+
+
+                usa_baston:
+                    tieneDiscapacidad
+                        ? obtenerCheckbox(
+                            "usaBaston"
+                        )
+                        : false,
+
+
+                usa_perro_guia:
+                    tieneDiscapacidad
+                        ? obtenerCheckbox(
+                            "usaPerroGuia"
+                        )
+                        : false,
+
+
+                usa_silla_ruedas:
+                    tieneDiscapacidad
+                        ? obtenerCheckbox(
+                            "usaSillaRuedas"
+                        )
+                        : false,
+
+
+                usa_andadera:
+                    tieneDiscapacidad
+                        ? obtenerCheckbox(
+                            "usaAndadera"
+                        )
+                        : false,
+
+
+                usa_muletas:
+                    tieneDiscapacidad
+                        ? obtenerCheckbox(
+                            "usaMuletas"
+                        )
+                        : false,
+
+
+                usa_protesis:
+                    tieneDiscapacidad
+                        ? obtenerCheckbox(
+                            "usaProtesis"
+                        )
+                        : false,
+
+
+                otro_apoyo:
+                    (
+                        tieneDiscapacidad
+                        && usaOtroApoyo?.checked
+                    )
+                        ? (
+                            otroApoyo
+                                ?.value
+                                .trim()
+                            || ""
+                        )
+                        : "",
+
+
+                nombre_contacto:
                     document
                         .getElementById(
-                            "alergias"
+                            "nombreContacto"
                         )
                         ?.value
                         .trim()
                     || "",
 
 
-                condiciones_medicas:
+                telefono_contacto:
                     document
                         .getElementById(
-                            "enfermedades"
-                        )
-                        ?.value
-                        .trim()
-                    || "",
-
-
-                medicamentos:
-                    document
-                        .getElementById(
-                            "medicamentos"
-                        )
-                        ?.value
-                        .trim()
-                    || "",
-
-
-                contacto:
-                    document
-                        .getElementById(
-                            "contacto"
-                        )
-                        ?.value
-                        .trim()
-                    || "",
-
-
-                telefonoEmergencia:
-                    document
-                        .getElementById(
-                            "telefonoEmergencia"
+                            "telefonoContacto"
                         )
                         ?.value
                         .trim()
@@ -2043,6 +2540,11 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
                 );
 
 
+                await cargarDatosMedicos(
+                    true
+                );
+
+
             } catch (error) {
 
                 console.error(
@@ -2055,11 +2557,9 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
 
 
                 alert(
-
                     normalizarError(
                         error
                     )
-
                 );
 
 

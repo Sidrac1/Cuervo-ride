@@ -2252,3 +2252,906 @@ textarea:focus-visible{
 
 }
 
+/*==================================================
+        EXPEDIENTE MÉDICO — ACCESIBILIDAD
+    Complemento para el nuevo panel médico
+==================================================*/
+
+
+/*==================================================
+            VARIABLES DEL PANEL MÉDICO
+==================================================*/
+
+.expediente-medico-admin{
+
+    --medico-celeste:#59d8e8;
+    --medico-celeste-suave:rgba(89,216,232,.11);
+
+    --medico-verde:#98ec63;
+    --medico-verde-suave:rgba(152,236,99,.11);
+
+    --medico-azul:#5eb1ff;
+    --medico-azul-suave:rgba(94,177,255,.11);
+
+    --medico-amarillo:#ffc34d;
+    --medico-amarillo-suave:rgba(255,195,77,.11);
+
+    --medico-rojo:#ff7080;
+    --medico-rojo-suave:rgba(255,112,128,.11);
+
+}
+
+
+/*==================================================
+            ENCABEZADO DEL PANEL MÉDICO
+==================================================*/
+
+.expediente-panel-header{
+
+    background:
+
+        radial-gradient(
+            circle at 94% 10%,
+            rgba(89,216,232,.09),
+            transparent 210px
+        ),
+
+        linear-gradient(
+            145deg,
+            rgba(89,216,232,.025),
+            transparent 48%
+        ),
+
+        rgba(10,27,45,.55);
+
+}
+
+.expediente-panel-header
+.usuario-panel-etiqueta{
+
+    color:
+        var(--medico-celeste);
+
+}
+
+.usuario-panel-header-icono.medico{
+
+    border-color:
+        rgba(89,216,232,.20);
+
+    background:
+        var(--medico-celeste-suave);
+
+    color:
+        var(--medico-celeste);
+
+}
+
+
+/*==================================================
+            FORMULARIO MÉDICO
+==================================================*/
+
+.expediente-medico-form{
+
+    gap:18px;
+
+}
+
+.expediente-bloque{
+
+    position:relative;
+
+    transition:
+
+        transform .22s ease,
+        border-color .22s ease,
+        background .22s ease,
+        box-shadow .22s ease;
+
+}
+
+.expediente-bloque:hover{
+
+    transform:
+        translateY(-2px);
+
+    border-color:
+        rgba(89,216,232,.14);
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(89,216,232,.025),
+            transparent
+        ),
+
+        rgba(6,18,31,.46);
+
+    box-shadow:
+        0 15px 30px
+        rgba(0,0,0,.12);
+
+}
+
+.expediente-bloque
+.usuario-form-bloque-header > i{
+
+    border-color:
+        rgba(89,216,232,.17);
+
+    background:
+        var(--medico-celeste-suave);
+
+    color:
+        var(--medico-celeste);
+
+}
+
+
+/*==================================================
+        ETIQUETAS DE CAMPOS MÉDICOS
+==================================================*/
+
+.expediente-medico-admin
+.usuario-campo > label{
+
+    min-height:20px;
+
+}
+
+.expediente-medico-admin
+.usuario-campo > label > i{
+
+    color:
+        var(--medico-celeste);
+
+}
+
+
+/*==================================================
+        CAMPOS DEL EXPEDIENTE MÉDICO
+==================================================*/
+
+.expediente-medico-admin
+.usuario-campo input[type="text"],
+.expediente-medico-admin
+.usuario-campo input[type="tel"],
+.expediente-medico-admin
+.usuario-campo select,
+.expediente-medico-admin
+.usuario-campo textarea{
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(89,216,232,.012),
+            transparent
+        ),
+
+        rgba(5,17,29,.72);
+
+}
+
+.expediente-medico-admin
+.usuario-campo input[type="text"]:focus,
+.expediente-medico-admin
+.usuario-campo input[type="tel"]:focus,
+.expediente-medico-admin
+.usuario-campo select:focus,
+.expediente-medico-admin
+.usuario-campo textarea:focus{
+
+    border-color:
+        rgba(89,216,232,.42);
+
+    box-shadow:
+        0 0 0 4px
+        rgba(89,216,232,.075);
+
+}
+
+.expediente-medico-admin
+.usuario-campo textarea{
+
+    min-height:140px;
+
+    line-height:1.65;
+
+}
+
+
+/*==================================================
+                RADIO GROUP
+==================================================*/
+
+.expediente-radio-group{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0,1fr)
+        );
+
+    gap:10px;
+
+    width:100%;
+
+}
+
+.expediente-radio-group > label{
+
+    position:relative;
+
+    display:flex;
+    align-items:center;
+
+    min-height:46px;
+
+    padding:0;
+
+    cursor:pointer;
+
+}
+
+.expediente-radio-group
+input[type="radio"]{
+
+    position:absolute;
+
+    width:1px;
+    height:1px;
+
+    margin:0;
+
+    opacity:0;
+
+    pointer-events:none;
+
+}
+
+.expediente-radio-group
+label > span{
+
+    width:100%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    min-height:46px;
+
+    padding:10px 14px;
+
+    border:1px solid
+        var(--detalle-borde);
+
+    border-radius:
+        var(--detalle-radio-sm);
+
+    background:
+        rgba(5,17,29,.72);
+
+    color:
+        var(--detalle-texto-secundario);
+
+    font-size:10px;
+    font-weight:800;
+
+    transition:
+
+        transform .18s ease,
+        border-color .18s ease,
+        background .18s ease,
+        color .18s ease,
+        box-shadow .18s ease;
+
+}
+
+.expediente-radio-group
+label:hover > span{
+
+    transform:
+        translateY(-1px);
+
+    border-color:
+        rgba(89,216,232,.25);
+
+    background:
+        rgba(89,216,232,.055);
+
+    color:
+        var(--detalle-texto);
+
+}
+
+.expediente-radio-group
+input[type="radio"]:checked + span{
+
+    border-color:
+        rgba(152,236,99,.40);
+
+    background:
+
+        linear-gradient(
+            135deg,
+            rgba(152,236,99,.17),
+            rgba(152,236,99,.055)
+        );
+
+    color:
+        var(--medico-verde);
+
+    box-shadow:
+
+        inset 0 0 0 1px
+        rgba(152,236,99,.08),
+
+        0 8px 20px
+        rgba(152,236,99,.07);
+
+}
+
+.expediente-radio-group
+input[type="radio"]:focus-visible + span{
+
+    outline:2px solid
+        var(--medico-celeste);
+
+    outline-offset:3px;
+
+}
+
+
+/*==================================================
+            SECCIÓN DE DISCAPACIDAD
+==================================================*/
+
+#datosDiscapacidad,
+#apoyosDiscapacidad{
+
+    transition:
+
+        opacity .22s ease,
+        transform .22s ease,
+        border-color .22s ease;
+
+}
+
+#datosDiscapacidad.seccion-inactiva,
+#apoyosDiscapacidad.seccion-inactiva{
+
+    opacity:.48;
+
+    transform:
+        scale(.995);
+
+    pointer-events:none;
+
+}
+
+#datosDiscapacidad.seccion-inactiva::after,
+#apoyosDiscapacidad.seccion-inactiva::after{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    border-radius:inherit;
+
+    background:
+        rgba(4,14,25,.22);
+
+    pointer-events:none;
+
+}
+
+
+/*==================================================
+                CHECKBOX GRID
+==================================================*/
+
+.expediente-checkbox-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(0,1fr)
+        );
+
+    gap:11px;
+
+    width:100%;
+
+}
+
+.expediente-checkbox-grid > label{
+
+    position:relative;
+
+    display:block;
+
+    min-width:0;
+
+    cursor:pointer;
+
+}
+
+.expediente-checkbox-grid
+input[type="checkbox"]{
+
+    position:absolute;
+
+    width:1px;
+    height:1px;
+
+    margin:0;
+
+    opacity:0;
+
+    pointer-events:none;
+
+}
+
+.expediente-checkbox-grid
+label > span{
+
+    width:100%;
+
+    display:flex;
+    align-items:center;
+    justify-content:flex-start;
+
+    gap:9px;
+
+    min-height:52px;
+
+    padding:11px 13px;
+
+    border:1px solid
+        var(--detalle-borde);
+
+    border-radius:13px;
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.018),
+            transparent
+        ),
+
+        rgba(5,17,29,.72);
+
+    color:
+        var(--detalle-texto-secundario);
+
+    font-size:9px;
+    font-weight:800;
+
+    line-height:1.35;
+
+    transition:
+
+        transform .18s ease,
+        border-color .18s ease,
+        background .18s ease,
+        color .18s ease,
+        box-shadow .18s ease;
+
+}
+
+.expediente-checkbox-grid
+label > span i{
+
+    flex:0 0 auto;
+
+    display:grid;
+    place-items:center;
+
+    width:29px;
+    height:29px;
+
+    border:1px solid
+        var(--detalle-borde);
+
+    border-radius:9px;
+
+    background:
+        rgba(255,255,255,.035);
+
+    color:
+        var(--detalle-texto-suave);
+
+    font-size:11px;
+
+    transition:
+
+        border-color .18s ease,
+        background .18s ease,
+        color .18s ease;
+
+}
+
+.expediente-checkbox-grid
+label:hover > span{
+
+    transform:
+        translateY(-2px);
+
+    border-color:
+        rgba(89,216,232,.23);
+
+    background:
+        rgba(89,216,232,.045);
+
+    color:
+        var(--detalle-texto);
+
+}
+
+.expediente-checkbox-grid
+input[type="checkbox"]:checked + span{
+
+    border-color:
+        rgba(152,236,99,.35);
+
+    background:
+
+        linear-gradient(
+            135deg,
+            rgba(152,236,99,.14),
+            rgba(152,236,99,.035)
+        );
+
+    color:
+        var(--medico-verde);
+
+    box-shadow:
+        0 10px 22px
+        rgba(152,236,99,.07);
+
+}
+
+.expediente-checkbox-grid
+input[type="checkbox"]:checked + span i{
+
+    border-color:
+        rgba(152,236,99,.25);
+
+    background:
+        var(--medico-verde-suave);
+
+    color:
+        var(--medico-verde);
+
+}
+
+.expediente-checkbox-grid
+input[type="checkbox"]:focus-visible + span{
+
+    outline:2px solid
+        var(--medico-celeste);
+
+    outline-offset:3px;
+
+}
+
+
+/*==================================================
+                CAMPO OTRO APOYO
+==================================================*/
+
+.otro-apoyo-campo{
+
+    position:relative;
+
+    padding-top:4px;
+
+    animation:
+        mostrarOtroApoyo .25s ease both;
+
+}
+
+.otro-apoyo-campo[hidden]{
+
+    display:none !important;
+
+}
+
+.otro-apoyo-campo::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:-4px;
+    left:0;
+
+    width:48px;
+    height:2px;
+
+    border-radius:999px;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--medico-celeste),
+            transparent
+        );
+
+}
+
+.otro-apoyo-campo input:disabled{
+
+    cursor:not-allowed;
+
+    opacity:.45;
+
+}
+
+
+/*==================================================
+        AVISO DE INFORMACIÓN CONFIDENCIAL
+==================================================*/
+
+.expediente-seguridad-aviso{
+
+    display:flex;
+    align-items:flex-start;
+
+    gap:13px;
+
+    padding:16px;
+
+    border:1px solid
+        rgba(89,216,232,.16);
+
+    border-radius:16px;
+
+    background:
+
+        radial-gradient(
+            circle at top left,
+            rgba(89,216,232,.08),
+            transparent 170px
+        ),
+
+        linear-gradient(
+            145deg,
+            rgba(89,216,232,.045),
+            rgba(152,236,99,.018)
+        ),
+
+        rgba(7,20,34,.56);
+
+}
+
+.expediente-seguridad-icono{
+
+    flex:0 0 auto;
+
+    display:grid;
+    place-items:center;
+
+    width:45px;
+    height:45px;
+
+    border:1px solid
+        rgba(89,216,232,.20);
+
+    border-radius:14px;
+
+    background:
+        var(--medico-celeste-suave);
+
+    color:
+        var(--medico-celeste);
+
+    font-size:17px;
+
+}
+
+.expediente-seguridad-aviso > div:last-child{
+
+    min-width:0;
+
+}
+
+.expediente-seguridad-aviso strong{
+
+    display:block;
+
+    margin-bottom:5px;
+
+    color:
+        var(--detalle-texto);
+
+    font-size:11px;
+    font-weight:800;
+
+}
+
+.expediente-seguridad-aviso p{
+
+    margin:0;
+
+    color:
+        var(--detalle-texto-secundario);
+
+    font-size:9px;
+    line-height:1.65;
+
+}
+
+
+/*==================================================
+            BOTÓN GUARDAR EXPEDIENTE
+==================================================*/
+
+.btn-guardar-expediente{
+
+    min-width:170px;
+
+    border-color:
+        rgba(89,216,232,.25);
+
+    background:
+
+        linear-gradient(
+            135deg,
+            var(--medico-celeste),
+            #42bdce
+        );
+
+    color:#071824;
+
+    box-shadow:
+        0 11px 25px
+        rgba(66,189,206,.17);
+
+}
+
+.btn-guardar-expediente:hover{
+
+    box-shadow:
+        0 15px 31px
+        rgba(66,189,206,.25);
+
+}
+
+
+/*==================================================
+            CAMPOS DESHABILITADOS
+==================================================*/
+
+.expediente-medico-admin
+input:disabled,
+.expediente-medico-admin
+select:disabled,
+.expediente-medico-admin
+textarea:disabled{
+
+    cursor:not-allowed;
+
+    opacity:.52;
+
+    background:
+        rgba(5,17,29,.45);
+
+}
+
+
+/*==================================================
+                ANIMACIONES
+==================================================*/
+
+@keyframes mostrarOtroApoyo{
+
+    from{
+
+        opacity:0;
+
+        transform:
+            translateY(-8px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:
+            translateY(0);
+
+    }
+
+}
+
+
+/*==================================================
+                RESPONSIVE
+==================================================*/
+
+@media(max-width:1100px){
+
+    .expediente-checkbox-grid{
+
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0,1fr)
+            );
+
+    }
+
+}
+
+
+@media(max-width:650px){
+
+    .expediente-radio-group{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .expediente-checkbox-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .expediente-checkbox-grid
+    label > span{
+
+        min-height:48px;
+
+    }
+
+    .expediente-seguridad-aviso{
+
+        padding:14px;
+
+    }
+
+    .expediente-seguridad-icono{
+
+        width:40px;
+        height:40px;
+
+        border-radius:12px;
+
+        font-size:15px;
+
+    }
+
+    .btn-guardar-expediente{
+
+        width:100%;
+
+    }
+
+}
+
+
+@media(max-width:430px){
+
+    .expediente-seguridad-aviso{
+
+        align-items:center;
+        flex-direction:column;
+
+        text-align:center;
+
+    }
+
+}
