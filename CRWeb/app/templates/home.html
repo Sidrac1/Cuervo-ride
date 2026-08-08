@@ -1,108 +1,215 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
     <meta charset="UTF-8">
 
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
     <title>Cuervo Ride</title>
+
+
+    <!--==================================================
+                        FONT AWESOME
+    ==================================================-->
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+
+    <!--==================================================
+                            CSS
+    ==================================================-->
 
     <link
         rel="stylesheet"
         href="{% static 'css/home.css' %}">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0">
 </head>
+
 
 <body>
 
+
+<!--==================================================
+                        NAVBAR
+==================================================-->
+
 <header class="navbar">
 
-    <!-- Logo -->
+    <!-- LOGO -->
+
     <div class="nav-left">
 
         <a
             href="{% url 'home' %}"
-            class="logo-link">
+            class="logo-link"
+            aria-label="Ir al inicio">
 
-            <div class="logo"></div>
+            <img
+                src="{% static 'img/LMST.png' %}"
+                class="logo"
+                alt="Cuervo Ride">
 
         </a>
 
     </div>
 
 
-    <!-- Navegación -->
-    <nav class="nav-links">
+    <!-- NAVEGACIÓN -->
+
+    <nav
+        class="nav-links"
+        aria-label="Navegación principal">
+
 
         {% if user.is_authenticated %}
 
-            <!-- PASAJERO -->
+
+            <!--==========================================
+                        PASAJERO
+            ===========================================-->
+
             {% if user.es_pasajero %}
 
                 <a href="{% url 'agendarviaje' %}">
-                    Agendar viaje
+
+                    <i class="fa-solid fa-magnifying-glass"></i>
+
+                    Buscar viajes
+
                 </a>
+
 
                 <a href="{% url 'mis_viajes_pasajero' %}">
+
+                    <i class="fa-solid fa-route"></i>
+
                     Mis viajes
+
                 </a>
 
+
                 <a href="{% url 'sobrenosotros' %}">
+
+                    <i class="fa-regular fa-circle-question"></i>
+
                     Nosotros
+
                 </a>
 
             {% endif %}
 
 
-            <!-- CONDUCTOR -->
+            <!--==========================================
+                        CONDUCTOR
+            ===========================================-->
+
             {% if user.es_conductor %}
 
                 <a href="{% url 'publicar_viaje' %}">
+
+                    <i class="fa-solid fa-circle-plus"></i>
+
                     Publicar viaje
+
                 </a>
+
 
                 <a href="{% url 'mis_viajes_conductor' %}">
+
+                    <i class="fa-solid fa-route"></i>
+
                     Mis viajes
+
                 </a>
 
+
                 <a href="{% url 'sobrenosotros' %}">
+
+                    <i class="fa-regular fa-circle-question"></i>
+
                     Nosotros
+
                 </a>
 
             {% endif %}
 
 
-            <!-- ADMINISTRADOR -->
+            <!--==========================================
+                        ADMINISTRADOR
+            ===========================================-->
+
             {% if user.es_administrador %}
 
                 <a href="{% url 'index' %}">
+
+                    <i class="fa-solid fa-chart-line"></i>
+
                     Panel
+
                 </a>
 
+
                 <a href="{% url 'panel_admin' %}">
+
+                    <i class="fa-solid fa-users"></i>
+
                     Usuarios
+
                 </a>
 
             {% endif %}
 
+
         {% else %}
 
-            <a href="{% url 'login' %}">
-                Iniciar sesión
+
+            <!--==========================================
+                    USUARIO NO AUTENTICADO
+            ===========================================-->
+
+            <a
+                href="{% url 'sobrenosotros' %}"
+                class="nav-link-secundario">
+
+                Nosotros
+
             </a>
 
-            <a href="{% url 'register' %}">
-                Registrarse
+
+            <a
+                href="{% url 'login' %}">
+
+                Iniciar sesión
+
             </a>
+
+
+            <a
+                href="{% url 'register' %}"
+                class="nav-register">
+
+                Registrarse
+
+            </a>
+
 
         {% endif %}
 
     </nav>
 
 
-    <!-- Perfil -->
+    <!--==================================================
+                        PERFIL
+    ==================================================-->
+
     <div class="profile">
 
         {% if user.is_authenticated %}
@@ -114,6 +221,7 @@
                 aria-label="Abrir menú de usuario"
                 aria-expanded="false"
                 aria-controls="profileMenu">
+
 
                 {% if user.foto %}
 
@@ -131,14 +239,18 @@
 
                 {% endif %}
 
+
                 <span class="profile-arrow">
-                    ▾
+
+                    <i class="fa-solid fa-chevron-down"></i>
+
                 </span>
 
             </button>
 
 
-            <!-- Menú desplegable -->
+            <!-- MENÚ DESPLEGABLE -->
+
             <div
                 class="profile-menu"
                 id="profileMenu"
@@ -146,16 +258,30 @@
 
                 <div class="profile-menu-header">
 
+                    <span class="profile-menu-label">
+                        Cuenta
+                    </span>
+
+
                     <strong>
+
                         {% if user.get_full_name %}
+
                             {{ user.get_full_name }}
+
                         {% else %}
+
                             {{ user.email }}
+
                         {% endif %}
+
                     </strong>
 
-                    <span>
+
+                    <span class="profile-role">
+
                         {{ user.get_rol_display|default:user.rol }}
+
                     </span>
 
                 </div>
@@ -166,7 +292,9 @@
                     class="profile-menu-item">
 
                     <span class="profile-menu-icon">
-                        👤
+
+                        <i class="fa-solid fa-user"></i>
+
                     </span>
 
                     <span>
@@ -183,12 +311,15 @@
 
                     {% csrf_token %}
 
+
                     <button
                         type="submit"
                         class="profile-menu-item logout-button">
 
                         <span class="profile-menu-icon">
-                            ↪
+
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+
                         </span>
 
                         <span>
@@ -208,52 +339,940 @@
 </header>
 
 
-<section class="baner">
 
-    <div class="baner-content">
+<!--==================================================
+                            HERO
+==================================================-->
+
+<main>
+
+    <section class="hero">
+
+
+        <!-- OSCURECIMIENTO PARA LEGIBILIDAD -->
+
+        <div class="hero-overlay"></div>
+
+
+        <!-- CTA DEL HERO -->
+
+        <div class="hero-content">
+
+            <span class="hero-badge">
+
+                <i class="fa-solid fa-location-dot"></i>
+
+                Movilidad universitaria
+
+            </span>
+
+
+            <p class="hero-frase">
+
+                Comparte el camino.
+                <strong>Llega a tu nido.</strong>
+
+            </p>
+
+
+            {% if user.is_authenticated and user.es_conductor %}
+
+                <a
+                    href="{% url 'publicar_viaje' %}"
+                    class="cta-btn">
+
+                    <i class="fa-solid fa-circle-plus"></i>
+
+                    Publicar viaje
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </a>
+
+            {% else %}
+
+                <a
+                    href="{% url 'agendarviaje' %}"
+                    class="cta-btn">
+
+                    <i class="fa-solid fa-location-arrow"></i>
+
+                    Apartar lugar
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </a>
+
+            {% endif %}
+
+        </div>
+
+
+        <a
+            href="#beneficios"
+            class="hero-scroll"
+            aria-label="Ver más">
+
+            <span>
+                Descubre Cuervo-Ride
+            </span>
+
+            <i class="fa-solid fa-chevron-down"></i>
+
+        </a>
+
+    </section>
+
+
+
+    <!--==================================================
+                    FRANJA DE CONFIANZA
+    ==================================================-->
+
+    <section class="trust-bar">
+
+        <div class="trust-item">
+
+            <span class="trust-icon">
+
+                <i class="fa-solid fa-graduation-cap"></i>
+
+            </span>
+
+            <div>
+
+                <strong>
+                    Comunidad universitaria
+                </strong>
+
+                <small>
+                    Viaja con estudiantes
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <div class="trust-divider"></div>
+
+
+        <div class="trust-item">
+
+            <span class="trust-icon">
+
+                <i class="fa-solid fa-user-shield"></i>
+
+            </span>
+
+            <div>
+
+                <strong>
+                    Perfiles verificados
+                </strong>
+
+                <small>
+                    Mayor confianza al viajar
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <div class="trust-divider"></div>
+
+
+        <div class="trust-item">
+
+            <span class="trust-icon">
+
+                <i class="fa-solid fa-car-side"></i>
+
+            </span>
+
+            <div>
+
+                <strong>
+                    Vehículos revisados
+                </strong>
+
+                <small>
+                    Documentación validada
+                </small>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!--==================================================
+                        BENEFICIOS
+    ==================================================-->
+
+    <section
+        class="home-section beneficios"
+        id="beneficios">
+
+        <div class="section-heading">
+
+            <span class="section-tag">
+
+                <i class="fa-solid fa-feather"></i>
+
+                VIAJA DIFERENTE
+
+            </span>
+
+
+            <h2>
+
+                Comparte tu viaje,
+                <span>llega a tu nido seguro.</span>
+
+            </h2>
+
+
+            <p>
+
+                Encuentra estudiantes que realizan rutas similares,
+                aprovecha los lugares disponibles y forma parte de
+                una comunidad que se mueve junta.
+
+            </p>
+
+        </div>
+
+
+        <div class="beneficios-grid">
+
+
+            <!-- BUSCAR -->
+
+            <article class="beneficio-card">
+
+                <div class="beneficio-numero">
+                    01
+                </div>
+
+
+                <div class="beneficio-icon">
+
+                    <i class="fa-solid fa-map-location-dot"></i>
+
+                </div>
+
+
+                <h3>
+                    Encuentra tu ruta
+                </h3>
+
+
+                <p>
+
+                    Busca viajes por origen, destino y horario
+                    para encontrar una opción que se adapte a ti.
+
+                </p>
+
+
+                <span class="beneficio-link">
+
+                    Encuentra tu camino
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </span>
+
+            </article>
+
+
+            <!-- COMPARTIR -->
+
+            <article class="beneficio-card destacado">
+
+                <div class="beneficio-numero">
+                    02
+                </div>
+
+
+                <div class="beneficio-icon">
+
+                    <i class="fa-solid fa-people-group"></i>
+
+                </div>
+
+
+                <h3>
+                    Comparte el trayecto
+                </h3>
+
+
+                <p>
+
+                    Aprovecha los asientos disponibles de otros
+                    estudiantes y reduce el costo de tus traslados.
+
+                </p>
+
+
+                <span class="beneficio-link">
+
+                    Viaja acompañado
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </span>
+
+            </article>
+
+
+            <!-- SEGURIDAD -->
+
+            <article class="beneficio-card">
+
+                <div class="beneficio-numero">
+                    03
+                </div>
+
+
+                <div class="beneficio-icon">
+
+                    <i class="fa-solid fa-shield-heart"></i>
+
+                </div>
+
+
+                <h3>
+                    Viaja con confianza
+                </h3>
+
+
+                <p>
+
+                    Conductores, vehículos y documentación pasan por
+                    un proceso de revisión antes de poder ofrecer viajes.
+
+                </p>
+
+
+                <span class="beneficio-link">
+
+                    Comunidad segura
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </span>
+
+            </article>
+
+        </div>
+
+    </section>
+
+
+
+    <!--==================================================
+                    CÓMO FUNCIONA
+    ==================================================-->
+
+    <section class="como-funciona">
+
+        <div class="como-funciona-contenido">
+
+            <div class="section-heading izquierda">
+
+                <span class="section-tag">
+
+                    <i class="fa-solid fa-route"></i>
+
+                    ASÍ DE FÁCIL
+
+                </span>
+
+
+                <h2>
+
+                    Tu siguiente viaje
+                    está a <span>tres pasos.</span>
+
+                </h2>
+
+
+                <p>
+
+                    Cuervo-Ride facilita encontrar y compartir viajes
+                    dentro de la comunidad universitaria.
+
+                </p>
+
+            </div>
+
+
+            <div class="steps">
+
+
+                <article class="step">
+
+                    <div class="step-number">
+                        1
+                    </div>
+
+                    <div class="step-info">
+
+                        <div class="step-icon">
+
+                            <i class="fa-solid fa-magnifying-glass-location"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Encuentra un viaje
+                            </h3>
+
+                            <p>
+                                Elige el origen, destino y horario que necesitas.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <div class="step-line"></div>
+
+
+                <article class="step">
+
+                    <div class="step-number">
+                        2
+                    </div>
+
+                    <div class="step-info">
+
+                        <div class="step-icon">
+
+                            <i class="fa-solid fa-ticket"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Aparta tu lugar
+                            </h3>
+
+                            <p>
+                                Selecciona el viaje que más te conviene.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <div class="step-line"></div>
+
+
+                <article class="step">
+
+                    <div class="step-number">
+                        3
+                    </div>
+
+                    <div class="step-info">
+
+                        <div class="step-icon">
+
+                            <i class="fa-solid fa-car-rear"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Comparte el camino
+                            </h3>
+
+                            <p>
+                                Encuéntrate con tu conductor y comienza el viaje.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!--==================================================
+                    PASAJERO / CONDUCTOR
+    ==================================================-->
+
+    <section class="roles-section">
+
+        <div class="section-heading">
+
+            <span class="section-tag">
+
+                <i class="fa-solid fa-road"></i>
+
+                ELIGE TU CAMINO
+
+            </span>
+
+
+            <h2>
+
+                Una comunidad,
+                <span>dos formas de viajar.</span>
+
+            </h2>
+
+
+            <p>
+
+                Ya sea que necesites llegar a tu destino o tengas
+                lugares disponibles, hay un espacio para ti.
+
+            </p>
+
+        </div>
+
+
+        <div class="roles-grid">
+
+
+            <!-- PASAJERO -->
+
+            <article class="role-card pasajero">
+
+                <div class="role-card-decoracion">
+
+                    <i class="fa-solid fa-location-dot"></i>
+
+                </div>
+
+
+                <div class="role-icon">
+
+                    <i class="fa-solid fa-person-walking-luggage"></i>
+
+                </div>
+
+
+                <span class="role-label">
+                    PASAJERO
+                </span>
+
+
+                <h3>
+                    Encuentra quien vaya por tu camino.
+                </h3>
+
+
+                <p>
+
+                    Explora viajes publicados por estudiantes,
+                    revisa la ruta y aparta tu lugar.
+
+                </p>
+
+
+                <ul>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Consulta rutas disponibles
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Aparta tu lugar
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Consulta tus viajes
+                    </li>
+
+                </ul>
+
+
+                <a
+                    href="{% url 'agendarviaje' %}"
+                    class="role-button">
+
+                    Buscar viajes
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </a>
+
+            </article>
+
+
+
+            <!-- CONDUCTOR -->
+
+            <article class="role-card conductor">
+
+                <div class="role-card-decoracion">
+
+                    <i class="fa-solid fa-car"></i>
+
+                </div>
+
+
+                <div class="role-icon">
+
+                    <i class="fa-solid fa-car-side"></i>
+
+                </div>
+
+
+                <span class="role-label">
+                    CONDUCTOR
+                </span>
+
+
+                <h3>
+                    Convierte tus lugares libres en un viaje compartido.
+                </h3>
+
+
+                <p>
+
+                    Publica las rutas que ya realizas y permite que
+                    otros estudiantes viajen contigo.
+
+                </p>
+
+
+                <ul>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Publica tus rutas
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Vehículos verificados
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Gestiona tus viajes
+                    </li>
+
+                </ul>
+
+
+                {% if user.is_authenticated and user.es_conductor %}
+
+                    <a
+                        href="{% url 'publicar_viaje' %}"
+                        class="role-button">
+
+                        Publicar viaje
+
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                    </a>
+
+                {% else %}
+
+                    <a
+                        href="{% url 'register' %}"
+                        class="role-button">
+
+                        Quiero conducir
+
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                    </a>
+
+                {% endif %}
+
+            </article>
+
+        </div>
+
+    </section>
+
+
+
+    <!--==================================================
+                        CTA FINAL
+    ==================================================-->
+
+    <section class="final-cta">
+
+        <div class="final-cta-glow"></div>
+
+
+        <div class="final-cta-icon">
+
+            <i class="fa-solid fa-feather-pointed"></i>
+
+        </div>
+
+
+        <div class="final-cta-text">
+
+            <span>
+                TU SIGUIENTE VIAJE
+            </span>
+
+
+            <h2>
+                El camino se disfruta más cuando se comparte.
+            </h2>
+
+
+            <p>
+
+                Encuentra tu próximo viaje dentro de la comunidad Cuervo-Ride.
+
+            </p>
+
+        </div>
+
 
         {% if user.is_authenticated and user.es_conductor %}
 
-            <a href="{% url 'publicar_viaje' %}" class="cta-btn" style="text-decoration:none; display:inline-block;">
-                Publicar viaje
+            <a
+                href="{% url 'publicar_viaje' %}"
+                class="final-cta-button">
+
+                Publicar un viaje
+
+                <i class="fa-solid fa-arrow-right"></i>
+
             </a>
 
         {% else %}
 
-        <a href="{% url 'agendarviaje' %}">
-            <button
-                type="button"
-                class="cta-btn">
+            <a
+                href="{% url 'agendarviaje' %}"
+                class="final-cta-button">
 
-                Apartar lugar
+                Buscar un viaje
 
-            </button>
-             </a>
+                <i class="fa-solid fa-arrow-right"></i>
+
+            </a>
 
         {% endif %}
 
+    </section>
+
+</main>
+
+
+
+<!--==================================================
+                        FOOTER
+==================================================-->
+
+<footer class="footer">
+
+    <div class="footer-main">
+
+
+        <div class="footer-brand">
+
+            <img
+                src="{% static 'img/LMST.png' %}"
+                alt="Cuervo Ride">
+
+
+            <p>
+
+                Movilidad universitaria creada para conectar
+                estudiantes y compartir el camino.
+
+            </p>
+
+        </div>
+
+
+        <div class="footer-links">
+
+            <strong>
+                Cuervo-Ride
+            </strong>
+
+            <a href="{% url 'home' %}">
+                Inicio
+            </a>
+
+            <a href="{% url 'sobrenosotros' %}">
+                Nosotros
+            </a>
+
+        </div>
+
+
+        <div class="footer-links">
+
+            <strong>
+                Cuenta
+            </strong>
+
+
+            {% if user.is_authenticated %}
+
+                <a href="{% url 'perfil' %}">
+                    Mi perfil
+                </a>
+
+            {% else %}
+
+                <a href="{% url 'login' %}">
+                    Iniciar sesión
+                </a>
+
+                <a href="{% url 'register' %}">
+                    Registrarse
+                </a>
+
+            {% endif %}
+
+        </div>
+
     </div>
 
-</section>
+
+    <div class="footer-bottom">
+
+        <span>
+            © Cuervo-Ride
+        </span>
 
 
-<section class="info">
+        <span>
+            Comunidad universitaria
+        </span>
 
-    <h2>
-        Comparte tu viaje, llega a tu nido seguro.
-    </h2>
+    </div>
 
-    <p>
-        ¿Vas camino a la universidad o de regreso a casa?
-        Encuentra estudiantes que realizan tu misma ruta y comparte el trayecto.
-        Ahorra en transporte, aprovecha los asientos disponibles de otros compañeros
-        y viaja de una manera más económica, práctica y segura.
-    </p>
-
-</section>
+</footer>
 
 
-<script src="{% static 'js/home.js' %}"></script>
+
+<!--==================================================
+                MENÚ DEL PERFIL
+==================================================-->
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const boton =
+            document.getElementById(
+                "profileMenuButton"
+            );
+
+        const menu =
+            document.getElementById(
+                "profileMenu"
+            );
+
+
+        if (!boton || !menu) {
+
+            return;
+
+        }
+
+
+        boton.addEventListener(
+            "click",
+            function (evento) {
+
+                evento.stopPropagation();
+
+
+                const abierto =
+                    !menu.hidden;
+
+
+                menu.hidden =
+                    abierto;
+
+
+                boton.classList.toggle(
+                    "active",
+                    !abierto
+                );
+
+
+                boton.setAttribute(
+                    "aria-expanded",
+                    String(!abierto)
+                );
+
+            }
+        );
+
+
+        document.addEventListener(
+            "click",
+            function (evento) {
+
+                if (
+                    menu.contains(evento.target)
+                    || boton.contains(evento.target)
+                ) {
+
+                    return;
+
+                }
+
+
+                menu.hidden =
+                    true;
+
+
+                boton.classList.remove(
+                    "active"
+                );
+
+
+                boton.setAttribute(
+                    "aria-expanded",
+                    "false"
+                );
+
+            }
+        );
+
+    }
+);
+
+</script>
+
 
 </body>
+
 </html>
