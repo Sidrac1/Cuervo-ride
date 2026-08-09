@@ -1,107 +1,538 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/nosotros.css' %}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nosotros</title>
-
-    <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-
-    <link rel="stylesheet" href="{% static 'css/nosotros.css' %}">
 </head>
-
 <body>
-
-    {% include 'components/sidebar.html' %}
-
-    <!-- CONTENIDO -->
-
-    <main class="content">
+    
+{% include 'components/sidebar.html' %}
 
 
-        <header>
+<main class="content">
 
-            <h1 class="logo-text">
-                Cuervo-<span>Ride</span>
+    <!--==================================================
+                        TOP BAR
+    ==================================================-->
+
+    <header class="topbar">
+
+        <div class="topbar-texto">
+
+            <span class="topbar-etiqueta">
+
+                <i class="fa-solid fa-feather"></i>
+
+                Cuervo-Ride
+
+            </span>
+
+            <h1>
+                Nosotros
             </h1>
 
-        </header>
-
-        <section class="Nosotros">
-
-            <!-- NOSOTROS -->
-
-            <div class="Nosotros-top">
+        </div>
 
 
-                <div class="info">
+        <div class="logo-text">
 
-                    <h1>¿Quienes Somos?</h1>
+            Cuervo-<span>Ride</span>
+
+        </div>
+
+    </header>
+
+
+
+    <!--==================================================
+                        HERO NOSOTROS
+    ==================================================-->
+
+    <section class="nosotros-hero">
+
+        <div class="nosotros-hero-contenido">
+
+            <span class="nosotros-tag">
+
+                <i class="fa-solid fa-users"></i>
+
+                NUESTRA COMUNIDAD
+
+            </span>
+
+
+            <h2>
+
+                Más que compartir un viaje,
+                <span>compartimos el camino.</span>
+
+            </h2>
+
+
+            <p>
+
+                Cuervo-Ride nace como una iniciativa universitaria
+                enfocada en mejorar la movilidad, seguridad e inclusión
+                dentro de la comunidad de la Universidad Tecnológica
+                de Tijuana.
+
+            </p>
+
+        </div>
+
+
+        <div class="nosotros-hero-icono">
+
+            <i class="fa-solid fa-road"></i>
+
+        </div>
+
+    </section>
+
+
+
+    <!--==================================================
+                    SOBRE NOSOTROS
+    ==================================================-->
+
+    <section class="sobre-nosotros">
+
+        <div class="section-heading">
+
+            <span class="section-numero">
+                01
+            </span>
+
+
+            <div>
+
+                <span class="section-tag">
+
+                    <i class="fa-solid fa-circle-info"></i>
+
+                    SOBRE EL PROYECTO
+
+                </span>
+
+
+                <h2>
+                    ¿Quiénes somos?
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="sobre-grid">
+
+            <article class="sobre-card principal">
+
+                <div class="sobre-card-icono">
+
+                    <i class="fa-solid fa-graduation-cap"></i>
 
                 </div>
 
 
-            </div>
+                <h3>
+                    Una solución creada por estudiantes
+                </h3>
 
-            <!-- CONTENIDO PRINCIPAL -->
 
-            <div class="contenido">
-                <h1>Sobre nosotros</h1>
                 <p>
-                    Somos un equipo de estudiantes de la Universidad Tecnológica de Tijuana comprometidos con mejorar la seguridad,
-                    accesibilidad y movilidad de nuestra comunidad universitaria. Nuestro proyecto nace a partir de una necesidad real: la
-                    falta de opciones de transporte seguras y confiables para los estudiantes que concluyen sus clases en horarios
-                    nocturnos. <br>
-                    <br>
-                    La plataforma fue diseñada para conectar a estudiantes que cuentan con vehículo propio y desean compartir
-                    trayectos, con compañeros que necesitan un traslado seguro hacia sus hogares. Todo esto dentro de un entorno
-                    controlado, exclusivo para la comunidad universitaria, donde la confianza, la verificación de usuarios y la inclusión son
-                    pilares fundamentales. <br>
-                    <br>
-                    Nuestro objetivo es transformar los “aventones” informales en una solución organizada, segura y accesible, que fomente
-                    el sentido de comunidad y reduzca los riesgos asociados al transporte nocturno. Además, integramos funcionalidades
-                    pensadas para estudiantes con discapacidades motrices, promoviendo un sistema de movilidad verdaderamente
-                    incluyente. <br>
-                    <br>
-                    Creemos que la tecnología puede ser una herramienta para cuidar a las personas, optimizar recursos y fortalecer la
-                    colaboración entre estudiantes. Por eso, desarrollamos una plataforma enfocada no solo en el traslado, sino en la
-                    tranquilidad y bienestar de quienes forman parte de la UTT.
-                </p>
-                <h2>Mision</h2>
-                <p>
-                    Coordinar el transporte durante el turno nocturno para el alumnado de la UTT mediante un modelo
-                    de raite (ride) seguro poniendo especial atención en la seguridad, accesibilidad y equidad en los
-                    costos. Nuestra misión está enfocada en resolver la necesidad de transporte para los alumnos en el
-                    turno vespertino que no cuentan con transporte público después de las 8:30 PM. Buscamos ofrecer
-                    una alternativa que fomente la colaboración entre los alumnos que cuentan con un vehículo propio y
-                    los alumnos que necesitan volver a sus casas después del horario de clases.
-                </p>
-                <h2>Vision</h2>
-                <p>
-                    Convertirse en el sistema predilecto por la UTT para gestionar el transporte seguro de sus
-                    estudiantes durante el turno nocturno poniendo especial atención en integrar al alumnado con
-                    discapacidades motrices. Nuestra visión apunta a un futuro donde todos los alumnos tengan
-                    transporte rápido, seguro, confiable y organizado para proteger a la comunidad estudiantil.
-                </p>
-                <h2>Valores</h2>
-                <p>
-                    El proyecto se fundamenta en principios como inclusión, seguridad, responsabilidad, colaboración,
-                    sostenibilidad y respeto. Estos valores guían tanto el diseño del sistema como la interacción entre
-                    usuarios, garantizando que la experiencia sea justa, confiable y orientada al bienestar de la
+
+                    Somos un equipo de estudiantes de la Universidad
+                    Tecnológica de Tijuana comprometidos con mejorar
+                    la seguridad, accesibilidad y movilidad de nuestra
                     comunidad universitaria.
+
                 </p>
+
+
+                <p>
+
+                    Nuestro proyecto nace a partir de una necesidad real:
+                    la falta de opciones de transporte seguras y confiables
+                    para los estudiantes que concluyen sus clases en
+                    horarios nocturnos.
+
+                </p>
+
+            </article>
+
+
+            <article class="sobre-card">
+
+                <div class="sobre-card-icono verde">
+
+                    <i class="fa-solid fa-people-arrows"></i>
+
+                </div>
+
+
+                <h3>
+                    Conectamos estudiantes
+                </h3>
+
+
+                <p>
+
+                    La plataforma conecta a estudiantes que cuentan con
+                    vehículo propio y desean compartir trayectos, con
+                    compañeros que necesitan un traslado seguro hacia
+                    sus hogares.
+
+                </p>
+
+            </article>
+
+
+            <article class="sobre-card">
+
+                <div class="sobre-card-icono azul">
+
+                    <i class="fa-solid fa-shield-heart"></i>
+
+                </div>
+
+
+                <h3>
+                    Seguridad y confianza
+                </h3>
+
+
+                <p>
+
+                    Todo funciona dentro de un entorno controlado y
+                    exclusivo para la comunidad universitaria, donde
+                    la confianza y la verificación de usuarios son
+                    pilares fundamentales.
+
+                </p>
+
+            </article>
+
+
+            <article class="sobre-card">
+
+                <div class="sobre-card-icono morado">
+
+                    <i class="fa-solid fa-universal-access"></i>
+
+                </div>
+
+
+                <h3>
+                    Movilidad incluyente
+                </h3>
+
+
+                <p>
+
+                    Integramos funcionalidades pensadas para estudiantes
+                    con discapacidades motrices, promoviendo un sistema
+                    de movilidad accesible y verdaderamente incluyente.
+
+                </p>
+
+            </article>
+
+        </div>
+
+
+        <div class="sobre-texto-amplio">
+
+            <i class="fa-solid fa-quote-left"></i>
+
+
+            <p>
+
+                Nuestro objetivo es transformar los “aventones” informales
+                en una solución organizada, segura y accesible, que fomente
+                el sentido de comunidad y reduzca los riesgos asociados al
+                transporte nocturno.
+
+            </p>
+
+        </div>
+
+    </section>
+
+
+
+    <!--==================================================
+                    MISIÓN Y VISIÓN
+    ==================================================-->
+
+    <section class="mision-vision">
+
+        <!-- MISIÓN -->
+
+        <article class="institucional-card mision">
+
+            <div class="institucional-icono">
+
+                <i class="fa-solid fa-bullseye"></i>
+
             </div>
 
 
-        </section>
+            <span class="institucional-tag">
+                NUESTRA MISIÓN
+            </span>
+
+
+            <h2>
+                Facilitar traslados seguros y accesibles.
+            </h2>
+
+
+            <p>
+
+                Coordinar el transporte durante el turno nocturno para
+                el alumnado de la UTT mediante un modelo de raite seguro,
+                poniendo especial atención en la seguridad, accesibilidad
+                y equidad en los costos.
+
+            </p>
+
+
+            <p>
+
+                Nuestra misión está enfocada en resolver la necesidad de
+                transporte para los alumnos del turno vespertino que no
+                cuentan con transporte público después de las 8:30 PM,
+                fomentando la colaboración entre estudiantes con vehículo
+                propio y quienes necesitan regresar a casa.
+
+            </p>
+
+        </article>
+
+
+        <!-- VISIÓN -->
+
+        <article class="institucional-card vision">
+
+            <div class="institucional-icono">
+
+                <i class="fa-solid fa-eye"></i>
+
+            </div>
+
+
+            <span class="institucional-tag">
+                NUESTRA VISIÓN
+            </span>
+
+
+            <h2>
+                Una comunidad donde nadie se quede sin camino.
+            </h2>
+
+
+            <p>
+
+                Convertirnos en el sistema predilecto por la UTT para
+                gestionar el transporte seguro de sus estudiantes durante
+                el turno nocturno.
+
+            </p>
+
+
+            <p>
+
+                Nuestra visión apunta a un futuro donde todos los alumnos
+                tengan acceso a transporte rápido, seguro, confiable y
+                organizado, integrando especialmente al alumnado con
+                discapacidades motrices.
+
+            </p>
+
+        </article>
+
+    </section>
 
 
 
-    </main>
+    <!--==================================================
+                        VALORES
+    ==================================================-->
 
-    <script src="{% static 'js/sidebarP.js' %}"></script>
+    <section class="valores">
+
+        <div class="section-heading centro">
+
+            <span class="section-tag">
+
+                <i class="fa-solid fa-heart"></i>
+
+                LO QUE NOS DEFINE
+
+            </span>
+
+
+            <h2>
+                Nuestros valores
+            </h2>
+
+
+            <p>
+
+                Los principios que guían tanto el diseño de la plataforma
+                como la interacción entre los miembros de la comunidad.
+
+            </p>
+
+        </div>
+
+
+        <div class="valores-grid">
+
+            <article class="valor-card">
+
+                <i class="fa-solid fa-universal-access"></i>
+
+                <h3>
+                    Inclusión
+                </h3>
+
+                <p>
+                    Diseñamos pensando en las necesidades de todos.
+                </p>
+
+            </article>
+
+
+            <article class="valor-card">
+
+                <i class="fa-solid fa-shield-halved"></i>
+
+                <h3>
+                    Seguridad
+                </h3>
+
+                <p>
+                    Protegemos a la comunidad mediante procesos de verificación.
+                </p>
+
+            </article>
+
+
+            <article class="valor-card">
+
+                <i class="fa-solid fa-handshake"></i>
+
+                <h3>
+                    Colaboración
+                </h3>
+
+                <p>
+                    Fomentamos que los estudiantes se apoyen entre sí.
+                </p>
+
+            </article>
+
+
+            <article class="valor-card">
+
+                <i class="fa-solid fa-scale-balanced"></i>
+
+                <h3>
+                    Responsabilidad
+                </h3>
+
+                <p>
+                    Promovemos una participación consciente y confiable.
+                </p>
+
+            </article>
+
+
+            <article class="valor-card">
+
+                <i class="fa-solid fa-leaf"></i>
+
+                <h3>
+                    Sostenibilidad
+                </h3>
+
+                <p>
+                    Compartir trayectos permite aprovechar mejor los recursos.
+                </p>
+
+            </article>
+
+
+            <article class="valor-card">
+
+                <i class="fa-solid fa-people-group"></i>
+
+                <h3>
+                    Respeto
+                </h3>
+
+                <p>
+                    Construimos una comunidad basada en confianza y convivencia.
+                </p>
+
+            </article>
+
+        </div>
+
+    </section>
+
+
+
+    <!--==================================================
+                    CIERRE
+    ==================================================-->
+
+    <section class="nosotros-cierre">
+
+        <div class="nosotros-cierre-icono">
+
+            <i class="fa-solid fa-feather-pointed"></i>
+
+        </div>
+
+
+        <div>
+
+            <span>
+                CUERVO-RIDE
+            </span>
+
+
+            <h2>
+                Tecnología para cuidar a nuestra comunidad.
+            </h2>
+
+
+            <p>
+
+                Creemos que la tecnología puede optimizar recursos,
+                fortalecer la colaboración entre estudiantes y brindar
+                mayor tranquilidad a quienes forman parte de la UTT.
+
+            </p>
+
+        </div>
+
+    </section>
+
+
+</main>
 
 </body>
 </html>
