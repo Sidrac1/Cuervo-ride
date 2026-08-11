@@ -2043,7 +2043,7 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
                     body:
                         JSON.stringify({
 
-                            estado:
+                            decision:
                                 estado,
 
                             motivo:
@@ -2124,7 +2124,7 @@ function iniciarUsuarioInfo(usuarioIdParam = null) {
                     body:
                         JSON.stringify({
 
-                            estado:
+                            decision:
                                 estado,
 
                             motivo:

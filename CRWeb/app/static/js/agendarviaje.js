@@ -149,15 +149,14 @@ document.addEventListener("DOMContentLoaded", function () {
         }).addTo(mapa);
 
 
-        L.tileLayer(
-            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-            {
-                maxZoom: 19,
 
-                attribution:
-                    "&copy; OpenStreetMap contributors"
-            }
-        ).addTo(mapa);
+        const mapTilerKey = 'JS0B3dwVkIVaAJNtu5s2';
+
+        L.tileLayer(`https://api.maptiler.com/maps/streets-v4-dark/{z}/{x}/{y}.png?key=${maptilerKey}`, {
+            maxZoom: 19,
+            attribution: "&copy; MapTiler"
+        }).addTo(mapa);
+
 
 
         window.setTimeout(

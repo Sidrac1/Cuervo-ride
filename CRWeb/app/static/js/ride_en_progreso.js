@@ -122,17 +122,13 @@ async function iniciarMapaRide() {
     );
 
 
-    L.tileLayer(
-        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        {
-            maxZoom: 19,
+    const mapTilerKey = 'JS0B3dwVkIVaAJNtu5s2';
 
-            attribution:
-                "&copy; OpenStreetMap contributors",
-        }
-    ).addTo(
-        mapaRide
-    );
+    L.tileLayer(`https://api.maptiler.com/maps/streets-v4-dark/{z}/{x}/{y}.png?key=${maptilerKey}`, {
+        maxZoom: 19,
+        attribution: "&copy; MapTiler"
+    }).addTo(mapaRide);
+    
 
 
     grupoRutaRide =

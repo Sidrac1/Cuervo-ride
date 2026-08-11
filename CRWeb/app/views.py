@@ -200,6 +200,8 @@ def agendarviaje(request):
     contexto = {
         "viajes": viajes,
         "busqueda": busqueda,
+        "latitud_inicial": 32.461344,
+        "longitud_inicial": -116.823934,
     }
 
     return render(
@@ -2040,7 +2042,10 @@ def perfil(request):
             perfil_conductor, _ = PerfilConductor.objects.get_or_create(usuario=request.user)
 
             numero_licencia = request.POST.get("numero_licencia", "").strip()
-            fecha_vencimiento = request.POST.get("fecha_vencimiento", "").strip()
+            fecha_vencimiento = (
+                request.POST.get("fecha_vencimiento", "").strip()
+                or request.POST.get("fecha_vencimiento_licencia", "").strip()
+            )
             foto_frontal = request.FILES.get("foto_licencia_frontal")
             foto_reverso = request.FILES.get("foto_licencia_reverso")
 
@@ -2102,7 +2107,10 @@ def perfil(request):
                 .first()
             )
 
-            foto_vehiculo = request.FILES.get("foto")
+            foto_vehiculo = (
+                request.FILES.get("foto_vehiculo")
+                or request.FILES.get("foto")
+            )
 
             if foto_vehiculo is not None:
                 try:
@@ -5823,7 +5831,20 @@ def api_verificar_conductor(request, usuario_id):
 
     try:
         data = json.loads(request.body)
-        decision = data.get("decision", "").strip().lower()
+        decision = (
+            data.get("decision")
+            or data.get("estado")
+            or ""
+        ).strip().lower()
+
+        decisiones_validas = {
+            "aprobado": "aprobado",
+            "aprobar": "aprobado",
+            "rechazado": "rechazado",
+            "rechazar": "rechazado",
+        }
+
+        decision = decisiones_validas.get(decision, "")
 
         if decision not in {"aprobado", "rechazado"}:
             return JsonResponse({"ok": False, "error": "decision debe ser 'aprobado' o 'rechazado'."}, status=400)
@@ -5860,7 +5881,20 @@ def api_verificar_vehiculo(request, vehiculo_id):
 
     try:
         data = json.loads(request.body)
-        decision = data.get("decision", "").strip().lower()
+        decision = (
+            data.get("decision")
+            or data.get("estado")
+            or ""
+        ).strip().lower()
+
+        decisiones_validas = {
+            "aprobado": "aprobado",
+            "aprobar": "aprobado",
+            "rechazado": "rechazado",
+            "rechazar": "rechazado",
+        }
+
+        decision = decisiones_validas.get(decision, "")
 
         if decision not in {"aprobado", "rechazado"}:
             return JsonResponse({"ok": False, "error": "decision debe ser 'aprobado' o 'rechazado'."}, status=400)

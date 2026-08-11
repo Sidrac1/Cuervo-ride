@@ -46,9 +46,10 @@ document.addEventListener("DOMContentLoaded", () => {
     /* Inicialización del Mapa */
     const mapa = L.map("mapa", { zoomControl: false }).setView(CONFIG.centroInicial, CONFIG.zoomInicial);
     L.control.zoom({ position: "bottomright" }).addTo(mapa);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    const maptilerKey = "JS0B3dwVkIVaAJNtu5s2"
+    L.tileLayer(`https://api.maptiler.com/maps/streets-v4-dark/{z}/{x}/{y}.png?key=${maptilerKey}`, {
         maxZoom: 19,
-        attribution: "&copy; OpenStreetMap contributors"
+        attribution: "&copy; MapTiler"
     }).addTo(mapa);
 
     /* Marcadores */
