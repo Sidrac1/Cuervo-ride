@@ -33,14 +33,13 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
 
     "daphne",
-
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    'axes',
     "channels",
 
     ##Pages
@@ -53,10 +52,21 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'axes.middleware.AxesMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+AUTHENTICATION_BACKENDS = [
+    'axes.backends.AxesStandaloneBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
 
+from datetime import timedelta
+# Configuración de django-axes (Límite de accesos fallidos)
+AXES_FAILURE_LIMIT = 5                           # Bloquea al 5to intento fallido
+AXES_COOLOFF_TIME = timedelta(minutes=5)         # El bloqueo dura 5 minutos
+AXES_RESET_ON_SUCCESS = True                     # Reinicia el contador al iniciar sesión con éxito
+AXES_LOCKOUT_PARAMETERS = [["username", "ip_address"]]  # Evalúa combinación de usuario e IP
 ROOT_URLCONF = 'CRWeb.urls'
 
 TEMPLATES = [
@@ -126,9 +136,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-mx'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Tijuana'
 
 USE_I18N = True
 
@@ -144,3 +154,7 @@ AUTH_USER_MODEL = "app.Usuario"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+# Configuración de correo para pruebas en desarrollo (Muestra el correo en la consola)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'CuervoRide <no-reply@cuervoride.com>'
