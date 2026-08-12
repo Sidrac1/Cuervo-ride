@@ -52,22 +52,29 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'axes.middleware.AxesMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 AUTHENTICATION_BACKENDS = [
-    'axes.backends.AxesStandaloneBackend',
+    'axes.backends.AxesBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
 
 from datetime import timedelta
 # Configuración de django-axes (Límite de accesos fallidos)
-AXES_FAILURE_LIMIT = 5                           # Bloquea al 5to intento fallido
+AXES_FAILURE_LIMIT = 5
 AXES_COOLOFF_TIME = timedelta(minutes=5)         # El bloqueo dura 5 minutos
-AXES_RESET_ON_SUCCESS = True                     # Reinicia el contador al iniciar sesión con éxito
-AXES_LOCKOUT_PARAMETERS = [["username", "ip_address"]]  # Evalúa combinación de usuario e IP
+AXES_ONLY_USER_FAILURES = True
+AXES_LOCKOUT_PARAMETERS = ["username"]
+AXES_USERNAME_FORM_FIELD = "username"
+AXES_RESET_ON_SUCCESS = True
 ROOT_URLCONF = 'CRWeb.urls'
+AXES_LOCKOUT_TEMPLATE = None
+AXES_LOCKOUT_URL = None
+AXES_HANDLER = 'axes.handlers.database.AxesDatabaseHandler'
+AXES_LOCKOUT_CALLABLE = None
+AXES_HTTP_RESPONSE_HANDLER = 'axes.handlers.database.AxesDatabaseHandler'
+
 
 TEMPLATES = [
     {
