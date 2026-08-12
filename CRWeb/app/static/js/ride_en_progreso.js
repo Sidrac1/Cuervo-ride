@@ -122,7 +122,7 @@ async function iniciarMapaRide() {
     );
 
 
-    const mapTilerKey = 'JS0B3dwVkIVaAJNtu5s2';
+    const maptilerKey = 'JS0B3dwVkIVaAJNtu5s2';
 
     L.tileLayer(`https://api.maptiler.com/maps/streets-v4-dark/{z}/{x}/{y}.png?key=${maptilerKey}`, {
         maxZoom: 19,

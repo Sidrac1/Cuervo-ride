@@ -961,9 +961,7 @@ def calificar_conductor(request, solicitud_id):
 # LOGIN
 # =========================================================
 
-MAX_INTENTOS = 5
-TIEMPO_BLOQUEO_SEGUNDOS = 300
-
+# app/views.py
 
 @never_cache
 def login_view(request):
@@ -982,10 +980,10 @@ def login_view(request):
             messages.error(request, "Por favor ingresa tu usuario o correo.")
             return render(request, "forms/login.html")
 
-        # 1. Buscar usuario por correo
+        # 1. Buscar usuario en la BD por correo o username
         usuario = Usuario.objects.filter(email=identificador).first()
 
-        # 2. Verificar estado en la base de datos
+        # 2. Verificar estado manual en BD
         if usuario and usuario.estado_cuenta == Usuario.EstadosCuenta.BLOQUEADA:
             messages.error(
                 request,
@@ -994,7 +992,7 @@ def login_view(request):
             )
             return render(request, "forms/login.html")
 
-        # 3. Verificar si Axes ya tiene bloqueada la IP o el usuario
+        # 3. Verificar si Axes ya tiene bloqueado a este identificador
         if AxesProxyHandler.is_locked(request, credentials={"username": identificador}):
             if usuario and usuario.estado_cuenta != Usuario.EstadosCuenta.BLOQUEADA:
                 usuario.estado_cuenta = Usuario.EstadosCuenta.BLOQUEADA
@@ -1002,33 +1000,35 @@ def login_view(request):
 
             messages.error(
                 request,
-                "La cuenta se encuentra bloqueada. Un administrador debe desbloquearla desde el panel."
+                "Tu cuenta ha sido bloqueada por alcanzar el límite de intentos fallidos. "
+                "Contacta a un administrador para desbloquearla."
             )
             return render(request, "forms/login.html")
 
         # 4. Intentar autenticación
-        user = authenticate(request, username=identificador, password=password)
+        user = authenticate(request=request, username=identificador, password=password)
 
         if user is not None:
+            reset(username=identificador)
             login(request, user)
             return redirect("home")
         else:
-            # 5. Si falló la contraseña, verificar si este intento provocó el bloqueo
-            if usuario:
-                if AxesProxyHandler.is_locked(request, credentials={"username": identificador}):
+            # 5. La contraseña fue incorrecta: verificar si se superó el límite justo ahora
+            if AxesProxyHandler.is_locked(request, credentials={"username": identificador}):
+                if usuario:
                     usuario.estado_cuenta = Usuario.EstadosCuenta.BLOQUEADA
                     usuario.save(update_fields=["estado_cuenta"])
-                    messages.error(
-                        request,
-                        "Has alcanzado el límite de 5 intentos fallidos. "
-                        "Tu cuenta ha sido bloqueada en el sistema."
-                    )
-                else:
-                    messages.error(request, "Usuario o contraseña incorrectos.")
+                
+                messages.error(
+                    request,
+                    "Has alcanzado el límite de 5 intentos fallidos. Tu cuenta ha sido bloqueada."
+                )
             else:
                 messages.error(request, "Usuario o contraseña incorrectos.")
 
+    # En cualquier fallo o renderizado inicial, siempre recarga el HTML del login
     return render(request, "forms/login.html")
+
 
 # =========================================================
 # REGISTRO
