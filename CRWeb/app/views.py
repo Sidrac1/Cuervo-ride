@@ -1,4 +1,5 @@
 import json
+import re
 from decimal import Decimal, InvalidOperation
 from urllib.parse import urlencode
 
@@ -100,6 +101,32 @@ def redirigir_segun_rol(usuario):
 
 def valor_booleano(request, nombre):
     return request.POST.get(nombre) in {"on", "true", "True", "1", "si", "sí"}
+
+
+def normalizar_telefono(valor):
+    """
+    Limpia y normaliza números telefónicos mexicanos.
+
+    Acepta formatos como:
+        6641234567
+        664 123 4567
+        664-123-4567
+        (664) 123-4567
+        +52 664 123 4567
+
+    Devuelve únicamente los 10 dígitos nacionales.
+    """
+    texto = str(valor or "").strip()
+
+    if not texto:
+        return ""
+
+    telefono = re.sub(r"\D", "", texto)
+
+    if len(telefono) == 12 and telefono.startswith("52"):
+        telefono = telefono[2:]
+
+    return telefono
 
 
 # =========================================================
@@ -1045,7 +1072,7 @@ def register(request):
         matricula = request.POST.get("matricula", "").strip().upper()
         carrera = request.POST.get("carrera", "").strip()
         grado_grupo = request.POST.get("grado_grupo", "").strip()
-        telefono = request.POST.get("telefono", "").strip()
+        telefono = normalizar_telefono(request.POST.get("telefono", ""))
         correo = (request.POST.get("correo") or request.POST.get("email") or "").strip().lower()
         password = request.POST.get("password", "")
         confirmar_password = request.POST.get("confirmar_password", "")
@@ -1070,7 +1097,10 @@ def register(request):
         if not matricula: errores.append("La matrícula es obligatoria.")
         if not carrera: errores.append("La carrera es obligatoria.")
         if not grado_grupo: errores.append("El grado y grupo son obligatorios.")
-        if not telefono: errores.append("El teléfono es obligatorio.")
+        if not telefono:
+            errores.append("El teléfono es obligatorio.")
+        elif len(telefono) != 10:
+            errores.append("El teléfono debe contener 10 dígitos.")
         if not correo: errores.append("El correo electrónico es obligatorio.")
         if not password: errores.append("La contraseña es obligatoria.")
         if not confirmar_password: errores.append("Debes confirmar la contraseña.")
@@ -1132,7 +1162,23 @@ def register(request):
             messages.error(request, "Ocurrió un error inesperado al crear la cuenta.")
             return render(request, "forms/register.html", {"datos": datos_formulario})
 
-        login(request, usuario)
+        usuario_autenticado = authenticate(
+            request=request,
+            username=correo,
+            password=password,
+        )
+
+        if usuario_autenticado is None:
+            messages.error(
+                request,
+                (
+                    "La cuenta fue creada correctamente, pero no fue posible "
+                    "iniciar sesión automáticamente. Inicia sesión manualmente."
+                ),
+            )
+            return redirect("login")
+
+        login(request, usuario_autenticado)
         messages.success(request, "Tu cuenta fue creada correctamente.")
         return redirect("infoMedica")
 
@@ -1165,7 +1211,7 @@ def infoMedica(request):
         informacion_medica.medicamentos = request.POST.get("medicamentos", "").strip()
         informacion_medica.condiciones_medicas = request.POST.get("condiciones_medicas", "").strip()
         informacion_medica.nombre_contacto = request.POST.get("nombre_contacto", "").strip()
-        informacion_medica.telefono_contacto = request.POST.get("telefono_contacto", "").strip()
+        informacion_medica.telefono_contacto = normalizar_telefono(request.POST.get("telefono_contacto", ""))
         informacion_medica.parentesco_contacto = request.POST.get("parentesco_contacto", "").strip()
         informacion_medica.observaciones = request.POST.get("observaciones", "").strip()
 
@@ -2851,7 +2897,8 @@ def api_actualizar_usuario(request, usuario_id):
         usuario.matricula = data.get("matricula", usuario.matricula)
         usuario.grado_grupo = data.get("cuatrimestre", usuario.grado_grupo)
         usuario.carrera = data.get("carrera", usuario.carrera)
-        usuario.telefono = data.get("telefono", usuario.telefono)
+        if "telefono" in data:
+            usuario.telefono = normalizar_telefono(data.get("telefono"))
         
         nuevo_rol = data.get("rol", "").lower()
         if nuevo_rol in {Usuario.Roles.ADMINISTRADOR, Usuario.Roles.CONDUCTOR, Usuario.Roles.PASAJERO}:
@@ -3023,7 +3070,11 @@ def api_actualizar_expediente_medico(request, usuario_id):
         info.medicamentos = data.get("medicamentos", "").strip()
         info.condiciones_medicas = data.get("condiciones_medicas", "").strip()
         info.nombre_contacto = data.get("contacto", "").strip()
-        info.telefono_contacto = data.get("telefonoEmergencia", "").strip()
+        telefono_contacto_recibido = data.get(
+            "telefono_contacto",
+            data.get("telefonoEmergencia", "")
+        )
+        info.telefono_contacto = normalizar_telefono(telefono_contacto_recibido)
         info.observaciones = data.get("observaciones", "").strip()
 
         if "verificado" in data:
