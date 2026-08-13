@@ -315,7 +315,7 @@ textarea{
 
     background:transparent;
 
-    color:#fff;
+    color:#ffffff;
 
     cursor:pointer;
 
@@ -330,11 +330,11 @@ textarea{
     object-fit:cover;
 
     border:2px solid
-        rgba(255,255,255,.55);
+        rgba(0, 0, 0, 0.55);
 
     border-radius:50%;
 
-    background:#fff;
+    background:#000000;
 
     transition:
         border-color .2s ease,
