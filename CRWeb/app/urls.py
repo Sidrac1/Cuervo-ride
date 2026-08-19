@@ -28,6 +28,7 @@ urlpatterns = [
     path("viajes/<int:viaje_id>/calificar-pasajeros/",views.listar_pasajeros_calificar,name="listar_pasajeros_calificar",),
     path("viajes/solicitudes/<int:solicitud_id>/calificar-pasajero/",views.calificar_pasajero,name="calificar_pasajero",),
     path("viajes/solicitud/<int:solicitud_id>/calificar-viaje/",views.calificar_viaje,name="calificar_viaje",),
+    path("404/",views.error_404,name="error_404"),
 
     # ---------------------------------------------------------
     # Autenticación y Registro

@@ -65,6 +65,14 @@ Usuario = get_user_model()
 # FUNCIONES AUXILIARES
 # =========================================================
 
+def error_404(request, exception):
+
+    return render(
+        request,
+        "404.html",
+        status=404
+    )
+
 def inicio(request):
     if request.user.is_authenticated:
         return redirect("home")
@@ -987,8 +995,6 @@ def calificar_conductor(request, solicitud_id):
 # =========================================================
 # LOGIN
 # =========================================================
-
-# app/views.py
 
 @never_cache
 def login_view(request):

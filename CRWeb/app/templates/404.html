@@ -1,0 +1,192 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Página no encontrada | Cuervo-Ride
+    </title>
+
+
+    <!-- FONT AWESOME -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+
+    <!-- CSS -->
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/404.css' %}">
+
+</head>
+
+
+<body>
+
+
+    <main class="error-page">
+
+        <div class="error-overlay"></div>
+
+
+        <section class="error-container">
+
+
+            <!--==================================================
+                        CONTENIDO
+            ==================================================-->
+
+            <div class="error-info">
+
+
+                <span class="error-tag">
+
+                    <i class="fa-solid fa-location-dot"></i>
+
+                    RUTA NO ENCONTRADA
+
+                </span>
+
+
+                <div class="error-code">
+
+                    404
+
+                </div>
+
+
+                <h1>
+
+                    Parece que tomaste
+                    <span>la ruta equivocada.</span>
+
+                </h1>
+
+
+                <p>
+
+                    La página que estás buscando no existe,
+                    fue movida o ya no se encuentra disponible.
+
+                </p>
+
+
+                <p class="error-frase">
+
+                    No todos los caminos llevan al nido.
+
+                </p>
+
+
+                <div class="error-actions">
+
+
+                    <!-- VOLVER AL INICIO -->
+
+                    <a
+                        href="{% url 'home' %}"
+                        class="btn-error principal">
+
+                        <i class="fa-solid fa-house"></i>
+
+                        Volver al inicio
+
+                    </a>
+
+
+                    <!-- VOLVER ATRÁS -->
+
+                    <button
+                        type="button"
+                        class="btn-error secundario"
+                        onclick="history.back()">
+
+                        <i class="fa-solid fa-arrow-left"></i>
+
+                        Regresar
+
+                    </button>
+
+
+                </div>
+
+
+            </div>
+
+
+
+            <!--==================================================
+                        CUERVO 404
+            ==================================================-->
+
+            <div class="error-image">
+
+
+                <div class="error-glow"></div>
+
+
+                <img
+                    src="{% static 'img/cuervo404.png' %}"
+                    alt="Cuervo confundido junto a una señal 404">
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!--==================================================
+                    DETALLE INFERIOR
+        ==================================================-->
+
+        <div class="error-footer">
+
+
+            <div class="error-footer-line"></div>
+
+
+            <div class="error-footer-content">
+
+
+                <span>
+
+                    <i class="fa-solid fa-feather"></i>
+
+                    Cuervo-Ride
+
+                </span>
+
+
+                <span>
+
+                    Comparte el camino,
+                    llega a tu nido seguro.
+
+                </span>
+
+
+            </div>
+
+
+        </div>
+
+
+    </main>
+
+
+</body>
+
+</html>
